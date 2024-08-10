@@ -9,14 +9,6 @@ class APIResponse(HTTPException):
     """
 
 
-class ServiceNotFound(LookupError):
-    """Custom exception for service not found.
-
-    >>> ServiceNotFound
-
-    """
-
-
 class UnSupportedOS(RuntimeError):
     """Custom exception class for unsupported OS.
 

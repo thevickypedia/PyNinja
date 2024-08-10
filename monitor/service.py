@@ -1,10 +1,11 @@
-import psutil
-import subprocess
 import platform
-
+import subprocess
 from http import HTTPStatus
+
+import psutil
+
+from monitor.exceptions import UnSupportedOS
 from monitor.squire import ServiceStatus
-from monitor.exceptions import ServiceNotFound, UnSupportedOS
 
 current_os = platform.system()
 
@@ -25,9 +26,9 @@ def get_pid(service_name: str) -> int:
         int:
         Process ID running the service.
     """
-    for proc in psutil.process_iter(['pid', 'name']):
-        if proc.info['name'] == service_name:
-            return proc.info['pid']
+    for proc in psutil.process_iter(["pid", "name"]):
+        if proc.info["name"] == service_name:
+            return proc.info["pid"]
 
 
 def get_service_status(service_name: str) -> ServiceStatus:
@@ -35,9 +36,6 @@ def get_service_status(service_name: str) -> ServiceStatus:
 
     Args:
         service_name (str): Name of the service.
-
-    Raises:
-        ServiceNotFound: When the service could not be found.
 
     Returns:
         ServiceStatus:
@@ -47,26 +45,28 @@ def get_service_status(service_name: str) -> ServiceStatus:
     if not (pid := get_pid(service_name)):
         pid = 0000
 
-    service_not_found = ServiceNotFound(
-        f"Service {service_name!r} not found."
-    )
-
     running = ServiceStatus(
         pid=pid,
         status_code=HTTPStatus.OK.real,
-        description=f"{service_name} is running"
+        description=f"{service_name} is running",
     )
 
     stopped = ServiceStatus(
         pid=pid,
         status_code=HTTPStatus.NOT_IMPLEMENTED.real,
-        description=f"{service_name} has been stopped"
+        description=f"{service_name} has been stopped",
     )
 
     unknown = ServiceStatus(
         pid=pid,
         status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
-        description=f"{service_name} - status unknwon"
+        description=f"{service_name} - status unknwon",
+    )
+
+    unavailable = ServiceStatus(
+        pid=pid,
+        status_code=HTTPStatus.NOT_FOUND.real,
+        description=f"{service_name} - not found",
     )
 
     if current_os == "Windows":
@@ -81,8 +81,8 @@ def get_service_status(service_name: str) -> ServiceStatus:
             else:
                 return unknown
         except subprocess.CalledProcessError:
-            raise service_not_found
-    
+            return unavailable
+
     if current_os == "Linux":
         # Linux: Use systemctl
         cmd = f"systemctl is-active {service_name}"
@@ -95,11 +95,11 @@ def get_service_status(service_name: str) -> ServiceStatus:
             else:
                 return ServiceStatus(
                     status_code=HTTPStatus.NOT_IMPLEMENTED.real,
-                    description=f"{service_name} - {output}"
+                    description=f"{service_name} - {output}",
                 )
         except subprocess.CalledProcessError:
-            raise service_not_found
-    
+            return unavailable
+
     if current_os == "Darwin":
         # macOS: Use launchctl
         cmd = f"launchctl list | grep {service_name}"
@@ -110,4 +110,4 @@ def get_service_status(service_name: str) -> ServiceStatus:
             else:
                 return stopped
         except subprocess.CalledProcessError:
-            raise service_not_found
+            return unavailable
