@@ -4,13 +4,12 @@ from http import HTTPStatus
 
 import psutil
 
-from monitor.exceptions import UnSupportedOS
-from monitor.squire import ServiceStatus
+from monitor import exceptions, squire
 
 current_os = platform.system()
 
 if current_os not in ("Darwin", "Linux", "Windows"):
-    raise UnSupportedOS(
+    raise exceptions.UnSupportedOS(
         f"{current_os} is unsupported.\n\t"
         "Host machine should either be macOS, Windows or any of Linux distros"
     )
@@ -31,7 +30,7 @@ def get_pid(service_name: str) -> int:
             return proc.info["pid"]
 
 
-def get_service_status(service_name: str) -> ServiceStatus:
+def get_service_status(service_name: str) -> squire.ServiceStatus:
     """Get service status.
 
     Args:
@@ -45,25 +44,25 @@ def get_service_status(service_name: str) -> ServiceStatus:
     if not (pid := get_pid(service_name)):
         pid = 0000
 
-    running = ServiceStatus(
+    running = squire.ServiceStatus(
         pid=pid,
         status_code=HTTPStatus.OK.real,
         description=f"{service_name} is running",
     )
 
-    stopped = ServiceStatus(
+    stopped = squire.ServiceStatus(
         pid=pid,
         status_code=HTTPStatus.NOT_IMPLEMENTED.real,
         description=f"{service_name} has been stopped",
     )
 
-    unknown = ServiceStatus(
+    unknown = squire.ServiceStatus(
         pid=pid,
         status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
         description=f"{service_name} - status unknwon",
     )
 
-    unavailable = ServiceStatus(
+    unavailable = squire.ServiceStatus(
         pid=pid,
         status_code=HTTPStatus.NOT_FOUND.real,
         description=f"{service_name} - not found",
@@ -93,7 +92,7 @@ def get_service_status(service_name: str) -> ServiceStatus:
             elif output == "inactive":
                 return stopped
             else:
-                return ServiceStatus(
+                return squire.ServiceStatus(
                     status_code=HTTPStatus.NOT_IMPLEMENTED.real,
                     description=f"{service_name} - {output}",
                 )

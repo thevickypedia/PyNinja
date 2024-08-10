@@ -1,0 +1,42 @@
+[project]
+name = "service-monitor"
+dynamic = ["version", "dependencies"]
+description = "OS agnostic service monitoring API"
+readme = "README.md"
+authors = [{ name = "Vignesh Rao", email = "svignesh1793@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Development Status :: 5 - Production/Stable",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+]
+keywords = ["service-monitor"]
+requires-python = ">=3.10"
+
+[tool.setuptools]
+packages = ["monitor"]
+
+[tool.setuptools.dynamic]
+version = {attr = "monitor.version"}
+dependencies = { file = ["requirements.txt"] }
+
+[project.optional-dependencies]
+dev = ["sphinx==5.1.1", "pre-commit", "recommonmark", "gitverse"]
+
+[project.scripts]
+# sends all the args to commandline function, where the arbitary commands as processed accordingly
+monitor = "monitor:commandline"
+
+[build-system]
+requires      = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+Homepage = "https://github.com/thevickypedia/service-monitor"
+Docs = "https://thevickypedia.github.io/service-monitor"
+Source = "https://github.com/thevickypedia/service-monitor"
+"Bug Tracker" = "https://github.com/thevickypedia/service-monitor/issues"
+"Release Notes" = "https://github.com/thevickypedia/service-monitor/blob/main/release_notes.rst"

@@ -1,4 +1,3 @@
-import os
 import socket
 from typing import Optional
 
@@ -49,6 +48,4 @@ class Settings(BaseSettings):
         extra = "ignore"
 
 
-settings = Settings().from_env_file(
-    env_file=os.environ.get("env_file") or os.environ.get("ENV_FILE") or ".env"
-)
+settings = Settings

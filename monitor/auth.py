@@ -4,8 +4,7 @@ from http import HTTPStatus
 from fastapi import Depends
 from fastapi.security import HTTPBasicCredentials, HTTPBearer
 
-from monitor.exceptions import APIResponse
-from monitor.squire import settings
+from monitor import exceptions, squire
 
 SECURITY = HTTPBearer()
 
@@ -23,8 +22,8 @@ async def authenticator(token: HTTPBasicCredentials = Depends(SECURITY)) -> None
     auth = token.model_dump().get("credentials", "")
     if auth.startswith("\\"):
         auth = bytes(auth, "utf-8").decode(encoding="unicode_escape")
-    if secrets.compare_digest(auth, settings.apikey):
+    if secrets.compare_digest(auth, squire.settings.apikey):
         return
-    raise APIResponse(
+    raise exceptions.APIResponse(
         status_code=HTTPStatus.UNAUTHORIZED.real, detail=HTTPStatus.UNAUTHORIZED.phrase
     )
