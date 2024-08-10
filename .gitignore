@@ -4,4 +4,7 @@
 venv/
 __pycache__/
 
+build/
+PyNinja.egg-info/
+
 temp.py

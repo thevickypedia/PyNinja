@@ -31,7 +31,7 @@ def commandline(*args, **kwargs) -> None:
     **Commands**
         ``start | run``: Initiates the backup process.
     """
-    assert sys.argv[0].endswith("monitor"), "Invalid commandline trigger!!"
+    assert sys.argv[0].lower().endswith("pyninja"), "Invalid commandline trigger!!"
     options = {
         "--version | -V": "Prints the version.",
         "--help | -H": "Prints the help section.",
@@ -50,7 +50,7 @@ def commandline(*args, **kwargs) -> None:
         sys.exit(0)
     if kwargs.get("help"):
         click.echo(
-            f"\nUsage: monitor [arbitrary-command]\nOptions (and corresponding behavior):{choices}"
+            f"\nUsage: pyninja [arbitrary-command]\nOptions (and corresponding behavior):{choices}"
         )
         sys.exit(0)
     trigger = kwargs.get("start") or kwargs.get("run")
@@ -63,6 +63,6 @@ def commandline(*args, **kwargs) -> None:
     else:
         click.secho("\nNo command provided", fg="red")
     click.echo(
-        f"Usage: monitor [arbitrary-command]\nOptions (and corresponding behavior):{choices}"
+        f"Usage: pyninja [arbitrary-command]\nOptions (and corresponding behavior):{choices}"
     )
     sys.exit(1)
