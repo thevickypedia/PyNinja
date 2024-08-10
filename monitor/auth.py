@@ -4,7 +4,8 @@ from http import HTTPStatus
 from fastapi import Depends
 from fastapi.security import HTTPBasicCredentials, HTTPBearer
 
-from monitor.squire import APIResponse, settings
+from monitor.exceptions import APIResponse
+from monitor.squire import settings
 
 SECURITY = HTTPBearer()
 

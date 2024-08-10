@@ -2,21 +2,28 @@ import os
 import socket
 from typing import Optional
 
-from fastapi.exceptions import HTTPException
-from pydantic import PositiveInt
+from pydantic import BaseModel, PositiveInt
 from pydantic_settings import BaseSettings
 
 
-class APIResponse(HTTPException):
-    """Custom ``HTTPException`` from ``FastAPI`` to wrap an API response.
+class ServiceStatus(BaseModel):
+    """Object to load service status with a status code and description.
 
-    >>> APIResponse
+    >>> ServiceStatus
 
     """
 
+    pid: int
+    status_code: int
+    description: str
+
 
 class Settings(BaseSettings):
-    """Object to load environment variables."""
+    """Object to load environment variables.
+
+    >>> Settings
+
+    """
 
     monitor_host: str = socket.gethostbyname("localhost")
     monitor_port: PositiveInt = 8000
