@@ -9,6 +9,16 @@ from pydantic import BaseModel, PositiveInt
 from pydantic_settings import BaseSettings
 
 
+class StatusPayload(BaseModel):
+    """BaseModel that handles input data for ``StatusPayload``.
+
+    >>> StatusPayload
+
+    """
+
+    service_name: str
+
+
 class ServiceStatus(BaseModel):
     """Object to load service status with a status code and description.
 
@@ -28,9 +38,9 @@ class EnvConfig(BaseSettings):
 
     """
 
-    monitor_host: str = socket.gethostbyname("localhost")
-    monitor_port: PositiveInt = 8000
-    root_password: str
+    ninja_host: str = socket.gethostbyname("localhost") or "0.0.0.0"
+    ninja_port: PositiveInt = 8000
+    workers: PositiveInt = 1
     apikey: str
 
     @classmethod
