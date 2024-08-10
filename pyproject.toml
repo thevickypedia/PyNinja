@@ -1,5 +1,5 @@
 [project]
-name = "service-monitor"
+name = "PyNinja"
 dynamic = ["version", "dependencies"]
 description = "OS agnostic service monitoring API"
 readme = "README.md"
