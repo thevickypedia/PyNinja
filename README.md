@@ -1,2 +1,2 @@
-# service-monitor
-Service monitor for Linux and macOS
+# PyNinja
+Light weight OS agnostic service monitoring API

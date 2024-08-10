@@ -4,7 +4,7 @@ import platform
 import uvicorn
 from fastapi import FastAPI
 
-from monitor import router, squire
+from pyninja import router, squire
 
 
 def start(env_file: str = None) -> None:

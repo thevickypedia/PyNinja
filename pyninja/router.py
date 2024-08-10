@@ -4,13 +4,13 @@ from fastapi import Depends
 from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute
 
-from monitor import auth, exceptions, service
+from pyninja import auth, exceptions, service
 
 logging.getLogger("uvicorn.access").disabled = True
 LOGGER = logging.getLogger("uvicorn.error")
 
 
-async def service_monitor(service_name: str):
+async def service_status(service_name: str):
     """API function to monitor a service."""
     service_status = service.get_service_status(service_name)
     LOGGER.info(
@@ -32,8 +32,8 @@ async def docs():
 
 routes = [
     APIRoute(
-        path="/service-monitor",
-        endpoint=service_monitor,
+        path="/status",
+        endpoint=service_status,
         methods=["GET"],
         dependencies=[Depends(auth.authenticator)],
     ),

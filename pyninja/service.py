@@ -4,7 +4,7 @@ from http import HTTPStatus
 
 import psutil
 
-from monitor import exceptions, squire
+from pyninja import exceptions, squire
 
 current_os = platform.system()
 

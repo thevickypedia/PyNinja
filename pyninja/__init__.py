@@ -4,7 +4,7 @@ import sys
 
 import click
 
-from monitor.main import start  # noqa: F401
+from pyninja.main import start  # noqa: F401
 
 version = "0.0.0-a"
 
@@ -21,7 +21,7 @@ version = "0.0.0-a"
     help="Environment configuration filepath.",
 )
 def commandline(*args, **kwargs) -> None:
-    """Starter function to invoke service-monitor via CLI commands.
+    """Starter function to invoke PyNinja via CLI commands.
 
     **Flags**
         - ``--version | -V``: Prints the version.
@@ -46,7 +46,7 @@ def commandline(*args, **kwargs) -> None:
         for k, v in options.items()
     )
     if kwargs.get("version"):
-        click.echo(f"service-monitor {version}")
+        click.echo(f"PyNinja {version}")
         sys.exit(0)
     if kwargs.get("help"):
         click.echo(

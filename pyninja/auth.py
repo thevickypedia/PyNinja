@@ -4,7 +4,7 @@ from http import HTTPStatus
 from fastapi import Depends
 from fastapi.security import HTTPBasicCredentials, HTTPBearer
 
-from monitor import exceptions, squire
+from pyninja import exceptions, squire
 
 SECURITY = HTTPBearer()
 

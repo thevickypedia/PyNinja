@@ -1,7 +1,7 @@
 [project]
 name = "PyNinja"
 dynamic = ["version", "dependencies"]
-description = "OS agnostic service monitoring API"
+description = "Light weight OS agnostic service monitoring API"
 readme = "README.md"
 authors = [{ name = "Vignesh Rao", email = "svignesh1793@gmail.com" }]
 license = { file = "LICENSE" }
@@ -12,15 +12,16 @@ classifiers = [
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
+    "Topic :: System :: Monitoring",
 ]
-keywords = ["service-monitor"]
+keywords = ["service-monitor", "PyNinja"]
 requires-python = ">=3.10"
 
 [tool.setuptools]
 packages = ["monitor"]
 
 [tool.setuptools.dynamic]
-version = {attr = "monitor.version"}
+version = {attr = "pyninja.version"}
 dependencies = { file = ["requirements.txt"] }
 
 [project.optional-dependencies]
@@ -28,15 +29,15 @@ dev = ["sphinx==5.1.1", "pre-commit", "recommonmark", "gitverse"]
 
 [project.scripts]
 # sends all the args to commandline function, where the arbitary commands as processed accordingly
-monitor = "monitor:commandline"
+pyninja = "pyninja:commandline"
 
 [build-system]
 requires      = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project.urls]
-Homepage = "https://github.com/thevickypedia/service-monitor"
-Docs = "https://thevickypedia.github.io/service-monitor"
-Source = "https://github.com/thevickypedia/service-monitor"
-"Bug Tracker" = "https://github.com/thevickypedia/service-monitor/issues"
-"Release Notes" = "https://github.com/thevickypedia/service-monitor/blob/main/release_notes.rst"
+Homepage = "https://github.com/thevickypedia/PyNinja"
+Docs = "https://thevickypedia.github.io/PyNinja"
+Source = "https://github.com/thevickypedia/PyNinja"
+"Bug Tracker" = "https://github.com/thevickypedia/PyNinja/issues"
+"Release Notes" = "https://github.com/thevickypedia/PyNinja/blob/main/release_notes.rst"
