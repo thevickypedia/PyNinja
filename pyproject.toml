@@ -18,7 +18,7 @@ keywords = ["service-monitor", "PyNinja"]
 requires-python = ">=3.10"
 
 [tool.setuptools]
-packages = ["monitor"]
+packages = ["pyninja"]
 
 [tool.setuptools.dynamic]
 version = {attr = "pyninja.version"}

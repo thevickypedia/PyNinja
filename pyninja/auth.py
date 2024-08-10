@@ -22,7 +22,7 @@ async def authenticator(token: HTTPBasicCredentials = Depends(SECURITY)) -> None
     auth = token.model_dump().get("credentials", "")
     if auth.startswith("\\"):
         auth = bytes(auth, "utf-8").decode(encoding="unicode_escape")
-    if secrets.compare_digest(auth, squire.settings.apikey):
+    if secrets.compare_digest(auth, squire.env.apikey):
         return
     raise exceptions.APIResponse(
         status_code=HTTPStatus.UNAUTHORIZED.real, detail=HTTPStatus.UNAUTHORIZED.phrase

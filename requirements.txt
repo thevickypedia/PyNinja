@@ -2,4 +2,5 @@ fastapi==0.112.0
 psutil==6.0.0
 pydantic==2.8.2
 pydantic-settings==2.4.0
+PyYaml==6.0.2
 uvicorn==0.30.5
