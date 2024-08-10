@@ -1,11 +1,14 @@
 import platform
 import secrets
+from http import HTTPStatus
+
 import uvicorn
-from fastapi import FastAPI, Depends
+from fastapi import Depends, FastAPI
 from fastapi.routing import APIRoute
 from fastapi.security import HTTPBasicCredentials, HTTPBearer
-from monitor.models import settings, APIResponse
-from http import HTTPStatus
+
+from monitor.models import APIResponse, settings
+
 SECURITY = HTTPBearer()
 
 
@@ -30,10 +33,12 @@ async def authenticator(token: HTTPBasicCredentials = Depends(SECURITY)) -> None
 
 
 async def service_monitor(service_name: str):
+    """API function to monitor a service."""
     return service_name
 
 
-def start():
+def start() -> None:
+    """Starter function for the API, which uses uvicorn server as trigger."""
     app = FastAPI(
         routes=[
             APIRoute(
@@ -42,7 +47,7 @@ def start():
                 methods=["GET"],
                 dependencies=[Depends(authenticator)],
             )
-         ],
-        title=f"Service monitor for {platform.uname().node}"
+        ],
+        title=f"Service monitor for {platform.uname().node}",
     )
     uvicorn.run(host=settings.monitor_host, port=settings.monitor_port, app=app)

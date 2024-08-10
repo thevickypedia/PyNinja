@@ -1,9 +1,11 @@
 import os
 import socket
 from typing import Optional
+
 from fastapi.exceptions import HTTPException
-from pydantic import BaseModel, PositiveInt
+from pydantic import PositiveInt
 from pydantic_settings import BaseSettings
+
 
 class APIResponse(HTTPException):
     """Custom ``HTTPException`` from ``FastAPI`` to wrap an API response.
@@ -22,7 +24,7 @@ class Settings(BaseSettings):
     apikey: str
 
     @classmethod
-    def from_env_file(cls, env_file: Optional[str]) -> 'Settings':
+    def from_env_file(cls, env_file: Optional[str]) -> "Settings":
         """Create Settings instance from environment file.
 
         Args:
@@ -35,6 +37,8 @@ class Settings(BaseSettings):
         return cls(_env_file=env_file)
 
     class Config:
+        """Extra configuration for Settings object."""
+
         extra = "ignore"
 
 

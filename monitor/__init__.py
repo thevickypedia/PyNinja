@@ -1,1 +1,1 @@
-from monitor.main import start
+from monitor.main import start  # noqa: F401
