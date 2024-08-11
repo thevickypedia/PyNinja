@@ -2,8 +2,6 @@ import platform
 import subprocess
 from http import HTTPStatus
 
-import psutil
-
 from pyninja import exceptions, squire
 
 current_os = platform.system()
@@ -13,21 +11,6 @@ if current_os not in ("Darwin", "Linux", "Windows"):
         f"{current_os} is unsupported.\n\t"
         "Host machine should either be macOS, Windows or any of Linux distros"
     )
-
-
-def get_pid(service_name: str) -> int:
-    """Get process ID for a particular service.
-
-    Args:
-        service_name (str): Name of the service.
-
-    Returns:
-        int:
-        Process ID running the service.
-    """
-    for proc in psutil.process_iter(["pid", "name"]):
-        if proc.info["name"] == service_name:
-            return proc.info["pid"]
 
 
 def get_service_status(service_name: str) -> squire.ServiceStatus:
@@ -40,30 +23,22 @@ def get_service_status(service_name: str) -> squire.ServiceStatus:
         ServiceStatus:
         Returns an instance of the ServiceStatus.
     """
-    # A service (eg: docker) may have multiple process IDs with different suffix names
-    if not (pid := get_pid(service_name)):
-        pid = 0000
-
     running = squire.ServiceStatus(
-        pid=pid,
         status_code=HTTPStatus.OK.real,
         description=f"{service_name} is running",
     )
 
     stopped = squire.ServiceStatus(
-        pid=pid,
         status_code=HTTPStatus.NOT_IMPLEMENTED.real,
         description=f"{service_name} has been stopped",
     )
 
     unknown = squire.ServiceStatus(
-        pid=pid,
         status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
         description=f"{service_name} - status unknwon",
     )
 
     unavailable = squire.ServiceStatus(
-        pid=pid,
         status_code=HTTPStatus.NOT_FOUND.real,
         description=f"{service_name} - not found",
     )

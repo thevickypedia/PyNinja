@@ -31,6 +31,14 @@ Routers
 
 .. automodule:: pyninja.routers
 
+Monitors
+========
+
+Process
+=======
+
+.. automodule:: pyninja.process
+
 Service
 =======
 

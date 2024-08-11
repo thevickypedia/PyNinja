@@ -26,7 +26,6 @@ class ServiceStatus(BaseModel):
 
     """
 
-    pid: int
     status_code: int
     description: str
 
