@@ -2,7 +2,7 @@ import platform
 import subprocess
 from http import HTTPStatus
 
-from pyninja import exceptions, squire
+from pyninja import exceptions, models
 
 current_os = platform.system()
 
@@ -13,7 +13,7 @@ if current_os not in ("Darwin", "Linux", "Windows"):
     )
 
 
-def get_service_status(service_name: str) -> squire.ServiceStatus:
+def get_service_status(service_name: str) -> models.ServiceStatus:
     """Get service status.
 
     Args:
@@ -23,22 +23,22 @@ def get_service_status(service_name: str) -> squire.ServiceStatus:
         ServiceStatus:
         Returns an instance of the ServiceStatus.
     """
-    running = squire.ServiceStatus(
+    running = models.ServiceStatus(
         status_code=HTTPStatus.OK.real,
         description=f"{service_name} is running",
     )
 
-    stopped = squire.ServiceStatus(
+    stopped = models.ServiceStatus(
         status_code=HTTPStatus.NOT_IMPLEMENTED.real,
         description=f"{service_name} has been stopped",
     )
 
-    unknown = squire.ServiceStatus(
+    unknown = models.ServiceStatus(
         status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
         description=f"{service_name} - status unknwon",
     )
 
-    unavailable = squire.ServiceStatus(
+    unavailable = models.ServiceStatus(
         status_code=HTTPStatus.NOT_FOUND.real,
         description=f"{service_name} - not found",
     )
@@ -67,7 +67,7 @@ def get_service_status(service_name: str) -> squire.ServiceStatus:
             elif output == "inactive":
                 return stopped
             else:
-                return squire.ServiceStatus(
+                return models.ServiceStatus(
                     status_code=HTTPStatus.NOT_IMPLEMENTED.real,
                     description=f"{service_name} - {output}",
                 )

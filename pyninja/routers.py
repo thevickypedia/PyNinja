@@ -1,21 +1,21 @@
 import logging
 import secrets
 import subprocess
+from datetime import datetime
 from http import HTTPStatus
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import Depends, Header, Request
 from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute
 
-from pyninja import auth, exceptions, process, service, squire
+from pyninja import auth, database, exceptions, models, process, rate_limit, service
 
 LOGGER = logging.getLogger("uvicorn.error")
 
 
-# todo: Enable rate-limit and brute-force protection for running commands
 async def run_command(
-    request: Request, payload: squire.Payload, token: Optional[str] = Header(None)
+        request: Request, payload: models.Payload, token: Optional[str] = Header(None)
 ):
     """**API function to run a command on host machine.**
 
@@ -28,12 +28,29 @@ async def run_command(
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    if not all((squire.env.remote_execution, squire.env.api_secret)):
+    # todo: remove dependency authentication and convert it to condition match
+    #   add failed auth to handle_auth_errors
+    # placeholder list, to avoid a DB search for every request
+    if request.client.host in models.session.forbid:
+        # Get timestamp until which the host has to be forbidden
+        if (
+                timestamp := database.get_record(request.client.host)
+        ) and timestamp > auth.EPOCH():
+            LOGGER.warning(
+                "%s is forbidden until %s due to repeated login failures",
+                request.client.host,
+                datetime.fromtimestamp(timestamp).strftime("%c"),
+            )
+            raise exceptions.APIResponse(
+                status_code=HTTPStatus.FORBIDDEN.value,
+                detail=f"{request.client.host!r} is not allowed",
+            )
+    if not all((models.env.remote_execution, models.env.api_secret)):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.NOT_IMPLEMENTED.real,
             detail="Remote execution has been disabled on the server.",
         )
-    if token and secrets.compare_digest(token, squire.env.api_secret):
+    if token and secrets.compare_digest(token, models.env.api_secret):
         LOGGER.info(
             "Command request '%s' received from client-host: %s, host-header: %s, x-fwd-host: %s",
             payload.command,
@@ -44,11 +61,12 @@ async def run_command(
         if user_agent := request.headers.get("user-agent"):
             LOGGER.info("User agent: %s", user_agent)
     else:
+        await auth.handle_auth_error(request)
         raise exceptions.APIResponse(
             status_code=HTTPStatus.UNAUTHORIZED.real,
             detail=HTTPStatus.UNAUTHORIZED.phrase,
         )
-    process = subprocess.Popen(
+    process_cmd = subprocess.Popen(
         payload.command,
         shell=True,
         universal_newlines=True,
@@ -58,7 +76,7 @@ async def run_command(
     )
     output = {"stdout": [], "stderr": []}
     try:
-        stdout, stderr = process.communicate(timeout=payload.timeout)
+        stdout, stderr = process_cmd.communicate(timeout=payload.timeout)
     except subprocess.TimeoutExpired as warn:
         LOGGER.warning(warn)
         raise exceptions.APIResponse(
@@ -85,10 +103,8 @@ async def process_status(process_name: str):
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    if service_status := list(process.get_process_status(process_name)):
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.OK.real, detail=service_status
-        )
+    if response := list(process.get_process_status(process_name)):
+        raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
     LOGGER.error("%s: 404 - No such process", process_name)
     raise exceptions.APIResponse(
         status_code=404, detail=f"Process {process_name} not found."
@@ -107,15 +123,15 @@ async def service_status(service_name: str):
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    service_status = service.get_service_status(service_name)
+    response = service.get_service_status(service_name)
     LOGGER.info(
         "%s: %d - %s",
         service_name,
-        service_status.status_code,
-        service_status.description,
+        response.status_code,
+        response.description,
     )
     raise exceptions.APIResponse(
-        status_code=service_status.status_code, detail=service_status.description
+        status_code=response.status_code, detail=response.description
     )
 
 
@@ -129,24 +145,41 @@ async def docs() -> RedirectResponse:
     return RedirectResponse("/docs")
 
 
-routes = [
-    APIRoute(
-        path="/service-status",
-        endpoint=service_status,
-        methods=["GET"],
-        dependencies=[Depends(auth.authenticator)],
-    ),
-    APIRoute(
-        path="/process-status",
-        endpoint=process_status,
-        methods=["GET"],
-        dependencies=[Depends(auth.authenticator)],
-    ),
-    APIRoute(
-        path="/run-command",
-        endpoint=run_command,
-        methods=["POST"],
-        dependencies=[Depends(auth.authenticator)],
-    ),
-    APIRoute(path="/", endpoint=docs, methods=["GET"], include_in_schema=False),
-]
+def get_all_routes() -> List[APIRoute]:
+    """Get all the routes to be added for the API server.
+
+    Returns:
+        List[APIRoute]:
+        Returns the routes as a list of APIRoute objects.
+    """
+    APIRoute(path="/", endpoint=docs, methods=["GET"], include_in_schema=False)
+    dependencies = [Depends(auth.authenticator)]
+    for each_rate_limit in models.env.rate_limit:
+        LOGGER.info("Adding rate limit: %s", each_rate_limit)
+        dependencies.append(
+            Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
+        )
+    routes = [
+        APIRoute(
+            path="/service-status",
+            endpoint=service_status,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path="/process-status",
+            endpoint=process_status,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+    ]
+    if all((models.env.remote_execution, models.env.api_secret)):
+        routes.append(
+            APIRoute(
+                path="/run-command",
+                endpoint=run_command,
+                methods=["POST"],
+                dependencies=dependencies,
+            )
+        )
+    return routes

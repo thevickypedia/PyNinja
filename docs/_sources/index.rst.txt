@@ -21,11 +21,6 @@ Authenticator
 =============
 .. automodule:: pyninja.auth
 
-Exceptions
-==========
-
-.. automodule:: pyninja.exceptions
-
 Routers
 =======
 
@@ -44,26 +39,56 @@ Service
 
 .. automodule:: pyninja.service
 
+Database
+========
+
+.. automodule:: pyninja.database
+
+RateLimiter
+===========
+
+.. automodule:: pyninja.rate_limit
+
+Exceptions
+==========
+
+.. automodule:: pyninja.exceptions
+
+Models
+======
+
+.. autoclass:: pyninja.models.Payload(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
+.. autoclass:: pyninja.models.ServiceStatus(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
+.. autoclass:: pyninja.models.Session(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
+.. autoclass:: pyninja.models.RateLimit(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
+.. autoclass:: pyninja.models.EnvConfig(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
+.. automodule:: pyninja.models
+   :exclude-members: Payload, ServiceStatus, EnvConfig, Session, RateLimit, env, database
+
 Squire
 ======
 
-.. autoclass:: pyninja.squire.Payload(BaseModel)
-   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
-
-====
-
-.. autoclass:: pyninja.squire.ServiceStatus(BaseModel)
-   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
-
-====
-
-.. autoclass:: pyninja.squire.EnvConfig(BaseModel)
-   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
-
-====
-
 .. automodule:: pyninja.squire
-   :exclude-members: Payload, ServiceStatus, EnvConfig
 
 Indices and tables
 ==================

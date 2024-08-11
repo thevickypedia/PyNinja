@@ -1,5 +1,5 @@
 # PyNinja
-Light weight OS agnostic service monitoring API
+Lightweight OS-agnostic service monitoring API
 
 ![Python][label-pyversion]
 

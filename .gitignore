@@ -14,5 +14,6 @@ temp.py
 
 logging.ini
 *.log
+*.db
 
 !samples/*

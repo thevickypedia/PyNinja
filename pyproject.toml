@@ -1,7 +1,7 @@
 [project]
 name = "PyNinja"
 dynamic = ["version", "dependencies"]
-description = "Light weight OS agnostic service monitoring API"
+description = "Lightweight OS-agnostic service monitoring API"
 readme = "README.md"
 authors = [{ name = "Vignesh Rao", email = "svignesh1793@gmail.com" }]
 license = { file = "LICENSE" }
