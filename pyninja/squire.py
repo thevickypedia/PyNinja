@@ -51,13 +51,13 @@ class EnvConfig(BaseSettings):
             env_file: Name of the env file.
 
         Returns:
-            Settings:
-            Loads the ``Settings`` model.
+            EnvConfig:
+            Loads the ``EnvConfig`` model.
         """
         return cls(_env_file=env_file)
 
     class Config:
-        """Extra configuration for Settings object."""
+        """Extra configuration for EnvConfig object."""
 
         extra = "ignore"
 

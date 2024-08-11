@@ -7,4 +7,6 @@ __pycache__/
 build/
 PyNinja.egg-info/
 
+doc_gen/_*
+
 temp.py

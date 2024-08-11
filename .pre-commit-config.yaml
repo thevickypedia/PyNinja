@@ -43,3 +43,12 @@ repos:
     hooks:
       - id: isort
         args: [ --profile, black ]
+
+  - repo: local
+    hooks:
+      - id: docs
+        name: runbook
+        entry: /bin/bash pre_commit.sh
+        language: system
+        pass_filenames: false
+        always_run: true

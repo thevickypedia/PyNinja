@@ -1,0 +1,15 @@
+name: none-shall-pass
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.md'
+  workflow_dispatch:
+
+jobs:
+  none-shall-pass:
+    runs-on: thevickypedia-lite
+    steps:
+      - uses: thevickypedia/none-shall-pass@v5
