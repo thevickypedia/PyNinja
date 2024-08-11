@@ -7,7 +7,7 @@ from fastapi import FastAPI
 import pyninja
 from pyninja import models, routers, squire
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("uvicorn.error")
 
 
 def start(**kwargs) -> None:

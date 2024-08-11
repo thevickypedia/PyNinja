@@ -1,10 +1,48 @@
 import json
+import logging
 import os
 import pathlib
+import subprocess
+from typing import Dict, List
 
 import yaml
+from pydantic import PositiveFloat, PositiveInt
 
 from pyninja.models import EnvConfig
+
+LOGGER = logging.getLogger("uvicorn.error")
+
+
+def process_command(
+    command: str, timeout: PositiveInt | PositiveFloat
+) -> Dict[str, List[str]]:
+    """Process the requested command.
+
+    Args:
+        command: Command as string.
+        timeout: Timeout for the command.
+
+    Returns:
+        Dict[str, List[str]]:
+        Returns the result with stdout and stderr as key-value pairs.
+    """
+    process_cmd = subprocess.Popen(
+        command,
+        shell=True,
+        universal_newlines=True,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    result = {"stdout": [], "stderr": []}
+    stdout, stderr = process_cmd.communicate(timeout=timeout)
+    for line in stdout.splitlines():
+        LOGGER.info(line.strip())
+        result["stdout"].append(line.strip())
+    for line in stderr.splitlines():
+        LOGGER.error(line.strip())
+        result["stderr"].append(line.strip())
+    return result
 
 
 def env_loader(filename: str | os.PathLike) -> EnvConfig:

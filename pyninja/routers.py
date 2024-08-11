@@ -1,21 +1,24 @@
 import logging
-import secrets
 import subprocess
-from datetime import datetime
 from http import HTTPStatus
 from typing import List, Optional
 
 from fastapi import Depends, Header, Request
 from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from pyninja import auth, database, exceptions, models, process, rate_limit, service
+from pyninja import auth, exceptions, models, process, rate_limit, service, squire
 
 LOGGER = logging.getLogger("uvicorn.error")
+security = HTTPBearer()
 
 
 async def run_command(
-        request: Request, payload: models.Payload, token: Optional[str] = Header(None)
+    request: Request,
+    payload: models.Payload,
+    apikey: HTTPAuthorizationCredentials = Depends(security),
+    token: Optional[str] = Header(None),
 ):
     """**API function to run a command on host machine.**
 
@@ -28,70 +31,23 @@ async def run_command(
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    # todo: remove dependency authentication and convert it to condition match
-    #   add failed auth to handle_auth_errors
-    # placeholder list, to avoid a DB search for every request
-    if request.client.host in models.session.forbid:
-        # Get timestamp until which the host has to be forbidden
-        if (
-                timestamp := database.get_record(request.client.host)
-        ) and timestamp > auth.EPOCH():
-            LOGGER.warning(
-                "%s is forbidden until %s due to repeated login failures",
-                request.client.host,
-                datetime.fromtimestamp(timestamp).strftime("%c"),
-            )
-            raise exceptions.APIResponse(
-                status_code=HTTPStatus.FORBIDDEN.value,
-                detail=f"{request.client.host!r} is not allowed",
-            )
-    if not all((models.env.remote_execution, models.env.api_secret)):
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.NOT_IMPLEMENTED.real,
-            detail="Remote execution has been disabled on the server.",
-        )
-    if token and secrets.compare_digest(token, models.env.api_secret):
-        LOGGER.info(
-            "Command request '%s' received from client-host: %s, host-header: %s, x-fwd-host: %s",
-            payload.command,
-            request.client.host,
-            request.headers.get("host"),
-            request.headers.get("x-forwarded-host"),
-        )
-        if user_agent := request.headers.get("user-agent"):
-            LOGGER.info("User agent: %s", user_agent)
-    else:
-        await auth.handle_auth_error(request)
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.UNAUTHORIZED.real,
-            detail=HTTPStatus.UNAUTHORIZED.phrase,
-        )
-    process_cmd = subprocess.Popen(
-        payload.command,
-        shell=True,
-        universal_newlines=True,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    output = {"stdout": [], "stderr": []}
+    await auth.level_2(request, apikey, token)
+    LOGGER.info("Requested command: '%s'", payload.command)
     try:
-        stdout, stderr = process_cmd.communicate(timeout=payload.timeout)
+        response = squire.process_command(payload.command, payload.timeout)
     except subprocess.TimeoutExpired as warn:
         LOGGER.warning(warn)
         raise exceptions.APIResponse(
             status_code=HTTPStatus.REQUEST_TIMEOUT, detail=warn.__str__()
         )
-    for line in stdout.splitlines():
-        LOGGER.info(line.strip())
-        output["stdout"].append(line.strip())
-    for line in stderr.splitlines():
-        LOGGER.error(line.strip())
-        output["stderr"].append(line.strip())
-    raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=output)
+    raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
 
 
-async def process_status(process_name: str):
+async def process_status(
+    request: Request,
+    process_name: str,
+    apikey: HTTPAuthorizationCredentials = Depends(security),
+):
     """**API function to monitor a process.**
 
     **Args:**
@@ -103,6 +59,7 @@ async def process_status(process_name: str):
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
+    await auth.level_1(request, apikey)
     if response := list(process.get_process_status(process_name)):
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
     LOGGER.error("%s: 404 - No such process", process_name)
@@ -111,7 +68,11 @@ async def process_status(process_name: str):
     )
 
 
-async def service_status(service_name: str):
+async def service_status(
+    request: Request,
+    service_name: str,
+    apikey: HTTPAuthorizationCredentials = Depends(security),
+):
     """**API function to monitor a service.**
 
     **Args:**
@@ -123,6 +84,7 @@ async def service_status(service_name: str):
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
+    await auth.level_1(request, apikey)
     response = service.get_service_status(service_name)
     LOGGER.info(
         "%s: %d - %s",
@@ -153,12 +115,10 @@ def get_all_routes() -> List[APIRoute]:
         Returns the routes as a list of APIRoute objects.
     """
     APIRoute(path="/", endpoint=docs, methods=["GET"], include_in_schema=False)
-    dependencies = [Depends(auth.authenticator)]
-    for each_rate_limit in models.env.rate_limit:
-        LOGGER.info("Adding rate limit: %s", each_rate_limit)
-        dependencies.append(
-            Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
-        )
+    dependencies = [
+        Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
+        for each_rate_limit in models.env.rate_limit
+    ]
     routes = [
         APIRoute(
             path="/service-status",
