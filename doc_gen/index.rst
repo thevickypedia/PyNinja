@@ -29,6 +29,11 @@ Routers
 Monitors
 ========
 
+Docker
+------
+
+.. automodule:: pyninja.dockerized
+
 Process
 -------
 
