@@ -1,10 +1,13 @@
 """Placeholder for packaging."""
 
+import os
 import sys
 
 import click
 
-from pyninja.main import start, version  # noqa: F401
+from pyninja.main import start  # noqa: F401
+
+version = "0.0.0"
 
 
 @click.command()
@@ -12,6 +15,7 @@ from pyninja.main import start, version  # noqa: F401
 @click.argument("run", required=False)
 @click.option("--version", "-V", is_flag=True, help="Prints the version.")
 @click.option("--help", "-H", is_flag=True, help="Prints the help section.")
+@click.option("--apikey", "-A", help="APIkey for the server.")
 @click.option(
     "--env",
     "-E",
@@ -24,6 +28,7 @@ def commandline(*args, **kwargs) -> None:
     **Flags**
         - ``--version | -V``: Prints the version.
         - ``--help | -H``: Prints the help section.
+        - ``--apikey | -A``: Takes the apikey as a commandline argument.
         - ``--env | -E``: Environment configuration filepath.
 
     **Commands**
@@ -33,6 +38,7 @@ def commandline(*args, **kwargs) -> None:
     options = {
         "--version | -V": "Prints the version.",
         "--help | -H": "Prints the help section.",
+        "--apikey | -A": "APIkey for the server.",
         "--env | -E": "Environment configuration filepath.",
         "start | run": "Initiates the backup process.",
     }
@@ -51,6 +57,8 @@ def commandline(*args, **kwargs) -> None:
             f"\nUsage: pyninja [arbitrary-command]\nOptions (and corresponding behavior):{choices}"
         )
         sys.exit(0)
+    if kwargs.get("apikey"):
+        os.environ["apikey"] = kwargs.get("apikey")
     trigger = kwargs.get("start") or kwargs.get("run")
     if trigger and trigger.lower() in ("start", "run"):
         # Click doesn't support assigning defaults like traditional dictionaries, so kwargs.get("max", 100) won't work

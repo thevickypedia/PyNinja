@@ -58,6 +58,9 @@ pyninja start
 - **WORKERS** - Number of workers for the uvicorn server.
 - **APIKEY** - API Key for authentication.
 
+> `PyNinja` supports [logging.ini] configuration for custom logging. Just place it in the current working directory.<br>
+> Refer [samples] directory for examples.
+
 ## Coding Standards
 Docstring format: [`Google`][google-docs] <br>
 Styling conventions: [`PEP 8`][pep8] and [`isort`][isort]
@@ -132,3 +135,5 @@ Licensed under the [MIT License][license]
 [pypi-repo]: https://packaging.python.org/tutorials/packaging-projects/
 [license]: https://github.com/thevickypedia/PyNinja/blob/master/LICENSE
 [runbook]: https://thevickypedia.github.io/PyNinja/
+[samples]: https://github.com/thevickypedia/PyNinja/tree/main/samples
+[logging.ini]: https://docs.python-guide.org/writing/logging/#example-configuration-via-an-ini-file

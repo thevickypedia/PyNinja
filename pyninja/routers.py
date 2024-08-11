@@ -6,7 +6,7 @@ from fastapi.routing import APIRoute
 
 from pyninja import auth, exceptions, service, squire
 
-LOGGER = logging.getLogger("uvicorn")
+LOGGER = logging.getLogger(__name__)
 
 
 async def service_status(payload: squire.StatusPayload):
@@ -39,7 +39,7 @@ async def docs():
 
 routes = [
     APIRoute(
-        path="/status",
+        path="/service-status",
         endpoint=service_status,
         methods=["POST"],
         dependencies=[Depends(auth.authenticator)],

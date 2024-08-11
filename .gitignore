@@ -12,7 +12,7 @@ doc_gen/_*
 
 temp.py
 
-# work in progress
-samples/
 logging.ini
 *.log
+
+!samples/*

@@ -3,9 +3,8 @@ import os
 import uvicorn
 from fastapi import FastAPI
 
+import pyninja
 from pyninja import routers, squire
-
-version = "0.0.0"
 
 
 def start(env_file: str = None) -> None:
@@ -21,7 +20,7 @@ def start(env_file: str = None) -> None:
         routes=routers.routes,
         title="PyNinja",
         description="Light weight OS agnostic service monitoring API",
-        version=version,
+        version=pyninja.version,
     )
     kwargs = dict(
         host=squire.env.ninja_host,
