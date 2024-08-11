@@ -70,7 +70,17 @@
 <dd><p>Starter function for the API, which uses uvicorn server as trigger.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>env_file</strong> – Filepath for the <code class="docutils literal notranslate"><span class="pre">.env</span></code> file.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variables.</strong> (<em>- env_file - Env filepath to load the environment</em>) – </p></li>
+<li><p><strong>server.</strong> (<em>- workers - Number of workers for the uvicorn</em>) – </p></li>
+<li><p><strong>server.</strong> – </p></li>
+<li><p><strong>server.</strong> – </p></li>
+<li><p><strong>execution.</strong> (<em>- remote_execution - Boolean flag to enable remote</em>) – </p></li>
+<li><p><strong>remotely.</strong> (<em>- api_secret - Secret access key for running commands on server</em>) – </p></li>
+<li><p><strong>errors.</strong> (<em>- database - FilePath to store the auth database that handles the authentication</em>) – </p></li>
+<li><p><strong>limit.</strong> (<em>- rate_limit - List of dictionaries with max_requests and seconds to apply as rate</em>) – </p></li>
+<li><p><strong>authentication.</strong> (<em>- apikey - API Key for</em>) – </p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -180,7 +190,10 @@
 <dd><p><strong>API function to run a command on host machine.</strong></p>
 <p><strong>Args:</strong></p>
 <blockquote>
-<div><p>payload: Payload received as request body.</p>
+<div><p>request: Reference to the FastAPI request object.
+payload: Payload received as request body.
+apikey: API Key to authenticate the request.
+token: API secret to authenticate the request.</p>
 </div></blockquote>
 <p><strong>Raises:</strong></p>
 <blockquote>
@@ -191,11 +204,14 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routers.process_status">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">process_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.process_status" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">process_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpu_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.process_status" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>API function to monitor a process.</strong></p>
 <p><strong>Args:</strong></p>
 <blockquote>
-<div><p>process_name: Name of the process to check status.</p>
+<div><p>request: Reference to the FastAPI request object.
+process_name: Name of the process to check status.
+cpu_interval: Interval in seconds to get the CPU usage.
+apikey: API Key to authenticate the request.</p>
 </div></blockquote>
 <p><strong>Raises:</strong></p>
 <blockquote>
@@ -210,7 +226,9 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <dd><p><strong>API function to monitor a service.</strong></p>
 <p><strong>Args:</strong></p>
 <blockquote>
-<div><p>service_name: Name of the service to check status.</p>
+<div><p>request: Reference to the FastAPI request object.
+service_name: Name of the service to check status.
+apikey: API Key to authenticate the request.</p>
 </div></blockquote>
 <p><strong>Raises:</strong></p>
 <blockquote>
@@ -254,31 +272,40 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <span id="process"></span><h2>Process<a class="headerlink" href="#module-pyninja.process" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.process.get_process_status">
-<span class="sig-prename descclassname"><span class="pre">pyninja.process.</span></span><span class="sig-name descname"><span class="pre">get_process_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.process.get_process_status" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.process.</span></span><span class="sig-name descname"><span class="pre">get_process_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpu_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.process.get_process_status" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get process information by name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>process_name</strong> – Name of the process.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>process_name</strong> – Name of the process.</p></li>
+<li><p><strong>cpu_interval</strong> – CPU interval to get the CPU performance.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Yields<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>Generator[Dict[str, int]]</em> – Yields the process metrics as a dictionary of key-value pairs.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a list of performance report for each process hosting the given process name.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Dict[str, int | float | str | bool]]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.process.get_performance">
-<span class="sig-prename descclassname"><span class="pre">pyninja.process.</span></span><span class="sig-name descname"><span class="pre">get_performance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Process</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.process.get_performance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks performance by monitoring CPU utilization, number of threads and open files.</p>
+<span class="sig-prename descclassname"><span class="pre">pyninja.process.</span></span><span class="sig-name descname"><span class="pre">get_performance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Process</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpu_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.process.get_performance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks process performance by monitoring CPU utilization, number of threads and open files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>process</strong> – Process object.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>process</strong> – Process object.</p></li>
+<li><p><strong>cpu_interval</strong> – CPU interval to get the CPU performance.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Returns the process metrics as key-value pairs.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict[str, int]</p>
+<dd class="field-odd"><p>Dict[str, int | float | str | bool]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -289,13 +316,13 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.service.get_service_status">
 <span class="sig-prename descclassname"><span class="pre">pyninja.service.</span></span><span class="sig-name descname"><span class="pre">get_service_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.ServiceStatus" title="pyninja.models.ServiceStatus"><span class="pre">ServiceStatus</span></a></span></span><a class="headerlink" href="#pyninja.service.get_service_status" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get service status.</p>
+<dd><p>Get service status by name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>service_name</strong> (<em>str</em>) – Name of the service.</p>
+<dd class="field-odd"><p><strong>service_name</strong> – Name of the service.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Returns an instance of the ServiceStatus.</p>
+<dd class="field-even"><p>Returns an instance of the ServiceStatus object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pyninja.models.ServiceStatus" title="pyninja.models.ServiceStatus">ServiceStatus</a></p>
@@ -413,7 +440,7 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.models.Payload.timeout">
-<span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.models.Payload.timeout" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyninja.models.Payload.timeout" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

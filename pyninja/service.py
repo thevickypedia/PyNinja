@@ -14,14 +14,14 @@ if current_os not in ("Darwin", "Linux", "Windows"):
 
 
 def get_service_status(service_name: str) -> models.ServiceStatus:
-    """Get service status.
+    """Get service status by name.
 
     Args:
-        service_name (str): Name of the service.
+        service_name: Name of the service.
 
     Returns:
         ServiceStatus:
-        Returns an instance of the ServiceStatus.
+        Returns an instance of the ServiceStatus object.
     """
     running = models.ServiceStatus(
         status_code=HTTPStatus.OK.real,

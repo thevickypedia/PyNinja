@@ -4,14 +4,7 @@ import socket
 import sqlite3
 from typing import Dict, List, Set, Tuple
 
-from pydantic import (
-    BaseModel,
-    Field,
-    FilePath,
-    PositiveFloat,
-    PositiveInt,
-    field_validator,
-)
+from pydantic import BaseModel, Field, FilePath, PositiveInt, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -60,7 +53,7 @@ class Payload(BaseModel):
     """
 
     command: str
-    timeout: PositiveInt | PositiveFloat = 3
+    timeout: PositiveInt = 3
 
 
 class ServiceStatus(BaseModel):

@@ -9,7 +9,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from pyninja import database, exceptions, models
 
-LOGGER = logging.getLogger("uvicorn.error")
+LOGGER = logging.getLogger("uvicorn.default")
 EPOCH = lambda: int(time.time())  # noqa: E731
 SECURITY = HTTPBearer()
 

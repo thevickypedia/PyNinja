@@ -10,7 +10,7 @@ from pydantic import PositiveFloat, PositiveInt
 
 from pyninja.models import EnvConfig
 
-LOGGER = logging.getLogger("uvicorn.error")
+LOGGER = logging.getLogger("uvicorn.default")
 
 
 def process_command(

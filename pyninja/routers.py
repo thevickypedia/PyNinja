@@ -7,10 +7,11 @@ from fastapi import Depends, Header, Request
 from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import PositiveFloat, PositiveInt
 
 from pyninja import auth, exceptions, models, process, rate_limit, service, squire
 
-LOGGER = logging.getLogger("uvicorn.error")
+LOGGER = logging.getLogger("uvicorn.default")
 security = HTTPBearer()
 
 
@@ -24,7 +25,10 @@ async def run_command(
 
     **Args:**
 
+        request: Reference to the FastAPI request object.
         payload: Payload received as request body.
+        apikey: API Key to authenticate the request.
+        token: API secret to authenticate the request.
 
     **Raises:**
 
@@ -32,7 +36,9 @@ async def run_command(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_2(request, apikey, token)
-    LOGGER.info("Requested command: '%s'", payload.command)
+    LOGGER.info(
+        "Requested command: '%s' with timeout: %ds", payload.command, payload.timeout
+    )
     try:
         response = squire.process_command(payload.command, payload.timeout)
     except subprocess.TimeoutExpired as warn:
@@ -46,13 +52,17 @@ async def run_command(
 async def process_status(
     request: Request,
     process_name: str,
+    cpu_interval: PositiveInt | PositiveFloat = 1,
     apikey: HTTPAuthorizationCredentials = Depends(security),
 ):
     """**API function to monitor a process.**
 
     **Args:**
 
+        request: Reference to the FastAPI request object.
         process_name: Name of the process to check status.
+        cpu_interval: Interval in seconds to get the CPU usage.
+        apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -60,7 +70,7 @@ async def process_status(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_1(request, apikey)
-    if response := list(process.get_process_status(process_name)):
+    if response := process.get_process_status(process_name, cpu_interval):
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
     LOGGER.error("%s: 404 - No such process", process_name)
     raise exceptions.APIResponse(
@@ -77,7 +87,9 @@ async def service_status(
 
     **Args:**
 
+        request: Reference to the FastAPI request object.
         service_name: Name of the service to check status.
+        apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -114,12 +126,12 @@ def get_all_routes() -> List[APIRoute]:
         List[APIRoute]:
         Returns the routes as a list of APIRoute objects.
     """
-    APIRoute(path="/", endpoint=docs, methods=["GET"], include_in_schema=False)
     dependencies = [
         Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
         for each_rate_limit in models.env.rate_limit
     ]
     routes = [
+        APIRoute(path="/", endpoint=docs, methods=["GET"], include_in_schema=False),
         APIRoute(
             path="/service-status",
             endpoint=service_status,

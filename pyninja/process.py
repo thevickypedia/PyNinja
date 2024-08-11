@@ -1,54 +1,76 @@
 import logging
-from collections.abc import Generator
-from typing import Dict
+import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Dict, List
 
 import psutil
+from pydantic import PositiveInt
 
-LOGGER = logging.getLogger("uvicorn.error")
+LOGGER = logging.getLogger("uvicorn.default")
 
 
-def get_process_status(process_name: str) -> Generator[Dict[str, int]]:
+def get_process_status(
+    process_name: str, cpu_interval: PositiveInt
+) -> List[Dict[str, int | float | str | bool]]:
     """Get process information by name.
 
     Args:
         process_name: Name of the process.
+        cpu_interval: CPU interval to get the CPU performance.
 
-    Yields:
-        Generator[Dict[str, int]]:
-        Yields the process metrics as a dictionary of key-value pairs.
+    Returns:
+        List[Dict[str, int | float | str | bool]]:
+        Returns a list of performance report for each process hosting the given process name.
     """
-    # todo: implement concurrency
-    for proc in psutil.process_iter(["pid", "name"]):
-        if proc.name().lower() == process_name.lower():
-            process = psutil.Process(proc.pid)
-            process._name = process_name
-            try:
-                perf_report = get_performance(process)
-                LOGGER.info({f"{process_name} [{process.pid}]": perf_report})
-                perf_report["pname"] = process_name
-                perf_report["zombie"] = False
-                yield perf_report
-            except psutil.ZombieProcess as warn:
-                LOGGER.warning(warn)
-                yield {"zombie": True, "process_name": process_name}
+    result = []
+    futures = {}
+    executor = ThreadPoolExecutor(max_workers=os.cpu_count())
+    with executor:
+        for proc in psutil.process_iter(["pid", "name"]):
+            if proc.name().lower() == process_name.lower():
+                future = executor.submit(
+                    get_performance, process=proc, cpu_interval=cpu_interval
+                )
+                futures[future] = proc.name()
+    for future in as_completed(futures):
+        if future.exception():
+            LOGGER.error(
+                "Thread processing for '%s' received an exception: %s",
+                futures[future],
+                future.exception(),
+            )
+        else:
+            result.append(future.result())
+    return result
 
 
-def get_performance(process: psutil.Process) -> Dict[str, int | float]:
-    """Checks performance by monitoring CPU utilization, number of threads and open files.
+def get_performance(
+    process: psutil.Process, cpu_interval: PositiveInt
+) -> Dict[str, int | float | str | bool]:
+    """Checks process performance by monitoring CPU utilization, number of threads and open files.
 
     Args:
         process: Process object.
+        cpu_interval: CPU interval to get the CPU performance.
 
     Returns:
-        Dict[str, int]:
+        Dict[str, int | float | str | bool]:
         Returns the process metrics as key-value pairs.
     """
-    cpu = process.cpu_percent(interval=0.5)
-    threads = process.num_threads()
-    open_files = len(process.open_files())
-    return {
-        "cpu": cpu,
-        "threads": threads,
-        "open_files": open_files,
-        "pid": process.pid.real,
-    }
+    try:
+        cpu = process.cpu_percent(interval=cpu_interval)
+        threads = process.num_threads()
+        open_files = len(process.open_files())
+        perf_report = {
+            "pid": process.pid.real,
+            "pname": process.name(),
+            "cpu": cpu,
+            "threads": threads,
+            "open_files": open_files,
+            "zombie": False,
+        }
+        LOGGER.info({f"{process.name()} [{process.pid}]": perf_report})
+    except psutil.ZombieProcess as warn:
+        LOGGER.warning(warn)
+        perf_report = {"zombie": True, "process_name": process.name()}
+    return perf_report

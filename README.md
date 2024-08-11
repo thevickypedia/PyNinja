@@ -58,6 +58,8 @@ pyninja start
 - **WORKERS** - Number of workers for the uvicorn server.
 - **REMOTE_EXECUTION** - Boolean flag to enable remote execution.
 - **API_SECRET** - Secret access key for running commands on server remotely.
+- **DATABASE** - FilePath to store the auth database that handles the authentication errors.
+- **RATE_LIMIT** - List of dictionaries with `max_requests` and `seconds` to apply as rate limit.
 - **APIKEY** - API Key for authentication.
 
 ⚠️ Enabling remote execution can be extremely risky and can be a major security threat. So use **caution** and set the **API_SECRET** to a strong value.
