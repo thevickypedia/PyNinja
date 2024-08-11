@@ -28,16 +28,12 @@ async def run_command(
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    if squire.env.command_timeout == 0:
+    if not all((squire.env.remote_execution, squire.env.api_secret)):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.NOT_IMPLEMENTED.real,
             detail="Remote execution has been disabled on the server.",
         )
-    if (
-        token
-        and squire.env.api_secret
-        and secrets.compare_digest(token, squire.env.api_secret)
-    ):
+    if token and secrets.compare_digest(token, squire.env.api_secret):
         LOGGER.info(
             "Command request '%s' received from client-host: %s, host-header: %s, x-fwd-host: %s",
             payload.command,
@@ -62,7 +58,7 @@ async def run_command(
     )
     output = {"stdout": [], "stderr": []}
     try:
-        stdout, stderr = process.communicate(timeout=squire.env.command_timeout)
+        stdout, stderr = process.communicate(timeout=payload.timeout)
     except subprocess.TimeoutExpired as warn:
         LOGGER.warning(warn)
         raise exceptions.APIResponse(
