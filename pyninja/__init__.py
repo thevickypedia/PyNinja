@@ -6,7 +6,7 @@ import click
 
 from pyninja.main import start  # noqa: F401
 
-version = "0.0.0-a"
+version = "0.0.0"
 
 
 @click.command()
