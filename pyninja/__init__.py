@@ -4,9 +4,7 @@ import sys
 
 import click
 
-from pyninja.main import start  # noqa: F401
-
-version = "0.0.0"
+from pyninja.main import start, version  # noqa: F401
 
 
 @click.command()

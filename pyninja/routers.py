@@ -6,8 +6,7 @@ from fastapi.routing import APIRoute
 
 from pyninja import auth, exceptions, service, squire
 
-logging.getLogger("uvicorn.access").disabled = True
-LOGGER = logging.getLogger("uvicorn.error")
+LOGGER = logging.getLogger("uvicorn")
 
 
 async def service_status(payload: squire.StatusPayload):
