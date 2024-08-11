@@ -4,7 +4,7 @@ import platform
 import uvicorn
 from fastapi import FastAPI
 
-from pyninja import router, squire
+from pyninja import routers, squire
 
 
 def start(env_file: str = None) -> None:
@@ -13,7 +13,7 @@ def start(env_file: str = None) -> None:
         env_file or os.environ.get("env_file") or os.environ.get("ENV_FILE") or ".env"
     )
     app = FastAPI(
-        routes=router.routes,
+        routes=routers.routes,
         title=f"Service monitor for {platform.uname().node}",
     )
     uvicorn.run(
