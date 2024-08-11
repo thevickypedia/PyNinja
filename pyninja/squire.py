@@ -5,18 +5,18 @@ import socket
 from typing import Optional
 
 import yaml
-from pydantic import BaseModel, PositiveInt
+from pydantic import BaseModel, Field, PositiveInt
 from pydantic_settings import BaseSettings
 
 
-class StatusPayload(BaseModel):
-    """BaseModel that handles input data for ``StatusPayload``.
+class Payload(BaseModel):
+    """BaseModel that handles input data for ``Payload``.
 
-    >>> StatusPayload
+    >>> Payload
 
     """
 
-    service_name: str
+    command: str
 
 
 class ServiceStatus(BaseModel):
@@ -40,6 +40,8 @@ class EnvConfig(BaseSettings):
     ninja_host: str = socket.gethostbyname("localhost") or "0.0.0.0"
     ninja_port: PositiveInt = 8000
     workers: PositiveInt = 1
+    command_timeout: int = Field(0, ge=0, le=60)
+    api_secret: str | None = None
     apikey: str
 
     @classmethod
@@ -68,7 +70,7 @@ def env_loader(filename: str | os.PathLike) -> EnvConfig:
         filename: Filename from where env vars have to be loaded.
 
     Returns:
-        config.EnvConfig:
+        EnvConfig:
         Returns a reference to the ``EnvConfig`` object.
     """
     env_file = pathlib.Path(filename)

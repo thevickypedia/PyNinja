@@ -35,19 +35,19 @@ Monitors
 ========
 
 Process
-=======
+-------
 
 .. automodule:: pyninja.process
 
 Service
-=======
+-------
 
 .. automodule:: pyninja.service
 
 Squire
 ======
 
-.. autoclass:: pyninja.squire.StatusPayload(BaseModel)
+.. autoclass:: pyninja.squire.Payload(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 ====
@@ -63,7 +63,7 @@ Squire
 ====
 
 .. automodule:: pyninja.squire
-   :exclude-members: StatusPayload, ServiceStatus, EnvConfig
+   :exclude-members: Payload, ServiceStatus, EnvConfig
 
 Indices and tables
 ==================

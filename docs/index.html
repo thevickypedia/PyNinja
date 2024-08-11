@@ -120,51 +120,69 @@
 <section id="module-pyninja.routers">
 <span id="routers"></span><h1>Routers<a class="headerlink" href="#module-pyninja.routers" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routers.run_command">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.squire.Payload" title="pyninja.squire.Payload"><span class="pre">Payload</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.run_command" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>API function to run a command on host machine.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><p>payload: Payload received as request body.</p>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object with a status code and detail as response.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routers.process_status">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">process_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.squire.StatusPayload" title="pyninja.squire.StatusPayload"><span class="pre">StatusPayload</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.process_status" title="Permalink to this definition">¶</a></dt>
-<dd><p>API function to monitor a process.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>payload</strong> (<em>StatusPayload</em>) – Payload received as request body.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#pyninja.exceptions.APIResponse" title="pyninja.exceptions.APIResponse"><strong>APIResponse</strong></a> – </p></li>
-<li><p><strong>Raises the HTTPStatus object with a status code and detail as response.</strong> – </p></li>
-</ul>
-</dd>
-</dl>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">process_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.process_status" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>API function to monitor a process.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><p>process_name: Name of the process to check status.</p>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object with a status code and detail as response.</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routers.service_status">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">service_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.squire.StatusPayload" title="pyninja.squire.StatusPayload"><span class="pre">StatusPayload</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.service_status" title="Permalink to this definition">¶</a></dt>
-<dd><p>API function to monitor a service.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>payload</strong> (<em>StatusPayload</em>) – Payload received as request body.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#pyninja.exceptions.APIResponse" title="pyninja.exceptions.APIResponse"><strong>APIResponse</strong></a> – </p></li>
-<li><p><strong>Raises the HTTPStatus object with a status code and detail as response.</strong> – </p></li>
-</ul>
-</dd>
-</dl>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">service_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.service_status" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>API function to monitor a service.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><p>service_name: Name of the service to check status.</p>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object with a status code and detail as response.</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routers.docs">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">docs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.docs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">docs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RedirectResponse</span></span></span><a class="headerlink" href="#pyninja.routers.docs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Redirect to docs page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Redirects the user to <code class="docutils literal notranslate"><span class="pre">/docs</span></code> page.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>RedirectResponse</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
 <section id="monitors">
 <h1>Monitors<a class="headerlink" href="#monitors" title="Permalink to this heading">¶</a></h1>
-</section>
 <section id="module-pyninja.process">
-<span id="process"></span><h1>Process<a class="headerlink" href="#module-pyninja.process" title="Permalink to this heading">¶</a></h1>
+<span id="process"></span><h2>Process<a class="headerlink" href="#module-pyninja.process" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.process.get_process_status">
 <span class="sig-prename descclassname"><span class="pre">pyninja.process.</span></span><span class="sig-name descname"><span class="pre">get_process_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.process.get_process_status" title="Permalink to this definition">¶</a></dt>
@@ -198,7 +216,7 @@
 
 </section>
 <section id="module-pyninja.service">
-<span id="service"></span><h1>Service<a class="headerlink" href="#module-pyninja.service" title="Permalink to this heading">¶</a></h1>
+<span id="service"></span><h2>Service<a class="headerlink" href="#module-pyninja.service" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.service.get_service_status">
 <span class="sig-prename descclassname"><span class="pre">pyninja.service.</span></span><span class="sig-name descname"><span class="pre">get_service_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.squire.ServiceStatus" title="pyninja.squire.ServiceStatus"><span class="pre">ServiceStatus</span></a></span></span><a class="headerlink" href="#pyninja.service.get_service_status" title="Permalink to this definition">¶</a></dt>
@@ -217,18 +235,19 @@
 </dd></dl>
 
 </section>
+</section>
 <section id="squire">
 <h1>Squire<a class="headerlink" href="#squire" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pyninja.squire.StatusPayload">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.squire.</span></span><span class="sig-name descname"><span class="pre">StatusPayload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.squire.StatusPayload" title="Permalink to this definition">¶</a></dt>
-<dd><p>BaseModel that handles input data for <code class="docutils literal notranslate"><span class="pre">StatusPayload</span></code>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">StatusPayload</span>
+<dt class="sig sig-object py" id="pyninja.squire.Payload">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.squire.</span></span><span class="sig-name descname"><span class="pre">Payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.squire.Payload" title="Permalink to this definition">¶</a></dt>
+<dd><p>BaseModel that handles input data for <code class="docutils literal notranslate"><span class="pre">Payload</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Payload</span>
 </pre></div>
 </div>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.squire.StatusPayload.service_name">
-<span class="sig-name descname"><span class="pre">service_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.squire.StatusPayload.service_name" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.squire.Payload.command">
+<span class="sig-name descname"><span class="pre">command</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.squire.Payload.command" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -274,6 +293,16 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.squire.EnvConfig.workers">
 <span class="sig-name descname"><span class="pre">workers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyninja.squire.EnvConfig.workers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.squire.EnvConfig.command_timeout">
+<span class="sig-name descname"><span class="pre">command_timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyninja.squire.EnvConfig.command_timeout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.squire.EnvConfig.api_secret">
+<span class="sig-name descname"><span class="pre">api_secret</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.squire.EnvConfig.api_secret" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -324,7 +353,7 @@
 <dd class="field-even"><p>Returns a reference to the <code class="docutils literal notranslate"><span class="pre">EnvConfig</span></code> object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>config.EnvConfig</p>
+<dd class="field-odd"><p><a class="reference internal" href="#pyninja.squire.EnvConfig" title="pyninja.squire.EnvConfig">EnvConfig</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -360,9 +389,11 @@
 <li><a class="reference internal" href="#module-pyninja.auth">Authenticator</a></li>
 <li><a class="reference internal" href="#module-pyninja.exceptions">Exceptions</a></li>
 <li><a class="reference internal" href="#module-pyninja.routers">Routers</a></li>
-<li><a class="reference internal" href="#monitors">Monitors</a></li>
+<li><a class="reference internal" href="#monitors">Monitors</a><ul>
 <li><a class="reference internal" href="#module-pyninja.process">Process</a></li>
 <li><a class="reference internal" href="#module-pyninja.service">Service</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#squire">Squire</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>

@@ -93,8 +93,12 @@
 <li><p><strong>NINJA_HOST</strong> - Hostname for the API server.</p></li>
 <li><p><strong>NINJA_PORT</strong> - Port number for the API server.</p></li>
 <li><p><strong>WORKERS</strong> - Number of workers for the uvicorn server.</p></li>
+<li><p><strong>COMMAND_TIMEOUT</strong> - Number of seconds for a command to timeout.</p></li>
+<li><p><strong>API_SECRET</strong> - Secret access key for running commands on server remotely.</p></li>
 <li><p><strong>APIKEY</strong> - API Key for authentication.</p></li>
 </ul>
+<p><strong>COMMAND_TIMEOUT</strong> is set to <code class="docutils literal notranslate"><span class="pre">0</span></code> by default, disabling remote executions. To enable it, set it to a value greater than <code class="docutils literal notranslate"><span class="pre">0</span></code><br>
+⚠️ Enabling remote execution can be extremely risky and can be a major security threat. So use <strong>caution</strong> and set the <strong>API_SECRET</strong> to a strong value.</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">PyNinja</span></code> supports <a class="reference external" href="https://docs.python-guide.org/writing/logging/#example-configuration-via-an-ini-file">logging.ini</a> configuration for custom logging. Just place it in the current working directory.<br>
 Refer <a class="reference external" href="https://github.com/thevickypedia/PyNinja/tree/main/samples">samples</a> directory for examples.</p>

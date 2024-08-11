@@ -56,7 +56,12 @@ pyninja start
 - **NINJA_HOST** - Hostname for the API server.
 - **NINJA_PORT** - Port number for the API server.
 - **WORKERS** - Number of workers for the uvicorn server.
+- **COMMAND_TIMEOUT** - Number of seconds for a command to timeout.
+- **API_SECRET** - Secret access key for running commands on server remotely.
 - **APIKEY** - API Key for authentication.
+
+**COMMAND_TIMEOUT** is set to `0` by default, disabling remote executions. To enable it, set it to a value greater than `0`<br>
+⚠️ Enabling remote execution can be extremely risky and can be a major security threat. So use **caution** and set the **API_SECRET** to a strong value.
 
 > `PyNinja` supports [logging.ini] configuration for custom logging. Just place it in the current working directory.<br>
 > Refer [samples] directory for examples.
