@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+v0.0.3 (08/16/2024)
+-------------------
+- Allows env vars to be sourced from both ``env_file`` and ``kwargs``
+
 v0.0.2 (08/16/2024)
 -------------------
 - Includes added support for custom log configuration
