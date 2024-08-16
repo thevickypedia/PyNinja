@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+v0.0.2 (08/16/2024)
+-------------------
+- Includes added support for custom log configuration
+
 v0.0.1 (08/11/2024)
 -------------------
 - Includes a process monitor and remote command execution functionality
