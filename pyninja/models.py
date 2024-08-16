@@ -2,7 +2,7 @@ import pathlib
 import re
 import socket
 import sqlite3
-from typing import Dict, List, Set, Tuple
+from typing import Any, Dict, List, Set, Tuple
 
 from pydantic import BaseModel, Field, FilePath, PositiveInt, field_validator
 from pydantic_settings import BaseSettings
@@ -100,6 +100,7 @@ class EnvConfig(BaseSettings):
 
     """
 
+    apikey: str
     ninja_host: str = socket.gethostbyname("localhost") or "0.0.0.0"
     ninja_port: PositiveInt = 8000
     workers: PositiveInt = 1
@@ -107,7 +108,7 @@ class EnvConfig(BaseSettings):
     api_secret: str | None = None
     database: str = Field("auth.db", pattern=".*.db$")
     rate_limit: RateLimit | List[RateLimit] = []
-    apikey: str
+    log_config: Dict[str, Any] | FilePath | None = None
 
     # noinspection PyMethodParameters
     @field_validator("api_secret", mode="after")

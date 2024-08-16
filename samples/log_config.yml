@@ -1,0 +1,45 @@
+#### This is a sample logging configuration for the API. ####
+version: 1
+disable_existing_loggers: True
+formatters:
+  default:
+    (): 'uvicorn.logging.DefaultFormatter'
+    fmt: '%(asctime)s %(levelprefix)-9s %(name)s -: %(message)s'
+    use_colors: False
+  access:
+    (): 'uvicorn.logging.AccessFormatter'
+    fmt: '%(asctime)s %(levelprefix)-9s %(name)s -: %(client_addr)s - "%(request_line)s" %(status_code)s'
+    use_colors: False
+  error:
+    (): 'uvicorn.logging.DefaultFormatter'
+    fmt: '%(asctime)s %(levelprefix)-9s %(name)s -: %(message)s'
+    use_colors: False
+handlers:
+  default:
+    class: logging.FileHandler  # Can be changed to StreamHandler for stdout logging
+    formatter: default
+    filename: default.log
+  access:
+    class: logging.FileHandler  # Can be changed to StreamHandler for stdout logging
+    formatter: access
+    filename: access.log
+  error:
+    class: logging.FileHandler  # Can be changed to StreamHandler for stdout logging
+    formatter: error
+    filename: default.log
+loggers:
+  uvicorn:
+    propagate: True
+    level: INFO
+    handlers:
+      - default
+  uvicorn.error:
+    propagate: True
+    level: INFO
+    handlers:
+      - error
+  uvicorn.access:
+    propagate: True
+    level: INFO
+    handlers:
+      - access

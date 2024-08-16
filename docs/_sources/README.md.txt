@@ -62,9 +62,9 @@ pyninja start
 - **RATE_LIMIT** - List of dictionaries with `max_requests` and `seconds` to apply as rate limit.
 - **APIKEY** - API Key for authentication.
 
-⚠️ Enabling remote execution can be extremely risky and can be a major security threat. So use **caution** and set the **API_SECRET** to a strong value.
+⚠️ Enabling remote execution can be extremely risky and a major security threat.
+So use **caution** and set the **API_SECRET** to a strong value.
 
-> `PyNinja` supports [logging.ini] configuration for custom logging. Just place it in the current working directory.<br>
 > Refer [samples] directory for examples.
 
 ## Coding Standards
@@ -142,4 +142,3 @@ Licensed under the [MIT License][license]
 [license]: https://github.com/thevickypedia/PyNinja/blob/master/LICENSE
 [runbook]: https://thevickypedia.github.io/PyNinja/
 [samples]: https://github.com/thevickypedia/PyNinja/tree/main/samples
-[logging.ini]: https://docs.python-guide.org/writing/logging/#example-configuration-via-an-ini-file
