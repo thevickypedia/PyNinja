@@ -1,5 +1,4 @@
 import logging
-import os
 
 import uvicorn
 from fastapi import FastAPI
@@ -25,12 +24,7 @@ def start(**kwargs) -> None:
         rate_limit: List of dictionaries with ``max_requests`` and ``seconds`` to apply as rate limit.
         log_config: Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.
     """
-    if env_file := kwargs.get("env_file"):
-        models.env = squire.env_loader(env_file)
-    elif os.path.isfile(".env"):
-        models.env = squire.env_loader(".env")
-    else:
-        models.env = models.EnvConfig(**kwargs)
+    models.env = squire.load_env(**kwargs)
     if all((models.env.remote_execution, models.env.api_secret)):
         LOGGER.info(
             "Creating '%s' to handle authentication errors", models.env.database

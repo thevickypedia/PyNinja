@@ -820,8 +820,8 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.squire.env_loader">
-<span class="sig-prename descclassname"><span class="pre">pyninja.squire.</span></span><span class="sig-name descname"><span class="pre">env_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">os.PathLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.EnvConfig" title="pyninja.models.EnvConfig"><span class="pre">EnvConfig</span></a></span></span><a class="headerlink" href="#pyninja.squire.env_loader" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.squire.envfile_loader">
+<span class="sig-prename descclassname"><span class="pre">pyninja.squire.</span></span><span class="sig-name descname"><span class="pre">envfile_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">os.PathLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.EnvConfig" title="pyninja.models.EnvConfig"><span class="pre">EnvConfig</span></a></span></span><a class="headerlink" href="#pyninja.squire.envfile_loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads environment variables based on filetypes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -832,6 +832,24 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pyninja.models.EnvConfig" title="pyninja.models.EnvConfig">EnvConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.squire.load_env">
+<span class="sig-prename descclassname"><span class="pre">pyninja.squire.</span></span><span class="sig-name descname"><span class="pre">load_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.EnvConfig" title="pyninja.models.EnvConfig"><span class="pre">EnvConfig</span></a></span></span><a class="headerlink" href="#pyninja.squire.load_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge env vars from env_file with kwargs, giving priority to kwargs.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>This function allows env vars to be loaded partially from .env files and partially through kwargs.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns a reference to the <code class="docutils literal notranslate"><span class="pre">EnvConfig</span></code> object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyninja.models.EnvConfig" title="pyninja.models.EnvConfig">EnvConfig</a></p>
 </dd>
 </dl>
 </dd></dl>
