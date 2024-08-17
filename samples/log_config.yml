@@ -4,15 +4,18 @@ disable_existing_loggers: True
 formatters:
   default:
     (): 'uvicorn.logging.DefaultFormatter'
-    fmt: '%(asctime)s %(levelprefix)-9s %(name)s -: %(message)s'
+    datefmt: '%b-%d-%Y %I:%M:%S %p'
+    fmt: '%(asctime)s %(levelprefix)-9s [%(module)s:%(lineno)d] - %(message)s'
     use_colors: False
   access:
     (): 'uvicorn.logging.AccessFormatter'
-    fmt: '%(asctime)s %(levelprefix)-9s %(name)s -: %(client_addr)s - "%(request_line)s" %(status_code)s'
+    datefmt: '%b-%d-%Y %I:%M:%S %p'
+    fmt: '%(asctime)s %(levelprefix)-9s [%(module)s:%(lineno)d] %(client_addr)s - %(status_code)s'
     use_colors: False
   error:
     (): 'uvicorn.logging.DefaultFormatter'
-    fmt: '%(asctime)s %(levelprefix)-9s %(name)s -: %(message)s'
+    datefmt: '%b-%d-%Y %I:%M:%S %p'
+    fmt: '%(asctime)s %(levelprefix)-9s [%(module)s:%(lineno)d] - %(message)s'
     use_colors: False
 handlers:
   default:
