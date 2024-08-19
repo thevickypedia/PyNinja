@@ -439,6 +439,74 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <section id="module-pyninja.service">
 <span id="service"></span><h2>Service<a class="headerlink" href="#module-pyninja.service" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.service.running">
+<span class="sig-prename descclassname"><span class="pre">pyninja.service.</span></span><span class="sig-name descname"><span class="pre">running</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.ServiceStatus" title="pyninja.models.ServiceStatus"><span class="pre">ServiceStatus</span></a></span></span><a class="headerlink" href="#pyninja.service.running" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs an ServiceStatus object with a status code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>service_name</strong> – Name of the service.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a reference to the ServiceStatus object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyninja.models.ServiceStatus" title="pyninja.models.ServiceStatus">ServiceStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.service.stopped">
+<span class="sig-prename descclassname"><span class="pre">pyninja.service.</span></span><span class="sig-name descname"><span class="pre">stopped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.ServiceStatus" title="pyninja.models.ServiceStatus"><span class="pre">ServiceStatus</span></a></span></span><a class="headerlink" href="#pyninja.service.stopped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs an ServiceStatus object with a status code 501.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>service_name</strong> – Name of the service.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a reference to the ServiceStatus object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyninja.models.ServiceStatus" title="pyninja.models.ServiceStatus">ServiceStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.service.unknown">
+<span class="sig-prename descclassname"><span class="pre">pyninja.service.</span></span><span class="sig-name descname"><span class="pre">unknown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.ServiceStatus" title="pyninja.models.ServiceStatus"><span class="pre">ServiceStatus</span></a></span></span><a class="headerlink" href="#pyninja.service.unknown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs an ServiceStatus object with a status code 503.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>service_name</strong> – Name of the service.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a reference to the ServiceStatus object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyninja.models.ServiceStatus" title="pyninja.models.ServiceStatus">ServiceStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.service.unavailable">
+<span class="sig-prename descclassname"><span class="pre">pyninja.service.</span></span><span class="sig-name descname"><span class="pre">unavailable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.ServiceStatus" title="pyninja.models.ServiceStatus"><span class="pre">ServiceStatus</span></a></span></span><a class="headerlink" href="#pyninja.service.unavailable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs an ServiceStatus object with a status code 404.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>service_name</strong> – Name of the service.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a reference to the ServiceStatus object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyninja.models.ServiceStatus" title="pyninja.models.ServiceStatus">ServiceStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.service.get_service_status">
 <span class="sig-prename descclassname"><span class="pre">pyninja.service.</span></span><span class="sig-name descname"><span class="pre">get_service_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.ServiceStatus" title="pyninja.models.ServiceStatus"><span class="pre">ServiceStatus</span></a></span></span><a class="headerlink" href="#pyninja.service.get_service_status" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get service status by name.</p>
@@ -592,6 +660,31 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 
 <hr class="docutils" />
 <dl class="py class">
+<dt class="sig sig-object py" id="pyninja.models.ServiceManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">ServiceManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.models.ServiceManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default service manager (commands) dedicated to each supported operating system.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ServiceManager</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.ServiceManager.Linux">
+<span class="sig-name descname"><span class="pre">Linux</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceManager.Linux" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.ServiceManager.Darwin">
+<span class="sig-name descname"><span class="pre">Darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceManager.Darwin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.ServiceManager.windows">
+<span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceManager.windows" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py class">
 <dt class="sig sig-object py" id="pyninja.models.Session">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">Session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.models.Session" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object to store session information.</p>
@@ -684,6 +777,11 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.EnvConfig.service_manager">
+<span class="sig-name descname"><span class="pre">service_manager</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#pyninja.models.ServiceManager" title="pyninja.models.ServiceManager"><span class="pre">ServiceManager</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.models.EnvConfig.service_manager" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.models.EnvConfig.database">
 <span class="sig-name descname"><span class="pre">database</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.models.EnvConfig.database" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -697,6 +795,23 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <dt class="sig sig-object py" id="pyninja.models.EnvConfig.log_config">
 <span class="sig-name descname"><span class="pre">log_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.models.EnvConfig.log_config" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyninja.models.EnvConfig.parse_service_manager">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_service_manager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.models.EnvConfig.parse_service_manager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse service manager filepath into a string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Takes service_manager filepath as an argument.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the string representation of the filepath.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyninja.models.EnvConfig.parse_api_secret">
@@ -769,6 +884,20 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>AssertionError</strong> – When at least 1 of the above conditions fail to match.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.models.get_service_manager">
+<span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">get_service_manager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.ServiceManager" title="pyninja.models.ServiceManager"><span class="pre">ServiceManager</span></a></span></span><a class="headerlink" href="#pyninja.models.get_service_manager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get service manager filepath for the host operating system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns the <code class="docutils literal notranslate"><span class="pre">FilePath</span></code> referencing the appropriate <code class="docutils literal notranslate"><span class="pre">ServiceManager</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyninja.models.ServiceManager" title="pyninja.models.ServiceManager">ServiceManager</a></p>
 </dd>
 </dl>
 </dd></dl>

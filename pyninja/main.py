@@ -41,7 +41,8 @@ def start(**kwargs) -> None:
         host=models.env.ninja_host,
         port=models.env.ninja_port,
         workers=models.env.workers,
-        log_config=models.env.log_config,
         app=app,
     )
+    if models.env.log_config:
+        kwargs["log_config"] = models.env.log_config
     uvicorn.run(**kwargs)

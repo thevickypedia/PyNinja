@@ -1,11 +1,30 @@
 import pathlib
+import platform
 import re
 import socket
 import sqlite3
 from typing import Any, Dict, List, Set, Tuple
 
-from pydantic import BaseModel, Field, FilePath, PositiveInt, field_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    FilePath,
+    PositiveInt,
+    ValidationError,
+    field_validator,
+)
+from pydantic_core import InitErrorDetails
 from pydantic_settings import BaseSettings
+
+from pyninja import exceptions
+
+OPERATING_SYSTEM = platform.system()
+
+if OPERATING_SYSTEM not in ("Darwin", "Linux", "Windows"):
+    raise exceptions.UnSupportedOS(
+        f"{OPERATING_SYSTEM!r} is unsupported.\n\t"
+        "Host machine should either be macOS, Windows or any Linux distros"
+    )
 
 
 def complexity_checker(secret: str) -> None:
@@ -93,6 +112,42 @@ class RateLimit(BaseModel):
     seconds: PositiveInt
 
 
+class ServiceManager(BaseModel):
+    """Default service manager (commands) dedicated to each supported operating system.
+
+    >>> ServiceManager
+
+    """
+
+    Linux: FilePath = "/usr/bin/systemctl"
+    Darwin: FilePath = "/bin/launchctl"
+    windows: FilePath = "C:\\Windows\\System32\\sc.exe"
+
+
+def get_service_manager() -> ServiceManager:
+    """Get service manager filepath for the host operating system.
+
+    Returns:
+        ServiceManager:
+        Returns the ``FilePath`` referencing the appropriate ``ServiceManager``.
+    """
+    try:
+        return ServiceManager().model_dump()[OPERATING_SYSTEM]
+    except KeyError:
+        # This shouldn't happen programmatically, but just in case
+        # https://docs.pydantic.dev/latest/errors/validation_errors/#model_type
+        raise ValidationError.from_exception_data(
+            title="PyNinja",
+            line_errors=[
+                InitErrorDetails(
+                    type="model_type",
+                    loc=("operating_system",),
+                    input="invalid",
+                )
+            ],
+        )
+
+
 class EnvConfig(BaseSettings):
     """Object to load environment variables.
 
@@ -106,9 +161,24 @@ class EnvConfig(BaseSettings):
     workers: PositiveInt = 1
     remote_execution: bool = False
     api_secret: str | None = None
+    service_manager: FilePath | ServiceManager = get_service_manager()
     database: str = Field("auth.db", pattern=".*.db$")
     rate_limit: RateLimit | List[RateLimit] = []
     log_config: Dict[str, Any] | FilePath | None = None
+
+    # noinspection PyMethodParameters
+    @field_validator("service_manager", mode="after")
+    def parse_service_manager(cls, value: FilePath) -> str:
+        """Parse service manager filepath into a string.
+
+        Args:
+            value: Takes service_manager filepath as an argument.
+
+        Returns:
+            str:
+            Returns the string representation of the filepath.
+        """
+        return value.__str__()
 
     # noinspection PyMethodParameters
     @field_validator("api_secret", mode="after")
