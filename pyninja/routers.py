@@ -234,6 +234,16 @@ async def docs() -> RedirectResponse:
     return RedirectResponse("/docs")
 
 
+async def health() -> exceptions.APIResponse:
+    """Health check for PyNinja.
+
+    Returns:
+        APIResponse:
+        Returns a health check response with status code 200.
+    """
+    raise exceptions.APIResponse(status_code=HTTPStatus.OK, detail=HTTPStatus.OK.phrase)
+
+
 def get_all_routes() -> List[APIRoute]:
     """Get all the routes to be added for the API server.
 
@@ -247,6 +257,7 @@ def get_all_routes() -> List[APIRoute]:
     ]
     routes = [
         APIRoute(path="/", endpoint=docs, methods=["GET"], include_in_schema=False),
+        APIRoute(path="/health", endpoint=health, methods=["GET"], include_in_schema=False),
         APIRoute(
             path="/service-status",
             endpoint=service_status,
