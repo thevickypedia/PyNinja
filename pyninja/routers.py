@@ -10,7 +10,7 @@ from fastapi import Depends, Header, Request
 from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from fastapi.websockets import WebSocket, WebSocketDisconnect
+from fastapi.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 from pydantic import PositiveFloat, PositiveInt
 
 from pyninja import (
@@ -340,12 +340,35 @@ async def websocket_endpoint(websocket: WebSocket):
     """
     await websocket.accept()
     refresh_time = time.time()
-    data = squire.system_resources()
+    ws_settings = models.WSSettings()
+    LOGGER.info("Websocket settings: %s", ws_settings.model_dump_json())
+    data = squire.system_resources(ws_settings.cpu_interval)
     while True:
-        if time.time() - refresh_time > 3:
+        if websocket.application_state == WebSocketState.CONNECTED:
+            try:
+                msg = await asyncio.wait_for(websocket.receive_text(), timeout=0.1)
+                if msg.startswith("refresh_interval:"):
+                    ws_settings.refresh_interval = int(msg.split(":")[1].strip())
+                    LOGGER.info(
+                        "Updating refresh interval to %s seconds",
+                        ws_settings.refresh_interval,
+                    )
+                elif msg.startswith("cpu_interval"):
+                    ws_settings.cpu_interval = int(msg.split(":")[1].strip())
+                    LOGGER.info(
+                        "Updating CPU interval to %s seconds", ws_settings.cpu_interval
+                    )
+                else:
+                    LOGGER.error("Invalid WS message received: %s", msg)
+                    break
+            except asyncio.TimeoutError:
+                pass
+            except WebSocketDisconnect:
+                break
+        if time.time() - refresh_time > ws_settings.refresh_interval:
             refresh_time = time.time()
             LOGGER.debug("Fetching new charts")
-            data = squire.system_resources()
+            data = squire.system_resources(ws_settings.cpu_interval)
         try:
             await websocket.send_json(data)
             await asyncio.sleep(1)

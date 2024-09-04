@@ -68,15 +68,18 @@ def private_ip_address() -> str | None:
     return ip_address_
 
 
-def system_resources() -> Dict[str, dict]:
+def system_resources(cpu_interval: int) -> Dict[str, dict]:
     """Get system resources like CPU, virtual memory and swap memory information.
+
+    Args:
+        cpu_interval: Interval in seconds is used to compare CPU times elapsed before and after.
 
     Returns:
         Dict[str, dict]:
         Returns a nested dictionary.
     """
     return dict(
-        cpu_usage=psutil.cpu_percent(interval=2, percpu=True),
+        cpu_usage=psutil.cpu_percent(interval=cpu_interval, percpu=True),
         memory_info=psutil.virtual_memory()._asdict(),
         swap_info=psutil.swap_memory()._asdict(),
     )

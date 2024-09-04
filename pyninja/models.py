@@ -124,6 +124,17 @@ class ServiceManager(BaseModel):
     windows: FilePath = "C:\\Windows\\System32\\sc.exe"
 
 
+class WSSettings(BaseModel):
+    """Default settings for websocket configuration.
+
+    >>> WSSettings
+
+    """
+
+    cpu_interval: PositiveInt = 3
+    refresh_interval: PositiveInt = 5
+
+
 def get_service_manager() -> ServiceManager:
     """Get service manager filepath for the host operating system.
 

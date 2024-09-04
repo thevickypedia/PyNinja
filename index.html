@@ -53,6 +53,17 @@
             height: inherit !important;
             max-height: 100% !important;
         }
+        .tooltip-button {
+            padding: 5px 5px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+        }
+        .tooltip-button:hover {
+            background-color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -63,6 +74,13 @@
             <div class="cpu-box" id="cpuUsageContainer">
                 <!-- CPU Usage will be dynamically added here -->
             </div>
+            <br>
+            <h3>Set CPU Interval (seconds)</h3>
+            <input type="number" id="cpuInterval" min="1" value="2">
+            <button class="tooltip-button" title="Used to compare CPU times elapsed before and after interval." id="setCPUIntervalBtn">Update</button>
+            <h3>Set Refresh Interval (seconds)</h3>
+            <input type="number" id="refreshInterval" min="1" value="2">
+            <button class="tooltip-button" title="Frequency to query system resources." id="setRefreshIntervalBtn">Update</button>
         </div>
         <div class="box">
             <h3>Memory and Swap Usage</h3>
@@ -88,10 +106,6 @@
     </div>
 
     <script>
-        window.addEventListener('load', () => {
-            document.getElementById('main-css').disabled = false;
-        });
-
         const ws = new WebSocket("ws://localhost:8080/ws/system");
 
         let memoryChartInstance = null;
@@ -107,7 +121,7 @@
             cpuUsage.forEach((usage, index) => {
                 const cpuDiv = document.createElement('div');
                 cpuDiv.innerHTML = `
-                    <strong>CPU ${index}:</strong> ${usage}%
+                    <strong>CPU ${index+1}:</strong> ${usage}%
                     <div class="progress">
                         <div id="cpu${index}" class="progress-bar"></div>
                     </div>
@@ -194,6 +208,15 @@
                 });
             }
         };
+
+        document.getElementById('setCPUIntervalBtn').addEventListener('click', () => {
+            const cpuInterval = document.getElementById('cpuInterval').value;
+            ws.send(`cpu_interval:${cpuInterval}`);
+        });
+        document.getElementById('setRefreshIntervalBtn').addEventListener('click', () => {
+            const refreshInterval = document.getElementById('refreshInterval').value;
+            ws.send(`refresh_interval:${refreshInterval}`);
+        });
 
         function updateProgressBar(id, percentage) {
             const bar = document.getElementById(id);
