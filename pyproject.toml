@@ -19,6 +19,8 @@ requires-python = ">=3.10"
 
 [tool.setuptools]
 packages = ["pyninja"]
+[tool.setuptools.package-data]
+"pyninja" = ["index.html"]
 
 [tool.setuptools.dynamic]
 version = {attr = "pyninja.version"}

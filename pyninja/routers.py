@@ -368,10 +368,10 @@ async def monitor():
         HTMLResponse:
         Returns an HTML response templated using Jinja2.
     """
-    with open("index.html") as file:
+    ws_settings = models.WSSettings()
+    with open(ws_settings.template) as file:
         template_file = file.read()
     template = jinja2.Template(template_file)
-    ws_settings = models.WSSettings()
     rendered = template.render(
         HOST=models.env.ninja_host,
         PORT=models.env.ninja_port,

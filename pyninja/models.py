@@ -1,3 +1,4 @@
+import os
 import pathlib
 import platform
 import re
@@ -131,6 +132,7 @@ class WSSettings(BaseModel):
 
     """
 
+    template: FilePath = os.path.join(pathlib.Path(__file__).parent, "index.html")
     cpu_interval: PositiveInt = 3
     refresh_interval: PositiveInt = 5
 

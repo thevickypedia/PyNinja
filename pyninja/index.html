@@ -106,7 +106,9 @@
     </div>
 
     <script>
-        const ws = new WebSocket("ws://{{ HOST }}:{{ PORT }}/ws/system");
+        const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+        const wsHost = window.location.host;
+        const ws = new WebSocket(`${wsProtocol}://${wsHost}/ws/system`);
 
         let memoryChartInstance = null;
         let swapChartInstance = null;
