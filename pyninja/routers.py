@@ -3,6 +3,7 @@ import subprocess
 from http import HTTPStatus
 from typing import List, Optional
 
+import psutil
 from fastapi import Depends, Header, Request
 from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute
@@ -21,13 +22,97 @@ from pyninja import (
 )
 
 LOGGER = logging.getLogger("uvicorn.default")
-security = HTTPBearer()
+BEARER_AUTH = HTTPBearer()
+
+
+async def get_ip(
+    request: Request,
+    public: bool = False,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """Get local and public IP address of the device.
+
+    Args:
+        request: Reference to the FastAPI request object.
+        public: Boolean flag to get the public IP address.
+        apikey: API Key to authenticate the request.
+        token: API secret to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and the public/private IP as response.
+    """
+    await auth.level_1(request, apikey)
+    if public:
+        return squire.public_ip_address()
+    else:
+        return squire.private_ip_address()
+
+
+async def get_cpu(
+    request: Request,
+    interval: int | float = 2,
+    per_cpu: bool = True,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """Get the CPU utilization.
+
+    **Args:**
+
+        request: Reference to the FastAPI request object.
+        interval: Interval to get the CPU utilization.
+        per_cpu: If True, returns the CPU utilization for each CPU.
+        apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and CPU usage as response.
+    """
+    await auth.level_1(request, apikey)
+    if per_cpu:
+        cpu_percentages = psutil.cpu_percent(interval=interval, percpu=True)
+        usage = {f"cpu{i+1}": percent for i, percent in enumerate(cpu_percentages)}
+    else:
+        usage = {"cpu": psutil.cpu_percent(interval=interval, percpu=False)}
+    raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=usage)
+
+
+async def get_memory(
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """Get memory utilization.
+
+    **Args:**
+
+        request: Reference to the FastAPI request object.
+        apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and CPU usage as response.
+    """
+    await auth.level_1(request, apikey)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.OK.real,
+        detail={
+            "ram_total": squire.size_converter(psutil.virtual_memory().total),
+            "ram_used": squire.size_converter(psutil.virtual_memory().used),
+            "ram_usage": psutil.virtual_memory().percent,
+            "swap_total": squire.size_converter(psutil.swap_memory().total),
+            "swap_used": squire.size_converter(psutil.swap_memory().used),
+            "swap_usage": psutil.swap_memory().percent,
+        },
+    )
 
 
 async def run_command(
     request: Request,
     payload: models.Payload,
-    apikey: HTTPAuthorizationCredentials = Depends(security),
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
 ):
     """**API function to run a command on host machine.**
@@ -62,7 +147,7 @@ async def process_status(
     request: Request,
     process_name: str,
     cpu_interval: PositiveInt | PositiveFloat = 1,
-    apikey: HTTPAuthorizationCredentials = Depends(security),
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to monitor a process.**
 
@@ -90,7 +175,7 @@ async def process_status(
 async def service_status(
     request: Request,
     service_name: str,
-    apikey: HTTPAuthorizationCredentials = Depends(security),
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to monitor a service.**
 
@@ -123,7 +208,7 @@ async def docker_containers(
     container_name: str = None,
     get_all: bool = False,
     get_running: bool = False,
-    apikey: HTTPAuthorizationCredentials = Depends(security),
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to get docker containers' information.**
 
@@ -174,7 +259,7 @@ async def docker_containers(
 
 async def docker_images(
     request: Request,
-    apikey: HTTPAuthorizationCredentials = Depends(security),
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to get docker images' information.**
 
@@ -200,7 +285,7 @@ async def docker_images(
 
 async def docker_volumes(
     request: Request,
-    apikey: HTTPAuthorizationCredentials = Depends(security),
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to get docker volumes' information.**
 
@@ -234,7 +319,7 @@ async def docs() -> RedirectResponse:
     return RedirectResponse("/docs")
 
 
-async def health() -> exceptions.APIResponse:
+async def health():
     """Health check for PyNinja.
 
     Returns:
@@ -257,7 +342,27 @@ def get_all_routes() -> List[APIRoute]:
     ]
     routes = [
         APIRoute(path="/", endpoint=docs, methods=["GET"], include_in_schema=False),
-        APIRoute(path="/health", endpoint=health, methods=["GET"], include_in_schema=False),
+        APIRoute(
+            path="/health", endpoint=health, methods=["GET"], include_in_schema=False
+        ),
+        APIRoute(
+            path="/get-ip",
+            endpoint=get_ip,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path="/get-cpu",
+            endpoint=get_cpu,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path="/get-memory",
+            endpoint=get_memory,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
         APIRoute(
             path="/service-status",
             endpoint=service_status,

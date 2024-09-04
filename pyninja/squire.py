@@ -1,16 +1,98 @@
 import json
 import logging
+import math
 import os
 import pathlib
+import re
+import socket
 import subprocess
 from typing import Dict, List
 
+import requests
 import yaml
 from pydantic import PositiveFloat, PositiveInt
 
 from pyninja.models import EnvConfig
 
 LOGGER = logging.getLogger("uvicorn.default")
+IP_REGEX = re.compile(
+    r"""^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"""  # noqa: E501
+)
+
+
+def public_ip_address() -> str:
+    """Gets public IP address of the host using different endpoints.
+
+    Returns:
+        str:
+        Public IP address.
+    """
+    fn1 = lambda fa: fa.text.strip()  # noqa: E731
+    fn2 = lambda fa: fa.json()["origin"].strip()  # noqa: E731
+    mapping = {
+        "https://checkip.amazonaws.com/": fn1,
+        "https://api.ipify.org/": fn1,
+        "https://ipinfo.io/ip/": fn1,
+        "https://v4.ident.me/": fn1,
+        "https://httpbin.org/ip": fn2,
+        "https://myip.dnsomatic.com/": fn1,
+    }
+    for url, func in mapping.items():
+        try:
+            with requests.get(url) as response:
+                return IP_REGEX.findall(func(response))[0]
+        except (
+            requests.RequestException,
+            requests.JSONDecodeError,
+            re.error,
+            IndexError,
+        ):
+            continue
+
+
+def private_ip_address() -> str | None:
+    """Uses a simple check on network id to see if it is connected to local host or not.
+
+    Returns:
+        str:
+        Private IP address of host machine.
+    """
+    socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        socket_.connect(("8.8.8.8", 80))
+    except OSError:
+        return
+    ip_address_ = socket_.getsockname()[0]
+    socket_.close()
+    return ip_address_
+
+
+def format_nos(input_: float) -> int | float:
+    """Removes ``.0`` float values.
+
+    Args:
+        input_: Strings or integers with ``.0`` at the end.
+
+    Returns:
+        int | float:
+        Int if found, else returns the received float value.
+    """
+    return int(input_) if isinstance(input_, float) and input_.is_integer() else input_
+
+
+def size_converter(byte_size: int | float) -> str:
+    """Gets the current memory consumed and converts it to human friendly format.
+
+    Args:
+        byte_size: Receives byte size as argument.
+
+    Returns:
+        str:
+        Converted understandable size.
+    """
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    index = int(math.floor(math.log(byte_size, 1024)))
+    return f"{format_nos(round(byte_size / pow(1024, index), 2))} {size_name[index]}"
 
 
 def process_command(
