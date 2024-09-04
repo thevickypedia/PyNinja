@@ -373,6 +373,17 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routers.websocket_endpoint">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">websocket_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">websocket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WebSocket</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.websocket_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Websocket endpoint to fetch live system resource usage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>websocket</strong> – Reference to the websocket object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routers.get_all_routes">
 <span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">get_all_routes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">APIRoute</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.routers.get_all_routes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all the routes to be added for the API server.</p>
@@ -1021,6 +1032,20 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.squire.system_resources">
+<span class="sig-prename descclassname"><span class="pre">pyninja.squire.</span></span><span class="sig-name descname"><span class="pre">system_resources</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.squire.system_resources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get system resources like CPU, virtual memory and swap memory information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns a nested dictionary.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, dict]</p>
 </dd>
 </dl>
 </dd></dl>

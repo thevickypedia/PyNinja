@@ -8,6 +8,7 @@ import socket
 import subprocess
 from typing import Dict, List
 
+import psutil
 import requests
 import yaml
 from pydantic import PositiveFloat, PositiveInt
@@ -65,6 +66,20 @@ def private_ip_address() -> str | None:
     ip_address_ = socket_.getsockname()[0]
     socket_.close()
     return ip_address_
+
+
+def system_resources() -> Dict[str, dict]:
+    """Get system resources like CPU, virtual memory and swap memory information.
+
+    Returns:
+        Dict[str, dict]:
+        Returns a nested dictionary.
+    """
+    return dict(
+        cpu_usage=psutil.cpu_percent(interval=2, percpu=True),
+        memory_info=psutil.virtual_memory()._asdict(),
+        swap_info=psutil.swap_memory()._asdict(),
+    )
 
 
 def format_nos(input_: float) -> int | float:

@@ -1,5 +1,7 @@
+import asyncio
 import logging
 import subprocess
+import time
 from http import HTTPStatus
 from typing import List, Optional
 
@@ -8,6 +10,7 @@ from fastapi import Depends, Header, Request
 from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.websockets import WebSocket, WebSocketDisconnect
 from pydantic import PositiveFloat, PositiveInt
 
 from pyninja import (
@@ -327,6 +330,27 @@ async def health():
         Returns a health check response with status code 200.
     """
     raise exceptions.APIResponse(status_code=HTTPStatus.OK, detail=HTTPStatus.OK.phrase)
+
+
+async def websocket_endpoint(websocket: WebSocket):
+    """Websocket endpoint to fetch live system resource usage.
+
+    Args:
+        websocket: Reference to the websocket object.
+    """
+    await websocket.accept()
+    refresh_time = time.time()
+    data = squire.system_resources()
+    while True:
+        if time.time() - refresh_time > 3:
+            refresh_time = time.time()
+            LOGGER.debug("Fetching new charts")
+            data = squire.system_resources()
+        try:
+            await websocket.send_json(data)
+            await asyncio.sleep(1)
+        except WebSocketDisconnect:
+            break
 
 
 def get_all_routes() -> List[APIRoute]:

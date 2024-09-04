@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Monitor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style id="main-css" disabled>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+        .box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 30%;
+            text-align: center;
+        }
+        .progress {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 5px;
+            overflow: hidden;
+            transition: background-color 0.5s ease;
+        }
+        .progress-bar {
+            height: 25px;
+            transition: width 0.5s ease, background-color 0.5s ease;
+            width: 0%;
+        }
+        .progress-bar-green {
+            background-color: #4caf50;
+        }
+        .progress-bar-yellow {
+            background-color: #ffeb3b;
+        }
+        .progress-bar-red {
+            background-color: #f44336;
+        }
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 80%;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+        canvas {
+            width: 100% !important;
+            height: inherit !important;
+            max-height: 100% !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>System Monitor</h1>
+    <div class="container">
+        <div class="box">
+            <h3>CPU Usage</h3>
+            <div class="cpu-box" id="cpuUsageContainer">
+                <!-- CPU Usage will be dynamically added here -->
+            </div>
+        </div>
+        <div class="box">
+            <h3>Memory and Swap Usage</h3>
+            <div class="progress">
+                <div id="memoryUsage" class="progress-bar"></div>
+            </div>
+            <p id="memoryUsageText">Memory: 0%</p>
+            <div class="progress">
+                <div id="swapUsage" class="progress-bar"></div>
+            </div>
+            <p id="swapUsageText">Swap: 0%</p>
+        </div>
+        <div class="box">
+            <h4>Memory Usage</h4>
+            <div class="chart-container">
+                <canvas id="memoryChart"></canvas>
+            </div>
+            <h4>Swap Usage</h4>
+            <div class="chart-container">
+                <canvas id="swapChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            document.getElementById('main-css').disabled = false;
+        });
+
+        const ws = new WebSocket("ws://localhost:8080/ws/system");
+
+        let memoryChartInstance = null;
+        let swapChartInstance = null;
+
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+
+            // Update CPU usage
+            const cpuUsage = data.cpu_usage;
+            const cpuContainer = document.getElementById('cpuUsageContainer');
+            cpuContainer.innerHTML = ''; // Clear previous content
+            cpuUsage.forEach((usage, index) => {
+                const cpuDiv = document.createElement('div');
+                cpuDiv.innerHTML = `
+                    <strong>CPU ${index}:</strong> ${usage}%
+                    <div class="progress">
+                        <div id="cpu${index}" class="progress-bar"></div>
+                    </div>
+                `;
+                cpuContainer.appendChild(cpuDiv);
+                updateProgressBar(`cpu${index}`, usage);
+            });
+
+            // Update Memory and Swap usage
+            const memoryInfo = data.memory_info;
+            const memoryUsage = (memoryInfo.used / memoryInfo.total) * 100;
+            document.getElementById('memoryUsage').style.width = memoryUsage.toFixed(2) + '%';
+            document.getElementById('memoryUsageText').innerText = `Memory: ${memoryUsage.toFixed(2)}%`;
+            updateProgressBar('memoryUsage', memoryUsage);
+
+            const swapInfo = data.swap_info;
+            const swapUsage = (swapInfo.used / swapInfo.total) * 100;
+            document.getElementById('swapUsage').style.width = swapUsage.toFixed(2) + '%';
+            document.getElementById('swapUsageText').innerText = `Swap: ${swapUsage.toFixed(2)}%`;
+            updateProgressBar('swapUsage', swapUsage);
+
+            // Create/update pie charts
+            if (memoryChartInstance) {
+                memoryChartInstance.data.datasets[0].data = [memoryInfo.used, memoryInfo.total - memoryInfo.used];
+                memoryChartInstance.update();
+            } else {
+                const memoryChart = document.getElementById('memoryChart').getContext('2d');
+                memoryChartInstance = new Chart(memoryChart, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Used', 'Free'],
+                        datasets: [{
+                            label: 'Memory Usage',
+                            data: [memoryInfo.used, memoryInfo.total - memoryInfo.used],
+                            backgroundColor: ['#FF6384', '#36A2EB']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        const value = tooltipItem.raw;
+                                        const formattedValue = formatBytes(value);
+                                        return `${tooltipItem.label}: ${formattedValue}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (swapChartInstance) {
+                swapChartInstance.data.datasets[0].data = [swapInfo.used, swapInfo.total - swapInfo.used];
+                swapChartInstance.update();
+            } else {
+                const swapChart = document.getElementById('swapChart').getContext('2d');
+                swapChartInstance = new Chart(swapChart, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Used', 'Free'],
+                        datasets: [{
+                            label: 'Swap Usage',
+                            data: [swapInfo.used, swapInfo.total - swapInfo.used],
+                            backgroundColor: ['#FFCE56', '#E7E9ED']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        const value = tooltipItem.raw;
+                                        const formattedValue = formatBytes(value);
+                                        return `${tooltipItem.label}: ${formattedValue}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        };
+
+        function updateProgressBar(id, percentage) {
+            const bar = document.getElementById(id);
+            bar.style.width = percentage + '%';
+
+            // Remove old color classes
+            bar.classList.remove('progress-bar-green', 'progress-bar-yellow', 'progress-bar-red');
+
+            // Add new color class based on percentage
+            if (percentage <= 40) {
+                bar.classList.add('progress-bar-green');
+            } else if (percentage <= 80) {
+                bar.classList.add('progress-bar-yellow');
+            } else {
+                bar.classList.add('progress-bar-red');
+            }
+        }
+
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+            else if (bytes < 1073741824) return (bytes / 1048576).toFixed(2) + ' MB';
+            else return (bytes / 1073741824).toFixed(2) + ' GB';
+        }
+    </script>
+</body>
+</html>

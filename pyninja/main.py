@@ -37,6 +37,7 @@ def start(**kwargs) -> None:
         description="Lightweight OS-agnostic service monitoring API",
         version=pyninja.version,
     )
+    app.add_websocket_route(path="/ws/system", route=routers.websocket_endpoint)
     kwargs = dict(
         host=models.env.ninja_host,
         port=models.env.ninja_port,

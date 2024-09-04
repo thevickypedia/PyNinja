@@ -17,3 +17,4 @@ logging.ini
 *.db
 
 !samples/*
+discard/
