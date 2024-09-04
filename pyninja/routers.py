@@ -1,15 +1,22 @@
 import asyncio
 import logging
+import secrets
 import subprocess
 import time
 from http import HTTPStatus
 from typing import List, Optional
 
+import jinja2
 import psutil
 from fastapi import Depends, Header, Request
-from fastapi.responses import RedirectResponse
-from fastapi.routing import APIRoute
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.routing import APIRoute, APIWebSocketRoute
+from fastapi.security import (
+    HTTPAuthorizationCredentials,
+    HTTPBasic,
+    HTTPBasicCredentials,
+    HTTPBearer,
+)
 from fastapi.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 from pydantic import PositiveFloat, PositiveInt
 
@@ -25,6 +32,7 @@ from pyninja import (
 )
 
 LOGGER = logging.getLogger("uvicorn.default")
+BASIC_AUTH = HTTPBasic()
 BEARER_AUTH = HTTPBearer()
 
 
@@ -332,12 +340,59 @@ async def health():
     raise exceptions.APIResponse(status_code=HTTPStatus.OK, detail=HTTPStatus.OK.phrase)
 
 
+def verify_monitor_creds(credentials: HTTPBasicCredentials = Depends(BASIC_AUTH)):
+    """Verify credentials for monitoring page.
+
+    Args:
+        credentials: Basic authentication object.
+    """
+    username = models.env.monitor_user and secrets.compare_digest(
+        credentials.username, models.env.monitor_user
+    )
+    password = models.env.monitor_pass and secrets.compare_digest(
+        credentials.password, models.env.monitor_pass
+    )
+    if username and password:
+        return credentials.username
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.UNAUTHORIZED,
+        detail="Incorrect username or password",
+        headers={"WWW-Authenticate": "Basic"},
+    )
+
+
+async def monitor():
+    """Renders the UI for monitoring page.
+
+    Returns:
+        HTMLResponse:
+        Returns an HTML response templated using Jinja2.
+    """
+    with open("index.html") as file:
+        template_file = file.read()
+    template = jinja2.Template(template_file)
+    ws_settings = models.WSSettings()
+    rendered = template.render(
+        HOST=models.env.ninja_host,
+        PORT=models.env.ninja_port,
+        DEFAULT_CPU_INTERVAL=ws_settings.cpu_interval,
+        DEFAULT_REFRESH_INTERVAL=ws_settings.refresh_interval,
+    )
+    return HTMLResponse(rendered)
+
+
 async def websocket_endpoint(websocket: WebSocket):
     """Websocket endpoint to fetch live system resource usage.
 
     Args:
         websocket: Reference to the websocket object.
     """
+    credentials = await BASIC_AUTH(websocket)
+    try:
+        verify_monitor_creds(credentials)
+    except exceptions.APIResponse:
+        await websocket.close(code=1008)
+        return
     await websocket.accept()
     refresh_time = time.time()
     ws_settings = models.WSSettings()
@@ -392,6 +447,13 @@ def get_all_routes() -> List[APIRoute]:
         APIRoute(
             path="/health", endpoint=health, methods=["GET"], include_in_schema=False
         ),
+        APIRoute(
+            path="/monitor",
+            endpoint=monitor,
+            methods=["GET"],
+            dependencies=[Depends(verify_monitor_creds)] + dependencies,
+        ),
+        APIWebSocketRoute(path="/ws/system", endpoint=websocket_endpoint),
         APIRoute(
             path="/get-ip",
             endpoint=get_ip,

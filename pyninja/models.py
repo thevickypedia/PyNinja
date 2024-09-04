@@ -173,6 +173,8 @@ class EnvConfig(BaseSettings):
     workers: PositiveInt = 1
     remote_execution: bool = False
     api_secret: str | None = None
+    monitor_user: str | None = None
+    monitor_pass: str | None = None
     service_manager: FilePath | ServiceManager = get_service_manager()
     database: str = Field("auth.db", pattern=".*.db$")
     rate_limit: RateLimit | List[RateLimit] = []

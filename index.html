@@ -76,10 +76,10 @@
             </div>
             <br>
             <h3>Set CPU Interval (seconds)</h3>
-            <input type="number" id="cpuInterval" min="1" value="2">
+            <input type="number" id="cpuInterval" min="1" value="{{ DEFAULT_CPU_INTERVAL }}">
             <button class="tooltip-button" title="Used to compare CPU times elapsed before and after interval." id="setCPUIntervalBtn">Update</button>
             <h3>Set Refresh Interval (seconds)</h3>
-            <input type="number" id="refreshInterval" min="1" value="2">
+            <input type="number" id="refreshInterval" min="1" value="{{ DEFAULT_REFRESH_INTERVAL }}">
             <button class="tooltip-button" title="Frequency to query system resources." id="setRefreshIntervalBtn">Update</button>
         </div>
         <div class="box">
@@ -106,7 +106,7 @@
     </div>
 
     <script>
-        const ws = new WebSocket("ws://localhost:8080/ws/system");
+        const ws = new WebSocket("ws://{{ HOST }}:{{ PORT }}/ws/system");
 
         let memoryChartInstance = null;
         let swapChartInstance = null;
