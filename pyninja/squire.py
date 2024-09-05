@@ -1,6 +1,7 @@
 import json
 import logging
 import math
+import secrets
 import os
 import pathlib
 import re
@@ -194,3 +195,13 @@ def load_env(**kwargs) -> EnvConfig:
         file_env = {}
     merged_env = {**file_env, **kwargs}
     return EnvConfig(**merged_env)
+
+
+def keygen() -> str:
+    """Generate session token from secrets module, so that users are forced to log in when the server restarts.
+
+    Returns:
+        str:
+        Returns a URL safe 64-bit token.
+    """
+    return secrets.token_urlsafe(64)

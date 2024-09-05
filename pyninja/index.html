@@ -106,6 +106,12 @@
     </div>
 
     <script>
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+        const token = getCookie('session_token');
         const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
         const wsHost = window.location.host;
         const ws = new WebSocket(`${wsProtocol}://${wsHost}/ws/system`);

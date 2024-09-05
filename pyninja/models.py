@@ -132,9 +132,13 @@ class WSSettings(BaseModel):
 
     """
 
+    client_auth: Dict[str, str] = {}
     template: FilePath = os.path.join(pathlib.Path(__file__).parent, "index.html")
     cpu_interval: PositiveInt = 3
     refresh_interval: PositiveInt = 5
+
+
+ws_settings = WSSettings()
 
 
 def get_service_manager() -> ServiceManager:
