@@ -1,12 +1,36 @@
 import logging
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse, RedirectResponse
 
 import pyninja
-from pyninja import models, routers, squire
+from pyninja import models, routers, squire, monitor
 
 LOGGER = logging.getLogger("uvicorn.default")
+
+
+async def redirect_exception_handler(request: Request,
+                                     exception: monitor.config.RedirectException) -> JSONResponse:
+    """Custom exception handler to handle redirect.
+
+    Args:
+        request: Takes the ``Request`` object as an argument.
+        exception: Takes the ``RedirectException`` object inherited from ``Exception`` as an argument.
+
+    Returns:
+        JSONResponse:
+        Returns the JSONResponse with content, status code and cookie.
+    """
+    LOGGER.debug("Exception headers: %s", request.headers)
+    LOGGER.debug("Exception cookies: %s", request.cookies)
+    if request.url.path == monitor.config.static.login_endpoint:
+        response = JSONResponse(content={"redirect_url": exception.location}, status_code=200)
+    else:
+        response = RedirectResponse(url=exception.location)
+    if exception.detail:
+        response.set_cookie("detail", exception.detail.upper(), httponly=True, samesite="strict")
+    return response
 
 
 def start(**kwargs) -> None:
@@ -36,6 +60,10 @@ def start(**kwargs) -> None:
         title="PyNinja",
         description="Lightweight OS-agnostic service monitoring API",
         version=pyninja.version,
+    )
+    app.add_exception_handler(
+        exc_class_or_status_code=monitor.config.RedirectException,
+        handler=redirect_exception_handler
     )
     kwargs = dict(
         host=models.env.ninja_host,

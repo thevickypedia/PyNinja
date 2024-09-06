@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Monitor</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>PyNinja - System Monitor</title>
+    <meta property="og:type" content="SystemMonitor">
+    <meta name="keywords" content="Python, Monitor, fastapi, JavaScript, HTML, CSS">
+    <meta name="author" content="Vignesh Rao">
+    <link property="og:image" rel="icon" href="https://thevickypedia.github.io/open-source/images/logo/fastapi.ico">
+    <link property="og:image" rel="apple-touch-icon" href="https://thevickypedia.github.io/open-source/images/logo/fastapi.png">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style id="main-css" disabled>
         body {
@@ -76,10 +81,10 @@
             </div>
             <br>
             <h3>Set CPU Interval (seconds)</h3>
-            <input type="number" id="cpuInterval" min="1" value="{{ DEFAULT_CPU_INTERVAL }}">
+            <input type="number" id="cpuInterval" min="1" value="{{ default_cpu_interval }}">
             <button class="tooltip-button" title="Used to compare CPU times elapsed before and after interval." id="setCPUIntervalBtn">Update</button>
             <h3>Set Refresh Interval (seconds)</h3>
-            <input type="number" id="refreshInterval" min="1" value="{{ DEFAULT_REFRESH_INTERVAL }}">
+            <input type="number" id="refreshInterval" min="1" value="{{ default_refresh_interval }}">
             <button class="tooltip-button" title="Frequency to query system resources." id="setRefreshIntervalBtn">Update</button>
         </div>
         <div class="box">

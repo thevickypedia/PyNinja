@@ -1,10 +1,9 @@
-import os
 import pathlib
 import platform
 import re
 import socket
 import sqlite3
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any, Dict, List, Set, Tuple, Optional
 
 from pydantic import (
     BaseModel,
@@ -132,7 +131,6 @@ class WSSettings(BaseModel):
 
     """
 
-    template: FilePath = os.path.join(os.path.dirname(__file__), "index.html")
     cpu_interval: PositiveInt = 3
     refresh_interval: PositiveInt = 5
 
@@ -147,6 +145,7 @@ class WSSession(BaseModel):
 
     """
 
+    invalid: Dict[str, int] = {}
     client_auth: Dict[str, Dict[str, int]] = {}
 
 
