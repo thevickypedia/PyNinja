@@ -11,7 +11,8 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
     <link property="og:image" rel="icon" href="https://thevickypedia.github.io/open-source/images/logo/fastapi.ico">
-    <link property="og:image" rel="apple-touch-icon" href="https://thevickypedia.github.io/open-source/images/logo/fastapi.png">
+    <link property="og:image" rel="apple-touch-icon"
+          href="https://thevickypedia.github.io/open-source/images/logo/fastapi.png">
     <!-- Font Awesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
@@ -79,6 +80,16 @@
             background-color: #494949;
         }
 
+        footer {
+            bottom: 10px;
+            position: fixed;
+            width: 100%;
+            color: #fff;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: small;
+        }
+
     </style>
     <noscript>
         <style>
@@ -134,6 +145,7 @@
             alert("ERROR: Username and password are required to authenticate your request!");
             return false;
         }
+
         async function ConvertStringToHex(str) {
             let arr = [];
             for (let i = 0; i < str.length; i++) {
@@ -141,6 +153,7 @@
             }
             return "\\u" + arr.join("\\u");
         }
+
         async function CalculateHash(username, password, timestamp) {
             const message = username + password + timestamp;
             const encoder = new TextEncoder();
@@ -157,6 +170,7 @@
                 return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
             }
         }
+
         let hex_user = await ConvertStringToHex(username);
         let hex_pass = await ConvertStringToHex(password);
         let timestamp = Math.round(new Date().getTime() / 1000);
@@ -183,7 +197,7 @@
                     console.log(data);
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 console.error(`Status: ${textStatus}, Error: ${errorThrown}`);
                 if (jqXHR.hasOwnProperty("responseJSON")) {
                     alert(jqXHR.responseJSON.detail);
@@ -195,4 +209,10 @@
     }
 
 </script>
+<footer>
+    <div class="footer">
+        PyNinja - {{ version }}<br>
+        <a href="https://github.com/thevickypedia/PyNinja">https://github.com/thevickypedia/PyNinja</a>
+    </div>
+</footer>
 </html>

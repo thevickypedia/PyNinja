@@ -7,7 +7,8 @@
     <meta name="keywords" content="Python, Monitor, fastapi, JavaScript, HTML, CSS">
     <meta name="author" content="Vignesh Rao">
     <link property="og:image" rel="icon" href="https://thevickypedia.github.io/open-source/images/logo/fastapi.ico">
-    <link property="og:image" rel="apple-touch-icon" href="https://thevickypedia.github.io/open-source/images/logo/fastapi.png">
+    <link property="og:image" rel="apple-touch-icon"
+          href="https://thevickypedia.github.io/open-source/images/logo/fastapi.png">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <style>
         img {
@@ -30,6 +31,16 @@
 
         body {
             background-color: #151515;
+        }
+
+        footer {
+            bottom: 10px;
+            position: fixed;
+            width: 100%;
+            color: #fff;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: small;
         }
     </style>
     <noscript>
@@ -57,14 +68,20 @@
 <h3>{{ detail }}</h3>
 <p>
     <img src="https://thevickypedia.github.io/open-source/images/gif/blended_fusion.gif"
-        onerror="this.src='https://vigneshrao.com/open-source/images/gif/blended_fusion.gif'"
-        width="200" height="200" alt="Image" class="center">
+         onerror="this.src='https://vigneshrao.com/open-source/images/gif/blended_fusion.gif'"
+         width="200" height="200" alt="Image" class="center">
 </p>
 {% if show_login %}
-    <button style="text-align:center" onClick="window.location.href = '/monitor';">LOGIN</button>
+<button style="text-align:center" onClick="window.location.href = '/monitor';">LOGIN</button>
 {% else %}
-    <h3>Please close the session window</h3>
+<h3>Please close the session window</h3>
 {% endif %}
 <h4>Click <a href="https://vigneshrao.com/contact">ME</a> to reach out.</h4>
 </body>
+<footer>
+    <div class="footer">
+        PyNinja - {{ version }}<br>
+        <a href="https://github.com/thevickypedia/PyNinja">https://github.com/thevickypedia/PyNinja</a>
+    </div>
+</footer>
 </html>

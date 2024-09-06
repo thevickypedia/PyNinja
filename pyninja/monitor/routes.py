@@ -7,6 +7,7 @@ from fastapi import Cookie, Header, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
+import pyninja
 from pyninja import exceptions, models, monitor, squire
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -28,6 +29,7 @@ async def error_endpoint(request: Request) -> HTMLResponse:
             context={
                 "request": request,
                 "signin": monitor.config.static.login_endpoint,
+                "version": f"v{pyninja.version}",
             },
         )
     )
@@ -57,6 +59,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
                 "detail": "Session Expired",
                 "signin": monitor.config.static.login_endpoint,
                 "show_login": True,
+                "version": f"v{pyninja.version}",
             },
         )
     return await monitor.config.clear_session(response)
@@ -120,6 +123,7 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
             context={
                 "request": request,
                 "signin": monitor.config.static.login_endpoint,
+                "version": f"v{pyninja.version}",
             },
         )
 

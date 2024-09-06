@@ -8,6 +8,7 @@ from typing import Dict, List, NoReturn, Union
 from fastapi import Request, status
 from fastapi.responses import HTMLResponse
 
+import pyninja
 from pyninja import exceptions, models, monitor, squire
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -133,6 +134,7 @@ async def session_error(
             "request": request,
             "signin": monitor.config.static.login_endpoint,
             "reason": error.detail,
+            "version": f"v{pyninja.version}",
         },
     )
 

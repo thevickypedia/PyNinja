@@ -7,7 +7,8 @@
     <meta name="keywords" content="Python, Monitor, fastapi, JavaScript, HTML, CSS">
     <meta name="author" content="Vignesh Rao">
     <link property="og:image" rel="icon" href="https://thevickypedia.github.io/open-source/images/logo/fastapi.ico">
-    <link property="og:image" rel="apple-touch-icon" href="https://thevickypedia.github.io/open-source/images/logo/fastapi.png">
+    <link property="og:image" rel="apple-touch-icon"
+          href="https://thevickypedia.github.io/open-source/images/logo/fastapi.png">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <style>
         img {
@@ -15,19 +16,31 @@
             margin-left: auto;
             margin-right: auto;
         }
-        :is(h1, h2, h3, h4, h5, h6)
-        {
+
+        :is(h1, h2, h3, h4, h5, h6) {
             text-align: center;
             color: #F0F0F0;
             font-family: 'Courier New', sans-serif;
         }
+
         button {
             width: 100px;
             margin: 0 auto;
             display: block;
         }
+
         body {
             background-color: #151515;
+        }
+
+        footer {
+            bottom: 10px;
+            position: fixed;
+            width: 100%;
+            color: #fff;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: small;
         }
     </style>
     <noscript>
@@ -55,13 +68,26 @@
 <h3>USER ERROR - REPLACE USER</h3>
 <p>
     <img src="https://thevickypedia.github.io/open-source/images/gif/lockscape.gif"
-        onerror="this.src='https://vigneshrao.com/open-source/images/gif/lockscape.gif'"
-        width="200" height="170" alt="Image" class="center">
+         onerror="this.src='https://vigneshrao.com/open-source/images/gif/lockscape.gif'"
+         width="200" height="170" alt="Image" class="center">
 </p>
 <button style="text-align:center" onClick="window.location.href = '/monitor';">LOGIN</button>
 <br>
 <button style="text-align:center" onClick="alert('Forgot Password?\n\nRelax and try to remember your password.');">HELP
 </button>
 <h4>Click <a href="https://vigneshrao.com/contact">HERE</a> to reach out.</h4>
+<footer>
+    <div class="footer">
+        PyNinja - System Monitor
+        Version: {{ version }}
+        <a href="https://github.com/thevickypedia/PyNinja">https://github.com/thevickypedia/PyNinja</a>
+    </div>
+</footer>
 </body>
+<footer>
+    <div class="footer">
+        PyNinja - {{ version }}<br>
+        <a href="https://github.com/thevickypedia/PyNinja">https://github.com/thevickypedia/PyNinja</a>
+    </div>
+</footer>
 </html>
