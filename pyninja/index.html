@@ -106,12 +106,6 @@
     </div>
 
     <script>
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-        }
-        const token = getCookie('session_token');
         const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
         const wsHost = window.location.host;
         const ws = new WebSocket(`${wsProtocol}://${wsHost}/ws/system`);
@@ -120,8 +114,15 @@
         let swapChartInstance = null;
 
         ws.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-
+            let data;
+            try {
+                data = JSON.parse(event.data);
+            } catch (error) {
+                console.warn('Error parsing JSON data:', error);
+                alert(`${event.data}. Please refresh the page.`);
+                window.location.href = `${window.location.origin}/logout`;
+                return;
+            }
             // Update CPU usage
             const cpuUsage = data.cpu_usage;
             const cpuContainer = document.getElementById('cpuUsageContainer');

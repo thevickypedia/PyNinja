@@ -132,13 +132,25 @@ class WSSettings(BaseModel):
 
     """
 
-    client_auth: Dict[str, str] = {}
-    template: FilePath = os.path.join(pathlib.Path(__file__).parent, "index.html")
+    template: FilePath = os.path.join(os.path.dirname(__file__), "index.html")
     cpu_interval: PositiveInt = 3
     refresh_interval: PositiveInt = 5
 
 
 ws_settings = WSSettings()
+
+
+class WSSession(BaseModel):
+    """Object to store websocket session information.
+
+    >>> WSSession
+
+    """
+
+    client_auth: Dict[str, Dict[str, int]] = {}
+
+
+ws_session = WSSession()
 
 
 def get_service_manager() -> ServiceManager:
@@ -179,8 +191,9 @@ class EnvConfig(BaseSettings):
     workers: PositiveInt = 1
     remote_execution: bool = False
     api_secret: str | None = None
-    monitor_user: str | None = None
-    monitor_pass: str | None = None
+    monitor_username: str | None = None
+    monitor_password: str | None = None
+    monitor_session: PositiveInt = 10
     service_manager: FilePath | ServiceManager = get_service_manager()
     database: str = Field("auth.db", pattern=".*.db$")
     rate_limit: RateLimit | List[RateLimit] = []

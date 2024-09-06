@@ -1,14 +1,17 @@
+import ast
 import asyncio
+import base64
 import logging
 import secrets
 import subprocess
 import time
+from datetime import datetime
 from http import HTTPStatus
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import jinja2
 import psutil
-from fastapi import Depends, Header, Request, Response
+from fastapi import Depends, Header, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from fastapi.security import (
@@ -47,7 +50,6 @@ async def get_ip(
         request: Reference to the FastAPI request object.
         public: Boolean flag to get the public IP address.
         apikey: API Key to authenticate the request.
-        token: API secret to authenticate the request.
 
     **Raises:**
 
@@ -84,7 +86,7 @@ async def get_cpu(
     await auth.level_1(request, apikey)
     if per_cpu:
         cpu_percentages = psutil.cpu_percent(interval=interval, percpu=True)
-        usage = {f"cpu{i+1}": percent for i, percent in enumerate(cpu_percentages)}
+        usage = {f"cpu{i + 1}": percent for i, percent in enumerate(cpu_percentages)}
     else:
         usage = {"cpu": psutil.cpu_percent(interval=interval, percpu=False)}
     raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=usage)
@@ -341,19 +343,19 @@ async def health():
 
 
 def verify_monitor_creds(
-    request: Request,
-    credentials: HTTPBasicCredentials = Depends(BASIC_AUTH)
+    request: Request, credentials: HTTPBasicCredentials = Depends(BASIC_AUTH)
 ):
     """Verify credentials for monitoring page.
 
     Args:
+        request: Reference to the FastAPI request object.
         credentials: Basic authentication object.
     """
-    username = models.env.monitor_user and secrets.compare_digest(
-        credentials.username, models.env.monitor_user
+    username = models.env.monitor_username and secrets.compare_digest(
+        credentials.username, models.env.monitor_username
     )
-    password = models.env.monitor_pass and secrets.compare_digest(
-        credentials.password, models.env.monitor_pass
+    password = models.env.monitor_password and secrets.compare_digest(
+        credentials.password, models.env.monitor_password
     )
     if username and password:
         LOGGER.info(
@@ -364,26 +366,101 @@ def verify_monitor_creds(
         )
         if user_agent := request.headers.get("user-agent"):
             LOGGER.info("User agent: %s", user_agent)
-        client_token = {"username": credentials.username, "token": squire.keygen(), "timestamp": int(time.time())}
-        auth_payload = str(client_token).encode("utf-8")
-        expiration = int(time.time()) + 3_600  # Set to 1 hour
-        response = Response()
-        response.set_cookie(key="session_token",
-                            value=auth_payload,
-                            samesite="strict",
-                            path="/",
-                            httponly=False,
-                            expires=expiration)
-        return response
-    raise exceptions.APIResponse(
-        status_code=HTTPStatus.UNAUTHORIZED,
-        detail="Incorrect username or password",
-        headers={"WWW-Authenticate": "Basic"},
+    else:
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+
+
+def generate_cookie(request: Request) -> Dict[str, str | bool | int]:
+    """Generate a cookie for monitoring page.
+
+    Args:
+        request: Reference to the FastAPI request object.
+
+    Returns:
+        Dict[str, str | bool | int]:
+        Returns a dictionary with cookie details
+    """
+    client_token = dict(token=squire.keygen(), timestamp=int(time.time()))
+    models.ws_session.client_auth[request.client.host] = client_token
+    encoded_token = str(client_token).encode("ascii")
+    auth_payload = base64.b64encode(encoded_token).decode("ascii")
+    expiration = int(time.time()) + models.env.monitor_session
+    return dict(
+        key="session_token",
+        value=auth_payload,
+        samesite="strict",
+        path="/",
+        httponly=False,  # Set to False explicitly, for WebSocket
+        expires=expiration,
     )
 
 
-async def monitor():
+def validate_session(host: str, cookie_string: str) -> bool:
+    """Validate the session token.
+
+    Args:
+        host: Hostname from the request.
+        cookie_string: Session token from the cookie.
+
+    Returns:
+        bool:
+        Returns True if the session token is valid.
+    """
+    if not cookie_string:
+        LOGGER.warning("No session token found for %s", host)
+        return False
+    try:
+        decoded_payload = base64.b64decode(cookie_string)
+        decoded_str = decoded_payload.decode("ascii")
+        original_dict = ast.literal_eval(decoded_str)
+        assert (
+            models.ws_session.client_auth.get(host) == original_dict
+        ), f"{original_dict} != {models.ws_session.client_auth.get(host)}"
+        poached = datetime.fromtimestamp(
+            original_dict.get("timestamp") + models.env.monitor_session
+        )
+        LOGGER.info(
+            "Session token validated for %s until %s",
+            host,
+            poached.strftime("%Y-%m-%d %H:%M:%S"),
+        )
+        return True
+    except (KeyError, ValueError, TypeError) as error:
+        LOGGER.critical(error)
+    except AssertionError as error:
+        LOGGER.error("Session token mismatch: %s", error)
+    return False
+
+
+async def logout(request: Request):
+    """Logout the user from the monitoring page.
+
+    Args:
+        request: Reference to the FastAPI request object.
+
+    Returns:
+        RedirectResponse:
+        Redirects the user to the monitoring page.
+    """
+    # todo:
+    #  - This is a joke, replace the whole thing with proper session management
+    #  - Remove HTTPBasic auth
+    models.ws_session.client_auth.pop(request.client.host, None)
+    response = RedirectResponse("/monitor")
+    response.delete_cookie("session_token")
+    response.headers["authorization"] = "Basic"
+    return response
+
+
+async def monitor(request: Request):
     """Renders the UI for monitoring page.
+
+    Args:
+        request: Reference to the FastAPI request object.
 
     Returns:
         HTMLResponse:
@@ -398,7 +475,10 @@ async def monitor():
         DEFAULT_CPU_INTERVAL=models.ws_settings.cpu_interval,
         DEFAULT_REFRESH_INTERVAL=models.ws_settings.refresh_interval,
     )
-    return HTMLResponse(rendered)
+    response = HTMLResponse(rendered)
+    cookie_data = generate_cookie(request)
+    response.set_cookie(**cookie_data)
+    return response
 
 
 async def websocket_endpoint(websocket: WebSocket):
@@ -408,10 +488,19 @@ async def websocket_endpoint(websocket: WebSocket):
         websocket: Reference to the websocket object.
     """
     await websocket.accept()
-    print(websocket.cookies)
-    print(websocket.headers.get("cookie"))
+    session_token = websocket.cookies.get("session_token") or websocket.headers.get(
+        "cookie", {}
+    ).get("session_token")
+    if not validate_session(websocket.client.host, session_token):
+        await websocket.send_text("Unauthorized")
+        await websocket.close()
+        return
     refresh_time = time.time()
-    LOGGER.info("Intervals: {'CPU': %s, 'refresh': %s}", models.ws_settings.cpu_interval, models.ws_settings.refresh_interval)
+    LOGGER.info(
+        "Intervals: {'CPU': %s, 'refresh': %s}",
+        models.ws_settings.cpu_interval,
+        models.ws_settings.refresh_interval,
+    )
     data = squire.system_resources(models.ws_settings.cpu_interval)
     while True:
         if websocket.application_state == WebSocketState.CONNECTED:
@@ -426,7 +515,8 @@ async def websocket_endpoint(websocket: WebSocket):
                 elif msg.startswith("cpu_interval"):
                     models.ws_settings.cpu_interval = int(msg.split(":")[1].strip())
                     LOGGER.info(
-                        "Updating CPU interval to %s seconds", models.ws_settings.cpu_interval
+                        "Updating CPU interval to %s seconds",
+                        models.ws_settings.cpu_interval,
                     )
                 else:
                     LOGGER.error("Invalid WS message received: %s", msg)
@@ -435,7 +525,17 @@ async def websocket_endpoint(websocket: WebSocket):
                 pass
             except WebSocketDisconnect:
                 break
-        if time.time() - refresh_time > models.ws_settings.refresh_interval:
+        now = time.time()
+        if (
+            now
+            - models.ws_session.client_auth.get(websocket.client.host).get("timestamp")
+            > models.env.monitor_session
+        ):
+            LOGGER.info("Session expired for %s", websocket.client.host)
+            await websocket.send_text("Session Expired")
+            await websocket.close()
+            break
+        if now - refresh_time > models.ws_settings.refresh_interval:
             refresh_time = time.time()
             LOGGER.debug("Fetching new charts")
             data = squire.system_resources(models.ws_settings.cpu_interval)
@@ -467,6 +567,12 @@ def get_all_routes() -> List[APIRoute]:
             endpoint=monitor,
             methods=["GET"],
             dependencies=[Depends(verify_monitor_creds)] + dependencies,
+        ),
+        APIRoute(
+            path="/logout",
+            endpoint=logout,
+            methods=["GET"],
+            dependencies=dependencies,
         ),
         APIWebSocketRoute(path="/ws/system", endpoint=websocket_endpoint),
         APIRoute(
