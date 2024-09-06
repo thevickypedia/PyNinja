@@ -65,6 +65,26 @@
 <section id="module-pyninja.main">
 <span id="pyninja-main"></span><h1>PyNinja - Main<a class="headerlink" href="#module-pyninja.main" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.main.redirect_exception_handler">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">redirect_exception_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.exceptions.RedirectException" title="pyninja.exceptions.RedirectException"><span class="pre">RedirectException</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JSONResponse</span></span></span><a class="headerlink" href="#pyninja.main.redirect_exception_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom exception handler to handle redirect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – Takes the <code class="docutils literal notranslate"><span class="pre">Request</span></code> object as an argument.</p></li>
+<li><p><strong>exception</strong> – Takes the <code class="docutils literal notranslate"><span class="pre">RedirectException</span></code> object inherited from <code class="docutils literal notranslate"><span class="pre">Exception</span></code> as an argument.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the JSONResponse with content, status code and cookie.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSONResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.main.start">
 <span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.main.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Starter function for the API, which uses uvicorn server as trigger.</p>
@@ -78,6 +98,10 @@
 <li><p><strong>workers</strong> – Number of workers for the uvicorn server.</p></li>
 <li><p><strong>remote_execution</strong> – Boolean flag to enable remote execution.</p></li>
 <li><p><strong>api_secret</strong> – Secret access key for running commands on server remotely.</p></li>
+<li><p><strong>monitor_username</strong> – Username to authenticate the monitoring page.</p></li>
+<li><p><strong>monitor_password</strong> – Password to authenticate the monitoring page.</p></li>
+<li><p><strong>monitor_session</strong> – Session timeout for the monitoring page.</p></li>
+<li><p><strong>service_manager</strong> – Service manager filepath to handle the service status requests.</p></li>
 <li><p><strong>database</strong> – FilePath to store the auth database that handles the authentication errors.</p></li>
 <li><p><strong>rate_limit</strong> – List of dictionaries with <code class="docutils literal notranslate"><span class="pre">max_requests</span></code> and <code class="docutils literal notranslate"><span class="pre">seconds</span></code> to apply as rate limit.</p></li>
 <li><p><strong>log_config</strong> – Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.</p></li>
@@ -367,102 +391,6 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pyninja.exceptions.APIResponse" title="pyninja.exceptions.APIResponse">APIResponse</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.routers.verify_monitor_creds">
-<span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">verify_monitor_creds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPBasicCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBasic)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.verify_monitor_creds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Verify credentials for monitoring page.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>request</strong> – Reference to the FastAPI request object.</p></li>
-<li><p><strong>credentials</strong> – Basic authentication object.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.routers.generate_cookie">
-<span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">generate_cookie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.routers.generate_cookie" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate a cookie for monitoring page.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>request</strong> – Reference to the FastAPI request object.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Returns a dictionary with cookie details</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict[str, str | bool | int]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.routers.validate_session">
-<span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">validate_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookie_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.routers.validate_session" title="Permalink to this definition">¶</a></dt>
-<dd><p>Validate the session token.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>host</strong> – Hostname from the request.</p></li>
-<li><p><strong>cookie_string</strong> – Session token from the cookie.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Returns True if the session token is valid.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.routers.logout">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.logout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Logout the user from the monitoring page.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>request</strong> – Reference to the FastAPI request object.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Redirects the user to the monitoring page.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>RedirectResponse</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.routers.monitor">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">monitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.monitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Renders the UI for monitoring page.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>request</strong> – Reference to the FastAPI request object.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Returns an HTML response templated using Jinja2.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>HTMLResponse</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.routers.websocket_endpoint">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">websocket_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">websocket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WebSocket</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.websocket_endpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Websocket endpoint to fetch live system resource usage.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>websocket</strong> – Reference to the websocket object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -780,6 +708,34 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 </div>
 </dd></dl>
 
+<dl class="py exception">
+<dt class="sig sig-object py" id="pyninja.exceptions.RedirectException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.exceptions.</span></span><span class="sig-name descname"><span class="pre">RedirectException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detail</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.exceptions.RedirectException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom <code class="docutils literal notranslate"><span class="pre">RedirectException</span></code> raised within the API since HTTPException doesn’t support returning HTML content.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">RedirectException</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p>RedirectException allows the API to redirect on demand in cases where returning is not a solution.</p></li>
+<li><p>There are alternatives to raise HTML content as an exception but none work with our use-case with JavaScript.</p></li>
+<li><p>This way of exception handling comes handy for many unexpected scenarios.</p></li>
+</ul>
+</div>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://fastapi.tiangolo.com/tutorial/handling-errors/#install-custom-exception-handlers">https://fastapi.tiangolo.com/tutorial/handling-errors/#install-custom-exception-handlers</a></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="pyninja.exceptions.SessionError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.exceptions.</span></span><span class="sig-name descname"><span class="pre">SessionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detail</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.exceptions.SessionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom exception class for session errors.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SessionError</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 <section id="models">
 <h1>Models<a class="headerlink" href="#models" title="Permalink to this heading">¶</a></h1>
@@ -855,11 +811,6 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">WSSettings</span>
 </pre></div>
 </div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.models.WSSettings.template">
-<span class="sig-name descname"><span class="pre">template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.WSSettings.template" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.models.WSSettings.cpu_interval">
 <span class="sig-name descname"><span class="pre">cpu_interval</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyninja.models.WSSettings.cpu_interval" title="Permalink to this definition">¶</a></dt>
@@ -1094,11 +1045,16 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyninja.models.WSSession">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">WSSession</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_auth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.models.WSSession" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">WSSession</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invalid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_auth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.models.WSSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object to store websocket session information.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">WSSession</span>
 </pre></div>
 </div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.WSSession.invalid">
+<span class="sig-name descname"><span class="pre">invalid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.models.WSSession.invalid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.models.WSSession.client_auth">
 <span class="sig-name descname"><span class="pre">client_auth</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.models.WSSession.client_auth" title="Permalink to this definition">¶</a></dt>
@@ -1123,7 +1079,7 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.models.WSSession.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'client_auth':</span> <span class="pre">FieldInfo(annotation=Dict[str,</span> <span class="pre">Dict[str,</span> <span class="pre">int]],</span> <span class="pre">required=False,</span> <span class="pre">default={})}</span></em><a class="headerlink" href="#pyninja.models.WSSession.model_fields" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'client_auth':</span> <span class="pre">FieldInfo(annotation=Dict[str,</span> <span class="pre">Dict[str,</span> <span class="pre">int]],</span> <span class="pre">required=False,</span> <span class="pre">default={}),</span> <span class="pre">'invalid':</span> <span class="pre">FieldInfo(annotation=Dict[str,</span> <span class="pre">int],</span> <span class="pre">required=False,</span> <span class="pre">default={})}</span></em><a class="headerlink" href="#pyninja.models.WSSession.model_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -1320,6 +1276,289 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </dd></dl>
 
 </section>
+<section id="pyninja-monitor">
+<h1>PyNinja - Monitor<a class="headerlink" href="#pyninja-monitor" title="Permalink to this heading">¶</a></h1>
+</section>
+<section id="id1">
+<h1>Authenticator<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
+<span class="target" id="module-pyninja.monitor.authenticator"></span><dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.authenticator.failed_auth_counter">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.authenticator.</span></span><span class="sig-name descname"><span class="pre">failed_auth_counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.monitor.authenticator.failed_auth_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keeps track of failed login attempts from each host, and redirects if failed for 3 or more times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> – Takes the <code class="docutils literal notranslate"><span class="pre">Request</span></code> object as an argument.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.authenticator.raise_error">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.authenticator.</span></span><span class="sig-name descname"><span class="pre">raise_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="headerlink" href="#pyninja.monitor.authenticator.raise_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises a 401 Unauthorized error in case of bad credentials.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.authenticator.extract_credentials">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.authenticator.</span></span><span class="sig-name descname"><span class="pre">extract_credentials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.monitor.authenticator.extract_credentials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the credentials from <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> headers and decode it before returning as a list of strings.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.authenticator.verify_login">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.authenticator.</span></span><span class="sig-name descname"><span class="pre">verify_login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.monitor.authenticator.verify_login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifies authentication and generates session token for each user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns a dictionary with the payload required to create the session token.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.authenticator.generate_cookie">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.authenticator.</span></span><span class="sig-name descname"><span class="pre">generate_cookie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth_payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.monitor.authenticator.generate_cookie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a cookie for monitoring page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>auth_payload</strong> – Authentication payload containing username and timestamp.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a dictionary with cookie details</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, str | bool | int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.authenticator.session_error">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.authenticator.</span></span><span class="sig-name descname"><span class="pre">session_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.exceptions.SessionError" title="pyninja.exceptions.SessionError"><span class="pre">SessionError</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">HTMLResponse</span></span></span><a class="headerlink" href="#pyninja.monitor.authenticator.session_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the session error page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – Reference to the FastAPI request object.</p></li>
+<li><p><strong>error</strong> – Session error message.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns an HTML response templated using Jinja2.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HTMLResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.authenticator.validate_session">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.authenticator.</span></span><span class="sig-name descname"><span class="pre">validate_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookie_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.monitor.authenticator.validate_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate the session token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> – Hostname from the request.</p></li>
+<li><p><strong>cookie_string</strong> – Session token from the cookie.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns True if the session token is valid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyninja.monitor.config.Static">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.config.</span></span><span class="sig-name descname"><span class="pre">Static</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.monitor.config.Static" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object to store static values.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Static</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.monitor.config.Static.login_endpoint">
+<span class="sig-name descname"><span class="pre">login_endpoint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.monitor.config.Static.login_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.monitor.config.Static.logout_endpoint">
+<span class="sig-name descname"><span class="pre">logout_endpoint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.monitor.config.Static.logout_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.monitor.config.Static.monitor_endpoint">
+<span class="sig-name descname"><span class="pre">monitor_endpoint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.monitor.config.Static.monitor_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<span class="target" id="module-pyninja.monitor.config"></span><dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.config.clear_session">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.config.</span></span><span class="sig-name descname"><span class="pre">clear_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTMLResponse</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">HTMLResponse</span></span></span><a class="headerlink" href="#pyninja.monitor.config.clear_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the session token from the response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>response</strong> – Takes the <code class="docutils literal notranslate"><span class="pre">Response</span></code> object as an argument.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the response object with the session token cleared.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.config.get_expiry">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.config.</span></span><span class="sig-name descname"><span class="pre">get_expiry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lease_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lease_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.monitor.config.get_expiry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get expiry datetime as string using max age.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lease_start</strong> – Time when the authentication was made.</p></li>
+<li><p><strong>lease_duration</strong> – Number of seconds until expiry.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the date and time of expiry in GMT.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyninja.monitor.routes">
+<span id="routes"></span><h1>Routes<a class="headerlink" href="#module-pyninja.monitor.routes" title="Permalink to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.routes.error_endpoint">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.routes.</span></span><span class="sig-name descname"><span class="pre">error_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">HTMLResponse</span></span></span><a class="headerlink" href="#pyninja.monitor.routes.error_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error endpoint for the monitoring page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> – Reference to the FastAPI request object.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns an HTML response templated using Jinja2.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HTMLResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.routes.logout_endpoint">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.routes.</span></span><span class="sig-name descname"><span class="pre">logout_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">HTMLResponse</span></span></span><a class="headerlink" href="#pyninja.monitor.routes.logout_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs out the user and clears the session token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> – Reference to the FastAPI request object.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirects to login page.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HTMLResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.routes.login_endpoint">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.routes.</span></span><span class="sig-name descname"><span class="pre">login_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JSONResponse</span></span></span><a class="headerlink" href="#pyninja.monitor.routes.login_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login endpoint for the monitoring page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns a JSONResponse object with a <code class="docutils literal notranslate"><span class="pre">session_token</span></code> and <code class="docutils literal notranslate"><span class="pre">redirect_url</span></code> set.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSONResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.routes.monitor_endpoint">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.routes.</span></span><span class="sig-name descname"><span class="pre">monitor_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Cookie(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.monitor.routes.monitor_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the UI for monitoring page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – Reference to the FastAPI request object.</p></li>
+<li><p><strong>session_token</strong> – Session token set after verifying username and password.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns an HTML response templated using Jinja2.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HTMLResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.routes.websocket_endpoint">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.routes.</span></span><span class="sig-name descname"><span class="pre">websocket_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">websocket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WebSocket</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Cookie(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.monitor.routes.websocket_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Websocket endpoint to fetch live system resource usage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>websocket</strong> – Reference to the websocket object.</p></li>
+<li><p><strong>session_token</strong> – Session token set after verifying username and password.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyninja.monitor.secure">
+<span id="secure"></span><h1>Secure<a class="headerlink" href="#module-pyninja.monitor.secure" title="Permalink to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.secure.calculate_hash">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.secure.</span></span><span class="sig-name descname"><span class="pre">calculate_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.monitor.secure.calculate_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate hash value for the given payload.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.secure.base64_encode">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.secure.</span></span><span class="sig-name descname"><span class="pre">base64_encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.monitor.secure.base64_encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base64 encode the given payload.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.secure.base64_decode">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.secure.</span></span><span class="sig-name descname"><span class="pre">base64_decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.monitor.secure.base64_decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base64 decode the given payload.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.secure.hex_decode">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.secure.</span></span><span class="sig-name descname"><span class="pre">hex_decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.monitor.secure.hex_decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert hex value to a string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.secure.hex_encode">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.secure.</span></span><span class="sig-name descname"><span class="pre">hex_encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.monitor.secure.hex_encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert string value to hex.</p>
+</dd></dl>
+
+</section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
 <ul class="simple">
@@ -1354,6 +1593,11 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <li><a class="reference internal" href="#module-pyninja.exceptions">Exceptions</a></li>
 <li><a class="reference internal" href="#models">Models</a></li>
 <li><a class="reference internal" href="#module-pyninja.squire">Squire</a></li>
+<li><a class="reference internal" href="#pyninja-monitor">PyNinja - Monitor</a></li>
+<li><a class="reference internal" href="#id1">Authenticator</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+<li><a class="reference internal" href="#module-pyninja.monitor.routes">Routes</a></li>
+<li><a class="reference internal" href="#module-pyninja.monitor.secure">Secure</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 

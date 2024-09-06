@@ -3,21 +3,17 @@ import logging
 import time
 from http import HTTPStatus
 
-from fastapi import Request, Cookie
+from fastapi import Cookie, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
-from pyninja import (
-    models,
-    squire,
-    monitor
-)
+from pyninja import exceptions, models, monitor, squire
 
 LOGGER = logging.getLogger("uvicorn.default")
 
 
 async def error_endpoint(request: Request) -> HTMLResponse:
-    """Renders the error page.
+    """Error endpoint for the monitoring page.
 
     Args:
         request: Reference to the FastAPI request object.
@@ -26,11 +22,14 @@ async def error_endpoint(request: Request) -> HTMLResponse:
         HTMLResponse:
         Returns an HTML response templated using Jinja2.
     """
-    print(request.headers)
-    print(request.cookies)
-    return monitor.templates.TemplateResponse(
-        name="unauthorized.html",
-        context={"request": request, "signin": monitor.config.static.login_endpoint},
+    return await monitor.config.clear_session(
+        monitor.templates.TemplateResponse(
+            name="unauthorized.html",
+            context={
+                "request": request,
+                "signin": monitor.config.static.login_endpoint,
+            },
+        )
     )
 
 
@@ -45,40 +44,43 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
         Redirects to login page.
     """
     session_token = request.cookies.get("session_token")
-    if session_token:
+    try:
         await monitor.authenticator.validate_session(request.client.host, session_token)
+    except exceptions.SessionError as error:
+        response = await monitor.authenticator.session_error(request, error)
+    else:
         models.ws_session.client_auth.pop(request.client.host)
         response = monitor.templates.TemplateResponse(
             name="logout.html",
-            context={"request": request, "detail": "Session Expired", "signin": monitor.config.static.login_endpoint,
-                     "show_login": True}
+            context={
+                "request": request,
+                "detail": "Session Expired",
+                "signin": monitor.config.static.login_endpoint,
+                "show_login": True,
+            },
         )
-    else:
-        response = monitor.templates.TemplateResponse(
-            name="session.html",
-            context={"request": request, "signin": monitor.config.static.login_endpoint, "reason": "Session Expired"},
-        )
-    response.delete_cookie("session_token")
-    return response
+    return await monitor.config.clear_session(response)
 
 
 async def login_endpoint(request: Request) -> JSONResponse:
-    """Reads the root request to render HTMl page.
+    """Login endpoint for the monitoring page.
 
     Returns:
         JSONResponse:
-        Redirects to login page.
+        Returns a JSONResponse object with a ``session_token`` and ``redirect_url`` set.
     """
     auth_payload = await monitor.authenticator.verify_login(request)
     # AJAX calls follow redirect and return the response instead of replacing the URL
     # Solution is to revert to Form, but that won't allow header auth and additional customization done by JavaScript
-    response = JSONResponse(content={"redirect_url": monitor.config.static.monitor_endpoint}, status_code=HTTPStatus.OK)
+    response = JSONResponse(
+        content={"redirect_url": monitor.config.static.monitor_endpoint},
+        status_code=HTTPStatus.OK,
+    )
     response.set_cookie(**await monitor.authenticator.generate_cookie(auth_payload))
     return response
 
 
-async def monitor_endpoint(request: Request,
-                           session_token: str = Cookie(None)):
+async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
     """Renders the UI for monitoring page.
 
     Args:
@@ -89,37 +91,50 @@ async def monitor_endpoint(request: Request,
         HTMLResponse:
         Returns an HTML response templated using Jinja2.
     """
-    if not session_token:
+    if session_token:
+        try:
+            await monitor.authenticator.validate_session(
+                request.client.host, session_token
+            )
+        except exceptions.SessionError as error:
+            LOGGER.error("Session token mismatch: %s", error)
+            return await monitor.config.clear_session(
+                await monitor.authenticator.session_error(request, error)
+            )
+        else:
+            return monitor.templates.TemplateResponse(
+                name="main.html",
+                context=dict(
+                    request=request,
+                    default_cpu_interval=models.ws_settings.cpu_interval,
+                    default_refresh_interval=models.ws_settings.refresh_interval,
+                ),
+            )
+    else:
         return monitor.templates.TemplateResponse(
             name="index.html",
-            context={"request": request, "signin": monitor.config.static.login_endpoint}
+            context={
+                "request": request,
+                "signin": monitor.config.static.login_endpoint,
+            },
         )
-    await monitor.authenticator.validate_session(request.client.host, session_token)
-    return monitor.templates.TemplateResponse(
-        name="main.html",
-        context=dict(
-            request=request,
-            default_cpu_interval=models.ws_settings.cpu_interval,
-            default_refresh_interval=models.ws_settings.refresh_interval,
-        )
-    )
 
 
-async def websocket_endpoint(websocket: WebSocket):
+async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(None)):
     """Websocket endpoint to fetch live system resource usage.
 
     Args:
         websocket: Reference to the websocket object.
+        session_token: Session token set after verifying username and password.
     """
     await websocket.accept()
-    session_token = websocket.cookies.get("session_token") or websocket.headers.get(
-        "cookie", {}
-    ).get("session_token")
     if not monitor.authenticator.validate_session(websocket.client.host, session_token):
         await websocket.send_text("Unauthorized")
         await websocket.close()
         return
-    session_timestamp = models.ws_session.client_auth.get(websocket.client.host).get("timestamp")
+    session_timestamp = models.ws_session.client_auth.get(websocket.client.host).get(
+        "timestamp"
+    )
     refresh_time = time.time()
     LOGGER.info(
         "Intervals: {'CPU': %s, 'refresh': %s}",

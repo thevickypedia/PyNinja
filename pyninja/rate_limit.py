@@ -2,9 +2,9 @@ import math
 import time
 from http import HTTPStatus
 
-from fastapi import HTTPException, Request
+from fastapi import Request
 
-from pyninja import models
+from pyninja import exceptions, models
 
 
 class RateLimiter:
@@ -28,7 +28,7 @@ class RateLimiter:
         self.max_requests = rps.max_requests
         self.seconds = rps.seconds
         self.start_time = time.time()
-        self.exception = HTTPException(
+        self.exception = exceptions.APIResponse(
             status_code=HTTPStatus.TOO_MANY_REQUESTS.value,
             detail=HTTPStatus.TOO_MANY_REQUESTS.phrase,
             # reset headers, which will invalidate auth token

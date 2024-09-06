@@ -3,7 +3,7 @@ import platform
 import re
 import socket
 import sqlite3
-from typing import Any, Dict, List, Set, Tuple, Optional
+from typing import Any, Dict, List, Set, Tuple
 
 from pydantic import (
     BaseModel,

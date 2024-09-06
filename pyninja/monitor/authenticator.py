@@ -1,15 +1,17 @@
-import secrets
+import ast
 import base64
 import logging
-import ast
+import secrets
 from datetime import datetime
 from typing import Dict, List, NoReturn, Union
 
-from fastapi import HTTPException, Request, status
+from fastapi import Request, status
+from fastapi.responses import HTMLResponse
 
-from pyninja import squire, models, monitor
+from pyninja import exceptions, models, monitor, squire
 
 LOGGER = logging.getLogger("uvicorn.default")
+
 
 async def failed_auth_counter(request: Request) -> None:
     """Keeps track of failed login attempts from each host, and redirects if failed for 3 or more times.
@@ -22,17 +24,20 @@ async def failed_auth_counter(request: Request) -> None:
     except KeyError:
         models.ws_session.invalid[request.client.host] = 1
     if models.ws_session.invalid[request.client.host] >= 3:
-        raise monitor.config.RedirectException(location="/error")
+        raise exceptions.RedirectException(location="/error")
 
 
 async def raise_error(request) -> NoReturn:
     """Raises a 401 Unauthorized error in case of bad credentials."""
     await failed_auth_counter(request)
-    LOGGER.error("Incorrect username or password: %d", models.ws_session.invalid[request.client.host])
-    raise HTTPException(
+    LOGGER.error(
+        "Incorrect username or password: %d",
+        models.ws_session.invalid[request.client.host],
+    )
+    raise exceptions.APIResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Incorrect username or password",
-        headers=None
+        headers=None,
     )
 
 
@@ -45,7 +50,7 @@ async def extract_credentials(request: Request) -> List[str]:
     decoded_auth = await monitor.secure.base64_decode(auth_header)
     # convert hex to a string
     auth = await monitor.secure.hex_decode(decoded_auth)
-    return auth.split(',')
+    return auth.split(",")
 
 
 async def verify_login(request: Request) -> Dict[str, Union[str, int]]:
@@ -84,9 +89,12 @@ async def generate_cookie(auth_payload: dict) -> Dict[str, str | bool | int]:
         Dict[str, str | bool | int]:
         Returns a dictionary with cookie details
     """
-    expiration = monitor.squire.get_expiry(lease_start=auth_payload['timestamp'],
-                                           lease_duration=models.env.monitor_session)
-    LOGGER.info("Session for '%s' will be valid until %s", auth_payload['username'], expiration)
+    expiration = await monitor.config.get_expiry(
+        lease_start=auth_payload["timestamp"], lease_duration=models.env.monitor_session
+    )
+    LOGGER.info(
+        "Session for '%s' will be valid until %s", auth_payload["username"], expiration
+    )
     encoded_payload = str(auth_payload).encode("ascii")
     client_token = base64.b64encode(encoded_payload).decode("ascii")
     return dict(
@@ -96,6 +104,29 @@ async def generate_cookie(auth_payload: dict) -> Dict[str, str | bool | int]:
         path="/",
         httponly=False,  # Set to False explicitly, for WebSocket
         expires=expiration,
+    )
+
+
+async def session_error(
+    request: Request, error: exceptions.SessionError
+) -> HTMLResponse:
+    """Renders the session error page.
+
+    Args:
+        request: Reference to the FastAPI request object.
+        error: Session error message.
+
+    Returns:
+        HTMLResponse:
+        Returns an HTML response templated using Jinja2.
+    """
+    return monitor.templates.TemplateResponse(
+        name="session.html",
+        context={
+            "request": request,
+            "signin": monitor.config.static.login_endpoint,
+            "reason": error.detail,
+        },
     )
 
 
@@ -110,15 +141,12 @@ async def validate_session(host: str, cookie_string: str) -> bool:
         bool:
         Returns True if the session token is valid.
     """
-    if not cookie_string:
-        LOGGER.warning("No session token found for %s", host)
-        return False
     try:
         decoded_payload = base64.b64decode(cookie_string)
         decoded_str = decoded_payload.decode("ascii")
         original_dict = ast.literal_eval(decoded_str)
         assert (
-                models.ws_session.client_auth.get(host) == original_dict
+            models.ws_session.client_auth.get(host) == original_dict
         ), f"{original_dict} != {models.ws_session.client_auth.get(host)}"
         poached = datetime.fromtimestamp(
             original_dict.get("timestamp") + models.env.monitor_session
@@ -131,6 +159,7 @@ async def validate_session(host: str, cookie_string: str) -> bool:
         return True
     except (KeyError, ValueError, TypeError) as error:
         LOGGER.critical(error)
+        raise exceptions.SessionError("Invalid Session")
     except AssertionError as error:
-        LOGGER.error("Session token mismatch: %s", error)
-    return False
+        LOGGER.error(error)
+        raise exceptions.SessionError("Session Expired")

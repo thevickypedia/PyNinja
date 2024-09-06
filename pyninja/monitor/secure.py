@@ -5,9 +5,9 @@ import string
 from typing import Any
 
 UNICODE_PREFIX = (
-        base64.b64decode(b"XA==").decode(encoding="ascii")
-        + string.ascii_letters[20]
-        + string.digits[:1] * 2
+    base64.b64decode(b"XA==").decode(encoding="ascii")
+    + string.ascii_letters[20]
+    + string.digits[:1] * 2
 )
 
 

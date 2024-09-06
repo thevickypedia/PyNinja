@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+v0.0.4 (09/06/2024)
+-------------------
+- Include an option to monitor system resources via websockets
+
 v0.0.3 (08/16/2024)
 -------------------
 - Release `v0.0.3`

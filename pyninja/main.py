@@ -5,13 +5,14 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 
 import pyninja
-from pyninja import models, routers, squire, monitor
+from pyninja import exceptions, models, monitor, routers, squire
 
 LOGGER = logging.getLogger("uvicorn.default")
 
 
-async def redirect_exception_handler(request: Request,
-                                     exception: monitor.config.RedirectException) -> JSONResponse:
+async def redirect_exception_handler(
+    request: Request, exception: exceptions.RedirectException
+) -> JSONResponse:
     """Custom exception handler to handle redirect.
 
     Args:
@@ -25,11 +26,15 @@ async def redirect_exception_handler(request: Request,
     LOGGER.debug("Exception headers: %s", request.headers)
     LOGGER.debug("Exception cookies: %s", request.cookies)
     if request.url.path == monitor.config.static.login_endpoint:
-        response = JSONResponse(content={"redirect_url": exception.location}, status_code=200)
+        response = JSONResponse(
+            content={"redirect_url": exception.location}, status_code=200
+        )
     else:
         response = RedirectResponse(url=exception.location)
     if exception.detail:
-        response.set_cookie("detail", exception.detail.upper(), httponly=True, samesite="strict")
+        response.set_cookie(
+            "detail", exception.detail.upper(), httponly=True, samesite="strict"
+        )
     return response
 
 
@@ -44,6 +49,10 @@ def start(**kwargs) -> None:
         workers: Number of workers for the uvicorn server.
         remote_execution: Boolean flag to enable remote execution.
         api_secret: Secret access key for running commands on server remotely.
+        monitor_username: Username to authenticate the monitoring page.
+        monitor_password: Password to authenticate the monitoring page.
+        monitor_session: Session timeout for the monitoring page.
+        service_manager: Service manager filepath to handle the service status requests.
         database: FilePath to store the auth database that handles the authentication errors.
         rate_limit: List of dictionaries with ``max_requests`` and ``seconds`` to apply as rate limit.
         log_config: Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.
@@ -62,8 +71,8 @@ def start(**kwargs) -> None:
         version=pyninja.version,
     )
     app.add_exception_handler(
-        exc_class_or_status_code=monitor.config.RedirectException,
-        handler=redirect_exception_handler
+        exc_class_or_status_code=exceptions.RedirectException,
+        handler=redirect_exception_handler,
     )
     kwargs = dict(
         host=models.env.ninja_host,

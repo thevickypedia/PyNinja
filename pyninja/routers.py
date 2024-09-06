@@ -6,12 +6,8 @@ from typing import List, Optional
 import psutil
 from fastapi import Depends, Header, Request
 from fastapi.responses import RedirectResponse
-from fastapi.routing import APIRoute, APIWebSocketRoute
-from fastapi.security import (
-    HTTPAuthorizationCredentials,
-    HTTPBasic,
-    HTTPBearer,
-)
+from fastapi.routing import APIRoute
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
 from pyninja import (
@@ -19,11 +15,11 @@ from pyninja import (
     dockerized,
     exceptions,
     models,
+    monitor,
     process,
     rate_limit,
     service,
     squire,
-    monitor
 )
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -32,9 +28,9 @@ BEARER_AUTH = HTTPBearer()
 
 
 async def get_ip(
-        request: Request,
-        public: bool = False,
-        apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    request: Request,
+    public: bool = False,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """Get local and public IP address of the device.
 
@@ -56,10 +52,10 @@ async def get_ip(
 
 
 async def get_cpu(
-        request: Request,
-        interval: int | float = 2,
-        per_cpu: bool = True,
-        apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    request: Request,
+    interval: int | float = 2,
+    per_cpu: bool = True,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """Get the CPU utilization.
 
@@ -85,8 +81,8 @@ async def get_cpu(
 
 
 async def get_memory(
-        request: Request,
-        apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """Get memory utilization.
 
@@ -115,10 +111,10 @@ async def get_memory(
 
 
 async def run_command(
-        request: Request,
-        payload: models.Payload,
-        apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-        token: Optional[str] = Header(None),
+    request: Request,
+    payload: models.Payload,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    token: Optional[str] = Header(None),
 ):
     """**API function to run a command on host machine.**
 
@@ -149,10 +145,10 @@ async def run_command(
 
 
 async def process_status(
-        request: Request,
-        process_name: str,
-        cpu_interval: PositiveInt | PositiveFloat = 1,
-        apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    request: Request,
+    process_name: str,
+    cpu_interval: PositiveInt | PositiveFloat = 1,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to monitor a process.**
 
@@ -178,9 +174,9 @@ async def process_status(
 
 
 async def service_status(
-        request: Request,
-        service_name: str,
-        apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    request: Request,
+    service_name: str,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to monitor a service.**
 
@@ -209,11 +205,11 @@ async def service_status(
 
 
 async def docker_containers(
-        request: Request,
-        container_name: str = None,
-        get_all: bool = False,
-        get_running: bool = False,
-        apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    request: Request,
+    container_name: str = None,
+    get_all: bool = False,
+    get_running: bool = False,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to get docker containers' information.**
 
@@ -263,8 +259,8 @@ async def docker_containers(
 
 
 async def docker_images(
-        request: Request,
-        apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to get docker images' information.**
 
@@ -289,8 +285,8 @@ async def docker_images(
 
 
 async def docker_volumes(
-        request: Request,
-        apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to get docker volumes' information.**
 
@@ -351,34 +347,6 @@ def get_all_routes() -> List[APIRoute]:
             path="/health", endpoint=health, methods=["GET"], include_in_schema=False
         ),
         APIRoute(
-            path="/error",
-            endpoint=monitor.router.error_endpoint,
-            methods=["GET"],
-            dependencies=dependencies,
-        ),
-        APIRoute(
-            path="/login",
-            endpoint=monitor.router.login_endpoint,
-            methods=["POST"],
-            dependencies=dependencies,
-        ),
-        APIRoute(
-            path="/monitor",
-            endpoint=monitor.router.monitor_endpoint,
-            methods=["GET"],
-            dependencies=dependencies,
-        ),
-        APIRoute(
-            path="/logout",
-            endpoint=monitor.router.logout_endpoint,
-            methods=["GET"],
-            dependencies=dependencies,
-        ),
-        APIWebSocketRoute(
-            path="/ws/system",
-            endpoint=monitor.router.websocket_endpoint
-        ),
-        APIRoute(
             path="/get-ip",
             endpoint=get_ip,
             methods=["GET"],
@@ -436,4 +404,6 @@ def get_all_routes() -> List[APIRoute]:
                 dependencies=dependencies,
             )
         )
+    if all((models.env.monitor_username, models.env.monitor_password)):
+        routes.extend(monitor.get_all_monitor_routes(dependencies))
     return routes
