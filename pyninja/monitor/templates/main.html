@@ -124,7 +124,7 @@
                 data = JSON.parse(event.data);
             } catch (error) {
                 console.warn('Error parsing JSON data:', error);
-                alert(`${event.data}. Please refresh the page.`);
+                alert(event.data);
                 window.location.href = `${window.location.origin}/logout`;
                 return;
             }

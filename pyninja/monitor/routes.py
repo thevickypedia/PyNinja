@@ -3,7 +3,7 @@ import logging
 import time
 from http import HTTPStatus
 
-from fastapi import Cookie, Request
+from fastapi import Cookie, Header, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
@@ -62,14 +62,18 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
     return await monitor.config.clear_session(response)
 
 
-async def login_endpoint(request: Request) -> JSONResponse:
+async def login_endpoint(
+    request: Request, authorization: str = Header(None)
+) -> JSONResponse:
     """Login endpoint for the monitoring page.
 
     Returns:
         JSONResponse:
         Returns a JSONResponse object with a ``session_token`` and ``redirect_url`` set.
     """
-    auth_payload = await monitor.authenticator.verify_login(request)
+    auth_payload = await monitor.authenticator.verify_login(
+        authorization, request.client.host
+    )
     # AJAX calls follow redirect and return the response instead of replacing the URL
     # Solution is to revert to Form, but that won't allow header auth and additional customization done by JavaScript
     response = JSONResponse(

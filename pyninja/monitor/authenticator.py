@@ -13,26 +13,30 @@ from pyninja import exceptions, models, monitor, squire
 LOGGER = logging.getLogger("uvicorn.default")
 
 
-async def failed_auth_counter(request: Request) -> None:
+async def failed_auth_counter(host) -> None:
     """Keeps track of failed login attempts from each host, and redirects if failed for 3 or more times.
 
     Args:
-        request: Takes the ``Request`` object as an argument.
+        host: Host header from the request.
     """
     try:
-        models.ws_session.invalid[request.client.host] += 1
+        models.ws_session.invalid[host] += 1
     except KeyError:
-        models.ws_session.invalid[request.client.host] = 1
-    if models.ws_session.invalid[request.client.host] >= 3:
+        models.ws_session.invalid[host] = 1
+    if models.ws_session.invalid[host] >= 3:
         raise exceptions.RedirectException(location="/error")
 
 
-async def raise_error(request) -> NoReturn:
-    """Raises a 401 Unauthorized error in case of bad credentials."""
-    await failed_auth_counter(request)
+async def raise_error(host: str) -> NoReturn:
+    """Raises a 401 Unauthorized error in case of bad credentials.
+
+    Args:
+        host: Host header from the request.
+    """
+    await failed_auth_counter(host)
     LOGGER.error(
         "Incorrect username or password: %d",
-        models.ws_session.invalid[request.client.host],
+        models.ws_session.invalid[host],
     )
     raise exceptions.APIResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -41,42 +45,45 @@ async def raise_error(request) -> NoReturn:
     )
 
 
-async def extract_credentials(request: Request) -> List[str]:
-    """Extract the credentials from ``Authorization`` headers and decode it before returning as a list of strings."""
-    auth_header = request.headers.get("authorization", "")
-    # decode the Base64-encoded ASCII string
-    if not auth_header:
-        await raise_error(request)
-    decoded_auth = await monitor.secure.base64_decode(auth_header)
+async def extract_credentials(authorization: str, host: str) -> List[str]:
+    """Extract the credentials from ``Authorization`` headers and decode it before returning as a list of strings.
+
+    Args:
+        authorization: Authorization header from the request.
+        host: Host header from the request.
+    """
+    if not authorization:
+        await raise_error(host)
+    decoded_auth = await monitor.secure.base64_decode(authorization)
     # convert hex to a string
     auth = await monitor.secure.hex_decode(decoded_auth)
     return auth.split(",")
 
 
-async def verify_login(request: Request) -> Dict[str, Union[str, int]]:
+async def verify_login(authorization: str, host: str) -> Dict[str, Union[str, int]]:
     """Verifies authentication and generates session token for each user.
 
     Returns:
         Dict[str, str]:
         Returns a dictionary with the payload required to create the session token.
     """
-    username, signature, timestamp = await extract_credentials(request)
+    username, signature, timestamp = await extract_credentials(authorization, host)
     if secrets.compare_digest(username, models.env.monitor_username):
         hex_user = await monitor.secure.hex_encode(models.env.monitor_username)
         hex_pass = await monitor.secure.hex_encode(models.env.monitor_password)
     else:
         LOGGER.warning("User '%s' not allowed", username)
-        await raise_error(request)
+        await raise_error(host)
     message = f"{hex_user}{hex_pass}{timestamp}"
     expected_signature = await monitor.secure.calculate_hash(message)
     if secrets.compare_digest(signature, expected_signature):
-        models.ws_session.invalid[request.client.host] = 0
+        models.ws_session.invalid[host] = 0
         key = squire.keygen()
-        models.ws_session.client_auth[request.client.host] = dict(
+        models.ws_session.client_auth[host] = dict(
             username=username, token=key, timestamp=int(timestamp)
         )
-        return models.ws_session.client_auth[request.client.host]
-    await raise_error(request)
+        return models.ws_session.client_auth[host]
+    await raise_error(host)
 
 
 async def generate_cookie(auth_payload: dict) -> Dict[str, str | bool | int]:
