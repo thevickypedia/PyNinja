@@ -58,6 +58,10 @@ pyninja start
 - **WORKERS** - Number of workers for the uvicorn server.
 - **REMOTE_EXECUTION** - Boolean flag to enable remote execution.
 - **API_SECRET** - Secret access key for running commands on server remotely.
+- **MONITOR_USERNAME** - Username to authenticate the monitoring page.
+- **MONITOR_PASSWORD** - Password to authenticate the monitoring page.
+- **MONITOR_SESSION** - Session timeout for the monitoring page.
+- **SERVICE_MANAGER** - Service manager filepath to handle the service status requests.
 - **DATABASE** - FilePath to store the auth database that handles the authentication errors.
 - **RATE_LIMIT** - List of dictionaries with `max_requests` and `seconds` to apply as rate limit.
 - **APIKEY** - API Key for authentication.

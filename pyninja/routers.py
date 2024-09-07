@@ -404,6 +404,7 @@ def get_all_routes() -> List[APIRoute]:
                 dependencies=dependencies,
             )
         )
+    # Conditional endpoint based on monitor_username and monitor_password
     if all((models.env.monitor_username, models.env.monitor_password)):
         routes.extend(monitor.get_all_monitor_routes(dependencies))
     return routes

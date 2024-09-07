@@ -192,7 +192,7 @@ class EnvConfig(BaseSettings):
     api_secret: str | None = None
     monitor_username: str | None = None
     monitor_password: str | None = None
-    monitor_session: PositiveInt = 10
+    monitor_session: PositiveInt = 3_600
     service_manager: FilePath | ServiceManager = get_service_manager()
     database: str = Field("auth.db", pattern=".*.db$")
     rate_limit: RateLimit | List[RateLimit] = []
