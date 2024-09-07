@@ -14,7 +14,7 @@ import requests
 import yaml
 from pydantic import PositiveFloat, PositiveInt
 
-from pyninja.models import EnvConfig
+from . import models
 
 LOGGER = logging.getLogger("uvicorn.default")
 IP_REGEX = re.compile(
@@ -146,7 +146,7 @@ def process_command(
     return result
 
 
-def envfile_loader(filename: str | os.PathLike) -> EnvConfig:
+def envfile_loader(filename: str | os.PathLike) -> models.EnvConfig:
     """Loads environment variables based on filetypes.
 
     Args:
@@ -160,24 +160,24 @@ def envfile_loader(filename: str | os.PathLike) -> EnvConfig:
     if env_file.suffix.lower() == ".json":
         with open(env_file) as stream:
             env_data = json.load(stream)
-        return EnvConfig(**{k.lower(): v for k, v in env_data.items()})
+        return models.EnvConfig(**{k.lower(): v for k, v in env_data.items()})
     elif env_file.suffix.lower() in (".yaml", ".yml"):
         with open(env_file) as stream:
             env_data = yaml.load(stream, yaml.FullLoader)
-        return EnvConfig(**{k.lower(): v for k, v in env_data.items()})
+        return models.EnvConfig(**{k.lower(): v for k, v in env_data.items()})
     elif not env_file.suffix or env_file.suffix.lower() in (
         ".text",
         ".txt",
         "",
     ):
-        return EnvConfig.from_env_file(env_file)
+        return models.EnvConfig.from_env_file(env_file)
     else:
         raise ValueError(
             "\n\tUnsupported format for 'env_file', can be one of (.json, .yaml, .yml, .txt, .text, or null)"
         )
 
 
-def load_env(**kwargs) -> EnvConfig:
+def load_env(**kwargs) -> models.EnvConfig:
     """Merge env vars from env_file with kwargs, giving priority to kwargs.
 
     See Also:
@@ -194,7 +194,7 @@ def load_env(**kwargs) -> EnvConfig:
     else:
         file_env = {}
     merged_env = {**file_env, **kwargs}
-    return EnvConfig(**merged_env)
+    return models.EnvConfig(**merged_env)
 
 
 def keygen() -> str:

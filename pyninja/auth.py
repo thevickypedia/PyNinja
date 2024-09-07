@@ -7,7 +7,7 @@ from http import HTTPStatus
 from fastapi import Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from pyninja import database, exceptions, models
+from . import database, exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 EPOCH = lambda: int(time.time())  # noqa: E731

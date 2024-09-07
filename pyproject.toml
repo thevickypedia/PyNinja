@@ -18,12 +18,12 @@ keywords = ["service-monitor", "PyNinja"]
 requires-python = ">=3.10"
 
 [tool.setuptools]
-packages = ["pyninja"]
+packages = ["pyninja", "pyninja.monitor", "pyninja.monitor.templates"]
 [tool.setuptools.package-data]
-"pyninja" = ["index.html"]
+"pyninja.monitor.templates" = ["*.html"]
 
 [tool.setuptools.dynamic]
-version = {attr = "pyninja.version"}
+version = {attr = "pyninja.version.__version__"}
 dependencies = { file = ["requirements.txt"] }
 
 [project.optional-dependencies]

@@ -7,8 +7,7 @@ from fastapi import Cookie, Header, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
-import pyninja
-from pyninja import exceptions, models, monitor, squire
+from .. import exceptions, models, monitor, squire, version
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -24,12 +23,12 @@ async def error_endpoint(request: Request) -> HTMLResponse:
         Returns an HTML response templated using Jinja2.
     """
     return await monitor.config.clear_session(
-        monitor.templates.TemplateResponse(
+        monitor.config.templates.TemplateResponse(
             name="unauthorized.html",
             context={
                 "request": request,
                 "signin": monitor.config.static.login_endpoint,
-                "version": f"v{pyninja.version}",
+                "version": f"v{version.__version__}",
             },
         )
     )
@@ -52,14 +51,14 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
         response = await monitor.authenticator.session_error(request, error)
     else:
         models.ws_session.client_auth.pop(request.client.host)
-        response = monitor.templates.TemplateResponse(
+        response = monitor.config.templates.TemplateResponse(
             name="logout.html",
             context={
                 "request": request,
                 "detail": "Session Expired",
                 "signin": monitor.config.static.login_endpoint,
                 "show_login": True,
-                "version": f"v{pyninja.version}",
+                "version": f"v{version.__version__}",
             },
         )
     return await monitor.config.clear_session(response)
@@ -109,7 +108,7 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
                 await monitor.authenticator.session_error(request, error)
             )
         else:
-            return monitor.templates.TemplateResponse(
+            return monitor.config.templates.TemplateResponse(
                 name="main.html",
                 context=dict(
                     request=request,
@@ -118,12 +117,12 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
                 ),
             )
     else:
-        return monitor.templates.TemplateResponse(
+        return monitor.config.templates.TemplateResponse(
             name="index.html",
             context={
                 "request": request,
                 "signin": monitor.config.static.login_endpoint,
-                "version": f"v{pyninja.version}",
+                "version": f"v{version.__version__}",
             },
         )
 
@@ -136,9 +135,14 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         session_token: Session token set after verifying username and password.
     """
     await websocket.accept()
-    session_validity = await monitor.authenticator.validate_session(
-        websocket.client.host, session_token
-    )
+    try:
+        session_validity = await monitor.authenticator.validate_session(
+            websocket.client.host, session_token
+        )
+    except exceptions.SessionError as error:
+        await websocket.send_text(error.__str__())
+        await websocket.close()
+        return
     if not session_validity:
         await websocket.send_text("Unauthorized")
         await websocket.close()

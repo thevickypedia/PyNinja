@@ -16,7 +16,7 @@ from pydantic import (
 from pydantic_core import InitErrorDetails
 from pydantic_settings import BaseSettings
 
-from pyninja import exceptions
+from . import exceptions
 
 OPERATING_SYSTEM = platform.system()
 

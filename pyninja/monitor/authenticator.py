@@ -8,8 +8,8 @@ from typing import Dict, List, NoReturn, Union
 from fastapi import Request, status
 from fastapi.responses import HTMLResponse
 
-import pyninja
-from pyninja import exceptions, models, monitor, squire
+from .. import exceptions, models, squire, version
+from . import config, secure
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -55,9 +55,9 @@ async def extract_credentials(authorization: str, host: str) -> List[str]:
     """
     if not authorization:
         await raise_error(host)
-    decoded_auth = await monitor.secure.base64_decode(authorization)
+    decoded_auth = await secure.base64_decode(authorization)
     # convert hex to a string
-    auth = await monitor.secure.hex_decode(decoded_auth)
+    auth = await secure.hex_decode(decoded_auth)
     return auth.split(",")
 
 
@@ -70,13 +70,13 @@ async def verify_login(authorization: str, host: str) -> Dict[str, Union[str, in
     """
     username, signature, timestamp = await extract_credentials(authorization, host)
     if secrets.compare_digest(username, models.env.monitor_username):
-        hex_user = await monitor.secure.hex_encode(models.env.monitor_username)
-        hex_pass = await monitor.secure.hex_encode(models.env.monitor_password)
+        hex_user = await secure.hex_encode(models.env.monitor_username)
+        hex_pass = await secure.hex_encode(models.env.monitor_password)
     else:
         LOGGER.warning("User '%s' not allowed", username)
         await raise_error(host)
     message = f"{hex_user}{hex_pass}{timestamp}"
-    expected_signature = await monitor.secure.calculate_hash(message)
+    expected_signature = await secure.calculate_hash(message)
     if secrets.compare_digest(signature, expected_signature):
         models.ws_session.invalid[host] = 0
         key = squire.keygen()
@@ -97,7 +97,7 @@ async def generate_cookie(auth_payload: dict) -> Dict[str, str | bool | int]:
         Dict[str, str | bool | int]:
         Returns a dictionary with cookie details
     """
-    expiration = await monitor.config.get_expiry(
+    expiration = await config.get_expiry(
         lease_start=auth_payload["timestamp"], lease_duration=models.env.monitor_session
     )
     LOGGER.info(
@@ -128,13 +128,13 @@ async def session_error(
         HTMLResponse:
         Returns an HTML response templated using Jinja2.
     """
-    return monitor.templates.TemplateResponse(
+    return config.templates.TemplateResponse(
         name="session.html",
         context={
             "request": request,
-            "signin": monitor.config.static.login_endpoint,
+            "signin": config.static.login_endpoint,
             "reason": error.detail,
-            "version": f"v{pyninja.version}",
+            "version": f"v{version.__version__}",
         },
     )
 

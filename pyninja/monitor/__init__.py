@@ -1,15 +1,9 @@
-import os
 from typing import List
 
 from fastapi import Depends
 from fastapi.routing import APIRoute, APIWebSocketRoute
-from fastapi.templating import Jinja2Templates
 
-from pyninja.monitor import authenticator, config, routes, secure  # noqa: F401
-
-templates = Jinja2Templates(
-    directory=os.path.join(os.path.dirname(__file__), "templates")
-)
+from . import authenticator, config, routes, secure  # noqa: F401
 
 
 def get_all_monitor_routes(

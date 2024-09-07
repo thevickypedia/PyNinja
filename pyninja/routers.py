@@ -10,7 +10,7 @@ from fastapi.routing import APIRoute
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
-from pyninja import (
+from . import (
     auth,
     dockerized,
     exceptions,

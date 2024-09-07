@@ -1,4 +1,4 @@
-from pyninja import models
+from . import models
 
 
 def get_record(host: str) -> int | None:

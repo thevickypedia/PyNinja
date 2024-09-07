@@ -1,7 +1,13 @@
+import os
 import time
 
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+
+templates = Jinja2Templates(
+    directory=os.path.join(os.path.dirname(__file__), "templates")
+)
 
 
 async def clear_session(response: HTMLResponse) -> HTMLResponse:

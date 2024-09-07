@@ -4,7 +4,7 @@ from http import HTTPStatus
 
 from fastapi import Request
 
-from pyninja import exceptions, models
+from . import exceptions, models
 
 
 class RateLimiter:
