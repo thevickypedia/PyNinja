@@ -61,6 +61,7 @@ pyninja start
 - **MONITOR_USERNAME** - Username to authenticate the monitoring page.
 - **MONITOR_PASSWORD** - Password to authenticate the monitoring page.
 - **MONITOR_SESSION** - Session timeout for the monitoring page.
+- **MAX_CONNECTIONS** - Maximum number of monitoring sessions allowed in parallel.
 - **SERVICE_MANAGER** - Service manager filepath to handle the service status requests.
 - **DATABASE** - FilePath to store the auth database that handles the authentication errors.
 - **RATE_LIMIT** - List of dictionaries with `max_requests` and `seconds` to apply as rate limit.

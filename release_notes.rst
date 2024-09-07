@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v0.0.5 (09/07/2024)
+-------------------
+- Packs an entirely new UI and authentication mechanism for monitoring tool
+- Includes speed, stability and security improvements for monitoring feature
+- Adds night mode option for monitoring UI
+
 v0.0.4 (09/06/2024)
 -------------------
 - Includes an option to monitor system resources via `WebSockets`

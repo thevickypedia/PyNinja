@@ -193,6 +193,7 @@ class EnvConfig(BaseSettings):
     monitor_username: str | None = None
     monitor_password: str | None = None
     monitor_session: PositiveInt = 3_600
+    max_connections: PositiveInt = 3
     service_manager: FilePath | ServiceManager = get_service_manager()
     database: str = Field("auth.db", pattern=".*.db$")
     rate_limit: RateLimit | List[RateLimit] = []

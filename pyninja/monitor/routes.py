@@ -97,6 +97,13 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
         HTMLResponse:
         Returns an HTML response templated using Jinja2.
     """
+    # todo: use reverse-proxy to test this from multiple devices
+    # Remove the first hostname from client_auth quietly
+    if len(models.ws_session.client_auth) > models.env.max_connections:
+        first_key = next(iter(models.ws_session.client_auth))
+        # Remove the key-value pair associated with the first authenticated user
+        LOGGER.info("Maximum parallel connections limit reached. Dropping %s", first_key)
+        models.ws_session.client_auth.pop(first_key, None)
     if session_token:
         try:
             await monitor.authenticator.validate_session(
