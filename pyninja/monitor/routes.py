@@ -136,7 +136,10 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         session_token: Session token set after verifying username and password.
     """
     await websocket.accept()
-    if not monitor.authenticator.validate_session(websocket.client.host, session_token):
+    session_validity = await monitor.authenticator.validate_session(
+        websocket.client.host, session_token
+    )
+    if not session_validity:
         await websocket.send_text("Unauthorized")
         await websocket.close()
         return
