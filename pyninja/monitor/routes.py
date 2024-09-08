@@ -100,8 +100,7 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
         HTMLResponse:
         Returns an HTML response templated using Jinja2.
     """
-    # todo: use reverse-proxy to test this from multiple devices
-    # Remove the first hostname from client_auth quietly
+    # Removes the first hostname from client_auth quietly
     if len(models.ws_session.client_auth) > models.env.max_connections:
         first_key = next(iter(models.ws_session.client_auth))
         # Remove the key-value pair associated with the first authenticated user
@@ -160,15 +159,11 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     """
     await websocket.accept()
     try:
-        session_validity = await monitor.authenticator.validate_session(
+        await monitor.authenticator.validate_session(
             websocket.client.host, session_token
         )
     except exceptions.SessionError as error:
         await websocket.send_text(error.__str__())
-        await websocket.close()
-        return
-    if not session_validity:
-        await websocket.send_text("Unauthorized")
         await websocket.close()
         return
     session_timestamp = models.ws_session.client_auth.get(websocket.client.host).get(
@@ -182,6 +177,14 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     )
     data = squire.system_resources(models.ws_settings.cpu_interval)
     while True:
+        try:
+            await monitor.authenticator.validate_session(
+                websocket.client.host, session_token
+            )
+        except exceptions.SessionError as error:
+            await websocket.send_text(error.__str__())
+            await websocket.close()
+            return
         if websocket.application_state == WebSocketState.CONNECTED:
             try:
                 msg = await asyncio.wait_for(websocket.receive_text(), timeout=0.1)

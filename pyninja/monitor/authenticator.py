@@ -139,16 +139,16 @@ async def session_error(
     )
 
 
-async def validate_session(host: str, cookie_string: str) -> bool:
+async def validate_session(host: str, cookie_string: str) -> None:
     """Validate the session token.
 
     Args:
         host: Hostname from the request.
         cookie_string: Session token from the cookie.
 
-    Returns:
-        bool:
-        Returns True if the session token is valid.
+    Raises:
+        SessionError:
+        Raises a SessionError with summary.
     """
     try:
         decoded_payload = base64.b64decode(cookie_string)
@@ -165,7 +165,6 @@ async def validate_session(host: str, cookie_string: str) -> bool:
             host,
             poached.strftime("%Y-%m-%d %H:%M:%S"),
         )
-        return True
     except (KeyError, ValueError, TypeError) as error:
         LOGGER.critical(error)
         raise exceptions.SessionError("Invalid Session")
