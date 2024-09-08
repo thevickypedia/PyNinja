@@ -7,6 +7,7 @@ import re
 import secrets
 import socket
 import subprocess
+from datetime import timedelta
 from typing import Dict, List
 
 import psutil
@@ -99,6 +100,32 @@ def format_nos(input_: float) -> int | float:
     return int(input_) if isinstance(input_, float) and input_.is_integer() else input_
 
 
+def format_timedelta(td: timedelta) -> str:
+    """Converts timedelta to human-readable format.
+
+    Args:
+        td: Timedelta object.
+
+    Returns:
+        str:
+        Human-readable format of timedelta.
+    """
+    days = td.days
+    hours, remainder = divmod(td.seconds, 3600)
+    # minutes, seconds = divmod(remainder, 60)
+    # Constructing a formatted string based on non-zero values
+    parts = []
+    if days > 0:
+        parts.append(f"{days} day{'s' if days > 1 else ''}")
+    if hours > 0:
+        parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
+    # if minutes > 0:
+    #     parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
+    # if seconds > 0:
+    #     parts.append(f"{seconds} second{'s' if seconds > 1 else ''}")
+    return " and ".join(parts)
+
+
 def size_converter(byte_size: int | float) -> str:
     """Gets the current memory consumed and converts it to human friendly format.
 
@@ -109,9 +136,12 @@ def size_converter(byte_size: int | float) -> str:
         str:
         Converted understandable size.
     """
-    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-    index = int(math.floor(math.log(byte_size, 1024)))
-    return f"{format_nos(round(byte_size / pow(1024, index), 2))} {size_name[index]}"
+    if byte_size:
+        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+        index = int(math.floor(math.log(byte_size, 1024)))
+        return (
+            f"{format_nos(round(byte_size / pow(1024, index), 2))} {size_name[index]}"
+        )
 
 
 def process_command(

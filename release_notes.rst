@@ -1,36 +1,34 @@
 Release Notes
 =============
 
+v0.0.6a (09/07/2024)
+--------------------
+- Release `v0.0.6a`
+
 v0.0.5 (09/07/2024)
 -------------------
-- Packs an entirely new UI and authentication mechanism for monitoring tool
-- Includes speed, stability and security improvements for monitoring feature
-- Adds night mode option for monitoring UI
+- Release `v0.0.5`
 
 v0.0.4 (09/06/2024)
 -------------------
-- Includes an option to monitor system resources via `WebSockets`
+- Include an option to monitor system resources via websockets
 
 v0.0.3 (08/16/2024)
 -------------------
-- Allows env vars to be sourced from both ``env_file`` and ``kwargs``
+- Release `v0.0.3`
 
 v0.0.2 (08/16/2024)
 -------------------
-- Includes added support for custom log configuration
+- Release `v0.0.2`
 
 v0.0.1 (08/11/2024)
 -------------------
-- Includes a process monitor and remote command execution functionality
-- Security improvements including brute force protection and rate limiting
-- Accepts ``JSON`` and ``YAML`` files for env config
-- Supports custom worker count for ``uvicorn`` server
-- Allows custom logging using ``logging.ini``
-- Includes an option to set the ``apikey`` via commandline
+- Release `v0.0.1`
 
 v0.0.0 (08/11/2024)
 -------------------
-- Release first stable version
+- Implement concurrency for validating process health
+- Update logger names across the module and README.md
 
 0.0.0-a (08/10/2024)
 --------------------

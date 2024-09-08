@@ -1,13 +1,22 @@
 import logging
 
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.routing import APIRoute
 
-from . import exceptions, models, routers, squire, version
+from . import exceptions, models, rate_limit, routers, squire, version
+from .monitor import get_all_monitor_routes
 from .monitor.config import static
 
+BASE_LOGGER = logging.getLogger("BASE_LOGGER")
+BASE_LOGGER.setLevel(logging.INFO)
 LOGGER = logging.getLogger("uvicorn.default")
+PyNinjaAPI = FastAPI(
+    title="PyNinja",
+    summary="Lightweight OS-agnostic service monitoring API",
+    version=version.__version__,
+)
 
 
 async def redirect_exception_handler(
@@ -58,27 +67,45 @@ def start(**kwargs) -> None:
         log_config: Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.
     """
     models.env = squire.load_env(**kwargs)
+    dependencies = [
+        Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
+        for each_rate_limit in models.env.rate_limit
+    ]
+    PyNinjaAPI.routes.extend(routers.get_all_routes(dependencies))
+    # Conditional endpoint based on remote_execution and api_secret
     if all((models.env.remote_execution, models.env.api_secret)):
-        LOGGER.info(
+        BASE_LOGGER.info(
             "Creating '%s' to handle authentication errors", models.env.database
         )
         models.database = models.Database(models.env.database)
         models.database.create_table("auth_errors", ["host", "block_until"])
-    app = FastAPI(
-        routes=routers.get_all_routes(),
-        title="PyNinja",
-        description="Lightweight OS-agnostic service monitoring API",
-        version=version.__version__,
-    )
-    app.add_exception_handler(
-        exc_class_or_status_code=exceptions.RedirectException,
-        handler=redirect_exception_handler,
-    )
+        PyNinjaAPI.routes.append(
+            APIRoute(
+                path="/run-command",
+                endpoint=routers.run_command,
+                methods=["POST"],
+                dependencies=dependencies,
+            )
+        )
+    else:
+        BASE_LOGGER.warning("Remote execution disabled")
+    # Conditional endpoint based on monitor_username and monitor_password
+    if all((models.env.monitor_username, models.env.monitor_password)):
+        PyNinjaAPI.routes.extend(get_all_monitor_routes(dependencies))
+        PyNinjaAPI.add_exception_handler(
+            exc_class_or_status_code=exceptions.RedirectException,
+            handler=redirect_exception_handler,
+        )
+        PyNinjaAPI.description = (
+            "\nMonitoring page available at <a href='/monitor'>/monitor</a>"
+        )
+    else:
+        BASE_LOGGER.warning("Monitoring feature disabled")
     kwargs = dict(
         host=models.env.ninja_host,
         port=models.env.ninja_port,
         workers=models.env.workers,
-        app=app,
+        app=PyNinjaAPI,
     )
     if models.env.log_config:
         kwargs["log_config"] = models.env.log_config

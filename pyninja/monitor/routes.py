@@ -1,8 +1,11 @@
 import asyncio
 import logging
+import platform
 import time
+from datetime import timedelta
 from http import HTTPStatus
 
+import psutil
 from fastapi import Cookie, Header, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.websockets import WebSocket, WebSocketDisconnect, WebSocketState
@@ -102,7 +105,9 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
     if len(models.ws_session.client_auth) > models.env.max_connections:
         first_key = next(iter(models.ws_session.client_auth))
         # Remove the key-value pair associated with the first authenticated user
-        LOGGER.info("Maximum parallel connections limit reached. Dropping %s", first_key)
+        LOGGER.info(
+            "Maximum parallel connections limit reached. Dropping %s", first_key
+        )
         models.ws_session.client_auth.pop(first_key, None)
     if session_token:
         try:
@@ -115,12 +120,24 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
                 await monitor.authenticator.session_error(request, error)
             )
         else:
+            uname = platform.uname()
             return monitor.config.templates.TemplateResponse(
                 name="main.html",
                 context=dict(
                     request=request,
                     default_cpu_interval=models.ws_settings.cpu_interval,
                     default_refresh_interval=models.ws_settings.refresh_interval,
+                    node=uname.node,
+                    system=uname.system.lower(),
+                    machine=uname.machine.lower(),
+                    version=uname.version,
+                    release=uname.release,
+                    cores=psutil.cpu_count(logical=True),
+                    memory=squire.size_converter(psutil.virtual_memory().total),
+                    swap=squire.size_converter(psutil.swap_memory().total),
+                    uptime=squire.format_timedelta(
+                        timedelta(seconds=time.time() - psutil.boot_time())
+                    ),
                 ),
             )
     else:

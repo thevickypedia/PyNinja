@@ -10,17 +10,7 @@ from fastapi.routing import APIRoute
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
-from . import (
-    auth,
-    dockerized,
-    exceptions,
-    models,
-    monitor,
-    process,
-    rate_limit,
-    service,
-    squire,
-)
+from . import auth, dockerized, exceptions, models, process, service, squire
 
 LOGGER = logging.getLogger("uvicorn.default")
 BASIC_AUTH = HTTPBasic()
@@ -330,17 +320,16 @@ async def health():
     raise exceptions.APIResponse(status_code=HTTPStatus.OK, detail=HTTPStatus.OK.phrase)
 
 
-def get_all_routes() -> List[APIRoute]:
+def get_all_routes(dependencies: List[Depends]) -> List[APIRoute]:
     """Get all the routes to be added for the API server.
+
+    Args:
+        dependencies: List of dependencies to be added to the routes
 
     Returns:
         List[APIRoute]:
         Returns the routes as a list of APIRoute objects.
     """
-    dependencies = [
-        Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
-        for each_rate_limit in models.env.rate_limit
-    ]
     routes = [
         APIRoute(path="/", endpoint=docs, methods=["GET"], include_in_schema=False),
         APIRoute(
@@ -395,20 +384,4 @@ def get_all_routes() -> List[APIRoute]:
             dependencies=dependencies,
         ),
     ]
-    if all((models.env.remote_execution, models.env.api_secret)):
-        routes.append(
-            APIRoute(
-                path="/run-command",
-                endpoint=run_command,
-                methods=["POST"],
-                dependencies=dependencies,
-            )
-        )
-    else:
-        logging.getLogger().warning("Remote execution disabled")
-    # Conditional endpoint based on monitor_username and monitor_password
-    if all((models.env.monitor_username, models.env.monitor_password)):
-        routes.extend(monitor.get_all_monitor_routes(dependencies))
-    else:
-        logging.warning("Monitoring feature disabled")
     return routes

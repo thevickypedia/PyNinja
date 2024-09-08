@@ -164,7 +164,6 @@ def get_service_manager() -> ServiceManager:
     except KeyError:
         # This shouldn't happen programmatically, but just in case
         # https://docs.pydantic.dev/latest/errors/validation_errors/#model_type
-        # todo: Create an overrided object under exceptions.py
         raise ValidationError.from_exception_data(
             title="PyNinja",
             line_errors=[
