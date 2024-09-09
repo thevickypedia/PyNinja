@@ -9,6 +9,7 @@ from pydantic import (
     BaseModel,
     Field,
     FilePath,
+    PositiveFloat,
     PositiveInt,
     ValidationError,
     field_validator,
@@ -72,7 +73,7 @@ class Payload(BaseModel):
     """
 
     command: str
-    timeout: PositiveInt = 3
+    timeout: PositiveInt | PositiveFloat = 3
 
 
 class ServiceStatus(BaseModel):
@@ -132,7 +133,7 @@ class WSSettings(BaseModel):
     """
 
     cpu_interval: PositiveInt = 3
-    refresh_interval: PositiveInt = 5
+    refresh_interval: PositiveInt | PositiveFloat = 5
 
 
 ws_settings = WSSettings()

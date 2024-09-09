@@ -6,13 +6,15 @@ from datetime import timedelta
 from http import HTTPStatus
 
 import psutil
-from fastapi import Cookie, Header, Request
+from fastapi import Cookie, Depends, Request
 from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from .. import exceptions, models, monitor, squire, version
 
 LOGGER = logging.getLogger("uvicorn.default")
+BEARER_AUTH = HTTPBearer()
 
 
 async def error_endpoint(request: Request) -> HTMLResponse:
@@ -68,7 +70,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
 
 
 async def login_endpoint(
-    request: Request, authorization: str = Header(None)
+    request: Request, authorization: HTTPAuthorizationCredentials = Depends(BEARER_AUTH)
 ) -> JSONResponse:
     """Login endpoint for the monitoring page.
 
@@ -158,9 +160,15 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         session_token: Session token set after verifying username and password.
     """
     await websocket.accept()
-    task = asyncio.create_task(
-        monitor.authenticator.validate_session(websocket.client.host, session_token)
-    )
+    try:
+        await monitor.authenticator.validate_session(
+            websocket.client.host, session_token
+        )
+    except exceptions.SessionError as error:
+        LOGGER.warning(error)
+        await websocket.send_text(error.__str__())
+        await websocket.close()
+        return
     session_timestamp = models.ws_session.client_auth.get(websocket.client.host).get(
         "timestamp"
     )
@@ -171,35 +179,46 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         models.ws_settings.refresh_interval,
     )
     data = squire.system_resources(models.ws_settings.cpu_interval)
+    task = asyncio.create_task(asyncio.sleep(0.1))
     while True:
-        if task.done():
-            try:
+        try:
+            if task.done():
                 await task
                 task = asyncio.create_task(
                     monitor.authenticator.validate_session(
-                        websocket.client.host, session_token
+                        websocket.client.host, session_token, False
                     )
                 )
-            except exceptions.SessionError as error:
-                LOGGER.warning(error)
-                await websocket.send_text(error.__str__())
-                await websocket.close()
-                return
+        except exceptions.SessionError as error:
+            LOGGER.warning(error)
+            await websocket.send_text(error.__str__())
+            await websocket.close()
+            return
         if websocket.application_state == WebSocketState.CONNECTED:
             try:
-                msg = await asyncio.wait_for(websocket.receive_text(), timeout=0.1)
+                msg = await asyncio.wait_for(websocket.receive_text(), timeout=1)
                 if msg.startswith("refresh_interval:"):
-                    models.ws_settings.refresh_interval = int(msg.split(":")[1].strip())
-                    LOGGER.info(
-                        "Updating refresh interval to %s seconds",
-                        models.ws_settings.refresh_interval,
-                    )
+                    if refresh_interval := squire.dynamic_numbers(
+                        msg.split(":")[1].strip()
+                    ):
+                        models.ws_settings.refresh_interval = refresh_interval
+                        LOGGER.info(
+                            "Updating refresh interval to %s seconds",
+                            models.ws_settings.refresh_interval,
+                        )
+                    else:
+                        LOGGER.warning("Received an invalid refresh interval: %s", msg)
                 elif msg.startswith("cpu_interval"):
-                    models.ws_settings.cpu_interval = int(msg.split(":")[1].strip())
-                    LOGGER.info(
-                        "Updating CPU interval to %s seconds",
-                        models.ws_settings.cpu_interval,
-                    )
+                    if cpu_interval := squire.dynamic_numbers(
+                        msg.split(":")[1].strip()
+                    ):
+                        models.ws_settings.cpu_interval = cpu_interval
+                        LOGGER.info(
+                            "Updating CPU interval to %s seconds",
+                            models.ws_settings.cpu_interval,
+                        )
+                    else:
+                        LOGGER.warning("Received an invalid CPU interval: %s", msg)
                 else:
                     LOGGER.error("Invalid WS message received: %s", msg)
                     break
@@ -219,6 +238,10 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
             data = squire.system_resources(models.ws_settings.cpu_interval)
         try:
             await websocket.send_json(data)
-            await asyncio.sleep(1)
+            await asyncio.sleep(
+                min(
+                    models.ws_settings.refresh_interval, models.ws_settings.cpu_interval
+                )
+            )
         except WebSocketDisconnect:
             break

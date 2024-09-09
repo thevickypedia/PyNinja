@@ -116,13 +116,7 @@ Authenticator
 Configuration
 =============
 
-.. autoclass:: pyninja.monitor.config.Static(BaseModel)
-   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
-
-====
-
 .. automodule:: pyninja.monitor.config
-   :exclude-members: Static
 
 Routes
 ======

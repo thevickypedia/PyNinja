@@ -235,3 +235,22 @@ def keygen() -> str:
         Returns a URL safe 64-bit token.
     """
     return secrets.token_urlsafe(64)
+
+
+def dynamic_numbers(string: str) -> int | float | None:
+    """Convert strings to integer or float dynamically.
+
+    Args:
+        string: Number in string format.
+
+    Returns:
+        int | float:
+        Integer or float value.
+    """
+    try:
+        return int(string)
+    except ValueError:
+        try:
+            return float(string)
+        except ValueError:
+            return None

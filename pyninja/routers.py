@@ -17,7 +17,7 @@ BASIC_AUTH = HTTPBasic()
 BEARER_AUTH = HTTPBearer()
 
 
-async def get_ip(
+async def get_ip_address(
     request: Request,
     public: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
@@ -41,7 +41,7 @@ async def get_ip(
         return squire.private_ip_address()
 
 
-async def get_cpu(
+async def get_cpu_utilization(
     request: Request,
     interval: int | float = 2,
     per_cpu: bool = True,
@@ -70,7 +70,7 @@ async def get_cpu(
     raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=usage)
 
 
-async def get_memory(
+async def get_memory_utilization(
     request: Request,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
@@ -134,7 +134,7 @@ async def run_command(
     raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
 
 
-async def process_status(
+async def get_process_status(
     request: Request,
     process_name: str,
     cpu_interval: PositiveInt | PositiveFloat = 1,
@@ -163,7 +163,7 @@ async def process_status(
     )
 
 
-async def service_status(
+async def get_service_status(
     request: Request,
     service_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
@@ -194,7 +194,7 @@ async def service_status(
     )
 
 
-async def docker_containers(
+async def get_docker_containers(
     request: Request,
     container_name: str = None,
     get_all: bool = False,
@@ -248,7 +248,7 @@ async def docker_containers(
     )
 
 
-async def docker_images(
+async def get_docker_images(
     request: Request,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
@@ -274,7 +274,7 @@ async def docker_images(
     )
 
 
-async def docker_volumes(
+async def get_docker_volumes(
     request: Request,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
@@ -337,49 +337,49 @@ def get_all_routes(dependencies: List[Depends]) -> List[APIRoute]:
         ),
         APIRoute(
             path="/get-ip",
-            endpoint=get_ip,
+            endpoint=get_ip_address,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
             path="/get-cpu",
-            endpoint=get_cpu,
+            endpoint=get_cpu_utilization,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
             path="/get-memory",
-            endpoint=get_memory,
+            endpoint=get_memory_utilization,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
             path="/service-status",
-            endpoint=service_status,
+            endpoint=get_service_status,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
             path="/process-status",
-            endpoint=process_status,
+            endpoint=get_process_status,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
             path="/docker-container",
-            endpoint=docker_containers,
+            endpoint=get_docker_containers,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
             path="/docker-image",
-            endpoint=docker_images,
+            endpoint=get_docker_images,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
             path="/docker-volume",
-            endpoint=docker_volumes,
+            endpoint=get_docker_volumes,
             methods=["GET"],
             dependencies=dependencies,
         ),

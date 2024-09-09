@@ -7,6 +7,7 @@ from typing import Dict, List, NoReturn, Union
 
 from fastapi import Request, status
 from fastapi.responses import HTMLResponse
+from fastapi.security import HTTPAuthorizationCredentials
 
 from .. import exceptions, models, squire, version
 from . import config, secure
@@ -46,7 +47,9 @@ async def raise_error(host: str) -> NoReturn:
     )
 
 
-async def extract_credentials(authorization: str, host: str) -> List[str]:
+async def extract_credentials(
+    authorization: HTTPAuthorizationCredentials, host: str
+) -> List[str]:
     """Extract the credentials from ``Authorization`` headers and decode it before returning as a list of strings.
 
     Args:
@@ -55,13 +58,15 @@ async def extract_credentials(authorization: str, host: str) -> List[str]:
     """
     if not authorization:
         await raise_error(host)
-    decoded_auth = await secure.base64_decode(authorization)
+    decoded_auth = await secure.base64_decode(authorization.credentials)
     # convert hex to a string
     auth = await secure.hex_decode(decoded_auth)
     return auth.split(",")
 
 
-async def verify_login(authorization: str, host: str) -> Dict[str, Union[str, int]]:
+async def verify_login(
+    authorization: HTTPAuthorizationCredentials, host: str
+) -> Dict[str, Union[str, int]]:
     """Verifies authentication and generates session token for each user.
 
     Returns:
@@ -139,7 +144,7 @@ async def session_error(
     )
 
 
-async def validate_session(host: str, cookie_string: str) -> None:
+async def validate_session(host: str, cookie_string: str, log: bool = True) -> None:
     """Validate the session token.
 
     Args:
@@ -157,14 +162,15 @@ async def validate_session(host: str, cookie_string: str) -> None:
         assert (
             models.ws_session.client_auth.get(host) == original_dict
         ), f"{original_dict} != {models.ws_session.client_auth.get(host)}"
-        poached = datetime.fromtimestamp(
-            original_dict.get("timestamp") + models.env.monitor_session
-        )
-        LOGGER.info(
-            "Session token validated for %s until %s",
-            host,
-            poached.strftime("%Y-%m-%d %H:%M:%S"),
-        )
+        if log:
+            poached = datetime.fromtimestamp(
+                original_dict.get("timestamp") + models.env.monitor_session
+            )
+            LOGGER.info(
+                "Session token validated for %s until %s",
+                host,
+                poached.strftime("%Y-%m-%d %H:%M:%S"),
+            )
     except (KeyError, ValueError, TypeError) as error:
         LOGGER.critical(error)
         raise exceptions.SessionError("Invalid Session")

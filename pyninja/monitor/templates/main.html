@@ -36,7 +36,7 @@
 
         .progress {
             width: 100%;
-            background-color: #f3f3f3;
+            background-color: transparent;
             border-radius: 5px;
             overflow: hidden;
             transition: background-color 0.5s ease;
@@ -54,6 +54,10 @@
 
         .progress-bar-yellow {
             background-color: #ffeb3b;
+        }
+
+        .progress-bar-orange {
+            background-color: #ff9800;
         }
 
         .progress-bar-red {
@@ -316,13 +320,15 @@
             bar.style.width = percentage + '%';
 
             // Remove old color classes
-            bar.classList.remove('progress-bar-green', 'progress-bar-yellow', 'progress-bar-red');
+            bar.classList.remove('progress-bar-green', 'progress-bar-yellow', 'progress-bar-orange', 'progress-bar-red');
 
             // Add new color class based on percentage
-            if (percentage <= 40) {
+            if (percentage <= 50) {
                 bar.classList.add('progress-bar-green');
-            } else if (percentage <= 80) {
+            } else if (percentage <= 70) {
                 bar.classList.add('progress-bar-yellow');
+            } else if (percentage <= 90) {
+                bar.classList.add('progress-bar-orange');
             } else {
                 bar.classList.add('progress-bar-red');
             }

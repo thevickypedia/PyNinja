@@ -182,7 +182,7 @@
             url: origin.concat("{{ signin }}"),
             headers: {
                 'accept': 'application/json',
-                'Authorization': btoa(authHeaderValue)
+                'Authorization': `Bearer ${btoa(authHeaderValue)}`
             },
             crossDomain: "true",
             contentType: "application/json; charset=utf-8",
