@@ -15,6 +15,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script type="text/javascript" src="https://thevickypedia.github.io/open-source/nightmode/night.js" defer></script>
     <link rel="stylesheet" type="text/css" href="https://thevickypedia.github.io/open-source/nightmode/night.css">
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--suppress CssUnusedSymbol -->
     <style id="main-css">
         body {
@@ -102,9 +104,19 @@
             align-content: center;
         }
 
+        .logout {
+            position: absolute;
+            top: 3.8%;
+            right: 30px;
+            border: none;
+            padding: 10px 14px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
         .corner {
             position: absolute;
-            top: 3%;
+            top: 8%;
             right: 2%;
             font-size: 12px;
         }
@@ -119,6 +131,7 @@
 </div>
 <body translate="no">
 <div class="toggler fa fa-moon-o"></div>
+<button class="logout" onclick="logOut()"><i class="fa fa-sign-out"></i> Logout</button>
 <h1>PyNinja - System Monitor</h1>
 <div class="center-container">
     <details>
@@ -341,6 +354,9 @@
             else return (bytes / 1073741824).toFixed(2) + ' GB';
         }
     });
+    function logOut() {
+        window.location.href = window.location.origin + "{{ logout }}";
+    }
 </script>
 </body>
 </html>

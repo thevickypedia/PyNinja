@@ -60,9 +60,9 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
             name="logout.html",
             context={
                 "request": request,
-                "detail": "Session Expired",
                 "signin": "/login",
-                "show_login": True,
+                "detail": "You have been logged out successfully.",
+                "show_login": False,
                 "version": f"v{version.__version__}",
             },
         )
@@ -139,6 +139,7 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
                     uptime=squire.format_timedelta(
                         timedelta(seconds=time.time() - psutil.boot_time())
                     ),
+                    logout="/logout",
                 ),
             )
     else:
@@ -194,6 +195,11 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
             await websocket.send_text(error.__str__())
             await websocket.close()
             return
+        except KeyboardInterrupt:
+            task.cancel()
+            await websocket.send_text("Server Disconnected")
+            await websocket.close()
+            break
         if websocket.application_state == WebSocketState.CONNECTED:
             try:
                 msg = await asyncio.wait_for(websocket.receive_text(), timeout=1)
@@ -226,6 +232,10 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
                 pass
             except WebSocketDisconnect:
                 break
+            except KeyboardInterrupt:
+                await websocket.send_text("Server Disconnected")
+                await websocket.close()
+                break
         now = time.time()
         if now - session_timestamp > models.env.monitor_session:
             LOGGER.info("Session expired for %s", websocket.client.host)
@@ -244,4 +254,8 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
                 )
             )
         except WebSocketDisconnect:
+            break
+        except KeyboardInterrupt:
+            await websocket.send_text("Server Disconnected")
+            await websocket.close()
             break

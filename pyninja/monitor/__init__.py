@@ -18,7 +18,6 @@ def get_all_monitor_routes(
         List[APIRoute | APIWebSocketRoute]:
         Returns a list of API routes and WebSocket routes.
     """
-    # todo: Create a logout button for /monitor page
     return [
         APIRoute(
             path="/login",

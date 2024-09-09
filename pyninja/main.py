@@ -1,4 +1,5 @@
 import logging
+import pathlib
 
 import uvicorn
 from fastapi import Depends, FastAPI, Request
@@ -16,6 +17,7 @@ PyNinjaAPI = FastAPI(
     version=version.__version__,
     license_info={"name": "MIT License", "identifier": "MIT"},
 )
+PyNinjaAPI.__name__ = "PyNinjaAPI"
 
 
 def get_desc(remote_flag: bool, monitor_flag: bool) -> str:
@@ -150,11 +152,12 @@ def start(**kwargs) -> None:
     else:
         BASE_LOGGER.warning("Monitoring feature disabled")
     PyNinjaAPI.description = get_desc(arg1, arg2)
+    module_name = pathlib.Path(__file__)
     kwargs = dict(
         host=models.env.ninja_host,
         port=models.env.ninja_port,
         workers=models.env.workers,
-        app=PyNinjaAPI,
+        app=f"{module_name.parent.stem}.{module_name.stem}:{PyNinjaAPI.__name__}",
     )
     if models.env.log_config:
         kwargs["log_config"] = models.env.log_config
