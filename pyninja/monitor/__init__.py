@@ -18,6 +18,9 @@ def get_all_monitor_routes(
         List[APIRoute | APIWebSocketRoute]:
         Returns a list of API routes and WebSocket routes.
     """
+    # todo: None of the endpoints have authentication mechanism via /docs page
+    #       Create a logout button for /monitor page
+    #       Make CPU and memory bars transparent instead of white background spacing
     return [
         APIRoute(
             path="/login",

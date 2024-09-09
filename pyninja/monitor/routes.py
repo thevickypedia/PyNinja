@@ -30,7 +30,7 @@ async def error_endpoint(request: Request) -> HTMLResponse:
             name="unauthorized.html",
             context={
                 "request": request,
-                "signin": monitor.config.static.login_endpoint,
+                "signin": "/login",
                 "version": f"v{version.__version__}",
             },
         )
@@ -59,7 +59,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
             context={
                 "request": request,
                 "detail": "Session Expired",
-                "signin": monitor.config.static.login_endpoint,
+                "signin": "/login",
                 "show_login": True,
                 "version": f"v{version.__version__}",
             },
@@ -82,7 +82,7 @@ async def login_endpoint(
     # AJAX calls follow redirect and return the response instead of replacing the URL
     # Solution is to revert to Form, but that won't allow header auth and additional customization done by JavaScript
     response = JSONResponse(
-        content={"redirect_url": monitor.config.static.monitor_endpoint},
+        content={"redirect_url": "/monitor"},
         status_code=HTTPStatus.OK,
     )
     response.set_cookie(**await monitor.authenticator.generate_cookie(auth_payload))
@@ -144,7 +144,7 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
             name="index.html",
             context={
                 "request": request,
-                "signin": monitor.config.static.login_endpoint,
+                "signin": "/login",
                 "version": f"v{version.__version__}",
             },
         )
@@ -158,14 +158,9 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         session_token: Session token set after verifying username and password.
     """
     await websocket.accept()
-    try:
-        await monitor.authenticator.validate_session(
-            websocket.client.host, session_token
-        )
-    except exceptions.SessionError as error:
-        await websocket.send_text(error.__str__())
-        await websocket.close()
-        return
+    task = asyncio.create_task(
+        monitor.authenticator.validate_session(websocket.client.host, session_token)
+    )
     session_timestamp = models.ws_session.client_auth.get(websocket.client.host).get(
         "timestamp"
     )
@@ -177,14 +172,19 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     )
     data = squire.system_resources(models.ws_settings.cpu_interval)
     while True:
-        try:
-            await monitor.authenticator.validate_session(
-                websocket.client.host, session_token
-            )
-        except exceptions.SessionError as error:
-            await websocket.send_text(error.__str__())
-            await websocket.close()
-            return
+        if task.done():
+            try:
+                await task
+                task = asyncio.create_task(
+                    monitor.authenticator.validate_session(
+                        websocket.client.host, session_token
+                    )
+                )
+            except exceptions.SessionError as error:
+                LOGGER.warning(error)
+                await websocket.send_text(error.__str__())
+                await websocket.close()
+                return
         if websocket.application_state == WebSocketState.CONNECTED:
             try:
                 msg = await asyncio.wait_for(websocket.receive_text(), timeout=0.1)

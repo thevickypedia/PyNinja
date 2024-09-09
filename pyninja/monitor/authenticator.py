@@ -132,7 +132,7 @@ async def session_error(
         name="session.html",
         context={
             "request": request,
-            "signin": config.static.login_endpoint,
+            "signin": "/login",
             "reason": error.detail,
             "version": f"v{version.__version__}",
         },

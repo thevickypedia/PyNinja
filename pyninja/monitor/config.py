@@ -3,7 +3,6 @@ import time
 
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
 
 templates = Jinja2Templates(
     directory=os.path.join(os.path.dirname(__file__), "templates")
@@ -39,18 +38,3 @@ async def get_expiry(lease_start: int, lease_duration: int) -> str:
     """
     end = time.gmtime(lease_start + lease_duration)
     return time.strftime("%a, %d-%b-%Y %T GMT", end)
-
-
-class Static(BaseModel):
-    """Object to store static values.
-
-    >>> Static
-
-    """
-
-    login_endpoint: str = "/login"
-    logout_endpoint: str = "/logout"
-    monitor_endpoint: str = "/monitor"
-
-
-static = Static()
