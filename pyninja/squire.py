@@ -81,11 +81,13 @@ def system_resources(cpu_interval: int) -> Dict[str, dict]:
         Dict[str, dict]:
         Returns a nested dictionary.
     """
+    m1, m5, m15 = os.getloadavg() or (None, None, None)
     return dict(
         cpu_usage=psutil.cpu_percent(interval=cpu_interval, percpu=True),
         memory_info=psutil.virtual_memory()._asdict(),
         swap_info=psutil.swap_memory()._asdict(),
         disk_info=shutil.disk_usage("/")._asdict(),
+        load_averages={"1m": m1, "5m": m5, "15m": m15},
     )
 
 

@@ -164,6 +164,7 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         session_token: Session token set after verifying username and password.
     """
     await websocket.accept()
+    # Validate session before starting the websocket connection
     try:
         await monitor.authenticator.validate_session(
             websocket.client.host, session_token
@@ -185,6 +186,9 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     data = squire.system_resources(models.ws_settings.cpu_interval)
     task = asyncio.create_task(asyncio.sleep(0.1))
     while True:
+        # Validate session asynchronously (non-blocking)
+        # This way of handling session validation is more efficient than using a blocking call
+        # This might slip through one iteration even after the session has expired, but it just means one more iteration
         try:
             if task.done():
                 await task
@@ -264,8 +268,12 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
             break
     try:
         if task.done():
-            await task
-    except exceptions.SessionError as error:
+            await asyncio.wait_for(task, timeout=1)
+        else:
+            task.cancel()
+    except (
+        exceptions.SessionError,
+        asyncio.TimeoutError,
+        asyncio.CancelledError,
+    ) as error:
         LOGGER.warning(error)
-        await websocket.send_text(error.__str__())
-        await websocket.close()

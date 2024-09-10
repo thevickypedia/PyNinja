@@ -101,6 +101,30 @@ async def get_memory_utilization(
     )
 
 
+async def get_cpu_load_avg(
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """**Get the number of processes in the system run queue averaged over the last 1, 5, and 15 minutes respectively.**
+
+    **Args:**
+
+        request: Reference to the FastAPI request object.
+        apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and CPU usage as response.
+    """
+    await auth.level_1(request, apikey)
+    m1, m5, m15 = psutil.getloadavg() or (None, None, None)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.OK.real,
+        detail={"1m": m1, "5m": m5, "15m": m15},
+    )
+
+
 async def get_disk_utilization(
     request: Request,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
@@ -399,6 +423,12 @@ def get_all_routes(dependencies: List[Depends]) -> List[APIRoute]:
         APIRoute(
             path="/get-cpu",
             endpoint=get_cpu_utilization,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path="/get-cpu-load",
+            endpoint=get_cpu_load_avg,
             methods=["GET"],
             dependencies=dependencies,
         ),

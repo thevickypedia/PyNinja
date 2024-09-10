@@ -146,6 +146,11 @@
             right: 2%;
             font-size: 12px;
         }
+
+        .graph-canvas {
+            max-width: 600px;
+        }
+
     </style>
 </head>
 <div class="corner">
@@ -182,6 +187,7 @@
     </details>
 </div>
 <div class="container">
+    <!-- Box to display utilization per CPU -->
     <div class="box">
         <h3>CPU Usage</h3>
         <div class="cpu-box" id="cpuUsageContainer">
@@ -200,12 +206,14 @@
         <button class="tooltip-button" title="Frequency to query system resources" id="setRefreshIntervalBtn">Update
         </button>
     </div>
+    <!-- Box to display Memory, Swap and Disk usage along with CPU load avg -->
     <div class="box">
         <h3>Memory Usage</h3>
         <div class="progress">
             <div id="memoryUsage" class="progress-bar"></div>
         </div>
         <p id="memoryUsageText">Memory: 0%</p>
+
         {% if swap %}
             <h3>Swap Usage</h3>
             <div class="progress">
@@ -213,12 +221,19 @@
             </div>
             <p id="swapUsageText">Swap: 0%</p>
         {% endif %}
+
         <h3>Disk Usage</h3>
         <div class="progress">
             <div id="diskUsage" class="progress-bar"></div>
         </div>
         <p id="diskUsageText">Disk: 0%</p>
+
+        <div class="graph">
+            <h3>CPU Load Averages</h3>
+            <canvas class="graph-canvas" id="loadChart" width="400" height="200"></canvas>
+        </div>
     </div>
+    <!-- Box to display Memory, Swap and Disk usage as Pie charts -->
     <div class="box">
         <h3>Memory Usage</h3>
         <h5 id="memoryTotal"></h5>
@@ -249,6 +264,7 @@
         let memoryChartInstance = null;
         let swapChartInstance = null;
         let diskChartInstance = null;
+        let loadChartInstance = null;
 
         ws.onmessage = function (event) {
             const date = new Date();
@@ -259,7 +275,7 @@
             } catch (error) {
                 console.warn('Error parsing JSON data:', error);
                 alert(event.data);
-                window.location.href = `${window.location.origin}/logout`;
+                logOut();
                 return;
             }
             // Update CPU usage
@@ -300,6 +316,60 @@
             document.getElementById('diskUsage').style.width = diskUsage.toFixed(2) + '%';
             document.getElementById('diskUsageText').innerText = `Disk: ${diskUsage.toFixed(2)}%`;
             updateProgressBar('diskUsage', diskUsage);
+
+            // CPU Load Avg Graph
+            const loadAverages = data.load_averages;
+            if (loadChartInstance) {
+                loadChartInstance.data.datasets[0].data = [loadAverages["1m"], loadAverages["5m"], loadAverages["15m"]];
+                loadChartInstance.update();
+            } else {
+                const ctx = document.getElementById('loadChart').getContext('2d');
+                loadChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['1 minute', '5 minutes', '15 minutes'],
+                        datasets: [{
+                            label: 'Load Average',
+                            data: [loadAverages["1m"], loadAverages["5m"], loadAverages["15m"]],
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            // Hide the legend
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Processes'
+                                },
+                                ticks: {
+                                    // Set integer step size
+                                    stepSize: 1,
+                                    callback: function (value) {
+                                        return Number.isInteger(value) ? value : '';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
 
             // Memory Chart
             document.getElementById("memoryTotal").innerText = `Total: ${formatBytes(memoryInfo.total)}`;
