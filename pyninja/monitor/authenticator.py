@@ -150,6 +150,7 @@ async def validate_session(host: str, cookie_string: str, log: bool = True) -> N
     Args:
         host: Hostname from the request.
         cookie_string: Session token from the cookie.
+        log: Boolean flag to enable logging.
 
     Raises:
         SessionError:

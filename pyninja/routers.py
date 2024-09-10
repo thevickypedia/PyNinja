@@ -1,4 +1,5 @@
 import logging
+import shutil
 import subprocess
 from http import HTTPStatus
 from typing import List, Optional
@@ -10,7 +11,7 @@ from fastapi.routing import APIRoute
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
-from . import auth, dockerized, exceptions, models, process, service, squire
+from . import auth, dockerized, exceptions, models, process, processor, service, squire
 
 LOGGER = logging.getLogger("uvicorn.default")
 BASIC_AUTH = HTTPBasic()
@@ -22,7 +23,7 @@ async def get_ip_address(
     public: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
-    """Get local and public IP address of the device.
+    """**Get local and public IP address of the device.**
 
     Args:
         request: Reference to the FastAPI request object.
@@ -47,7 +48,7 @@ async def get_cpu_utilization(
     per_cpu: bool = True,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
-    """Get the CPU utilization.
+    """**Get the CPU utilization.**
 
     **Args:**
 
@@ -74,7 +75,7 @@ async def get_memory_utilization(
     request: Request,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
-    """Get memory utilization.
+    """**Get memory utilization.**
 
     **Args:**
 
@@ -96,6 +97,32 @@ async def get_memory_utilization(
             "swap_total": squire.size_converter(psutil.swap_memory().total),
             "swap_used": squire.size_converter(psutil.swap_memory().used),
             "swap_usage": psutil.swap_memory().percent,
+        },
+    )
+
+
+async def get_disk_utilization(
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """**Get disk utilization.**
+
+    **Args:**
+
+        request: Reference to the FastAPI request object.
+        apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and CPU usage as response.
+    """
+    await auth.level_1(request, apikey)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.OK.real,
+        detail={
+            k: squire.size_converter(v)
+            for k, v in shutil.disk_usage("/")._asdict().items()
         },
     )
 
@@ -300,6 +327,34 @@ async def get_docker_volumes(
     )
 
 
+async def get_processor_name(
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """**API function to get process information.**
+
+    **Args:**
+
+        request: Reference to the FastAPI request object.
+        process_name: Name of the process to get information.
+        apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_1(request, apikey)
+    if processor_info := processor.get_name():
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.OK.real, detail=processor_info
+        )
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.NOT_FOUND.real,
+        detail="Unable to retrieve processor information!",
+    )
+
+
 async def docs() -> RedirectResponse:
     """Redirect to docs page.
 
@@ -348,8 +403,20 @@ def get_all_routes(dependencies: List[Depends]) -> List[APIRoute]:
             dependencies=dependencies,
         ),
         APIRoute(
+            path="/get-processor",
+            endpoint=get_processor_name,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
             path="/get-memory",
             endpoint=get_memory_utilization,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path="/get-disk",
+            endpoint=get_disk_utilization,
             methods=["GET"],
             dependencies=dependencies,
         ),

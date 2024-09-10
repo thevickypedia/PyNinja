@@ -77,6 +77,11 @@ Models
 
 ====
 
+.. autoclass:: pyninja.models.ProcessorLib(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
 .. autoclass:: pyninja.models.WSSettings(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
@@ -98,7 +103,7 @@ Models
 ====
 
 .. automodule:: pyninja.models
-   :exclude-members: Payload, ServiceStatus, ServiceManager, WSSettings, EnvConfig, Session, RateLimit, env, database
+   :exclude-members: Payload, ServiceStatus, ServiceManager, ProcessorLib, WSSettings, EnvConfig, Session, RateLimit, env, database
 
 Squire
 ======

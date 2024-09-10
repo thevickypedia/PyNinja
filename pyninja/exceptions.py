@@ -1,6 +1,8 @@
-from typing import Optional
+from typing import NoReturn, Optional
 
 from fastapi.exceptions import HTTPException
+from pydantic import ValidationError
+from pydantic_core import InitErrorDetails
 
 
 class APIResponse(HTTPException):
@@ -54,3 +56,23 @@ class SessionError(Exception):
     def __init__(self, detail: Optional[str] = ""):
         """Instantiates the ``SessionError`` object."""
         self.detail = detail
+
+
+def raise_os_error() -> NoReturn:
+    """Raises a custom exception for unsupported OS.
+
+    Raises:
+        ValidationError:
+        Overridden exception from ``pydantic.ValidationError`` for unsupported OS.
+    """
+    # https://docs.pydantic.dev/latest/errors/validation_errors/#model_type
+    raise ValidationError.from_exception_data(
+        title="PyNinja",
+        line_errors=[
+            InitErrorDetails(
+                type="model_type",
+                loc=("operating_system",),
+                input="invalid",
+            )
+        ],
+    )

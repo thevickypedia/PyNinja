@@ -232,7 +232,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routers.get_ip_address">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">get_ip_address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">public</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.get_ip_address" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get local and public IP address of the device.</p>
+<dd><p><strong>Get local and public IP address of the device.</strong></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -252,7 +252,7 @@ Raises the HTTPStatus object with a status code and the public/private IP as res
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routers.get_cpu_utilization">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">get_cpu_utilization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_cpu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.get_cpu_utilization" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the CPU utilization.</p>
+<dd><p><strong>Get the CPU utilization.</strong></p>
 <p><strong>Args:</strong></p>
 <blockquote>
 <div><p>request: Reference to the FastAPI request object.
@@ -270,7 +270,23 @@ Raises the HTTPStatus object with a status code and CPU usage as response.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routers.get_memory_utilization">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">get_memory_utilization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.get_memory_utilization" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get memory utilization.</p>
+<dd><p><strong>Get memory utilization.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><p>request: Reference to the FastAPI request object.
+apikey: API Key to authenticate the request.</p>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object with a status code and CPU usage as response.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routers.get_disk_utilization">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">get_disk_utilization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.get_disk_utilization" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Get disk utilization.</strong></p>
 <p><strong>Args:</strong></p>
 <blockquote>
 <div><p>request: Reference to the FastAPI request object.
@@ -378,6 +394,23 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <p><strong>Args:</strong></p>
 <blockquote>
 <div><p>request: Reference to the FastAPI request object.
+apikey: API Key to authenticate the request.</p>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object with a status code and detail as response.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routers.get_processor_name">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">get_processor_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.get_processor_name" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>API function to get process information.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><p>request: Reference to the FastAPI request object.
+process_name: Name of the process to get information.
 apikey: API Key to authenticate the request.</p>
 </div></blockquote>
 <p><strong>Raises:</strong></p>
@@ -759,6 +792,20 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 </div>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.exceptions.raise_os_error">
+<span class="sig-prename descclassname"><span class="pre">pyninja.exceptions.</span></span><span class="sig-name descname"><span class="pre">raise_os_error</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="headerlink" href="#pyninja.exceptions.raise_os_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises a custom exception for unsupported OS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValidationError</strong> – </p></li>
+<li><p><strong>Overridden exception from pydantic.ValidationError for unsupported OS.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="models">
 <h1>Models<a class="headerlink" href="#models" title="Permalink to this heading">¶</a></h1>
@@ -810,18 +857,43 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 </pre></div>
 </div>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.models.ServiceManager.Linux">
-<span class="sig-name descname"><span class="pre">Linux</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceManager.Linux" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.models.ServiceManager.linux">
+<span class="sig-name descname"><span class="pre">linux</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceManager.linux" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.models.ServiceManager.Darwin">
-<span class="sig-name descname"><span class="pre">Darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceManager.Darwin" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.models.ServiceManager.darwin">
+<span class="sig-name descname"><span class="pre">darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceManager.darwin" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.models.ServiceManager.windows">
 <span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceManager.windows" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py class">
+<dt class="sig sig-object py" id="pyninja.models.ProcessorLib">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">ProcessorLib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.models.ProcessorLib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default processor library dedicated to each supported operating system.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ProcessorLib</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.ProcessorLib.linux">
+<span class="sig-name descname"><span class="pre">linux</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ProcessorLib.linux" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.ProcessorLib.darwin">
+<span class="sig-name descname"><span class="pre">darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ProcessorLib.darwin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.ProcessorLib.windows">
+<span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ProcessorLib.windows" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -962,6 +1034,11 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.models.EnvConfig.service_manager">
 <span class="sig-name descname"><span class="pre">service_manager</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#pyninja.models.ServiceManager" title="pyninja.models.ServiceManager"><span class="pre">ServiceManager</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.models.EnvConfig.service_manager" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.EnvConfig.processor_lib">
+<span class="sig-name descname"><span class="pre">processor_lib</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#pyninja.models.ProcessorLib" title="pyninja.models.ProcessorLib"><span class="pre">ProcessorLib</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.models.EnvConfig.processor_lib" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1125,6 +1202,20 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pyninja.models.ServiceManager" title="pyninja.models.ServiceManager">ServiceManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.models.get_processor_lib">
+<span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">get_processor_lib</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.ProcessorLib" title="pyninja.models.ProcessorLib"><span class="pre">ProcessorLib</span></a></span></span><a class="headerlink" href="#pyninja.models.get_processor_lib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get process library filepath for the host operating system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns the <code class="docutils literal notranslate"><span class="pre">FilePath</span></code> referencing the appropriate <code class="docutils literal notranslate"><span class="pre">ProcessorLib</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyninja.models.ProcessorLib" title="pyninja.models.ProcessorLib">ProcessorLib</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1439,6 +1530,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>host</strong> – Hostname from the request.</p></li>
 <li><p><strong>cookie_string</strong> – Session token from the cookie.</p></li>
+<li><p><strong>log</strong> – Boolean flag to enable logging.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>

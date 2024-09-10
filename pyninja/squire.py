@@ -5,6 +5,7 @@ import os
 import pathlib
 import re
 import secrets
+import shutil
 import socket
 import subprocess
 from datetime import timedelta
@@ -84,6 +85,7 @@ def system_resources(cpu_interval: int) -> Dict[str, dict]:
         cpu_usage=psutil.cpu_percent(interval=cpu_interval, percpu=True),
         memory_info=psutil.virtual_memory()._asdict(),
         swap_info=psutil.swap_memory()._asdict(),
+        disk_info=shutil.disk_usage("/")._asdict(),
     )
 
 

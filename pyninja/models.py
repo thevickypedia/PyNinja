@@ -11,17 +11,15 @@ from pydantic import (
     FilePath,
     PositiveFloat,
     PositiveInt,
-    ValidationError,
     field_validator,
 )
-from pydantic_core import InitErrorDetails
 from pydantic_settings import BaseSettings
 
 from . import exceptions
 
-OPERATING_SYSTEM = platform.system()
+OPERATING_SYSTEM = platform.system().lower()
 
-if OPERATING_SYSTEM not in ("Darwin", "Linux", "Windows"):
+if OPERATING_SYSTEM not in ("darwin", "linux", "windows"):
     raise exceptions.UnSupportedOS(
         f"{OPERATING_SYSTEM!r} is unsupported.\n\t"
         "Host machine should either be macOS, Windows or any Linux distros"
@@ -120,9 +118,21 @@ class ServiceManager(BaseModel):
 
     """
 
-    Linux: FilePath = "/usr/bin/systemctl"
-    Darwin: FilePath = "/bin/launchctl"
+    linux: FilePath = "/usr/bin/systemctl"
+    darwin: FilePath = "/bin/launchctl"
     windows: FilePath = "C:\\Windows\\System32\\sc.exe"
+
+
+class ProcessorLib(BaseModel):
+    """Default processor library dedicated to each supported operating system.
+
+    >>> ProcessorLib
+
+    """
+
+    linux: FilePath = "/proc/cpuinfo"
+    darwin: FilePath = "/usr/sbin/sysctl"
+    windows: FilePath = "c:\\Windows\\System32\\wbem\\wmic.exe"
 
 
 class WSSettings(BaseModel):
@@ -164,17 +174,21 @@ def get_service_manager() -> ServiceManager:
         return ServiceManager().model_dump()[OPERATING_SYSTEM]
     except KeyError:
         # This shouldn't happen programmatically, but just in case
-        # https://docs.pydantic.dev/latest/errors/validation_errors/#model_type
-        raise ValidationError.from_exception_data(
-            title="PyNinja",
-            line_errors=[
-                InitErrorDetails(
-                    type="model_type",
-                    loc=("operating_system",),
-                    input="invalid",
-                )
-            ],
-        )
+        exceptions.raise_os_error()
+
+
+def get_processor_lib() -> ProcessorLib:
+    """Get process library filepath for the host operating system.
+
+    Returns:
+        ProcessorLib:
+        Returns the ``FilePath`` referencing the appropriate ``ProcessorLib``.
+    """
+    try:
+        return ProcessorLib().model_dump()[OPERATING_SYSTEM]
+    except KeyError:
+        # This shouldn't happen programmatically, but just in case
+        exceptions.raise_os_error()
 
 
 class EnvConfig(BaseSettings):
@@ -195,6 +209,7 @@ class EnvConfig(BaseSettings):
     monitor_session: PositiveInt = 3_600
     max_connections: PositiveInt = 3
     service_manager: FilePath | ServiceManager = get_service_manager()
+    processor_lib: FilePath | ProcessorLib = get_processor_lib()
     database: str = Field("auth.db", pattern=".*.db$")
     rate_limit: RateLimit | List[RateLimit] = []
     log_config: Dict[str, Any] | FilePath | None = None

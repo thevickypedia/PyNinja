@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import platform
+import shutil
 import time
 from datetime import timedelta
 from http import HTTPStatus
@@ -11,7 +12,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
-from .. import exceptions, models, monitor, squire, version
+from .. import exceptions, models, monitor, processor, squire, version
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
@@ -122,25 +123,27 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
             )
         else:
             uname = platform.uname()
-            return monitor.config.templates.TemplateResponse(
-                name="main.html",
-                context=dict(
-                    request=request,
-                    default_cpu_interval=models.ws_settings.cpu_interval,
-                    default_refresh_interval=models.ws_settings.refresh_interval,
-                    node=uname.node,
-                    system=uname.system.lower(),
-                    machine=uname.machine.lower(),
-                    version=uname.version,
-                    release=uname.release,
-                    cores=psutil.cpu_count(logical=True),
-                    memory=squire.size_converter(psutil.virtual_memory().total),
-                    swap=squire.size_converter(psutil.swap_memory().total),
-                    uptime=squire.format_timedelta(
-                        timedelta(seconds=time.time() - psutil.boot_time())
-                    ),
-                    logout="/logout",
+            ctx = dict(
+                request=request,
+                default_cpu_interval=models.ws_settings.cpu_interval,
+                default_refresh_interval=models.ws_settings.refresh_interval,
+                node=uname.node,
+                system=uname.system,
+                machine=uname.machine,
+                cores=psutil.cpu_count(logical=True),
+                memory=squire.size_converter(psutil.virtual_memory().total),
+                storage=squire.size_converter(shutil.disk_usage("/").total),
+                swap=squire.size_converter(psutil.swap_memory().total),
+                logout="/logout",
+                uptime=squire.format_timedelta(
+                    timedelta(seconds=time.time() - psutil.boot_time())
                 ),
+                version=version.__version__,
+            )
+            if processor_name := processor.get_name():
+                ctx["processor"] = processor_name
+            return monitor.config.templates.TemplateResponse(
+                name="main.html", context=ctx
             )
     else:
         return monitor.config.templates.TemplateResponse(
@@ -259,3 +262,10 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
             await websocket.send_text("Server Disconnected")
             await websocket.close()
             break
+    try:
+        if task.done():
+            await task
+    except exceptions.SessionError as error:
+        LOGGER.warning(error)
+        await websocket.send_text(error.__str__())
+        await websocket.close()
