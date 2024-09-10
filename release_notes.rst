@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v0.0.7 (09/09/2024)
+-------------------
+- Includes a new feature to monitor disk utilization and get process name
+- Bug fix on uncaught errors during server shutdown
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v0.0.6...v0.0.7
+
 v0.0.6 (09/09/2024)
 -------------------
 - Includes an option to limit maximum number of WebSocket sessions
