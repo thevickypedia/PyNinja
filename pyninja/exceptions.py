@@ -1,8 +1,6 @@
-from typing import Any, NoReturn, Optional, Tuple
+from typing import NoReturn, Optional
 
 from fastapi.exceptions import HTTPException
-from pydantic import ValidationError
-from pydantic_core import InitErrorDetails
 
 
 class APIResponse(HTTPException):
@@ -58,23 +56,16 @@ class SessionError(Exception):
         self.detail = detail
 
 
-def raise_os_error(error: Any, supported: Tuple[str, str, str]) -> NoReturn:
+def raise_os_error(operating_system: str) -> NoReturn:
     """Raises a custom exception for unsupported OS.
+
+    Args:
+        operating_system: Current operating system.
 
     Raises:
         ValidationError: Overridden exception from ``pydantic.ValidationError`` for unsupported OS.
     """
-    # https://docs.pydantic.dev/latest/errors/validation_errors/#model_type
-    raise ValidationError.from_exception_data(
-        title="PyNinja",
-        line_errors=[
-            InitErrorDetails(
-                type="value_error",
-                loc=("operating_system",),
-                input="invalid",
-                ctx={
-                    "error": f"{error} is not a supported operating system.\n\tShould be one of {supported}"
-                },
-            )
-        ],
+    raise UnSupportedOS(
+        f"{operating_system!r} is unsupported.\n\t"
+        "Host machine should either be macOS, Windows or any Linux distros"
     )
