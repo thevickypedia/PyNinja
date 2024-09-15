@@ -105,10 +105,10 @@ async def level_2(
 
 
 async def incrementer(attempt: int) -> int:
-    """Increments block time for a host address based on the number of failed attempts.
+    """Increments block time for a host address based on the number of failed login attempts.
 
     Args:
-        attempt: Number of failed attempts.
+        attempt: Number of failed login attempts.
 
     Returns:
         int:

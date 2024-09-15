@@ -88,6 +88,7 @@ def system_resources(cpu_interval: int) -> Dict[str, dict]:
         swap_info=psutil.swap_memory()._asdict(),
         disk_info=shutil.disk_usage("/")._asdict(),
         load_averages={"1m": m1, "5m": m5, "15m": m15},
+        refresh_interval=models.ws_settings.refresh_interval,
     )
 
 
@@ -105,10 +106,18 @@ def format_nos(input_: float) -> int | float:
 
 
 def format_timedelta(td: timedelta) -> str:
-    """Converts timedelta to human-readable format.
+    """Converts timedelta to human-readable format by constructing a formatted string based on non-zero values.
 
     Args:
         td: Timedelta object.
+
+    See Also:
+        Always limits the output to a maximum of two identifiers.
+
+    Examples:
+        - 3 days and 1 hour
+        - 1 hour and 11 minutes
+        - 5 minutes and 23 seconds
 
     Returns:
         str:
@@ -116,18 +125,17 @@ def format_timedelta(td: timedelta) -> str:
     """
     days = td.days
     hours, remainder = divmod(td.seconds, 3600)
-    # minutes, seconds = divmod(remainder, 60)
-    # Constructing a formatted string based on non-zero values
+    minutes, seconds = divmod(remainder, 60)
     parts = []
     if days > 0:
         parts.append(f"{days} day{'s' if days > 1 else ''}")
     if hours > 0:
         parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
-    # if minutes > 0:
-    #     parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
-    # if seconds > 0:
-    #     parts.append(f"{seconds} second{'s' if seconds > 1 else ''}")
-    return " and ".join(parts)
+    if minutes > 0:
+        parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
+    if seconds > 0:
+        parts.append(f"{seconds} second{'s' if seconds > 1 else ''}")
+    return " and ".join(parts[:2])
 
 
 def size_converter(byte_size: int | float) -> str:

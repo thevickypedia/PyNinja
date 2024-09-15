@@ -41,9 +41,9 @@ def get_desc(remote_flag: bool, monitor_flag: bool) -> str:
         monitor_fl = "Disabled"
     description = "**Lightweight OS-agnostic service monitoring API**"
     description += (
-        "\n\nIn addition to monitoring services, processes and containers, "
-        "PyNinja API also allows you to execute remote commands and host a monitoring page for "
-        "system resources. 🚀"
+        "\n\nIn addition to monitoring services, processes, and containers,"
+        "the PyNinja API provides optional features for executing remote commands "
+        "and hosting a real-time system resource monitoring page. 🚀"
     )
     description += "\n\n#### Basic Features"
     description += "\n- <a href='/docs#/default/get_ip_get_ip_get'>/get-ip</a><br>"
@@ -66,6 +66,14 @@ def get_desc(remote_flag: bool, monitor_flag: bool) -> str:
     description += "\n\n#### Current State"
     description += f"\n- **Remote Execution:** {remote_fl}"
     description += f"\n- **Monitoring Page:** {monitor_fl}"
+    description += "\n\n#### Links"
+    description += (
+        "\n- <a href='https://pypi.org/project/PyNinja/'>PyPi Repository</a><br>"
+    )
+    description += (
+        "\n- <a href='https://github.com/thevickypedia/PyNinja'>GitHub Homepage</a><br>"
+    )
+    description += "\n- <a href='https://thevickypedia.github.io/PyNinja/'>Sphinx Documentation</a><br>"
     return description
 
 

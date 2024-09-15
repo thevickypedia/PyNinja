@@ -114,22 +114,22 @@ PyNinja - Monitor
 =================
 
 Authenticator
-=============
+-------------
 
 .. automodule:: pyninja.monitor.authenticator
 
 Configuration
-=============
+-------------
 
 .. automodule:: pyninja.monitor.config
 
 Routes
-======
+------
 
 .. automodule:: pyninja.monitor.routes
 
 Secure
-======
+------
 
 .. automodule:: pyninja.monitor.secure
 

@@ -62,8 +62,7 @@ def raise_os_error() -> NoReturn:
     """Raises a custom exception for unsupported OS.
 
     Raises:
-        ValidationError:
-        Overridden exception from ``pydantic.ValidationError`` for unsupported OS.
+        ValidationError: Overridden exception from ``pydantic.ValidationError`` for unsupported OS.
     """
     # https://docs.pydantic.dev/latest/errors/validation_errors/#model_type
     raise ValidationError.from_exception_data(

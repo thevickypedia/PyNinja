@@ -123,21 +123,32 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
             )
         else:
             uname = platform.uname()
+            sys_info_basic = dict(
+                node=uname.node,
+                system=uname.system,
+                architecture=uname.machine,
+                cpu_cores_cap=psutil.cpu_count(logical=True),
+                uptime=squire.format_timedelta(
+                    timedelta(seconds=time.time() - psutil.boot_time())
+                ),
+            )
+            sys_info_mem_storage = dict(
+                memory=squire.size_converter(psutil.virtual_memory().total),
+                swap=squire.size_converter(psutil.swap_memory().total),
+                storage=squire.size_converter(shutil.disk_usage("/").total),
+            )
+            sys_info_network = dict(
+                Private_IP_address_raw=squire.private_ip_address(),
+                Public_IP_address_raw=squire.public_ip_address(),
+            )
             ctx = dict(
                 request=request,
                 default_cpu_interval=models.ws_settings.cpu_interval,
                 default_refresh_interval=models.ws_settings.refresh_interval,
-                node=uname.node,
-                system=uname.system,
-                machine=uname.machine,
-                cores=psutil.cpu_count(logical=True),
-                memory=squire.size_converter(psutil.virtual_memory().total),
-                storage=squire.size_converter(shutil.disk_usage("/").total),
-                swap=squire.size_converter(psutil.swap_memory().total),
                 logout="/logout",
-                uptime=squire.format_timedelta(
-                    timedelta(seconds=time.time() - psutil.boot_time())
-                ),
+                sys_info_basic=sys_info_basic,
+                sys_info_mem_storage=sys_info_mem_storage,
+                sys_info_network=sys_info_network,
                 version=version.__version__,
             )
             if processor_name := processor.get_name():
@@ -177,13 +188,11 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     session_timestamp = models.ws_session.client_auth.get(websocket.client.host).get(
         "timestamp"
     )
-    refresh_time = time.time()
     LOGGER.info(
         "Intervals: {'CPU': %s, 'refresh': %s}",
         models.ws_settings.cpu_interval,
         models.ws_settings.refresh_interval,
     )
-    data = squire.system_resources(models.ws_settings.cpu_interval)
     task = asyncio.create_task(asyncio.sleep(0.1))
     while True:
         # Validate session asynchronously (non-blocking)
@@ -210,6 +219,7 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         if websocket.application_state == WebSocketState.CONNECTED:
             try:
                 msg = await asyncio.wait_for(websocket.receive_text(), timeout=1)
+                # todo: Check if this is session locked or updated globally
                 if msg.startswith("refresh_interval:"):
                     if refresh_interval := squire.dynamic_numbers(
                         msg.split(":")[1].strip()
@@ -249,17 +259,15 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
             await websocket.send_text("Session Expired")
             await websocket.close()
             break
-        if now - refresh_time > models.ws_settings.refresh_interval:
-            refresh_time = time.time()
-            LOGGER.debug("Fetching new charts")
-            data = squire.system_resources(models.ws_settings.cpu_interval)
+        # This can be gathered in the background
+        # but it will no longer be realtime data
+        # making it useless for long intervals
+        data = squire.system_resources(models.ws_settings.cpu_interval)
         try:
             await websocket.send_json(data)
-            await asyncio.sleep(
-                min(
-                    models.ws_settings.refresh_interval, models.ws_settings.cpu_interval
-                )
-            )
+            # There is no point in gathering data, when it is not propagated
+            # So instead of repeat iterations, simply sleep until next refresh
+            await asyncio.sleep(models.ws_settings.refresh_interval)
         except WebSocketDisconnect:
             break
         except KeyboardInterrupt:

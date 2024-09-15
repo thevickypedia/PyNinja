@@ -25,10 +25,11 @@ async def get_ip_address(
 ):
     """**Get local and public IP address of the device.**
 
-    Args:
-        request: Reference to the FastAPI request object.
-        public: Boolean flag to get the public IP address.
-        apikey: API Key to authenticate the request.
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - public: Boolean flag to get the public IP address.
+        - apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -52,10 +53,10 @@ async def get_cpu_utilization(
 
     **Args:**
 
-        request: Reference to the FastAPI request object.
-        interval: Interval to get the CPU utilization.
-        per_cpu: If True, returns the CPU utilization for each CPU.
-        apikey: API Key to authenticate the request.
+        - request: Reference to the FastAPI request object.
+        - interval: Interval to get the CPU utilization.
+        - per_cpu: If True, returns the CPU utilization for each CPU.
+        - apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -79,8 +80,8 @@ async def get_memory_utilization(
 
     **Args:**
 
-        request: Reference to the FastAPI request object.
-        apikey: API Key to authenticate the request.
+        - request: Reference to the FastAPI request object.
+        - apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -109,8 +110,8 @@ async def get_cpu_load_avg(
 
     **Args:**
 
-        request: Reference to the FastAPI request object.
-        apikey: API Key to authenticate the request.
+        - request: Reference to the FastAPI request object.
+        - apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -133,8 +134,8 @@ async def get_disk_utilization(
 
     **Args:**
 
-        request: Reference to the FastAPI request object.
-        apikey: API Key to authenticate the request.
+        - request: Reference to the FastAPI request object.
+        - apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -161,10 +162,10 @@ async def run_command(
 
     **Args:**
 
-        request: Reference to the FastAPI request object.
-        payload: Payload received as request body.
-        apikey: API Key to authenticate the request.
-        token: API secret to authenticate the request.
+        - request: Reference to the FastAPI request object.
+        - payload: Payload received as request body.
+        - apikey: API Key to authenticate the request.
+        - token: API secret to authenticate the request.
 
     **Raises:**
 
@@ -195,10 +196,10 @@ async def get_process_status(
 
     **Args:**
 
-        request: Reference to the FastAPI request object.
-        process_name: Name of the process to check status.
-        cpu_interval: Interval in seconds to get the CPU usage.
-        apikey: API Key to authenticate the request.
+        - request: Reference to the FastAPI request object.
+        - process_name: Name of the process to check status.
+        - cpu_interval: Interval in seconds to get the CPU usage.
+        - apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -223,9 +224,9 @@ async def get_service_status(
 
     **Args:**
 
-        request: Reference to the FastAPI request object.
-        service_name: Name of the service to check status.
-        apikey: API Key to authenticate the request.
+        - request: Reference to the FastAPI request object.
+        - service_name: Name of the service to check status.
+        - apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -256,11 +257,11 @@ async def get_docker_containers(
 
     **Args:**
 
-        request: Reference to the FastAPI request object.
-        container_name: Name of the container to check status.
-        get_all: Get all the containers' information.
-        get_running: Get running containers' information.
-        apikey: API Key to authenticate the request.
+        - request: Reference to the FastAPI request object.
+        - container_name: Name of the container to check status.
+        - get_all: Get all the containers' information.
+        - get_running: Get running containers' information.
+        - apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -307,8 +308,8 @@ async def get_docker_images(
 
     **Args:**
 
-        request: Reference to the FastAPI request object.
-        apikey: API Key to authenticate the request.
+        - request: Reference to the FastAPI request object.
+        - apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -333,8 +334,8 @@ async def get_docker_volumes(
 
     **Args:**
 
-        request: Reference to the FastAPI request object.
-        apikey: API Key to authenticate the request.
+        - request: Reference to the FastAPI request object.
+        - apikey: API Key to authenticate the request.
 
     **Raises:**
 
@@ -359,9 +360,9 @@ async def get_processor_name(
 
     **Args:**
 
-        request: Reference to the FastAPI request object.
-        process_name: Name of the process to get information.
-        apikey: API Key to authenticate the request.
+        - request: Reference to the FastAPI request object.
+        - process_name: Name of the process to get information.
+        - apikey: API Key to authenticate the request.
 
     **Raises:**
 

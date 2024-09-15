@@ -24,24 +24,28 @@ def get_all_monitor_routes(
             endpoint=routes.login_endpoint,
             methods=["POST"],
             dependencies=dependencies,
+            include_in_schema=False,
         ),
         APIRoute(
             path="/error",
             endpoint=routes.error_endpoint,
             methods=["GET"],
             dependencies=dependencies,
+            include_in_schema=False,
         ),
         APIRoute(
             path="/monitor",
             endpoint=routes.monitor_endpoint,
             methods=["GET"],
             dependencies=dependencies,
+            include_in_schema=False,
         ),
         APIRoute(
             path="/logout",
             endpoint=routes.logout_endpoint,
             methods=["GET"],
             dependencies=dependencies,
+            include_in_schema=False,
         ),
         APIWebSocketRoute(path="/ws/system", endpoint=routes.websocket_endpoint),
     ]

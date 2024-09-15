@@ -1,12 +1,38 @@
 import os
+import string
 import time
 
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+
+def capwords_filter(value: str) -> str:
+    """Capitalizes a string.
+
+    Args:
+        value: String value to be capitalized.
+
+    See Also:
+        This function is added as a filter to Jinja2 templates.
+
+    Returns:
+        str:
+        Returns the capitalized string.
+    """
+    if value.endswith("_raw"):
+        parts = value.split("_")
+        return " ".join(parts[:-1])
+    if value.endswith("_cap"):
+        parts = value.split("_")
+        return parts[0].upper() + " " + " ".join(parts[1:-1])
+    return string.capwords(value).replace("_", " ")
+
+
 templates = Jinja2Templates(
     directory=os.path.join(os.path.dirname(__file__), "templates")
 )
+# Add custom filter to Jinja2 environment
+templates.env.filters["capwords"] = capwords_filter
 
 
 async def clear_session(response: HTMLResponse) -> HTMLResponse:
