@@ -107,8 +107,8 @@ class RateLimit(BaseModel):
     seconds: PositiveInt
 
 
-class ServiceManager(BaseModel):
-    """Default service manager (commands) dedicated to each supported operating system.
+class ServiceLib(BaseModel):
+    """Default service library dedicated to each supported operating system.
 
     >>> ServiceManager
 
@@ -129,6 +129,17 @@ class ProcessorLib(BaseModel):
     linux: FilePath = "/proc/cpuinfo"
     darwin: FilePath = "/usr/sbin/sysctl"
     windows: FilePath = "c:\\Windows\\System32\\wbem\\wmic.exe"
+
+
+class DiskLib(BaseModel):
+    """Default disks library dedicated to each supported operating system.
+
+    >>> DiskLib
+
+    """
+
+    linux: FilePath = "/usr/bin/lsblk"
+    darwin: FilePath = "/usr/sbin/diskutil"
 
 
 class WSSettings(BaseModel):
@@ -159,32 +170,18 @@ class WSSession(BaseModel):
 ws_session = WSSession()
 
 
-def get_service_manager() -> ServiceManager:
-    """Get service manager filepath for the host operating system.
+def get_library(library: ServiceLib | ProcessorLib | DiskLib) -> FilePath:
+    """Get service/processor/disk library filepath for the host operating system.
 
     Returns:
-        ServiceManager:
-        Returns the ``FilePath`` referencing the appropriate ``ServiceManager``.
+        FilePath:
+        Returns the ``FilePath`` referencing the appropriate library.
     """
     try:
-        return ServiceManager().model_dump()[OPERATING_SYSTEM]
+        return FilePath(library().model_dump()[OPERATING_SYSTEM])
     except KeyError:
         # This shouldn't happen programmatically, but just in case
-        exceptions.raise_os_error(OPERATING_SYSTEM)
-
-
-def get_processor_lib() -> ProcessorLib:
-    """Get process library filepath for the host operating system.
-
-    Returns:
-        ProcessorLib:
-        Returns the ``FilePath`` referencing the appropriate ``ProcessorLib``.
-    """
-    try:
-        return ProcessorLib().model_dump()[OPERATING_SYSTEM]
-    except KeyError:
-        # This shouldn't happen programmatically, but just in case
-        exceptions.raise_os_error(OPERATING_SYSTEM)
+        exceptions.raise_os_error()
 
 
 class EnvConfig(BaseSettings):
@@ -204,25 +201,12 @@ class EnvConfig(BaseSettings):
     monitor_password: str | None = None
     monitor_session: PositiveInt = 3_600
     max_connections: PositiveInt = 3
-    service_manager: FilePath | ServiceManager = get_service_manager()
-    processor_lib: FilePath | ProcessorLib = get_processor_lib()
+    disk_lib: FilePath = get_library(DiskLib)
+    service_lib: FilePath = get_library(ServiceLib)
+    processor_lib: FilePath = get_library(ProcessorLib)
     database: str = Field("auth.db", pattern=".*.db$")
     rate_limit: RateLimit | List[RateLimit] = []
     log_config: Dict[str, Any] | FilePath | None = None
-
-    # noinspection PyMethodParameters
-    @field_validator("service_manager", mode="after")
-    def parse_service_manager(cls, value: FilePath) -> str:
-        """Parse service manager filepath into a string.
-
-        Args:
-            value: Takes service_manager filepath as an argument.
-
-        Returns:
-            str:
-            Returns the string representation of the filepath.
-        """
-        return value.__str__()
 
     # noinspection PyMethodParameters
     @field_validator("api_secret", mode="after")

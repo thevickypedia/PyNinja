@@ -125,6 +125,13 @@ def start(**kwargs) -> None:
         log_config: Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.
     """
     models.env = squire.load_env(**kwargs)
+
+    # todo: remove this after testing
+    from .disks import get_all_disks
+    import pprint
+    pprint.pprint(get_all_disks())
+    exit()
+
     dependencies = [
         Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
         for each_rate_limit in models.env.rate_limit

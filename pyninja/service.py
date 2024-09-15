@@ -84,7 +84,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
     if models.OPERATING_SYSTEM == "Linux":
         try:
             output = subprocess.check_output(
-                [models.env.service_manager, "is-active", service_name],
+                [models.env.service_lib, "is-active", service_name],
                 text=True,
             ).strip()
             if output == "active":
@@ -105,7 +105,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
     if models.OPERATING_SYSTEM == "Darwin":
         try:
             output = subprocess.check_output(
-                [models.env.service_manager, "list"], text=True
+                [models.env.service_lib, "list"], text=True
             )
             for line in output.splitlines():
                 if service_name in line:
@@ -119,7 +119,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
     if models.OPERATING_SYSTEM == "Windows":
         try:
             output = subprocess.check_output(
-                [models.env.service_manager, "query", service_name],
+                [models.env.service_lib, "query", service_name],
                 text=True,
             )
             if "RUNNING" in output:
