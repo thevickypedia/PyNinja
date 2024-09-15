@@ -1,4 +1,4 @@
-from typing import NoReturn, Optional
+from typing import Any, NoReturn, Optional, Tuple
 
 from fastapi.exceptions import HTTPException
 from pydantic import ValidationError
@@ -58,7 +58,7 @@ class SessionError(Exception):
         self.detail = detail
 
 
-def raise_os_error() -> NoReturn:
+def raise_os_error(error: Any, supported: Tuple[str, str, str]) -> NoReturn:
     """Raises a custom exception for unsupported OS.
 
     Raises:
@@ -69,9 +69,12 @@ def raise_os_error() -> NoReturn:
         title="PyNinja",
         line_errors=[
             InitErrorDetails(
-                type="model_type",
+                type="value_error",
                 loc=("operating_system",),
                 input="invalid",
+                ctx={
+                    "error": f"{error} is not a supported operating system.\n\tShould be one of {supported}"
+                },
             )
         ],
     )

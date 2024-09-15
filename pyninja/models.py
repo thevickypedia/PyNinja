@@ -18,8 +18,8 @@ from pydantic_settings import BaseSettings
 from . import exceptions
 
 OPERATING_SYSTEM = platform.system().lower()
-
-if OPERATING_SYSTEM not in ("darwin", "linux", "windows"):
+SUPPORTED = ("darwin", "linux", "windows")
+if OPERATING_SYSTEM not in SUPPORTED:
     raise exceptions.UnSupportedOS(
         f"{OPERATING_SYSTEM!r} is unsupported.\n\t"
         "Host machine should either be macOS, Windows or any Linux distros"
@@ -172,9 +172,9 @@ def get_service_manager() -> ServiceManager:
     """
     try:
         return ServiceManager().model_dump()[OPERATING_SYSTEM]
-    except KeyError:
+    except KeyError as key:
         # This shouldn't happen programmatically, but just in case
-        exceptions.raise_os_error()
+        exceptions.raise_os_error(key, SUPPORTED)
 
 
 def get_processor_lib() -> ProcessorLib:
@@ -186,9 +186,9 @@ def get_processor_lib() -> ProcessorLib:
     """
     try:
         return ProcessorLib().model_dump()[OPERATING_SYSTEM]
-    except KeyError:
+    except KeyError as key:
         # This shouldn't happen programmatically, but just in case
-        exceptions.raise_os_error()
+        exceptions.raise_os_error(key, SUPPORTED)
 
 
 class EnvConfig(BaseSettings):
@@ -303,5 +303,5 @@ class Database:
 session = Session()
 
 # Loaded in main:start()
-env = EnvConfig
-database = Database
+env: EnvConfig = EnvConfig
+database: Database = Database
