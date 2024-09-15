@@ -12,7 +12,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
-from .. import exceptions, models, monitor, processor, squire, version
+from .. import disks, exceptions, models, monitor, processor, squire, version
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
@@ -149,6 +149,7 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
                 sys_info_basic=sys_info_basic,
                 sys_info_mem_storage=sys_info_mem_storage,
                 sys_info_network=sys_info_network,
+                sys_info_disks=disks.get_all_disks(),
                 version=version.__version__,
             )
             if processor_name := processor.get_name():
@@ -259,7 +260,7 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
             await websocket.send_text("Session Expired")
             await websocket.close()
             break
-        # This can be gathered in the background
+        # This can be gathered in the background,
         # but it will no longer be realtime data
         # making it useless for long intervals
         data = squire.system_resources(models.ws_settings.cpu_interval)

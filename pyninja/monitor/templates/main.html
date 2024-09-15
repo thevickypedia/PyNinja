@@ -192,6 +192,18 @@
             <strong>{{ key|capwords }}: </strong>{{ value }}<br>
         {% endfor %}
     </details>
+    {% if sys_info_disks %}
+    <br>
+    <details>
+        <summary><strong>System Information (Disks)</strong></summary>
+        {% for disk_info in sys_info_disks %}
+        <br>
+        {% for key, value in disk_info.items() %}
+            <strong>{{ key }}: </strong>{{ value }}<br>
+        {% endfor %}
+        {% endfor %}
+    </details>
+    {% endif %}
 </div>
 <div class="container">
     <!-- Box to display utilization per CPU -->

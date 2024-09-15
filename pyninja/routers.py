@@ -11,7 +11,17 @@ from fastapi.routing import APIRoute
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
-from . import auth, dockerized, exceptions, models, process, processor, service, squire
+from . import (
+    auth,
+    disks,
+    dockerized,
+    exceptions,
+    models,
+    process,
+    processor,
+    service,
+    squire,
+)
 
 LOGGER = logging.getLogger("uvicorn.default")
 BASIC_AUTH = HTTPBasic()
@@ -149,6 +159,29 @@ async def get_disk_utilization(
             k: squire.size_converter(v)
             for k, v in shutil.disk_usage("/")._asdict().items()
         },
+    )
+
+
+async def get_all_disks(
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """**Get all disks attached to the host device.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and attached disks as response.
+    """
+    await auth.level_1(request, apikey)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.OK.real,
+        detail=disks.get_all_disks(),
     )
 
 
@@ -448,6 +481,12 @@ def get_all_routes(dependencies: List[Depends]) -> List[APIRoute]:
         APIRoute(
             path="/get-disk",
             endpoint=get_disk_utilization,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path="/get-all-disks",
+            endpoint=get_all_disks,
             methods=["GET"],
             dependencies=dependencies,
         ),

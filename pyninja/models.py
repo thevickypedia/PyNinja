@@ -3,7 +3,7 @@ import platform
 import re
 import socket
 import sqlite3
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any, Dict, List, Set, Tuple, Type
 
 from pydantic import (
     BaseModel,
@@ -110,7 +110,7 @@ class RateLimit(BaseModel):
 class ServiceLib(BaseModel):
     """Default service library dedicated to each supported operating system.
 
-    >>> ServiceManager
+    >>> ServiceLib
 
     """
 
@@ -128,7 +128,7 @@ class ProcessorLib(BaseModel):
 
     linux: FilePath = "/proc/cpuinfo"
     darwin: FilePath = "/usr/sbin/sysctl"
-    windows: FilePath = "c:\\Windows\\System32\\wbem\\wmic.exe"
+    windows: FilePath = "C:\\Windows\\System32\\wbem\\wmic.exe"
 
 
 class DiskLib(BaseModel):
@@ -140,6 +140,7 @@ class DiskLib(BaseModel):
 
     linux: FilePath = "/usr/bin/lsblk"
     darwin: FilePath = "/usr/sbin/diskutil"
+    windows: FilePath = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
 
 
 class WSSettings(BaseModel):
@@ -170,8 +171,13 @@ class WSSession(BaseModel):
 ws_session = WSSession()
 
 
-def get_library(library: ServiceLib | ProcessorLib | DiskLib) -> FilePath:
+def get_library(
+    library: Type[ServiceLib] | Type[ProcessorLib] | Type[DiskLib],
+) -> FilePath:
     """Get service/processor/disk library filepath for the host operating system.
+
+    Args:
+        library: Library class inherited from BaseModel.
 
     Returns:
         FilePath:
@@ -181,7 +187,7 @@ def get_library(library: ServiceLib | ProcessorLib | DiskLib) -> FilePath:
         return FilePath(library().model_dump()[OPERATING_SYSTEM])
     except KeyError:
         # This shouldn't happen programmatically, but just in case
-        exceptions.raise_os_error()
+        exceptions.raise_os_error(OPERATING_SYSTEM)
 
 
 class EnvConfig(BaseSettings):
@@ -283,5 +289,5 @@ class Database:
 session = Session()
 
 # Loaded in main:start()
-env: EnvConfig = EnvConfig
-database: Database = Database
+env: EnvConfig = EnvConfig  # noqa: PyTypeChecker
+database: Database = Database  # noqa: PyTypeChecker

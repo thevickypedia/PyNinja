@@ -130,19 +130,25 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#pyninja.models.ProcessorLib.darwin">darwin (pyninja.models.ProcessorLib attribute)</a>
+      <li><a href="index.html#pyninja.models.DiskLib.darwin">darwin (pyninja.models.DiskLib attribute)</a>
 
       <ul>
-        <li><a href="index.html#pyninja.models.ServiceManager.darwin">(pyninja.models.ServiceManager attribute)</a>
+        <li><a href="index.html#pyninja.models.ProcessorLib.darwin">(pyninja.models.ProcessorLib attribute)</a>
+</li>
+        <li><a href="index.html#pyninja.models.ServiceLib.darwin">(pyninja.models.ServiceLib attribute)</a>
 </li>
       </ul></li>
       <li><a href="index.html#pyninja.models.Database">Database (class in pyninja.models)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.models.EnvConfig.database">database (pyninja.models.EnvConfig attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.models.ServiceStatus.description">description (pyninja.models.ServiceStatus attribute)</a>
+</li>
+      <li><a href="index.html#pyninja.models.EnvConfig.disk_lib">disk_lib (pyninja.models.EnvConfig attribute)</a>
+</li>
+      <li><a href="index.html#pyninja.models.DiskLib">DiskLib (class in pyninja.models)</a>
 </li>
       <li><a href="index.html#pyninja.routers.docs">docs() (in module pyninja.routers)</a>
 </li>
@@ -200,6 +206,8 @@
 </li>
       <li><a href="index.html#pyninja.dockerized.get_all_containers">get_all_containers() (in module pyninja.dockerized)</a>
 </li>
+      <li><a href="index.html#pyninja.routers.get_all_disks">get_all_disks() (in module pyninja.routers)</a>
+</li>
       <li><a href="index.html#pyninja.dockerized.get_all_images">get_all_images() (in module pyninja.dockerized)</a>
 </li>
       <li><a href="index.html#pyninja.routers.get_all_routes">get_all_routes() (in module pyninja.routers)</a>
@@ -220,13 +228,15 @@
 </li>
       <li><a href="index.html#pyninja.routers.get_docker_images">get_docker_images() (in module pyninja.routers)</a>
 </li>
-      <li><a href="index.html#pyninja.routers.get_docker_volumes">get_docker_volumes() (in module pyninja.routers)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#pyninja.routers.get_docker_volumes">get_docker_volumes() (in module pyninja.routers)</a>
+</li>
       <li><a href="index.html#pyninja.monitor.config.get_expiry">get_expiry() (in module pyninja.monitor.config)</a>
 </li>
       <li><a href="index.html#pyninja.routers.get_ip_address">get_ip_address() (in module pyninja.routers)</a>
+</li>
+      <li><a href="index.html#pyninja.models.get_library">get_library() (in module pyninja.models)</a>
 </li>
       <li><a href="index.html#pyninja.routers.get_memory_utilization">get_memory_utilization() (in module pyninja.routers)</a>
 </li>
@@ -238,15 +248,11 @@
         <li><a href="index.html#pyninja.routers.get_process_status">(in module pyninja.routers)</a>
 </li>
       </ul></li>
-      <li><a href="index.html#pyninja.models.get_processor_lib">get_processor_lib() (in module pyninja.models)</a>
-</li>
       <li><a href="index.html#pyninja.routers.get_processor_name">get_processor_name() (in module pyninja.routers)</a>
 </li>
       <li><a href="index.html#pyninja.database.get_record">get_record() (in module pyninja.database)</a>
 </li>
       <li><a href="index.html#pyninja.dockerized.get_running_containers">get_running_containers() (in module pyninja.dockerized)</a>
-</li>
-      <li><a href="index.html#pyninja.models.get_service_manager">get_service_manager() (in module pyninja.models)</a>
 </li>
       <li><a href="index.html#pyninja.routers.get_service_status">get_service_status() (in module pyninja.routers)</a>
 
@@ -306,10 +312,12 @@
 </li>
       <li><a href="index.html#pyninja.auth.level_2">level_2() (in module pyninja.auth)</a>
 </li>
-      <li><a href="index.html#pyninja.models.ProcessorLib.linux">linux (pyninja.models.ProcessorLib attribute)</a>
+      <li><a href="index.html#pyninja.models.DiskLib.linux">linux (pyninja.models.DiskLib attribute)</a>
 
       <ul>
-        <li><a href="index.html#pyninja.models.ServiceManager.linux">(pyninja.models.ServiceManager attribute)</a>
+        <li><a href="index.html#pyninja.models.ProcessorLib.linux">(pyninja.models.ProcessorLib attribute)</a>
+</li>
+        <li><a href="index.html#pyninja.models.ServiceLib.linux">(pyninja.models.ServiceLib attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -403,8 +411,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.models.EnvConfig.parse_api_secret">parse_api_secret() (pyninja.models.EnvConfig class method)</a>
 </li>
-      <li><a href="index.html#pyninja.models.EnvConfig.parse_service_manager">parse_service_manager() (pyninja.models.EnvConfig class method)</a>
-</li>
       <li><a href="index.html#pyninja.models.Payload">Payload (class in pyninja.models)</a>
 </li>
       <li><a href="index.html#pyninja.squire.private_ip_address">private_ip_address() (in module pyninja.squire)</a>
@@ -454,8 +460,6 @@
         <li><a href="index.html#module-pyninja.main">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyninja.models
 
@@ -463,6 +467,8 @@
         <li><a href="index.html#module-pyninja.models">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyninja.monitor.authenticator
 
@@ -568,9 +574,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.models.RateLimit.seconds">seconds (pyninja.models.RateLimit attribute)</a>
 </li>
-      <li><a href="index.html#pyninja.models.EnvConfig.service_manager">service_manager (pyninja.models.EnvConfig attribute)</a>
+      <li><a href="index.html#pyninja.models.EnvConfig.service_lib">service_lib (pyninja.models.EnvConfig attribute)</a>
 </li>
-      <li><a href="index.html#pyninja.models.ServiceManager">ServiceManager (class in pyninja.models)</a>
+      <li><a href="index.html#pyninja.models.ServiceLib">ServiceLib (class in pyninja.models)</a>
 </li>
       <li><a href="index.html#pyninja.models.ServiceStatus">ServiceStatus (class in pyninja.models)</a>
 </li>
@@ -634,10 +640,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.monitor.routes.websocket_endpoint">websocket_endpoint() (in module pyninja.monitor.routes)</a>
 </li>
-      <li><a href="index.html#pyninja.models.ProcessorLib.windows">windows (pyninja.models.ProcessorLib attribute)</a>
+      <li><a href="index.html#pyninja.models.DiskLib.windows">windows (pyninja.models.DiskLib attribute)</a>
 
       <ul>
-        <li><a href="index.html#pyninja.models.ServiceManager.windows">(pyninja.models.ServiceManager attribute)</a>
+        <li><a href="index.html#pyninja.models.ProcessorLib.windows">(pyninja.models.ProcessorLib attribute)</a>
+</li>
+        <li><a href="index.html#pyninja.models.ServiceLib.windows">(pyninja.models.ServiceLib attribute)</a>
 </li>
       </ul></li>
   </ul></td>

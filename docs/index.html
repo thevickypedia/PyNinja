@@ -323,6 +323,24 @@ Raises the HTTPStatus object with a status code and CPU usage as response.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routers.get_all_disks">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">get_all_disks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.get_all_disks" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Get all disks attached to the host device.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>request: Reference to the FastAPI request object.</p></li>
+<li><p>apikey: API Key to authenticate the request.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object with a status code and attached disks as response.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routers.run_command">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routers.</span></span><span class="sig-name descname"><span class="pre">run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.models.Payload" title="pyninja.models.Payload"><span class="pre">Payload</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routers.run_command" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>API function to run a command on host machine.</strong></p>
@@ -887,25 +905,50 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 
 <hr class="docutils" />
 <dl class="py class">
-<dt class="sig sig-object py" id="pyninja.models.ServiceManager">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">ServiceManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.models.ServiceManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default service manager (commands) dedicated to each supported operating system.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ServiceManager</span>
+<dt class="sig sig-object py" id="pyninja.models.DiskLib">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">DiskLib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.models.DiskLib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default disks library dedicated to each supported operating system.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DiskLib</span>
 </pre></div>
 </div>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.models.ServiceManager.linux">
-<span class="sig-name descname"><span class="pre">linux</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceManager.linux" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.models.DiskLib.linux">
+<span class="sig-name descname"><span class="pre">linux</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.DiskLib.linux" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.models.ServiceManager.darwin">
-<span class="sig-name descname"><span class="pre">darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceManager.darwin" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.models.DiskLib.darwin">
+<span class="sig-name descname"><span class="pre">darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.DiskLib.darwin" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.models.ServiceManager.windows">
-<span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceManager.windows" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.models.DiskLib.windows">
+<span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.DiskLib.windows" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py class">
+<dt class="sig sig-object py" id="pyninja.models.ServiceLib">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">ServiceLib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.models.ServiceLib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default service library dedicated to each supported operating system.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ServiceLib</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.ServiceLib.linux">
+<span class="sig-name descname"><span class="pre">linux</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceLib.linux" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.ServiceLib.darwin">
+<span class="sig-name descname"><span class="pre">darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceLib.darwin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.ServiceLib.windows">
+<span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.ServiceLib.windows" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1069,13 +1112,18 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.models.EnvConfig.service_manager">
-<span class="sig-name descname"><span class="pre">service_manager</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#pyninja.models.ServiceManager" title="pyninja.models.ServiceManager"><span class="pre">ServiceManager</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.models.EnvConfig.service_manager" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.models.EnvConfig.disk_lib">
+<span class="sig-name descname"><span class="pre">disk_lib</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.EnvConfig.disk_lib" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.models.EnvConfig.service_lib">
+<span class="sig-name descname"><span class="pre">service_lib</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.EnvConfig.service_lib" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.models.EnvConfig.processor_lib">
-<span class="sig-name descname"><span class="pre">processor_lib</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#pyninja.models.ProcessorLib" title="pyninja.models.ProcessorLib"><span class="pre">ProcessorLib</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.models.EnvConfig.processor_lib" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">processor_lib</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.models.EnvConfig.processor_lib" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1092,23 +1140,6 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <dt class="sig sig-object py" id="pyninja.models.EnvConfig.log_config">
 <span class="sig-name descname"><span class="pre">log_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.models.EnvConfig.log_config" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pyninja.models.EnvConfig.parse_service_manager">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_service_manager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.models.EnvConfig.parse_service_manager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse service manager filepath into a string.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>value</strong> – Takes service_manager filepath as an argument.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Returns the string representation of the filepath.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyninja.models.EnvConfig.parse_api_secret">
@@ -1230,29 +1261,18 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.models.get_service_manager">
-<span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">get_service_manager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.ServiceManager" title="pyninja.models.ServiceManager"><span class="pre">ServiceManager</span></a></span></span><a class="headerlink" href="#pyninja.models.get_service_manager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get service manager filepath for the host operating system.</p>
+<dt class="sig sig-object py" id="pyninja.models.get_library">
+<span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">get_library</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">library</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.models.ServiceLib" title="pyninja.models.ServiceLib"><span class="pre">ServiceLib</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.models.ProcessorLib" title="pyninja.models.ProcessorLib"><span class="pre">ProcessorLib</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.models.DiskLib" title="pyninja.models.DiskLib"><span class="pre">DiskLib</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#pyninja.models.get_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get service/processor/disk library filepath for the host operating system.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Returns the <code class="docutils literal notranslate"><span class="pre">FilePath</span></code> referencing the appropriate <code class="docutils literal notranslate"><span class="pre">ServiceManager</span></code>.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>library</strong> – Library class inherited from BaseModel.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#pyninja.models.ServiceManager" title="pyninja.models.ServiceManager">ServiceManager</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the <code class="docutils literal notranslate"><span class="pre">FilePath</span></code> referencing the appropriate library.</p>
 </dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.models.get_processor_lib">
-<span class="sig-prename descclassname"><span class="pre">pyninja.models.</span></span><span class="sig-name descname"><span class="pre">get_processor_lib</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.models.ProcessorLib" title="pyninja.models.ProcessorLib"><span class="pre">ProcessorLib</span></a></span></span><a class="headerlink" href="#pyninja.models.get_processor_lib" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get process library filepath for the host operating system.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Returns the <code class="docutils literal notranslate"><span class="pre">FilePath</span></code> referencing the appropriate <code class="docutils literal notranslate"><span class="pre">ProcessorLib</span></code>.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#pyninja.models.ProcessorLib" title="pyninja.models.ProcessorLib">ProcessorLib</a></p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>FilePath</p>
 </dd>
 </dl>
 </dd></dl>
