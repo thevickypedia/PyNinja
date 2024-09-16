@@ -24,6 +24,35 @@
             overflow-x: hidden;
         }
 
+        .docker-stats {
+            height: 100%;
+            margin: 0;
+            display: none;  /* Hide the container initially */
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;  /* Ensure vertical alignment */
+        }
+
+        .docker-stats h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            display: none;  /* Hide the table initially */
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
         .container {
             display: flex;
             justify-content: space-between;
@@ -173,7 +202,7 @@
         <summary><strong>System Information (Basic)</strong></summary>
         <br>
         {% for key, value in sys_info_basic.items() %}
-            <strong>{{ key|capwords }}: </strong>{{ value }}<br>
+        <strong>{{ key|capwords }}: </strong>{{ value }}<br>
         {% endfor %}
     </details>
     <br>
@@ -181,7 +210,7 @@
         <summary><strong>System Information (Memory & Storage)</strong></summary>
         <br>
         {% for key, value in sys_info_mem_storage.items() %}
-            <strong>{{ key|capwords }}: </strong>{{ value }}<br>
+        <strong>{{ key|capwords }}: </strong>{{ value }}<br>
         {% endfor %}
     </details>
     <br>
@@ -189,7 +218,7 @@
         <summary><strong>System Information (Network)</strong></summary>
         <br>
         {% for key, value in sys_info_network.items() %}
-            <strong>{{ key|capwords }}: </strong>{{ value }}<br>
+        <strong>{{ key|capwords }}: </strong>{{ value }}<br>
         {% endfor %}
     </details>
     {% if sys_info_disks %}
@@ -199,7 +228,7 @@
         {% for disk_info in sys_info_disks %}
         <br>
         {% for key, value in disk_info.items() %}
-            <strong>{{ key }}: </strong>{{ value }}<br>
+        <strong>{{ key }}: </strong>{{ value }}<br>
         {% endfor %}
         {% endfor %}
     </details>
@@ -234,11 +263,11 @@
         <p id="memoryUsageText">Memory: 0%</p>
 
         {% if 'swap' in sys_info_mem_storage.keys() %}
-            <h3>Swap Usage</h3>
-            <div class="progress">
-                <div id="swapUsage" class="progress-bar"></div>
-            </div>
-            <p id="swapUsageText">Swap: 0%</p>
+        <h3>Swap Usage</h3>
+        <div class="progress">
+            <div id="swapUsage" class="progress-bar"></div>
+        </div>
+        <p id="swapUsageText">Swap: 0%</p>
         {% endif %}
 
         <h3>Disk Usage</h3>
@@ -260,11 +289,11 @@
             <canvas id="memoryChart"></canvas>
         </div>
         {% if 'swap' in sys_info_mem_storage.keys() %}
-            <h3>Swap Usage</h3>
-            <h5 id="swapTotal"></h5>
-            <div class="chart-container">
-                <canvas id="swapChart"></canvas>
-            </div>
+        <h3>Swap Usage</h3>
+        <h5 id="swapTotal"></h5>
+        <div class="chart-container">
+            <canvas id="swapChart"></canvas>
+        </div>
         {% endif %}
         <h3>Disk Usage</h3>
         <h5 id="diskTotal"></h5>
@@ -273,7 +302,25 @@
         </div>
     </div>
 </div>
-
+<div id="docker-stats" class="docker-stats">
+    <h3>Docker Stats</h3>
+    <table id="dockerStatsTable">
+        <thead>
+            <tr>
+                <th>Container ID</th>
+                <th>Container Name</th>
+                <th>CPU %</th>
+                <th>Memory Usage</th>
+                <th>Memory %</th>
+                <th>Net I/O</th>
+                <th>Block I/O</th>
+                <th>PIDs</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
@@ -294,6 +341,38 @@
                 alert(event.data);
                 logOut();
                 return;
+            }
+
+            const dockerStatsJSON = data.docker_stats;
+            // Check if dockerStatsJSON is valid
+            if (dockerStatsJSON && dockerStatsJSON.length > 0) {
+                // Show the container and the table
+                const statsContainer = document.getElementById("docker-stats");
+                statsContainer.style.display = "flex";
+                const table = document.getElementById("dockerStatsTable");
+                table.style.display = "table";
+                // Get reference to the table body
+                const tableBody = document.querySelector('#dockerStatsTable tbody');
+                // Clear the existing table rows
+                tableBody.innerHTML = '';
+                // Loop through the JSON data and populate the table
+                dockerStatsJSON.forEach(container => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${container.ID}</td>
+                        <td>${container.Name}</td>
+                        <td>${container.CPUPerc}</td>
+                        <td>${container.MemUsage}</td>
+                        <td>${container.MemPerc}</td>
+                        <td>${container.NetIO}</td>
+                        <td>${container.BlockIO}</td>
+                        <td>${container.PIDs}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                // Hide the container if no data is available
+                document.getElementById("docker-stats").style.display = "none";
             }
 
             // Floating info on top right of the page

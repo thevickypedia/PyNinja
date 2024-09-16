@@ -21,10 +21,10 @@ Authenticator
 =============
 .. automodule:: pyninja.auth
 
-Routers
-=======
+Routes
+======
 
-.. automodule:: pyninja.routers
+.. automodule:: pyninja.routes
 
 Monitors
 ========

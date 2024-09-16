@@ -6,7 +6,7 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.routing import APIRoute
 
-from . import exceptions, models, rate_limit, routers, squire, version
+from . import exceptions, models, rate_limit, routes, squire, version
 from .monitor import get_all_monitor_routes
 
 BASE_LOGGER = logging.getLogger("BASE_LOGGER")
@@ -129,7 +129,7 @@ def start(**kwargs) -> None:
         Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
         for each_rate_limit in models.env.rate_limit
     ]
-    PyNinjaAPI.routes.extend(routers.get_all_routes(dependencies))
+    PyNinjaAPI.routes.extend(routes.get_all_routes(dependencies))
     arg1, arg2 = False, False
     # Conditional endpoint based on remote_execution and api_secret
     if all((models.env.remote_execution, models.env.api_secret)):
@@ -141,7 +141,7 @@ def start(**kwargs) -> None:
         PyNinjaAPI.routes.append(
             APIRoute(
                 path="/run-command",
-                endpoint=routers.run_command,
+                endpoint=routes.run_command,
                 methods=["POST"],
                 dependencies=dependencies,
             )

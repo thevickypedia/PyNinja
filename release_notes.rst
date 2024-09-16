@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v0.0.9 (09/16/2024)
+-------------------
+- Includes disks information in the monitoring page
+- Restructured monitoring page with dedicated div container for each category of system information
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v0.0.8...v0.0.9
+
 v0.0.8 (09/10/2024)
 -------------------
 - Includes an option to get CPU load average via API calls and monitoring page UI

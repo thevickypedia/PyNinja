@@ -385,6 +385,29 @@ async def get_docker_volumes(
     )
 
 
+async def get_docker_stats(
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """**Get docker-stats for all running containers.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and attached disks as response.
+    """
+    await auth.level_1(request, apikey)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.OK.real,
+        detail=list(squire.get_docker_stats()),
+    )
+
+
 async def get_processor_name(
     request: Request,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
@@ -517,6 +540,12 @@ def get_all_routes(dependencies: List[Depends]) -> List[APIRoute]:
         APIRoute(
             path="/docker-volume",
             endpoint=get_docker_volumes,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path="/docker-stats",
+            endpoint=get_docker_stats,
             methods=["GET"],
             dependencies=dependencies,
         ),

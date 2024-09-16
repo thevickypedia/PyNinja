@@ -8,6 +8,7 @@ import secrets
 import shutil
 import socket
 import subprocess
+from collections.abc import Generator
 from datetime import timedelta
 from typing import Dict, List
 
@@ -71,6 +72,26 @@ def private_ip_address() -> str | None:
     return ip_address_
 
 
+def get_docker_stats() -> Generator[Dict[str, str]]:
+    """Run the docker stats command and parse the output into a list of key-value pairs.
+
+    Yields:
+        Dict[str, str]:
+        Yields key-value pairs with the container stat and value.
+    """
+    docker_stats_command = 'docker stats --no-stream --format "{{json .}}"'
+    try:
+        result = subprocess.run(
+            docker_stats_command, shell=True, capture_output=True, text=True
+        )
+    except subprocess.CalledProcessError as error:
+        LOGGER.error(error)
+        return []
+    for line in result.stdout.strip().splitlines():
+        yield json.loads(line)
+
+
+# noinspection PyProtectedMember
 def system_resources(cpu_interval: int) -> Dict[str, dict]:
     """Get system resources like CPU, virtual memory and swap memory information.
 
@@ -89,6 +110,7 @@ def system_resources(cpu_interval: int) -> Dict[str, dict]:
         disk_info=shutil.disk_usage("/")._asdict(),
         load_averages={"1m": m1, "5m": m5, "15m": m15},
         refresh_interval=models.ws_settings.refresh_interval,
+        docker_stats=list(get_docker_stats()),
     )
 
 
