@@ -263,12 +263,16 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         # This can be gathered in the background,
         # but it will no longer be realtime data
         # making it useless for long intervals
-        data = squire.system_resources(models.ws_settings.cpu_interval)
+        data = await squire.system_resources(models.ws_settings.cpu_interval)
         try:
             await websocket.send_json(data)
             # There is no point in gathering data, when it is not propagated
-            # So instead of repeat iterations, simply sleep until next refresh
-            await asyncio.sleep(models.ws_settings.refresh_interval)
+            # So instead of repeat iterations, simply sleep until next_refresh - cpu_interval
+            # Eg: If refresh_interval is 10s and cpu_interval is 3s, the sleep time will be 7s
+            # This will ensure the data is always current, and always updating right before each push to the UI
+            await asyncio.sleep(
+                models.ws_settings.refresh_interval - models.ws_settings.cpu_interval
+            )
         except WebSocketDisconnect:
             break
         except KeyboardInterrupt:

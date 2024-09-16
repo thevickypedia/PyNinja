@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import math
@@ -8,7 +9,7 @@ import secrets
 import shutil
 import socket
 import subprocess
-from collections.abc import Generator
+from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from typing import Dict, List
 
@@ -23,6 +24,8 @@ LOGGER = logging.getLogger("uvicorn.default")
 IP_REGEX = re.compile(
     r"""^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"""  # noqa: E501
 )
+# Use a ThreadPoolExecutor to run blocking functions in separate threads
+EXECUTOR = ThreadPoolExecutor(max_workers=2)
 
 
 def public_ip_address() -> str:
@@ -72,28 +75,58 @@ def private_ip_address() -> str | None:
     return ip_address_
 
 
-def get_docker_stats() -> Generator[Dict[str, str]]:
-    """Run the docker stats command and parse the output into a list of key-value pairs.
+def get_cpu_percent(cpu_interval: int) -> List[float]:
+    """Get CPU usage percentage.
 
-    Yields:
-        Dict[str, str]:
-        Yields key-value pairs with the container stat and value.
+    Args:
+        cpu_interval: System CPU times elapsed before and after the interval.
+
+    Returns:
+        List[float]:
+        Returns a list of CPU percentages.
     """
-    docker_stats_command = 'docker stats --no-stream --format "{{json .}}"'
-    try:
-        result = subprocess.run(
-            docker_stats_command, shell=True, capture_output=True, text=True
-        )
-    except subprocess.CalledProcessError as error:
-        LOGGER.error(error)
+    return psutil.cpu_percent(interval=cpu_interval, percpu=True)
+
+
+async def get_docker_stats() -> List[Dict[str, str]]:
+    """Run the docker stats command asynchronously and parse the output.
+
+    Returns:
+        List[Dict[str, str]]:
+        Returns a list of key-value pairs with the container stat and value.
+    """
+    process = await asyncio.create_subprocess_shell(
+        'docker stats --no-stream --format "{{json .}}"',
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    stdout, stderr = await process.communicate()
+    if stderr:
+        LOGGER.error(stderr.decode())
         return []
-    for line in result.stdout.strip().splitlines():
-        yield json.loads(line)
+    return [json.loads(line) for line in stdout.decode().strip().splitlines()]
 
 
 # noinspection PyProtectedMember
-def system_resources(cpu_interval: int) -> Dict[str, dict]:
-    """Get system resources like CPU, virtual memory and swap memory information.
+async def get_system_metrics() -> Dict[str, dict]:
+    """Async handler for virtual memory, swap memory disk usage and CPU load averages.
+
+    Returns:
+        Dict[str, dict]:
+        Returns a nested dictionary.
+    """
+    m1, m5, m15 = os.getloadavg() or (None, None, None)
+    return dict(
+        memory_info=psutil.virtual_memory()._asdict(),
+        swap_info=psutil.swap_memory()._asdict(),
+        disk_info=shutil.disk_usage("/")._asdict(),
+        load_averages=dict(m1=m1, m5=m5, m15=m15),
+        refresh_interval=models.ws_settings.refresh_interval,
+    )
+
+
+async def system_resources(cpu_interval: int) -> Dict[str, dict]:
+    """Gather system resources including Docker stats asynchronously.
 
     Args:
         cpu_interval: Interval in seconds is used to compare CPU times elapsed before and after.
@@ -102,16 +135,20 @@ def system_resources(cpu_interval: int) -> Dict[str, dict]:
         Dict[str, dict]:
         Returns a nested dictionary.
     """
-    m1, m5, m15 = os.getloadavg() or (None, None, None)
-    return dict(
-        cpu_usage=psutil.cpu_percent(interval=cpu_interval, percpu=True),
-        memory_info=psutil.virtual_memory()._asdict(),
-        swap_info=psutil.swap_memory()._asdict(),
-        disk_info=shutil.disk_usage("/")._asdict(),
-        load_averages={"1m": m1, "5m": m5, "15m": m15},
-        refresh_interval=models.ws_settings.refresh_interval,
-        docker_stats=list(get_docker_stats()),
-    )
+    system_metrics_task = asyncio.create_task(get_system_metrics())
+    docker_stats_task = asyncio.create_task(get_docker_stats())
+
+    # CPU percent check is a blocking call and cannot be awaited, so run it in a separate thread
+    loop = asyncio.get_event_loop()
+    cpu_usage_task = loop.run_in_executor(EXECUTOR, get_cpu_percent, cpu_interval)
+
+    system_metrics = await system_metrics_task
+    docker_stats = await docker_stats_task
+    cpu_usage = await cpu_usage_task
+
+    system_metrics["cpu_usage"] = cpu_usage
+    system_metrics["docker_stats"] = docker_stats
+    return system_metrics
 
 
 def format_nos(input_: float) -> int | float:

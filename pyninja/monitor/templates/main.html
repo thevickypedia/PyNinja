@@ -425,7 +425,7 @@
             // CPU Load Avg Graph
             const loadAverages = data.load_averages;
             if (loadChartInstance) {
-                loadChartInstance.data.datasets[0].data = [loadAverages["1m"], loadAverages["5m"], loadAverages["15m"]];
+                loadChartInstance.data.datasets[0].data = [loadAverages["m1"], loadAverages["m5"], loadAverages["m15"]];
                 loadChartInstance.update();
             } else {
                 const ctx = document.getElementById('loadChart').getContext('2d');
@@ -435,7 +435,7 @@
                         labels: ['1 minute', '5 minutes', '15 minutes'],
                         datasets: [{
                             label: 'Load Average',
-                            data: [loadAverages["1m"], loadAverages["5m"], loadAverages["15m"]],
+                            data: [loadAverages["m1"], loadAverages["m5"], loadAverages["m15"]],
                             backgroundColor: [
                                 'rgba(75, 192, 192, 0.2)',
                                 'rgba(153, 102, 255, 0.2)',

@@ -132,7 +132,7 @@ async def get_cpu_load_avg(
     m1, m5, m15 = psutil.getloadavg() or (None, None, None)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.OK.real,
-        detail={"1m": m1, "5m": m5, "15m": m15},
+        detail=dict(m1=m1, m5=m5, m15=m15),
     )
 
 
