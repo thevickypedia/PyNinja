@@ -4,7 +4,7 @@ import logging
 import os
 import shutil
 from concurrent.futures import ThreadPoolExecutor
-from typing import List, Dict
+from typing import Dict, List
 
 import psutil
 
@@ -15,14 +15,18 @@ EXECUTOR = ThreadPoolExecutor(max_workers=os.cpu_count())
 LOGGER = logging.getLogger("uvicorn.default")
 
 
-def get_cpu_percent() -> List[float]:
+def get_cpu_percent(cpu_interval: int) -> List[float]:
     """Get CPU usage percentage.
+
+    Args:
+        cpu_interval: Interval to get the CPU performance.
 
     Returns:
         List[float]:
         Returns a list of CPU percentages.
     """
-    return psutil.cpu_percent(interval=1, percpu=True)
+    LOGGER.info(cpu_interval)
+    return psutil.cpu_percent(interval=cpu_interval, percpu=True)
 
 
 async def get_docker_stats() -> List[Dict[str, str]]:
@@ -39,7 +43,7 @@ async def get_docker_stats() -> List[Dict[str, str]]:
     )
     stdout, stderr = await process.communicate()
     if stderr:
-        LOGGER.error(stderr.decode())
+        LOGGER.debug(stderr.decode().strip())
         return []
     return [json.loads(line) for line in stdout.decode().strip().splitlines()]
 
@@ -75,7 +79,7 @@ async def system_resources() -> Dict[str, dict]:
 
     # CPU percent check is a blocking call and cannot be awaited, so run it in a separate thread
     loop = asyncio.get_event_loop()
-    cpu_usage_task = loop.run_in_executor(EXECUTOR, get_cpu_percent)
+    cpu_usage_task = loop.run_in_executor(EXECUTOR, get_cpu_percent, *(1,))
 
     system_metrics = await system_metrics_task
     docker_stats = await docker_stats_task

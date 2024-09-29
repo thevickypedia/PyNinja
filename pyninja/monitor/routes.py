@@ -12,8 +12,8 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
+from .. import disks, exceptions, gpu, models, monitor, processor, squire, version
 from . import resources
-from .. import disks, exceptions, models, monitor, processor, squire, version, gpu
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()

@@ -1,14 +1,25 @@
 import json
 import logging
 import subprocess
-from typing import List, Dict
+from typing import Dict, List, Optional
+
+from pydantic import FilePath
 
 from . import models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
 
-def _darwin(lib_path):
+def _darwin(lib_path) -> Optional[List[Dict[str, str]]]:
+    """Get GPU model and vendor information for Linux operating system.
+
+    Args:
+        lib_path: Library path to get GPU information.
+
+    Returns:
+        List[Dict[str, str]]:
+        Returns a list of GPU model and vendor information.
+    """
     result = subprocess.run(
         [lib_path, "SPDisplaysDataType", "-json"],
         capture_output=True,
@@ -34,7 +45,16 @@ def _darwin(lib_path):
     return gpu_info
 
 
-def _linux(lib_path):
+def _linux(lib_path) -> Optional[List[Dict[str, str]]]:
+    """Get GPU model and vendor information for Linux operating system.
+
+    Args:
+        lib_path: Library path to get GPU information.
+
+    Returns:
+        List[Dict[str, str]]:
+        Returns a list of GPU model and vendor information.
+    """
     result = subprocess.run(
         [lib_path],
         capture_output=True,
@@ -58,7 +78,16 @@ def _linux(lib_path):
     return gpu_info
 
 
-def _windows(lib_path):
+def _windows(lib_path: FilePath) -> Optional[List[Dict[str, str]]]:
+    """Get GPU model and vendor information for Windows operating system.
+
+    Args:
+        lib_path: Library path to get GPU information.
+
+    Returns:
+        List[Dict[str, str]]:
+        Returns a list of GPU model and vendor information.
+    """
     result = subprocess.run(
         [
             lib_path,
@@ -90,13 +119,14 @@ def _windows(lib_path):
     if len(values) >= len(keys):
         result = []
         for i in range(0, len(values), len(keys)):
-            result.append(dict(zip(keys, values[i : i + len(keys)])))
+            result.append(dict(zip(keys, values[i : i + len(keys)])))  # noqa: E203
         return result
     else:
         LOGGER.debug("ValueError: Not enough values for the keys")
 
 
 def get_names() -> List[Dict[str, str]]:
+    """Get list of GPU model and vendor information based on the operating system."""
     fn_map = dict(linux=_linux, darwin=_darwin, windows=_windows)
     try:
         return fn_map[models.OPERATING_SYSTEM](models.env.gpu_lib)

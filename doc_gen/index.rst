@@ -34,6 +34,11 @@ Docker
 
 .. automodule:: pyninja.dockerized
 
+GPU
+---
+
+.. automodule:: pyninja.gpu
+
 Process
 -------
 
@@ -43,6 +48,11 @@ Service
 -------
 
 .. automodule:: pyninja.service
+
+Operations
+==========
+
+.. automodule:: pyninja.operations
 
 Database
 ========
@@ -87,11 +97,6 @@ Models
 
 ====
 
-.. autoclass:: pyninja.models.WSSettings(BaseModel)
-   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
-
-====
-
 .. autoclass:: pyninja.models.Session(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
@@ -108,7 +113,7 @@ Models
 ====
 
 .. automodule:: pyninja.models
-   :exclude-members: Payload, ServiceStatus, DiskLib, ServiceLib, ProcessorLib, WSSettings, EnvConfig, Session, RateLimit, env, database
+   :exclude-members: Payload, ServiceStatus, DiskLib, ServiceLib, ProcessorLib, EnvConfig, Session, RateLimit, env, database
 
 Squire
 ======
@@ -127,6 +132,11 @@ Configuration
 -------------
 
 .. automodule:: pyninja.monitor.config
+
+Resources
+---------
+
+.. automodule:: pyninja.monitor.resources
 
 Routes
 ------

@@ -2,38 +2,38 @@ import logging
 import subprocess
 import time
 from datetime import timedelta
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
 
 import psutil
 
-from . import squire, models
+from . import models, squire
 
 LOGGER = logging.getLogger("uvicorn.default")
 
 
 def default(name: str):
-    return dict(
-        name=name,
-        pid=0,
-        memory="N/A",
-        cpu="N/A",
-        uptime="N/A",
-        read_io="N/A",
-        write_io="N/A",
-    )
+    """Default values for processes and services."""
+    return {
+        "Name": name,
+        "PID": 0,
+        "Memory": "N/A",
+        "CPU": "N/A",
+        "Uptime": "N/A",
+        "Read I/O": "N/A",
+        "Write I/O": "N/A",
+    }
 
 
-def get_process_info(proc: psutil.Process):
-    cpu_usage = proc.cpu_percent()
-    memory_usage = proc.memory_info().rss  # Resident Set Size
-    cpu = f"{cpu_usage:.2f}%"
-    memory = squire.size_converter(memory_usage)
-    pid = proc.pid
-    threads = proc.num_threads()
-    uptime = squire.format_timedelta(
-        timedelta(seconds=int(time.time() - proc.create_time()))
-    )
+def get_process_info(proc: psutil.Process) -> Dict[str, str | int]:
+    """Get process information.
 
+    Args:
+        proc: Takes a ``psutil.Process`` object as an argument.
+
+    Returns:
+        Dict[str, str | int]:
+        Returns a dictionary with process usage statistics.
+    """
     # I/O counters don't work on macOS
     try:
         io_counters = proc.io_counters()
@@ -41,20 +41,28 @@ def get_process_info(proc: psutil.Process):
         write_io = squire.size_converter(io_counters.write_bytes)
     except AttributeError:
         read_io, write_io = "N/A", "N/A"
+    return {
+        "Name": proc.name(),
+        "PID": proc.pid,
+        "Memory": squire.size_converter(proc.memory_info().rss),  # Resident Set Size,
+        "CPU": f"{proc.cpu_percent():.2f}%",
+        "Uptime": squire.format_timedelta(
+            timedelta(seconds=int(time.time() - proc.create_time()))
+        ),
+        "Threads": proc.num_threads(),
+        "Read I/O": read_io,
+        "Write I/O": write_io,
+    }
 
-    return dict(
-        name=proc.name(),
-        pid=pid,
-        cpu=cpu,
-        memory=memory,
-        uptime=uptime,
-        threads=threads,
-        read_io=read_io,
-        write_io=write_io,
-    )
 
-
+# todo: Spawn threads
 async def process_monitor() -> List[Dict[str, str]]:
+    """Function to monitor processes and return their usage statistics.
+
+    Returns:
+        List[Dict[str, str]]:
+        Returns a list of dictionaries with process usage statistics.
+    """
     usages = []
     for proc in psutil.process_iter(
         ["pid", "name", "cpu_percent", "memory_info", "create_time"]
@@ -68,8 +76,9 @@ async def process_monitor() -> List[Dict[str, str]]:
     return usages
 
 
+# todo: Spawn threads
 async def service_monitor() -> List[Dict[str, str]]:
-    """
+    """Function to monitor services and return their usage statistics.
 
     See Also:
         Service names are case-sensitive, so use the following command to get the right name.
@@ -77,6 +86,10 @@ async def service_monitor() -> List[Dict[str, str]]:
             * macOS: `launchctl list | grep {{ service_name }}`
             * Linux: `systemctl show {{ service_name }} --property=MainPID`
             * Windows: `sc query {{ service_name }}`
+
+    Returns:
+        List[Dict[str, str]]:
+        Returns a list of dictionaries with service usage statistics.
     """
     usages = []
     for service_name in models.env.services:
@@ -110,6 +123,15 @@ def get_service_pid(service_name: str) -> Optional[int]:
 
 
 def get_service_pid_linux(service_name: str) -> Optional[int]:
+    """Get the PID of a service on Linux.
+
+    Args:
+        service_name: Name of the service.
+
+    Returns:
+        Optional[int]:
+        Returns the PID of the service.
+    """
     try:
         output = subprocess.check_output(
             ["systemctl", "show", service_name, "--property=MainPID"], text=True
@@ -122,6 +144,15 @@ def get_service_pid_linux(service_name: str) -> Optional[int]:
 
 
 def get_service_pid_macos(service_name: str) -> Optional[int]:
+    """Get the PID of a service on macOS.
+
+    Args:
+        service_name: Name of the service.
+
+    Returns:
+        Optional[int]:
+        Returns the PID of the service.
+    """
     try:
         output = subprocess.check_output(["launchctl", "list"], text=True)
         for line in output.splitlines():
@@ -132,6 +163,15 @@ def get_service_pid_macos(service_name: str) -> Optional[int]:
 
 
 def get_service_pid_windows(service_name: str) -> Optional[int]:
+    """Get the PID of a service on Windows.
+
+    Args:
+        service_name: Name of the service.
+
+    Returns:
+        Optional[int]:
+        Returns the PID of the service.
+    """
     try:
         output = subprocess.check_output(["sc", "query", service_name], text=True)
         for line in output.splitlines():

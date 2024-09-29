@@ -360,16 +360,6 @@
     <h3>Service Stats</h3>
     <table id="serviceStatsTable">
         <thead>
-            <tr>
-                <th>PID</th>
-                <th>Service Name</th>
-                <th>CPU %</th>
-                <th>Memory Usage</th>
-                <th>Uptime</th>
-                <th>Threads</th>
-                <th>Read I/O</th>
-                <th>Write I/O</th>
-            </tr>
         </thead>
         <tbody>
         </tbody>
@@ -379,16 +369,6 @@
     <h3>Process Stats</h3>
     <table id="processStatsTable">
         <thead>
-            <tr>
-                <th>PID</th>
-                <th>Process Name</th>
-                <th>CPU %</th>
-                <th>Memory Usage</th>
-                <th>Uptime</th>
-                <th>Threads</th>
-                <th>Read I/O</th>
-                <th>Write I/O</th>
-            </tr>
         </thead>
         <tbody>
         </tbody>
@@ -426,6 +406,57 @@
                 return;
             }
 
+            // Function to create the table head
+            function createHead(tableId, tableCSS) {
+                // Show the service and the table
+                const statsService = document.getElementById(tableCSS);
+                statsService.style.display = "flex";
+
+                const tableHead = document.querySelector(`#${tableId} thead`);
+                if (tableHead.children.length === 0) {
+                    const col = document.createElement('tr');
+                    // Loop through the JSON data and create the table head
+                    for (const key in serviceStatsJSON[0]) {
+                        const th = document.createElement('th');
+                        th.innerText = key;
+                        col.appendChild(th);
+                    }
+                    tableHead.appendChild(col);
+                }
+            }
+
+            // Function to populate data into the table
+            function populateTable(data, tableId) {
+                const table = document.getElementById(tableId);
+                table.style.display = "table";
+
+                // Sort the JSON data by name (a and b are elements of data array being compared)
+                data.sort((a, b) => {
+                    if (a.hasOwnProperty("name") && b.hasOwnProperty("name")) {
+                        return a.name.localeCompare(b.name);
+                    }
+                    if (a.hasOwnProperty("Name") && b.hasOwnProperty("Name")) {
+                        return a.Name.localeCompare(b.Name);
+                    }
+                    return 0;
+                });
+
+                // Get reference to the table body
+                const tableBody = document.querySelector(`#${tableId} tbody`);
+                // Clear the existing table rows
+                tableBody.innerHTML = '';
+                // Loop through the JSON data and populate the table
+                data.forEach(service => {
+                    const row = document.createElement('tr');
+                    for (const key in service) {
+                        const td = document.createElement('td');
+                        td.innerText = service[key];
+                        row.appendChild(td);
+                    }
+                    tableBody.appendChild(row);
+                });
+            }
+
             const dockerStatsJSON = data.docker_stats;
             // Check if dockerStatsJSON is valid
             if (dockerStatsJSON && dockerStatsJSON.length > 0) {
@@ -461,32 +492,8 @@
             const serviceStatsJSON = data.service_stats;
             // Check if serviceStatsJSON is valid
             if (serviceStatsJSON && serviceStatsJSON.length > 0) {
-                // Show the service and the table
-                const statsService = document.getElementById("service-stats");
-                statsService.style.display = "flex";
-                const table = document.getElementById("serviceStatsTable");
-                table.style.display = "table";
-                // Get reference to the table body
-                const tableBody = document.querySelector('#serviceStatsTable tbody');
-                // Clear the existing table rows
-                tableBody.innerHTML = '';
-                // Sort by name in ascending order
-                serviceStatsJSON.sort((a, b) => a.name.localeCompare(b.name));
-                // Loop through the JSON data and populate the table
-                serviceStatsJSON.forEach(service => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${service.pid}</td>
-                        <td>${service.name}</td>
-                        <td>${service.cpu}</td>
-                        <td>${service.memory}</td>
-                        <td>${service.uptime}</td>
-                        <td>${service.threads}</td>
-                        <td>${service.read_io}</td>
-                        <td>${service.write_io}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
+                createHead("serviceStatsTable", "service-stats");
+                populateTable(serviceStatsJSON, "serviceStatsTable");
             } else {
                 // Hide the container if no data is available
                 document.getElementById("service-stats").style.display = "none";
@@ -495,32 +502,8 @@
             const processStatsJSON = data.process_stats;
             // Check if processStatsJSON is valid
             if (processStatsJSON && processStatsJSON.length > 0) {
-                // Show the process and the table
-                const statsProcess = document.getElementById("process-stats");
-                statsProcess.style.display = "flex";
-                const table = document.getElementById("processStatsTable");
-                table.style.display = "table";
-                // Get reference to the table body
-                const tableBody = document.querySelector('#processStatsTable tbody');
-                // Clear the existing table rows
-                tableBody.innerHTML = '';
-                // Sort by name in ascending order
-                processStatsJSON.sort((a, b) => a.name.localeCompare(b.name));
-                // Loop through the JSON data and populate the table
-                processStatsJSON.forEach(process => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${process.pid}</td>
-                        <td>${process.name}</td>
-                        <td>${process.cpu}</td>
-                        <td>${process.memory}</td>
-                        <td>${process.uptime}</td>
-                        <td>${process.threads}</td>
-                        <td>${process.read_io}</td>
-                        <td>${process.write_io}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
+                createHead('processStatsTable', "process-stats");
+                populateTable(processStatsJSON, 'processStatsTable');
             } else {
                 // Hide the container if no data is available
                 document.getElementById("process-stats").style.display = "none";

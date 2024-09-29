@@ -1,6 +1,16 @@
 Release Notes
 =============
 
+v0.1.0 (09/29/2024)
+-------------------
+- Include `docker stats` in monitoring page
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v0.0.9...v0.1.0
+
+v0.1.0-alpha (09/16/2024)
+-------------------------
+- Alpha version for docker stats
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v0.0.9...v0.1.0-alpha
+
 v0.0.9 (09/16/2024)
 -------------------
 - Includes disks information in the monitoring page
