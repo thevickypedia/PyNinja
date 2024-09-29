@@ -143,18 +143,16 @@ class DiskLib(BaseModel):
     windows: FilePath = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
 
 
-class WSSettings(BaseModel):
-    """Default settings for websocket configuration.
+class GPULib(BaseModel):
+    """Default GPU library dedicated to each supported operating system.
 
-    >>> WSSettings
+    >>> GPULib
 
     """
 
-    cpu_interval: PositiveInt = 3
-    refresh_interval: PositiveInt | PositiveFloat = 5
-
-
-ws_settings = WSSettings()
+    linux: FilePath = "/usr/bin/lspci"
+    darwin: FilePath = "/usr/sbin/system_profiler"
+    windows: FilePath = "C:\\Windows\\System32\\wbem\\wmic.exe"
 
 
 class WSSession(BaseModel):
@@ -172,7 +170,7 @@ ws_session = WSSession()
 
 
 def get_library(
-    library: Type[ServiceLib] | Type[ProcessorLib] | Type[DiskLib],
+    library: Type[ServiceLib] | Type[ProcessorLib] | Type[DiskLib] | Type[GPULib],
 ) -> FilePath:
     """Get service/processor/disk library filepath for the host operating system.
 
@@ -207,6 +205,9 @@ class EnvConfig(BaseSettings):
     monitor_password: str | None = None
     monitor_session: PositiveInt = 3_600
     max_connections: PositiveInt = 3
+    processes: List[str] = []
+    services: List[str] = []
+    gpu_lib: FilePath = get_library(GPULib)
     disk_lib: FilePath = get_library(DiskLib)
     service_lib: FilePath = get_library(ServiceLib)
     processor_lib: FilePath = get_library(ProcessorLib)
