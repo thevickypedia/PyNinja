@@ -1,5 +1,4 @@
 import logging
-import os
 import pathlib
 
 import uvicorn
@@ -151,7 +150,6 @@ def start(**kwargs) -> None:
         BASE_LOGGER.warning("Remote execution disabled")
     # Conditional endpoint based on monitor_username and monitor_password
     if all((models.env.monitor_username, models.env.monitor_password)):
-        models.env.processes.append(str(os.getpid()))
         PyNinjaAPI.routes.extend(get_all_monitor_routes(dependencies))
         PyNinjaAPI.add_exception_handler(
             exc_class_or_status_code=exceptions.RedirectException,

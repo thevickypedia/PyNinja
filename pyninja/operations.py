@@ -23,11 +23,13 @@ def default(name: str):
         "Uptime": "N/A",
         "Threads": "N/A",
         "Read I/O": "N/A",
-        "Write I/O": "N/A"
+        "Write I/O": "N/A",
     }
 
 
-def get_process_info(proc: psutil.Process, process_name: str = None) -> Dict[str, str | int]:
+def get_process_info(
+    proc: psutil.Process, process_name: str = None
+) -> Dict[str, str | int]:
     """Get process information.
 
     Args:
@@ -120,7 +122,9 @@ async def service_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
             LOGGER.debug(error)
             usages.append(default(service_name))
             continue
-        tasks.append(loop.run_in_executor(executor, get_process_info, proc, service_name))
+        tasks.append(
+            loop.run_in_executor(executor, get_process_info, proc, service_name)
+        )
     for task in asyncio.as_completed(tasks):
         usages.append(await task)
     return usages
