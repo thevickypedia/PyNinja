@@ -20,6 +20,10 @@ on:
           - "true"
           - "false"
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   pypi-publisher:
     runs-on: thevickypedia-lite

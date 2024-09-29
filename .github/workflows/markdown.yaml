@@ -8,6 +8,10 @@ on:
       - '**/*.md'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   none-shall-pass:
     runs-on: thevickypedia-lite
