@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+v0.1.1-dev (09/29/2024)
+-----------------------
+- Include services/processes metrics to monitoring page
+- Filter PIDs from docker stats
+- Remove overall code redundancies in the UI
+- Convert collapsible sections of top level information in tables
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v0.1.0...v0.1.1-dev
+
 v0.1.0 (09/29/2024)
 -------------------
 - Include `docker stats` in monitoring page
