@@ -42,10 +42,10 @@ def get_process_info(proc: psutil.Process) -> Dict[str, str | int]:
     except AttributeError:
         read_io, write_io = "N/A", "N/A"
     return {
-        "Name": proc.name(),
         "PID": proc.pid,
-        "Memory": squire.size_converter(proc.memory_info().rss),  # Resident Set Size,
+        "Name": proc.name(),
         "CPU": f"{proc.cpu_percent():.2f}%",
+        "Memory": squire.size_converter(proc.memory_info().rss),  # Resident Set Size,
         "Uptime": squire.format_timedelta(
             timedelta(seconds=int(time.time() - proc.create_time()))
         ),
@@ -58,6 +58,12 @@ def get_process_info(proc: psutil.Process) -> Dict[str, str | int]:
 # todo: Spawn threads
 async def process_monitor() -> List[Dict[str, str]]:
     """Function to monitor processes and return their usage statistics.
+
+    See Also:
+        Process names can be case in-sensitive.
+
+            * macOS/Linux: `top | grep {{ process_name }}`
+            * Windows: `Task Manager`
 
     Returns:
         List[Dict[str, str]]:

@@ -25,7 +25,6 @@ def get_cpu_percent(cpu_interval: int) -> List[float]:
         List[float]:
         Returns a list of CPU percentages.
     """
-    LOGGER.info(cpu_interval)
     return psutil.cpu_percent(interval=cpu_interval, percpu=True)
 
 
@@ -45,7 +44,10 @@ async def get_docker_stats() -> List[Dict[str, str]]:
     if stderr:
         LOGGER.debug(stderr.decode().strip())
         return []
-    return [json.loads(line) for line in stdout.decode().strip().splitlines()]
+    return [
+        {key: value for key, value in json.loads(line).items() if key != "PIDs"}
+        for line in stdout.decode().strip().splitlines()
+    ]
 
 
 # noinspection PyProtectedMember

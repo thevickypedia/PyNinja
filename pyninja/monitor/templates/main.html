@@ -244,6 +244,7 @@
 <button class="redoc" onclick="goReDoc()"><i class="fa fa-file"></i> ReDoc</button>
 <button class="logout" onclick="logOut()"><i class="fa fa-sign-out"></i> Logout</button>
 <h1>PyNinja - System Monitor</h1>
+<!-- Collapsible containers for system information categorically -->
 <div class="center-container">
     <details>
         <summary><strong>System Information</strong></summary>
@@ -349,7 +350,6 @@
                 <th>Memory %</th>
                 <th>Net I/O</th>
                 <th>Block I/O</th>
-                <th>PIDs</th>
             </tr>
         </thead>
         <tbody>
@@ -480,7 +480,6 @@
                         <td>${container.MemPerc}</td>
                         <td>${container.NetIO}</td>
                         <td>${container.BlockIO}</td>
-                        <td>${container.PIDs}</td>
                     `;
                     tableBody.appendChild(row);
                 });
