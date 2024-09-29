@@ -16,21 +16,23 @@ LOGGER = logging.getLogger("uvicorn.default")
 def default(name: str):
     """Default values for processes and services."""
     return {
+        "PID": 0000,
         "Name": name,
-        "PID": 0,
-        "Memory": "N/A",
         "CPU": "N/A",
+        "Memory": "N/A",
         "Uptime": "N/A",
+        "Threads": "N/A",
         "Read I/O": "N/A",
-        "Write I/O": "N/A",
+        "Write I/O": "N/A"
     }
 
 
-def get_process_info(proc: psutil.Process) -> Dict[str, str | int]:
+def get_process_info(proc: psutil.Process, process_name: str = None) -> Dict[str, str | int]:
     """Get process information.
 
     Args:
         proc: Takes a ``psutil.Process`` object as an argument.
+        process_name: Takes a custom process name as an optional argument.
 
     Returns:
         Dict[str, str | int]:
@@ -41,12 +43,13 @@ def get_process_info(proc: psutil.Process) -> Dict[str, str | int]:
         io_counters = proc.io_counters()
         read_io = squire.size_converter(io_counters.read_bytes)
         write_io = squire.size_converter(io_counters.write_bytes)
-    except AttributeError:
+    except (AttributeError, psutil.AccessDenied) as error:
+        LOGGER.debug(error)
         read_io, write_io = "N/A", "N/A"
     try:
         return {
             "PID": proc.pid,
-            "Name": proc.name(),
+            "Name": process_name or proc.name(),
             "CPU": f"{proc.cpu_percent(models.MINIMUM_CPU_UPDATE_INTERVAL):.2f}%",
             # Resident Set Size
             "Memory": squire.size_converter(proc.memory_info().rss),
@@ -57,9 +60,9 @@ def get_process_info(proc: psutil.Process) -> Dict[str, str | int]:
             "Read I/O": read_io,
             "Write I/O": write_io,
         }
-    except psutil.NoSuchProcess as error:
+    except psutil.Error as error:
         LOGGER.debug(error)
-        return default(proc.name())
+        return default(process_name or proc.name())
 
 
 async def process_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
@@ -113,11 +116,11 @@ async def service_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
             continue
         try:
             proc = psutil.Process(pid)
-        except psutil.NoSuchProcess:
-            LOGGER.debug(f"Process with PID {pid} not found")
+        except psutil.Error as error:
+            LOGGER.debug(error)
             usages.append(default(service_name))
             continue
-        tasks.append(loop.run_in_executor(executor, get_process_info, proc))
+        tasks.append(loop.run_in_executor(executor, get_process_info, proc, service_name))
     for task in asyncio.as_completed(tasks):
         usages.append(await task)
     return usages

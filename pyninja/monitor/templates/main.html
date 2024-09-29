@@ -153,15 +153,6 @@
             background-color: #e0e0e0;
         }
 
-        .center-container {
-            width: 100%;
-            margin-left: 45%;
-        }
-
-        .center-container details {
-            text-align: left;
-        }
-
         h1 {
             width: 100%;
             text-align: center;
@@ -219,9 +210,24 @@
 
     </style>
     <style>
+        /* This container will only take up the space needed */
+        .center-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-left: 40%;
+            text-align: left;
+        }
+
+        .center-container details {
+            width: 40%;
+            text-align: center;
+        }
+
         .collapsible-table {
             display: table;
             border-collapse: collapse;
+            width: 100%;
         }
 
         .collapsible-table-row {
@@ -237,6 +243,18 @@
         .collapsible-table-cell {
             font-weight: bold;
         }
+
+        /* Ensures that the details are collapsed initially and expand on click
+        details[open] summary:before {
+            content: '-';
+            padding-right: 10px;
+        }
+
+        details summary:before {
+            content: '+';
+            padding-right: 10px;
+        }
+        */
     </style>
     <noscript>
         <style>
