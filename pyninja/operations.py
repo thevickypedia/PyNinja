@@ -80,7 +80,6 @@ async def process_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
     for proc in psutil.process_iter(
         ["pid", "name", "cpu_percent", "memory_info", "create_time"]
     ):
-        # todo: Add a way to include processes (with default values) that don't exist but requested to monitor
         if any(
             name in proc.name() or name == str(proc.pid)
             for name in models.env.processes

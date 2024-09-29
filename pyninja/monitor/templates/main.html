@@ -28,10 +28,10 @@
         .docker-stats {
             height: 100%;
             margin: 2%;
-            display: none;  /* Hide the container initially */
+            display: none; /* Hide the container initially */
             align-items: center;
             justify-content: center;
-            flex-direction: column;  /* Ensure vertical alignment */
+            flex-direction: column; /* Ensure vertical alignment */
         }
 
         .docker-stats h3 {
@@ -42,10 +42,10 @@
         .service-stats {
             height: 100%;
             margin: 2%;
-            display: none;  /* Hide the container initially */
+            display: none; /* Hide the container initially */
             align-items: center;
             justify-content: center;
-            flex-direction: column;  /* Ensure vertical alignment */
+            flex-direction: column; /* Ensure vertical alignment */
         }
 
         .service-stats h3 {
@@ -56,10 +56,10 @@
         .process-stats {
             height: 100%;
             margin: 2%;
-            display: none;  /* Hide the container initially */
+            display: none; /* Hide the container initially */
             align-items: center;
             justify-content: center;
-            flex-direction: column;  /* Ensure vertical alignment */
+            flex-direction: column; /* Ensure vertical alignment */
         }
 
         .process-stats h3 {
@@ -70,7 +70,7 @@
         table {
             width: 80%;
             border-collapse: collapse;
-            display: none;  /* Hide the table initially */
+            display: none; /* Hide the table initially */
         }
 
         table, th, td {
@@ -218,6 +218,26 @@
         }
 
     </style>
+    <style>
+        .collapsible-table {
+            display: table;
+            border-collapse: collapse;
+        }
+
+        .collapsible-table-row {
+            display: table-row;
+        }
+
+        .collapsible-table-cell {
+            display: table-cell;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .collapsible-table-cell {
+            font-weight: bold;
+        }
+    </style>
     <noscript>
         <style>
             body {
@@ -249,36 +269,56 @@
     <details>
         <summary><strong>System Information</strong></summary>
         <br>
-        {% for key, value in sys_info_basic.items() %}
-        <strong>{{ key }}: </strong>{{ value }}<br>
-        {% endfor %}
+        <div class="collapsible-table">
+            {% for key, value in sys_info_basic.items() %}
+            <div class="collapsible-table-row">
+                <div class="collapsible-table-cell"><strong>{{ key }}</strong></div>
+                <div class="collapsible-table-cell">{{ value }}</div>
+            </div>
+            {% endfor %}
+        </div>
     </details>
     <br>
     <details>
         <summary><strong>Memory and Storage</strong></summary>
         <br>
-        {% for key, value in sys_info_mem_storage.items() %}
-        <strong>{{ key }}: </strong>{{ value }}<br>
-        {% endfor %}
+        <div class="collapsible-table">
+            {% for key, value in sys_info_mem_storage.items() %}
+            <div class="collapsible-table-row">
+                <div class="collapsible-table-cell"><strong>{{ key }}</strong></div>
+                <div class="collapsible-table-cell">{{ value }}</div>
+            </div>
+            {% endfor %}
+        </div>
     </details>
     <br>
     <details>
         <summary><strong>Network Information</strong></summary>
         <br>
-        {% for key, value in sys_info_network.items() %}
-        <strong>{{ key }}: </strong>{{ value }}<br>
-        {% endfor %}
+        <div class="collapsible-table">
+            {% for key, value in sys_info_network.items() %}
+            <div class="collapsible-table-row">
+                <div class="collapsible-table-cell"><strong>{{ key }}</strong></div>
+                <div class="collapsible-table-cell">{{ value }}</div>
+            </div>
+            {% endfor %}
+        </div>
     </details>
     {% if sys_info_disks %}
     <br>
     <details>
         <summary><strong>Disk Information</strong></summary>
-        {% for disk_info in sys_info_disks %}
         <br>
-        {% for key, value in disk_info.items() %}
-        <strong>{{ key }}: </strong>{{ value }}<br>
-        {% endfor %}
-        {% endfor %}
+        <div class="collapsible-table">
+            {% for disk_info in sys_info_disks %}
+            {% for key, value in disk_info.items() %}
+            <div class="collapsible-table-row">
+                <div class="collapsible-table-cell"><strong>{{ key }}</strong></div>
+                <div class="collapsible-table-cell">{{ value }}</div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
     </details>
     {% endif %}
 </div>
