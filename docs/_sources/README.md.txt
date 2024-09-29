@@ -53,19 +53,24 @@ pyninja start
 > _By default, `PyNinja` will look for a `.env` file in the current working directory._
 </details>
 
+- **APIKEY** - API Key for authentication.
 - **NINJA_HOST** - Hostname for the API server.
 - **NINJA_PORT** - Port number for the API server.
-- **WORKERS** - Number of workers for the uvicorn server.
 - **REMOTE_EXECUTION** - Boolean flag to enable remote execution.
 - **API_SECRET** - Secret access key for running commands on server remotely.
 - **MONITOR_USERNAME** - Username to authenticate the monitoring page.
 - **MONITOR_PASSWORD** - Password to authenticate the monitoring page.
 - **MONITOR_SESSION** - Session timeout for the monitoring page.
 - **MAX_CONNECTIONS** - Maximum number of monitoring sessions allowed in parallel.
-- **SERVICE_MANAGER** - Service manager filepath to handle the service status requests.
+- **PROCESSES** - List of process names to include in the monitor page.
+- **SERVICES** - List of service names to include in the monitor page.
+- **GPU_LIB** - GPU library filepath to use for monitoring.
+- **DISK_LIB** - Disk library filepath to use for monitoring.
+- **SERVICE_LIB** - Memory library filepath to use for monitoring.
+- **PROCESSOR_LIB** - Processor library filepath to use for monitoring.
 - **DATABASE** - FilePath to store the auth database that handles the authentication errors.
 - **RATE_LIMIT** - List of dictionaries with `max_requests` and `seconds` to apply as rate limit.
-- **APIKEY** - API Key for authentication.
+- **LOG_CONFIG** - Logging configuration file path.
 
 ⚠️ Enabling remote execution can be extremely risky and a major security threat.
 So use **caution** and set the **API_SECRET** to a strong value.

@@ -2,7 +2,6 @@ import asyncio
 import json
 import logging
 import os
-import shutil
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, List
 
@@ -13,6 +12,27 @@ from .. import models, operations
 # Use a ThreadPoolExecutor to run blocking functions in separate threads
 EXECUTOR = ThreadPoolExecutor(max_workers=os.cpu_count())
 LOGGER = logging.getLogger("uvicorn.default")
+
+
+def map_docker_stats(json_data: Dict[str, str]) -> Dict[str, str]:
+    """Map the JSON data to a dictionary.
+
+    Args:
+        json_data: JSON data from the docker stats command.
+
+    Returns:
+        Dict[str, str]:
+        Returns a dictionary with container stats.
+    """
+    return {
+        "Container ID": json_data.get("ID"),
+        "Container Name": json_data.get("Name"),
+        "CPU": json_data.get("CPUPerc"),
+        "Memory": json_data.get("MemPerc"),
+        "Memory Usage": json_data.get("MemUsage"),
+        "Block I/O": json_data.get("BlockIO"),
+        "Network I/O": json_data.get("NetIO"),
+    }
 
 
 def get_cpu_percent(cpu_interval: int) -> List[float]:
@@ -45,7 +65,7 @@ async def get_docker_stats() -> List[Dict[str, str]]:
         LOGGER.debug(stderr.decode().strip())
         return []
     return [
-        {key: value for key, value in json.loads(line).items() if key != "PIDs"}
+        map_docker_stats(json.loads(line))
         for line in stdout.decode().strip().splitlines()
     ]
 
@@ -62,7 +82,6 @@ async def get_system_metrics() -> Dict[str, dict]:
     return dict(
         memory_info=psutil.virtual_memory()._asdict(),
         swap_info=psutil.swap_memory()._asdict(),
-        disk_info=shutil.disk_usage("/")._asdict(),
         load_averages=dict(m1=m1, m5=m5, m15=m15),
     )
 

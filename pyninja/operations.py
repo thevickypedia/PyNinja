@@ -43,18 +43,23 @@ def get_process_info(proc: psutil.Process) -> Dict[str, str | int]:
         write_io = squire.size_converter(io_counters.write_bytes)
     except AttributeError:
         read_io, write_io = "N/A", "N/A"
-    return {
-        "PID": proc.pid,
-        "Name": proc.name(),
-        "CPU": f"{proc.cpu_percent(models.MINIMUM_CPU_UPDATE_INTERVAL):.2f}%",
-        "Memory": squire.size_converter(proc.memory_info().rss),  # Resident Set Size,
-        "Uptime": squire.format_timedelta(
-            timedelta(seconds=int(time.time() - proc.create_time()))
-        ),
-        "Threads": proc.num_threads(),
-        "Read I/O": read_io,
-        "Write I/O": write_io,
-    }
+    try:
+        return {
+            "PID": proc.pid,
+            "Name": proc.name(),
+            "CPU": f"{proc.cpu_percent(models.MINIMUM_CPU_UPDATE_INTERVAL):.2f}%",
+            # Resident Set Size
+            "Memory": squire.size_converter(proc.memory_info().rss),
+            "Uptime": squire.format_timedelta(
+                timedelta(seconds=int(time.time() - proc.create_time()))
+            ),
+            "Threads": proc.num_threads(),
+            "Read I/O": read_io,
+            "Write I/O": write_io,
+        }
+    except psutil.NoSuchProcess as error:
+        LOGGER.debug(error)
+        return default(proc.name())
 
 
 async def process_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
@@ -75,7 +80,11 @@ async def process_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
     for proc in psutil.process_iter(
         ["pid", "name", "cpu_percent", "memory_info", "create_time"]
     ):
-        if any(name in proc.name() for name in models.env.processes):
+        # todo: Add a way to include processes (with default values) that don't exist but requested to monitor
+        if any(
+            name in proc.name() or name == str(proc.pid)
+            for name in models.env.processes
+        ):
             tasks.append(loop.run_in_executor(executor, get_process_info, proc))
     return [await task for task in asyncio.as_completed(tasks)]
 
