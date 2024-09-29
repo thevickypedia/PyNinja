@@ -143,9 +143,10 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
                 sys_info_basic["CPU"] = processor_name
             sys_info_mem_storage = {
                 "Memory": squire.size_converter(psutil.virtual_memory().total),
-                "Swap": squire.size_converter(psutil.swap_memory().total),
                 "Disk": squire.size_converter(shutil.disk_usage("/").total),
             }
+            if swap := psutil.swap_memory().total:
+                sys_info_mem_storage["Swap"] = squire.size_converter(swap)
             sys_info_network = {
                 "Private IP address": squire.private_ip_address(),
                 "Public IP address": squire.public_ip_address(),
@@ -226,8 +227,6 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         data = await resources.system_resources()
         try:
             await websocket.send_json(data)
-            # Refresh Interval
-            await asyncio.sleep(0.1)
         except WebSocketDisconnect:
             break
         except KeyboardInterrupt:

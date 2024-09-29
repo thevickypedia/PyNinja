@@ -8,7 +8,7 @@ from typing import Dict, List
 
 import psutil
 
-from .. import operations
+from .. import models, operations
 
 # Use a ThreadPoolExecutor to run blocking functions in separate threads
 EXECUTOR = ThreadPoolExecutor(max_workers=os.cpu_count())
@@ -76,12 +76,14 @@ async def system_resources() -> Dict[str, dict]:
     """
     system_metrics_task = asyncio.create_task(get_system_metrics())
     docker_stats_task = asyncio.create_task(get_docker_stats())
-    service_stats_task = asyncio.create_task(operations.service_monitor())
-    process_stats_task = asyncio.create_task(operations.process_monitor())
+    service_stats_task = asyncio.create_task(operations.service_monitor(EXECUTOR))
+    process_stats_task = asyncio.create_task(operations.process_monitor(EXECUTOR))
 
     # CPU percent check is a blocking call and cannot be awaited, so run it in a separate thread
     loop = asyncio.get_event_loop()
-    cpu_usage_task = loop.run_in_executor(EXECUTOR, get_cpu_percent, *(1,))
+    cpu_usage_task = loop.run_in_executor(
+        EXECUTOR, get_cpu_percent, *(models.MINIMUM_CPU_UPDATE_INTERVAL,)
+    )
 
     system_metrics = await system_metrics_task
     docker_stats = await docker_stats_task

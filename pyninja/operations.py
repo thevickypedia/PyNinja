@@ -1,6 +1,8 @@
+import asyncio
 import logging
 import subprocess
 import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from typing import Dict, List, Optional
 
@@ -44,7 +46,7 @@ def get_process_info(proc: psutil.Process) -> Dict[str, str | int]:
     return {
         "PID": proc.pid,
         "Name": proc.name(),
-        "CPU": f"{proc.cpu_percent():.2f}%",
+        "CPU": f"{proc.cpu_percent(models.MINIMUM_CPU_UPDATE_INTERVAL):.2f}%",
         "Memory": squire.size_converter(proc.memory_info().rss),  # Resident Set Size,
         "Uptime": squire.format_timedelta(
             timedelta(seconds=int(time.time() - proc.create_time()))
@@ -55,8 +57,7 @@ def get_process_info(proc: psutil.Process) -> Dict[str, str | int]:
     }
 
 
-# todo: Spawn threads
-async def process_monitor() -> List[Dict[str, str]]:
+async def process_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
     """Function to monitor processes and return their usage statistics.
 
     See Also:
@@ -69,21 +70,17 @@ async def process_monitor() -> List[Dict[str, str]]:
         List[Dict[str, str]]:
         Returns a list of dictionaries with process usage statistics.
     """
-    usages = []
+    loop = asyncio.get_event_loop()
+    tasks = []
     for proc in psutil.process_iter(
         ["pid", "name", "cpu_percent", "memory_info", "create_time"]
     ):
-        try:
-            if any(name in proc.name() for name in models.env.processes):
-                usages.append(get_process_info(proc))
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            usages.append(default(proc.name()))
-            continue
-    return usages
+        if any(name in proc.name() for name in models.env.processes):
+            tasks.append(loop.run_in_executor(executor, get_process_info, proc))
+    return [await task for task in asyncio.as_completed(tasks)]
 
 
-# todo: Spawn threads
-async def service_monitor() -> List[Dict[str, str]]:
+async def service_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
     """Function to monitor services and return their usage statistics.
 
     See Also:
@@ -97,6 +94,8 @@ async def service_monitor() -> List[Dict[str, str]]:
         List[Dict[str, str]]:
         Returns a list of dictionaries with service usage statistics.
     """
+    loop = asyncio.get_event_loop()
+    tasks = []
     usages = []
     for service_name in models.env.services:
         pid = get_service_pid(service_name)
@@ -110,8 +109,9 @@ async def service_monitor() -> List[Dict[str, str]]:
             LOGGER.debug(f"Process with PID {pid} not found")
             usages.append(default(service_name))
             continue
-        usage = get_process_info(proc)
-        usages.append(usage)
+        tasks.append(loop.run_in_executor(executor, get_process_info, proc))
+    for task in asyncio.as_completed(tasks):
+        usages.append(await task)
     return usages
 
 

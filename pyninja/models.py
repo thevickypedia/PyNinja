@@ -17,6 +17,7 @@ from pydantic_settings import BaseSettings
 
 from . import exceptions
 
+MINIMUM_CPU_UPDATE_INTERVAL = 1
 OPERATING_SYSTEM = platform.system().lower()
 if OPERATING_SYSTEM not in ("darwin", "linux", "windows"):
     exceptions.raise_os_error(OPERATING_SYSTEM)
@@ -198,7 +199,6 @@ class EnvConfig(BaseSettings):
     apikey: str
     ninja_host: str = socket.gethostbyname("localhost") or "0.0.0.0"
     ninja_port: PositiveInt = 8000
-    workers: PositiveInt = 1
     remote_execution: bool = False
     api_secret: str | None = None
     monitor_username: str | None = None

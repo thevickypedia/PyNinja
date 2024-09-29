@@ -113,7 +113,6 @@ def start(**kwargs) -> None:
         apikey: API Key for authentication.
         ninja_host: Hostname for the API server.
         ninja_port: Port number for the API server.
-        workers: Number of workers for the uvicorn server.
         remote_execution: Boolean flag to enable remote execution.
         api_secret: Secret access key for running commands on server remotely.
         monitor_username: Username to authenticate the monitoring page.
@@ -164,7 +163,6 @@ def start(**kwargs) -> None:
     kwargs = dict(
         host=models.env.ninja_host,
         port=models.env.ninja_port,
-        workers=models.env.workers,
         app=f"{module_name.parent.stem}.{module_name.stem}:{PyNinjaAPI.__name__}",
     )
     if models.env.log_config:
