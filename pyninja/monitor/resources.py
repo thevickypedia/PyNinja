@@ -7,7 +7,8 @@ from typing import Dict, List
 
 import psutil
 
-from .. import models, operations
+from pyninja.features import operations
+from pyninja.modules import models
 
 # Use a ThreadPoolExecutor to run blocking functions in separate threads
 EXECUTOR = ThreadPoolExecutor(max_workers=os.cpu_count())

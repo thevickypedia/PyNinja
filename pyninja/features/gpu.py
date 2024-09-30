@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 
 from pydantic import FilePath
 
-from . import models
+from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
 

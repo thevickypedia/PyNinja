@@ -11,17 +11,10 @@ from fastapi.routing import APIRoute
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
-from . import (
-    auth,
-    disks,
-    dockerized,
-    exceptions,
-    models,
-    process,
-    processor,
-    service,
-    squire,
-)
+from pyninja.executors import auth, squire
+from pyninja.features import disks, dockerized, process, processor, service
+from pyninja.modules import exceptions, models
+from pyninja.monitor import resources
 
 LOGGER = logging.getLogger("uvicorn.default")
 BASIC_AUTH = HTTPBasic()
@@ -404,7 +397,7 @@ async def get_docker_stats(
     await auth.level_1(request, apikey)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.OK.real,
-        detail=list(squire.get_docker_stats()),
+        detail=await resources.get_docker_stats(),
     )
 
 

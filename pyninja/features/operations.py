@@ -8,7 +8,8 @@ from typing import Dict, List, Optional
 
 import psutil
 
-from . import models, squire
+from pyninja.executors import squire
+from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -89,7 +90,7 @@ async def process_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
             name in proc.name() or name == str(proc.pid)
             for name in models.env.processes
         ):
-            tasks.append(loop.run_in_executor(executor, get_process_info, proc))
+            tasks.append(loop.run_in_executor(executor, get_process_info, *(proc,)))
     return [await task for task in asyncio.as_completed(tasks)]
 
 

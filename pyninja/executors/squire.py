@@ -14,7 +14,7 @@ import requests
 import yaml
 from pydantic import PositiveFloat, PositiveInt
 
-from . import models
+from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
 IP_REGEX = re.compile(

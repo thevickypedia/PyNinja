@@ -7,7 +7,8 @@ from typing import Dict, List
 import psutil
 from pydantic import FilePath
 
-from . import models, squire
+from pyninja.executors import squire
+from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
 

@@ -6,12 +6,15 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.routing import APIRoute
 
-from . import exceptions, models, rate_limit, routes, squire, version
-from .monitor import get_all_monitor_routes
+from pyninja import version
+from pyninja.executors import routes, squire
+from pyninja.modules import exceptions, models, rate_limit
+from pyninja.monitor import get_all_monitor_routes
 
 BASE_LOGGER = logging.getLogger("BASE_LOGGER")
 BASE_LOGGER.setLevel(logging.INFO)
 LOGGER = logging.getLogger("uvicorn.default")
+
 PyNinjaAPI = FastAPI(
     title="PyNinja",
     version=version.__version__,

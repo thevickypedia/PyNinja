@@ -9,8 +9,10 @@ from fastapi import Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.security import HTTPAuthorizationCredentials
 
-from .. import exceptions, models, squire, version
-from . import config, secure
+from pyninja import version
+from pyninja.executors import squire
+from pyninja.modules import exceptions, models
+from pyninja.monitor import config, secure
 
 LOGGER = logging.getLogger("uvicorn.default")
 

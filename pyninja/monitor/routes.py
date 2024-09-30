@@ -12,8 +12,10 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
-from .. import disks, exceptions, gpu, models, monitor, processor, squire, version
-from . import resources
+from pyninja import monitor, version
+from pyninja.executors import squire
+from pyninja.features import disks, gpu, processor
+from pyninja.modules import exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
@@ -227,7 +229,7 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
             await websocket.send_text("Session Expired")
             await websocket.close()
             break
-        data = await resources.system_resources()
+        data = await monitor.resources.system_resources()
         data["disk_info"] = disk_info
         try:
             await websocket.send_json(data)

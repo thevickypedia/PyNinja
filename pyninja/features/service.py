@@ -2,7 +2,7 @@ import logging
 import subprocess
 from http import HTTPStatus
 
-from . import models
+from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
