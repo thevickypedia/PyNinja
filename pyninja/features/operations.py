@@ -22,12 +22,12 @@ def default(name: str):
         "Memory": "N/A",
         "Uptime": "N/A",
         "Threads": "N/A",
+        "Open Files": "N/A",
         "Read I/O": "N/A",
         "Write I/O": "N/A",
     }
 
 
-# todo: Remove redundancy between features/operations.py and features/services.py [OR] features/process.py
 def get_process_info(
     proc: psutil.Process, process_name: str = None
 ) -> Dict[str, str | int]:
@@ -60,6 +60,7 @@ def get_process_info(
                 timedelta(seconds=int(time.time() - proc.create_time()))
             ),
             "Threads": proc.num_threads(),
+            "Open Files": len(proc.open_files()),
             "Read I/O": read_io,
             "Write I/O": write_io,
         }
@@ -71,8 +72,11 @@ def get_process_info(
 async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
     """Function to monitor processes and return their usage statistics.
 
+    Args:
+        processes: List of process names to monitor.
+
     See Also:
-        Process names can be case in-sensitive.
+        Process names can be case in-sensitive as they are not strictly matched.
 
             * macOS/Linux: `top | grep {{ process_name }}`
             * Windows: `Task Manager`
@@ -86,9 +90,12 @@ async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
     for proc in psutil.process_iter(
         ["pid", "name", "cpu_percent", "memory_info", "create_time"]
     ):
-        if any(name in proc.name() or name == str(proc.pid) for name in processes):
+        if any(
+            name.lower() in proc.name().lower() or name == str(proc.pid)
+            for name in processes
+        ):
             tasks.append(
-                loop.run_in_executor(models.EXECUTOR, get_process_info, *(proc,))
+                loop.run_in_executor(models.EXECUTOR, get_process_info, proc, None)
             )
     return [await task for task in asyncio.as_completed(tasks)]
 
@@ -96,8 +103,11 @@ async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
 async def service_monitor(services: List[str]) -> List[Dict[str, str]]:
     """Function to monitor services and return their usage statistics.
 
+    Args:
+        services: List of service names to monitor.
+
     See Also:
-        Service names are case-sensitive, so use the following command to get the right name.
+        Service names are case-sensitive as they are strictly matched. Use the following command to get the right name.
 
             * macOS: `launchctl list | grep {{ service_name }}`
             * Linux: `systemctl show {{ service_name }} --property=MainPID`
