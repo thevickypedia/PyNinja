@@ -59,7 +59,7 @@ def get_desc(remote_flag: bool, monitor_flag: bool) -> str:
     description += "\n- <a href='/docs#/default/docker_containers_docker_container_get'>/docker-container</a><br>"
     description += "\n- <a href='/docs#/default/docker_images_docker_image_get'>/docker-image</a><br>"
     description += "\n- <a href='/docs#/default/docker_volumes_docker_volume_get'>/docker-volume</a><br>"
-    description += "\n\n#### Optional Features"
+    description += "\n\n#### Additional Features"
     description += (
         "\n- <a href='/docs#/default/run_command_run_command_post'>/run-command</a><br>"
     )

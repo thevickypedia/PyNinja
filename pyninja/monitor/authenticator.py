@@ -11,8 +11,8 @@ from fastapi.security import HTTPAuthorizationCredentials
 
 from pyninja import version
 from pyninja.executors import squire
-from pyninja.modules import exceptions, models
-from pyninja.monitor import config, secure
+from pyninja.modules import exceptions, models, secure
+from pyninja.monitor import config
 
 LOGGER = logging.getLogger("uvicorn.default")
 

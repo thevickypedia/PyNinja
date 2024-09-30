@@ -15,7 +15,7 @@ from pydantic import (
 )
 from pydantic_settings import BaseSettings
 
-from . import exceptions
+from pyninja.modules import exceptions
 
 MINIMUM_CPU_UPDATE_INTERVAL = 1
 OPERATING_SYSTEM = platform.system().lower()
