@@ -1,8 +1,10 @@
+import os
 import pathlib
 import platform
 import re
 import socket
 import sqlite3
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List, Set, Tuple, Type
 
 from pydantic import (
@@ -18,6 +20,8 @@ from pydantic_settings import BaseSettings
 from pyninja.modules import exceptions
 
 MINIMUM_CPU_UPDATE_INTERVAL = 1
+# Use a ThreadPoolExecutor to run blocking functions in separate threads
+EXECUTOR = ThreadPoolExecutor(max_workers=os.cpu_count())
 OPERATING_SYSTEM = platform.system().lower()
 if OPERATING_SYSTEM not in ("darwin", "linux", "windows"):
     exceptions.raise_os_error(OPERATING_SYSTEM)

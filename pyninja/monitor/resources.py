@@ -2,7 +2,6 @@ import asyncio
 import json
 import logging
 import os
-from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, List
 
 import psutil
@@ -10,8 +9,6 @@ import psutil
 from pyninja.features import operations
 from pyninja.modules import models
 
-# Use a ThreadPoolExecutor to run blocking functions in separate threads
-EXECUTOR = ThreadPoolExecutor(max_workers=os.cpu_count())
 LOGGER = logging.getLogger("uvicorn.default")
 
 
@@ -96,13 +93,17 @@ async def system_resources() -> Dict[str, dict]:
     """
     system_metrics_task = asyncio.create_task(get_system_metrics())
     docker_stats_task = asyncio.create_task(get_docker_stats())
-    service_stats_task = asyncio.create_task(operations.service_monitor(EXECUTOR))
-    process_stats_task = asyncio.create_task(operations.process_monitor(EXECUTOR))
+    service_stats_task = asyncio.create_task(
+        operations.service_monitor(models.env.services)
+    )
+    process_stats_task = asyncio.create_task(
+        operations.process_monitor(models.env.processes)
+    )
 
     # CPU percent check is a blocking call and cannot be awaited, so run it in a separate thread
     loop = asyncio.get_event_loop()
     cpu_usage_task = loop.run_in_executor(
-        EXECUTOR, get_cpu_percent, *(models.MINIMUM_CPU_UPDATE_INTERVAL,)
+        models.EXECUTOR, get_cpu_percent, *(models.MINIMUM_CPU_UPDATE_INTERVAL,)
     )
 
     system_metrics = await system_metrics_task

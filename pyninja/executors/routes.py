@@ -12,7 +12,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
 from pyninja.executors import auth, squire
-from pyninja.features import cpu, disks, dockerized, process, service
+from pyninja.features import cpu, disks, dockerized, operations, process, service
 from pyninja.modules import exceptions, models
 from pyninja.monitor import resources
 
@@ -241,12 +241,72 @@ async def get_process_status(
     )
 
 
+async def get_service_usage(
+    request: Request,
+    service_names: List[str],
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """**API function to monitor a service.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - service_names: Name of the service to check status.
+        - apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_1(request, apikey)
+    response = await operations.service_monitor(service_names)
+    if len(service_names) == 1:
+        response = response[0]
+        if response.get("PID") == 0000:
+            raise exceptions.APIResponse(
+                status_code=HTTPStatus.NOT_FOUND.real,
+                detail=f"{service_names[0]!r} not found or not running",
+            )
+    raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
+
+
+async def get_process_usage(
+    request: Request,
+    process_names: List[str],
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """**API function to monitor a process.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - process_names: Name of the service to check status.
+        - apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_1(request, apikey)
+    response = await operations.process_monitor(process_names)
+    if len(process_names) == 1:
+        response = response[0]
+        if response.get("PID") == 0000:
+            raise exceptions.APIResponse(
+                status_code=HTTPStatus.NOT_FOUND.real,
+                detail=f"{process_names[0]!r} not found or not running",
+            )
+    raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
+
+
 async def get_service_status(
     request: Request,
     service_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
-    """**API function to monitor a service.**
+    """**API function to get the status of a service.**
 
     **Args:**
 
@@ -513,9 +573,21 @@ def get_all_routes(dependencies: List[Depends]) -> List[APIRoute]:
             dependencies=dependencies,
         ),
         APIRoute(
+            path="/service-usage",
+            endpoint=get_service_usage,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
             path="/process-status",
             endpoint=get_process_status,
             methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path="/process-usage",
+            endpoint=get_process_usage,
+            methods=["POST"],
             dependencies=dependencies,
         ),
         APIRoute(

@@ -81,7 +81,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
         ServiceStatus:
         Returns an instance of the ServiceStatus object.
     """
-    if models.OPERATING_SYSTEM == "Linux":
+    if models.OPERATING_SYSTEM == "linux":
         try:
             output = subprocess.check_output(
                 [models.env.service_lib, "is-active", service_name],
@@ -102,7 +102,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
             LOGGER.error("%d - %s", 404, error)
             return unavailable(service_name)
 
-    if models.OPERATING_SYSTEM == "Darwin":
+    if models.OPERATING_SYSTEM == "darwin":
         try:
             output = subprocess.check_output(
                 [models.env.service_lib, "list"], text=True
@@ -116,7 +116,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
             LOGGER.error("%d - %s", 404, error)
             return unavailable(service_name)
 
-    if models.OPERATING_SYSTEM == "Windows":
+    if models.OPERATING_SYSTEM == "windows":
         try:
             output = subprocess.check_output(
                 [models.env.service_lib, "query", service_name],

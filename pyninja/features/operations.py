@@ -2,7 +2,6 @@ import asyncio
 import logging
 import subprocess
 import time
-from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from typing import Dict, List, Optional
 
@@ -28,6 +27,7 @@ def default(name: str):
     }
 
 
+# todo: Remove redundancy between features/operations.py and features/services.py [OR] features/process.py
 def get_process_info(
     proc: psutil.Process, process_name: str = None
 ) -> Dict[str, str | int]:
@@ -68,7 +68,7 @@ def get_process_info(
         return default(process_name or proc.name())
 
 
-async def process_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
+async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
     """Function to monitor processes and return their usage statistics.
 
     See Also:
@@ -86,15 +86,14 @@ async def process_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
     for proc in psutil.process_iter(
         ["pid", "name", "cpu_percent", "memory_info", "create_time"]
     ):
-        if any(
-            name in proc.name() or name == str(proc.pid)
-            for name in models.env.processes
-        ):
-            tasks.append(loop.run_in_executor(executor, get_process_info, *(proc,)))
+        if any(name in proc.name() or name == str(proc.pid) for name in processes):
+            tasks.append(
+                loop.run_in_executor(models.EXECUTOR, get_process_info, *(proc,))
+            )
     return [await task for task in asyncio.as_completed(tasks)]
 
 
-async def service_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
+async def service_monitor(services: List[str]) -> List[Dict[str, str]]:
     """Function to monitor services and return their usage statistics.
 
     See Also:
@@ -111,7 +110,7 @@ async def service_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
     loop = asyncio.get_event_loop()
     tasks = []
     usages = []
-    for service_name in models.env.services:
+    for service_name in services:
         pid = get_service_pid(service_name)
         if not pid:
             LOGGER.debug(f"Failed to get PID for service: {service_name}")
@@ -124,7 +123,7 @@ async def service_monitor(executor: ThreadPoolExecutor) -> List[Dict[str, str]]:
             usages.append(default(service_name))
             continue
         tasks.append(
-            loop.run_in_executor(executor, get_process_info, proc, service_name)
+            loop.run_in_executor(models.EXECUTOR, get_process_info, proc, service_name)
         )
     for task in asyncio.as_completed(tasks):
         usages.append(await task)

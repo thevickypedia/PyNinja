@@ -1,10 +1,11 @@
 import logging
-import os
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import as_completed
 from typing import Dict, List
 
 import psutil
 from pydantic import PositiveInt
+
+from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -24,11 +25,10 @@ def get_process_status(
     """
     result = []
     futures = {}
-    executor = ThreadPoolExecutor(max_workers=os.cpu_count())
-    with executor:
+    with models.EXECUTOR:
         for proc in psutil.process_iter(["pid", "name"]):
             if proc.name().lower() == process_name.lower():
-                future = executor.submit(
+                future = models.EXECUTOR.submit(
                     get_performance, process=proc, cpu_interval=cpu_interval
                 )
                 futures[future] = proc.name()
