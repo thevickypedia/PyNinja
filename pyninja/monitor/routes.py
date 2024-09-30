@@ -14,7 +14,7 @@ from fastapi.websockets import WebSocket, WebSocketDisconnect
 
 from pyninja import monitor, version
 from pyninja.executors import squire
-from pyninja.features import disks, gpu, processor
+from pyninja.features import cpu, disks, gpu
 from pyninja.modules import exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -140,7 +140,7 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
                 sys_info_basic["GPU"] = ", ".join(
                     [gpu_info.get("model") for gpu_info in gpu_names]
                 )
-            if processor_name := processor.get_name():
+            if processor_name := cpu.get_name():
                 LOGGER.info("Processor: %s", processor_name)
                 sys_info_basic["CPU"] = processor_name
             sys_info_mem_storage = {

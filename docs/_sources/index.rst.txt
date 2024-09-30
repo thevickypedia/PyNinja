@@ -17,136 +17,134 @@ PyNinja - Main
 
 .. automodule:: pyninja.main
 
-Authenticator
-=============
-.. automodule:: pyninja.auth
+PyNinja - Executors
+===================
 
-Routes
-======
+API Authenticator
+-----------------
+.. automodule:: pyninja.executors.auth
 
-.. automodule:: pyninja.routes
+Database
+--------
+.. automodule:: pyninja.executors.database
 
-Monitors
-========
+API Routes
+----------
+.. automodule:: pyninja.executors.routes
+
+Squire
+------
+.. automodule:: pyninja.executors.squire
+
+PyNinja - Features
+==================
+
+CPU
+---
+.. automodule:: pyninja.features.cpu
+
+Disks
+-----
+.. automodule:: pyninja.features.disks
 
 Docker
 ------
-
-.. automodule:: pyninja.dockerized
+.. automodule:: pyninja.features.dockerized
 
 GPU
 ---
+.. automodule:: pyninja.features.gpu
 
-.. automodule:: pyninja.gpu
+Operations
+----------
+.. automodule:: pyninja.features.operations
 
 Process
 -------
-
-.. automodule:: pyninja.process
+.. automodule:: pyninja.features.process
 
 Service
 -------
+.. automodule:: pyninja.features.service
 
-.. automodule:: pyninja.service
-
-Operations
-==========
-
-.. automodule:: pyninja.operations
-
-Database
-========
-
-.. automodule:: pyninja.database
-
-RateLimiter
-===========
-
-.. automodule:: pyninja.rate_limit
+PyNinja - Modules
+=================
 
 Exceptions
-==========
-
-.. automodule:: pyninja.exceptions
+----------
+.. automodule:: pyninja.modules.exceptions
 
 Models
-======
-
-.. autoclass:: pyninja.models.Payload(BaseModel)
+------
+.. autoclass:: pyninja.modules.models.Payload(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 ====
 
-.. autoclass:: pyninja.models.ServiceStatus(BaseModel)
+.. autoclass:: pyninja.modules.models.ServiceStatus(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 ====
 
-.. autoclass:: pyninja.models.DiskLib(BaseModel)
+.. autoclass:: pyninja.modules.models.DiskLib(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 ====
 
-.. autoclass:: pyninja.models.ServiceLib(BaseModel)
+.. autoclass:: pyninja.modules.models.ServiceLib(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 ====
 
-.. autoclass:: pyninja.models.ProcessorLib(BaseModel)
+.. autoclass:: pyninja.modules.models.ProcessorLib(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 ====
 
-.. autoclass:: pyninja.models.Session(BaseModel)
+.. autoclass:: pyninja.modules.models.Session(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 ====
 
-.. autoclass:: pyninja.models.RateLimit(BaseModel)
+.. autoclass:: pyninja.modules.models.RateLimit(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 ====
 
-.. autoclass:: pyninja.models.EnvConfig(BaseModel)
+.. autoclass:: pyninja.modules.models.EnvConfig(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 ====
 
-.. automodule:: pyninja.models
+.. automodule:: pyninja.modules.models
    :exclude-members: Payload, ServiceStatus, DiskLib, ServiceLib, ProcessorLib, EnvConfig, Session, RateLimit, env, database
 
-Squire
-======
+RateLimit
+---------
+.. automodule:: pyninja.modules.rate_limit
 
-.. automodule:: pyninja.squire
+Secure
+---------
+.. automodule:: pyninja.modules.secure
 
 PyNinja - Monitor
 =================
 
 Authenticator
 -------------
-
 .. automodule:: pyninja.monitor.authenticator
 
 Configuration
 -------------
-
 .. automodule:: pyninja.monitor.config
 
 Resources
 ---------
-
 .. automodule:: pyninja.monitor.resources
 
 Routes
 ------
-
 .. automodule:: pyninja.monitor.routes
-
-Secure
-------
-
-.. automodule:: pyninja.monitor.secure
 
 Indices and tables
 ==================

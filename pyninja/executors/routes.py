@@ -12,7 +12,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
 from pyninja.executors import auth, squire
-from pyninja.features import disks, dockerized, process, processor, service
+from pyninja.features import cpu, disks, dockerized, process, service
 from pyninja.modules import exceptions, models
 from pyninja.monitor import resources
 
@@ -419,7 +419,7 @@ async def get_processor_name(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_1(request, apikey)
-    if processor_info := processor.get_name():
+    if processor_info := cpu.get_name():
         raise exceptions.APIResponse(
             status_code=HTTPStatus.OK.real, detail=processor_info
         )
