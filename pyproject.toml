@@ -18,7 +18,14 @@ keywords = ["service-monitor", "PyNinja"]
 requires-python = ">=3.10"
 
 [tool.setuptools]
-packages = ["pyninja", "pyninja.monitor", "pyninja.monitor.templates"]
+packages = [
+    "pyninja",
+    "pyninja.executors",
+    "pyninja.features",
+    "pyninja.modules",
+    "pyninja.monitor",
+    "pyninja.monitor.templates"
+]
 [tool.setuptools.package-data]
 "pyninja.monitor.templates" = ["*.html"]
 

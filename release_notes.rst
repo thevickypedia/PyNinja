@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v0.1.3 (10/05/2024)
+-------------------
+- Include open files metric to service/process monitoring
+- Includes process/service usage metrics served via API endpoints
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v0.1.1...v0.1.3
+
 v0.1.1 (09/29/2024)
 -------------------
 - Include services/processes metrics to monitoring page
