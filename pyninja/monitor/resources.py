@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+import subprocess
 from typing import Dict, List
 
 import psutil
@@ -46,6 +47,21 @@ def get_cpu_percent(cpu_interval: int) -> List[float]:
     return psutil.cpu_percent(interval=cpu_interval, percpu=True)
 
 
+def containers() -> bool:
+    """Check if any Docker containers are running."""
+    docker_ps = subprocess.run(
+        "docker ps -q",
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+        shell=True,
+    )
+    if docker_ps.stderr:
+        LOGGER.debug(docker_ps.stderr.decode().strip())
+        return False
+    if docker_ps.stdout.decode().strip().splitlines():
+        return True
+
+
 async def get_docker_stats() -> List[Dict[str, str]]:
     """Run the docker stats command asynchronously and parse the output.
 
@@ -53,6 +69,8 @@ async def get_docker_stats() -> List[Dict[str, str]]:
         List[Dict[str, str]]:
         Returns a list of key-value pairs with the container stat and value.
     """
+    if not containers():
+        return []
     process = await asyncio.create_subprocess_shell(
         'docker stats --no-stream --format "{{json .}}"',
         stdout=asyncio.subprocess.PIPE,

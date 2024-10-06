@@ -10,11 +10,14 @@
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+    <!-- Favicon.ico and Apple Touch Icon -->
     <link property="og:image" rel="icon" href="https://thevickypedia.github.io/open-source/images/logo/pyninja.ico">
     <link property="og:image" rel="apple-touch-icon"
           href="https://thevickypedia.github.io/open-source/images/logo/pyninja.png">
     <!-- Font Awesome icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/regular.min.css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -89,7 +92,27 @@
             font-family: 'Courier New', monospace;
             font-size: small;
         }
+    </style>
+    <style>
+        .password-container {
+            position: relative;
+        }
 
+        .password-container input[type="password"],
+        .password-container input[type="text"]{
+            width: 100%;
+            padding: 12px 36px 12px 12px;
+            box-sizing: border-box;
+        }
+
+        .fa-eye, .fa-eye-slash {
+            position: absolute;
+            top: 40%;
+            right: 4%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: lightgray;
+        }
     </style>
     <noscript>
         <style>
@@ -114,7 +137,7 @@
 <body>
 <div class="container">
     <div class="header">
-        <i class="fa fa-user"></i>
+        <i class="fa-solid fa-user"></i>
     </div>
     <div class="content">
         <!-- <form action="{ url_for('signin') }" method="post"> -->
@@ -122,7 +145,10 @@
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+            <div class="password-container">
+                <input type="password" id="password" name="password" required>
+                <i class="fa-regular fa-eye" id="eye"></i>
+            </div>
             <button type="submit" onclick="submitToAPI(event)">Sign In</button>
         </form>
     </div>
@@ -130,9 +156,11 @@
 </body>
 <!-- control the behavior of the browser's navigation without triggering a full page reload -->
 <script>
-    history.pushState(null, document.title, location.href);
-    window.addEventListener('popstate', function (event) {
+    document.addEventListener('DOMContentLoaded', function() {
         history.pushState(null, document.title, location.href);
+        window.addEventListener('popstate', function (event) {
+            history.pushState(null, document.title, location.href);
+        });
     });
 </script>
 <!-- handle authentication from login page -->
@@ -197,7 +225,7 @@
                     console.log(data);
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            error: function(jqXHR, textStatus, errorThrown) {
                 console.error(`Status: ${textStatus}, Error: ${errorThrown}`);
                 if (jqXHR.hasOwnProperty("responseJSON")) {
                     alert(jqXHR.responseJSON.detail);
@@ -215,4 +243,17 @@
         <a href="https://github.com/thevickypedia/PyNinja">https://github.com/thevickypedia/PyNinja</a>
     </div>
 </footer>
+<script>
+    const passwordInput = document.querySelector("#password")
+    const eye = document.querySelector("#eye")
+    eye.addEventListener("click", function() {
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eye.className = "fa-regular fa-eye-slash"
+        } else {
+            passwordInput.type = "password";
+            eye.className = "fa-regular fa-eye"
+        }
+    });
+</script>
 </html>
