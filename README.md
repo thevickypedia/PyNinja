@@ -61,6 +61,7 @@ pyninja start
 - **MONITOR_USERNAME** - Username to authenticate the monitoring page.
 - **MONITOR_PASSWORD** - Password to authenticate the monitoring page.
 - **MONITOR_SESSION** - Session timeout for the monitoring page.
+- **NO_AUTH** - Boolean flag to host monitoring page without authentication.
 - **MAX_CONNECTIONS** - Maximum number of monitoring sessions allowed in parallel.
 - **PROCESSES** - List of process names to include in the monitor page.
 - **SERVICES** - List of service names to include in the monitor page.

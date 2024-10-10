@@ -1687,6 +1687,11 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.no_auth">
+<span class="sig-name descname"><span class="pre">no_auth</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.no_auth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.processes">
 <span class="sig-name descname"><span class="pre">processes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.processes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2155,6 +2160,20 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </section>
 <section id="module-pyninja.monitor.resources">
 <span id="resources"></span><h2>Resources<a class="headerlink" href="#module-pyninja.monitor.resources" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.monitor.resources.landing_page">
+<span class="sig-prename descclassname"><span class="pre">pyninja.monitor.resources.</span></span><span class="sig-name descname"><span class="pre">landing_page</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.monitor.resources.landing_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the landing page context for monitor endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns a key-value pair to be inserted into the Jinja template.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.monitor.resources.map_docker_stats">
 <span class="sig-prename descclassname"><span class="pre">pyninja.monitor.resources.</span></span><span class="sig-name descname"><span class="pre">map_docker_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.monitor.resources.map_docker_stats" title="Permalink to this definition">¶</a></dt>

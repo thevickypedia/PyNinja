@@ -209,6 +209,7 @@ class EnvConfig(BaseSettings):
     monitor_password: str | None = None
     monitor_session: PositiveInt = 3_600
     max_connections: PositiveInt = 3
+    no_auth: bool = False
     processes: List[str] = []
     services: List[str] = []
     gpu_lib: FilePath = get_library(GPULib)

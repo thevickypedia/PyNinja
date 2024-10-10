@@ -2,15 +2,64 @@ import asyncio
 import json
 import logging
 import os
+import platform
+import shutil
 import subprocess
-from typing import Dict, List
+import time
+from datetime import timedelta
+from typing import Any, Dict, List
 
 import psutil
 
-from pyninja.features import operations
+from pyninja.executors import squire
+from pyninja.features import cpu, disks, gpu, operations
 from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
+
+
+def landing_page() -> Dict[str, Any]:
+    """Returns the landing page context for monitor endpoint.
+
+    Returns:
+        Dict[str, Any]:
+        Returns a key-value pair to be inserted into the Jinja template.
+    """
+    uname = platform.uname()
+    sys_info_basic = {
+        "System": uname.system,
+        "Architecture": uname.machine,
+        "Node": uname.node,
+        "CPU Cores": psutil.cpu_count(logical=True),
+        "Uptime": squire.format_timedelta(
+            timedelta(seconds=time.time() - psutil.boot_time())
+        ),
+    }
+    if gpu_names := gpu.get_names():
+        LOGGER.info(gpu_names)
+        sys_info_basic["GPU"] = ", ".join(
+            [gpu_info.get("model") for gpu_info in gpu_names]
+        )
+    if processor_name := cpu.get_name():
+        LOGGER.info("Processor: %s", processor_name)
+        sys_info_basic["CPU"] = processor_name
+    sys_info_mem_storage = {
+        "Memory": squire.size_converter(psutil.virtual_memory().total),
+        "Disk": squire.size_converter(shutil.disk_usage("/").total),
+    }
+    if swap := psutil.swap_memory().total:
+        sys_info_mem_storage["Swap"] = squire.size_converter(swap)
+    sys_info_network = {
+        "Private IP address": squire.private_ip_address(),
+        "Public IP address": squire.public_ip_address(),
+    }
+    return dict(
+        logout="/logout",
+        sys_info_basic=dict(sorted(sys_info_basic.items())),
+        sys_info_mem_storage=dict(sorted(sys_info_mem_storage.items())),
+        sys_info_network=sys_info_network,
+        sys_info_disks=disks.get_all_disks(),
+    )
 
 
 def map_docker_stats(json_data: Dict[str, str]) -> Dict[str, str]:

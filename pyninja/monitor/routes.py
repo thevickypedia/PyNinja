@@ -1,20 +1,15 @@
 import asyncio
 import logging
-import platform
 import shutil
 import time
-from datetime import timedelta
 from http import HTTPStatus
 
-import psutil
 from fastapi import Cookie, Depends, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
 from pyninja import monitor, version
-from pyninja.executors import squire
-from pyninja.features import cpu, disks, gpu
 from pyninja.modules import exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -59,7 +54,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
     except exceptions.SessionError as error:
         response = await monitor.authenticator.session_error(request, error)
     else:
-        models.ws_session.client_auth.pop(request.client.host)
+        models.ws_session.client_auth.pop(request.client.host, None)
         response = monitor.config.templates.TemplateResponse(
             name="logout.html",
             context={
@@ -114,7 +109,7 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
             "Maximum parallel connections limit reached. Dropping %s", first_key
         )
         models.ws_session.client_auth.pop(first_key, None)
-    if session_token:
+    if session_token or models.env.no_auth:
         try:
             await monitor.authenticator.validate_session(
                 request.client.host, session_token
@@ -124,47 +119,11 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
             return await monitor.config.clear_session(
                 await monitor.authenticator.session_error(request, error)
             )
-        else:
-            uname = platform.uname()
-            sys_info_basic = {
-                "System": uname.system,
-                "Architecture": uname.machine,
-                "Node": uname.node,
-                "CPU Cores": psutil.cpu_count(logical=True),
-                "Uptime": squire.format_timedelta(
-                    timedelta(seconds=time.time() - psutil.boot_time())
-                ),
-            }
-            if gpu_names := gpu.get_names():
-                LOGGER.info(gpu_names)
-                sys_info_basic["GPU"] = ", ".join(
-                    [gpu_info.get("model") for gpu_info in gpu_names]
-                )
-            if processor_name := cpu.get_name():
-                LOGGER.info("Processor: %s", processor_name)
-                sys_info_basic["CPU"] = processor_name
-            sys_info_mem_storage = {
-                "Memory": squire.size_converter(psutil.virtual_memory().total),
-                "Disk": squire.size_converter(shutil.disk_usage("/").total),
-            }
-            if swap := psutil.swap_memory().total:
-                sys_info_mem_storage["Swap"] = squire.size_converter(swap)
-            sys_info_network = {
-                "Private IP address": squire.private_ip_address(),
-                "Public IP address": squire.public_ip_address(),
-            }
-            ctx = dict(
-                request=request,
-                logout="/logout",
-                sys_info_basic=dict(sorted(sys_info_basic.items())),
-                sys_info_mem_storage=dict(sorted(sys_info_mem_storage.items())),
-                sys_info_network=sys_info_network,
-                sys_info_disks=disks.get_all_disks(),
-                version=version.__version__,
-            )
-            return monitor.config.templates.TemplateResponse(
-                name="main.html", context=ctx
-            )
+        ctx = monitor.resources.landing_page()
+        ctx["request"] = request
+        ctx["version"] = version.__version__
+        LOGGER.info("Rendering initial context for monitoring page!")
+        return monitor.config.templates.TemplateResponse(name="main.html", context=ctx)
     else:
         return monitor.config.templates.TemplateResponse(
             name="index.html",
@@ -194,9 +153,12 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         await websocket.send_text(error.__str__())
         await websocket.close()
         return
-    session_timestamp = models.ws_session.client_auth.get(websocket.client.host).get(
-        "timestamp"
-    )
+    if models.env.no_auth:
+        session_timestamp = time.time()
+    else:
+        session_timestamp = models.ws_session.client_auth.get(
+            websocket.client.host
+        ).get("timestamp")
     # Base task with a placeholder asyncio sleep to start the task loop
     task = asyncio.create_task(asyncio.sleep(0.1))
     # Store disk usage information (during startup) to avoid repeated calls
