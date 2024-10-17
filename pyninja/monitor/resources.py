@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import platform
+import re
 import shutil
 import subprocess
 import time
@@ -62,6 +63,30 @@ def landing_page() -> Dict[str, Any]:
     )
 
 
+def container_cpu_limit(container_name: str) -> int | None:
+    """Get CPU cores configured for a particular container using NanoCpus.
+
+    Args:
+        container_name: Name of the docker container.
+
+    Returns:
+        int:
+        Returns the number of CPU cores.
+    """
+    cmd = r"docker inspect --format '{{.HostConfig.NanoCpus}}' " + container_name
+    inspector = subprocess.run(
+        cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+        shell=True,
+    )
+    if inspector.stderr:
+        LOGGER.debug(inspector.stderr.decode().strip())
+        return
+    if nano_cpus := inspector.stdout.decode().strip():
+        return int(nano_cpus) / 1_000_000_000
+
+
 def map_docker_stats(json_data: Dict[str, str]) -> Dict[str, str]:
     """Map the JSON data to a dictionary.
 
@@ -72,15 +97,21 @@ def map_docker_stats(json_data: Dict[str, str]) -> Dict[str, str]:
         Dict[str, str]:
         Returns a dictionary with container stats.
     """
-    return {
+    docker_dump = {
         "Container ID": json_data.get("ID"),
         "Container Name": json_data.get("Name"),
         "CPU": json_data.get("CPUPerc"),
-        "Memory": json_data.get("MemPerc"),
-        "Memory Usage": json_data.get("MemUsage"),
-        "Block I/O": json_data.get("BlockIO"),
-        "Network I/O": json_data.get("NetIO"),
     }
+    if cpu_limit := container_cpu_limit(json_data.get("Name")):
+        if perc := re.findall(r"\d+\.\d+|\d+", json_data.get("CPUPerc")):
+            docker_dump["CPU Usage"] = (
+                f"{round((float(perc[0]) / 100) * cpu_limit, 2)} / {cpu_limit}"
+            )
+    docker_dump["Memory"] = json_data.get("MemPerc")
+    docker_dump["Memory Usage"] = json_data.get("MemUsage")
+    docker_dump["Block I/O"] = json_data.get("BlockIO")
+    docker_dump["Network I/O"] = json_data.get("NetIO")
+    return docker_dump
 
 
 def get_cpu_percent(cpu_interval: int) -> List[float]:
