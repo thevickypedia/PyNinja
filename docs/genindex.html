@@ -56,6 +56,7 @@
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
@@ -144,7 +145,7 @@
 </li>
       <li><a href="index.html#pyninja.modules.models.WSSession.client_auth">client_auth (pyninja.modules.models.WSSession attribute)</a>
 </li>
-      <li><a href="index.html#pyninja.modules.models.Payload.command">command (pyninja.modules.models.Payload attribute)</a>
+      <li><a href="index.html#pyninja.modules.payloads.RunCommand.command">command (pyninja.modules.payloads.RunCommand attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -176,17 +177,25 @@
 </li>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.database">database (pyninja.modules.models.EnvConfig attribute)</a>
 </li>
+      <li><a href="index.html#pyninja.modules.payloads.ListFiles.deep_scan">deep_scan (pyninja.modules.payloads.ListFiles attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.features.operations.default">default() (in module pyninja.features.operations)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.ServiceStatus.description">description (pyninja.modules.models.ServiceStatus attribute)</a>
 </li>
+      <li><a href="index.html#pyninja.modules.payloads.ListFiles.directory">directory (pyninja.modules.payloads.ListFiles attribute)</a>
+
+      <ul>
+        <li><a href="index.html#pyninja.modules.payloads.PutFile.directory">(pyninja.modules.payloads.PutFile attribute)</a>
+</li>
+      </ul></li>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.disk_lib">disk_lib (pyninja.modules.models.EnvConfig attribute)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.DiskLib">DiskLib (class in pyninja.modules.models)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.docs">docs() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.executors.routers.docs">docs() (in module pyninja.executors.routers)</a>
 </li>
       <li><a href="index.html#pyninja.executors.squire.dynamic_numbers">dynamic_numbers() (in module pyninja.executors.squire)</a>
 </li>
@@ -220,12 +229,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.monitor.authenticator.failed_auth_counter">failed_auth_counter() (in module pyninja.monitor.authenticator)</a>
 </li>
-      <li><a href="index.html#pyninja.modules.models.Session.forbid">forbid (pyninja.modules.models.Session attribute)</a>
+      <li><a href="index.html#pyninja.modules.payloads.PutFile.file">file (pyninja.modules.payloads.PutFile attribute)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.auth.forbidden">forbidden() (in module pyninja.executors.auth)</a>
+      <li><a href="index.html#pyninja.modules.payloads.GetFile.filepath">filepath (pyninja.modules.payloads.GetFile attribute)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.models.Session.forbid">forbid (pyninja.modules.models.Session attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#pyninja.executors.auth.forbidden">forbidden() (in module pyninja.executors.auth)</a>
+</li>
       <li><a href="index.html#pyninja.executors.squire.format_nos">format_nos() (in module pyninja.executors.squire)</a>
 </li>
       <li><a href="index.html#pyninja.executors.squire.format_timedelta">format_timedelta() (in module pyninja.executors.squire)</a>
@@ -242,51 +255,53 @@
 </li>
       <li><a href="index.html#pyninja.features.dockerized.get_all_containers">get_all_containers() (in module pyninja.features.dockerized)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_all_disks">get_all_disks() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.features.disks.get_all_disks">get_all_disks() (in module pyninja.features.disks)</a>
 
       <ul>
-        <li><a href="index.html#pyninja.features.disks.get_all_disks">(in module pyninja.features.disks)</a>
+        <li><a href="index.html#pyninja.routes.metrics.get_all_disks">(in module pyninja.routes.metrics)</a>
 </li>
       </ul></li>
       <li><a href="index.html#pyninja.features.dockerized.get_all_images">get_all_images() (in module pyninja.features.dockerized)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_all_routes">get_all_routes() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.executors.routers.get_all_routes">get_all_routes() (in module pyninja.executors.routers)</a>
 </li>
       <li><a href="index.html#pyninja.features.dockerized.get_all_volumes">get_all_volumes() (in module pyninja.features.dockerized)</a>
 </li>
       <li><a href="index.html#pyninja.features.dockerized.get_container_status">get_container_status() (in module pyninja.features.dockerized)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_cpu_load_avg">get_cpu_load_avg() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.metrics.get_cpu_load_avg">get_cpu_load_avg() (in module pyninja.routes.metrics)</a>
 </li>
       <li><a href="index.html#pyninja.monitor.resources.get_cpu_percent">get_cpu_percent() (in module pyninja.monitor.resources)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_cpu_utilization">get_cpu_utilization() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.metrics.get_cpu_utilization">get_cpu_utilization() (in module pyninja.routes.metrics)</a>
 </li>
       <li><a href="index.html#pyninja.main.get_desc">get_desc() (in module pyninja.main)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_disk_utilization">get_disk_utilization() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.metrics.get_disk_utilization">get_disk_utilization() (in module pyninja.routes.metrics)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_docker_containers">get_docker_containers() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.orchestration.get_docker_containers">get_docker_containers() (in module pyninja.routes.orchestration)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_docker_images">get_docker_images() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.orchestration.get_docker_images">get_docker_images() (in module pyninja.routes.orchestration)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_docker_stats">get_docker_stats() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.monitor.resources.get_docker_stats">get_docker_stats() (in module pyninja.monitor.resources)</a>
 
       <ul>
-        <li><a href="index.html#pyninja.monitor.resources.get_docker_stats">(in module pyninja.monitor.resources)</a>
+        <li><a href="index.html#pyninja.routes.orchestration.get_docker_stats">(in module pyninja.routes.orchestration)</a>
 </li>
       </ul></li>
-      <li><a href="index.html#pyninja.executors.routes.get_docker_volumes">get_docker_volumes() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.orchestration.get_docker_volumes">get_docker_volumes() (in module pyninja.routes.orchestration)</a>
 </li>
       <li><a href="index.html#pyninja.monitor.config.get_expiry">get_expiry() (in module pyninja.monitor.config)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_ip_address">get_ip_address() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.fullaccess.get_file">get_file() (in module pyninja.routes.fullaccess)</a>
+</li>
+      <li><a href="index.html#pyninja.routes.ipaddr.get_ip_address">get_ip_address() (in module pyninja.routes.ipaddr)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.get_library">get_library() (in module pyninja.modules.models)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#pyninja.executors.routes.get_memory_utilization">get_memory_utilization() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.metrics.get_memory_utilization">get_memory_utilization() (in module pyninja.routes.metrics)</a>
 </li>
       <li><a href="index.html#pyninja.features.cpu.get_name">get_name() (in module pyninja.features.cpu)</a>
 </li>
@@ -298,15 +313,15 @@
 </li>
       <li><a href="index.html#pyninja.features.operations.get_process_info">get_process_info() (in module pyninja.features.operations)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_process_status">get_process_status() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.features.process.get_process_status">get_process_status() (in module pyninja.features.process)</a>
 
       <ul>
-        <li><a href="index.html#pyninja.features.process.get_process_status">(in module pyninja.features.process)</a>
+        <li><a href="index.html#pyninja.routes.namespace.get_process_status">(in module pyninja.routes.namespace)</a>
 </li>
       </ul></li>
-      <li><a href="index.html#pyninja.executors.routes.get_process_usage">get_process_usage() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.namespace.get_process_usage">get_process_usage() (in module pyninja.routes.namespace)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_processor_name">get_processor_name() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.namespace.get_processor_name">get_processor_name() (in module pyninja.routes.namespace)</a>
 </li>
       <li><a href="index.html#pyninja.executors.database.get_record">get_record() (in module pyninja.executors.database)</a>
 </li>
@@ -320,15 +335,17 @@
 </li>
       <li><a href="index.html#pyninja.features.operations.get_service_pid_windows">get_service_pid_windows() (in module pyninja.features.operations)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.get_service_status">get_service_status() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.features.service.get_service_status">get_service_status() (in module pyninja.features.service)</a>
 
       <ul>
-        <li><a href="index.html#pyninja.features.service.get_service_status">(in module pyninja.features.service)</a>
+        <li><a href="index.html#pyninja.routes.namespace.get_service_status">(in module pyninja.routes.namespace)</a>
 </li>
       </ul></li>
-      <li><a href="index.html#pyninja.executors.routes.get_service_usage">get_service_usage() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.namespace.get_service_usage">get_service_usage() (in module pyninja.routes.namespace)</a>
 </li>
       <li><a href="index.html#pyninja.monitor.resources.get_system_metrics">get_system_metrics() (in module pyninja.monitor.resources)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.payloads.GetFile">GetFile (class in pyninja.modules.payloads)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.gpu_lib">gpu_lib (pyninja.modules.models.EnvConfig attribute)</a>
 </li>
@@ -342,7 +359,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.executors.auth.handle_auth_error">handle_auth_error() (in module pyninja.executors.auth)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.health">health() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.executors.routers.health">health() (in module pyninja.executors.routers)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -358,6 +375,8 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#pyninja.modules.payloads.ListFiles.include_directories">include_directories (pyninja.modules.payloads.ListFiles attribute)</a>
+</li>
       <li><a href="index.html#pyninja.executors.auth.incrementer">incrementer() (in module pyninja.executors.auth)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.Session.info">info (pyninja.modules.models.Session attribute)</a>
@@ -402,6 +421,10 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#pyninja.routes.fullaccess.list_files">list_files() (in module pyninja.routes.fullaccess)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.payloads.ListFiles">ListFiles (class in pyninja.modules.payloads)</a>
+</li>
       <li><a href="index.html#pyninja.executors.squire.load_env">load_env() (in module pyninja.executors.squire)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.log_config">log_config (pyninja.modules.models.EnvConfig attribute)</a>
@@ -448,7 +471,7 @@
 </li>
         <li><a href="index.html#module-pyninja.executors.database">pyninja.executors.database</a>
 </li>
-        <li><a href="index.html#module-pyninja.executors.routes">pyninja.executors.routes</a>
+        <li><a href="index.html#module-pyninja.executors.routers">pyninja.executors.routers</a>
 </li>
         <li><a href="index.html#module-pyninja.executors.squire">pyninja.executors.squire</a>
 </li>
@@ -484,6 +507,16 @@
 </li>
         <li><a href="index.html#module-pyninja.monitor.routes">pyninja.monitor.routes</a>
 </li>
+        <li><a href="index.html#module-pyninja.routes.fullaccess">pyninja.routes.fullaccess</a>
+</li>
+        <li><a href="index.html#module-pyninja.routes.ipaddr">pyninja.routes.ipaddr</a>
+</li>
+        <li><a href="index.html#module-pyninja.routes.metrics">pyninja.routes.metrics</a>
+</li>
+        <li><a href="index.html#module-pyninja.routes.namespace">pyninja.routes.namespace</a>
+</li>
+        <li><a href="index.html#module-pyninja.routes.orchestration">pyninja.routes.orchestration</a>
+</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -512,14 +545,20 @@
   </ul></td>
 </tr></table>
 
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#pyninja.modules.payloads.PutFile.overwrite">overwrite (pyninja.modules.payloads.PutFile attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.parse_api_secret">parse_api_secret() (pyninja.modules.models.EnvConfig class method)</a>
 </li>
       <li><a href="index.html#pyninja.features.disks.parse_size">parse_size() (in module pyninja.features.disks)</a>
-</li>
-      <li><a href="index.html#pyninja.modules.models.Payload">Payload (class in pyninja.modules.models)</a>
 </li>
       <li><a href="index.html#pyninja.executors.squire.private_ip_address">private_ip_address() (in module pyninja.executors.squire)</a>
 </li>
@@ -535,7 +574,11 @@
 </li>
       <li><a href="index.html#pyninja.executors.squire.public_ip_address">public_ip_address() (in module pyninja.executors.squire)</a>
 </li>
+      <li><a href="index.html#pyninja.routes.fullaccess.put_file">put_file() (in module pyninja.routes.fullaccess)</a>
+</li>
       <li><a href="index.html#pyninja.executors.database.put_record">put_record() (in module pyninja.executors.database)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.payloads.PutFile">PutFile (class in pyninja.modules.payloads)</a>
 </li>
       <li>
     pyninja.executors.auth
@@ -552,10 +595,10 @@
 </li>
       </ul></li>
       <li>
-    pyninja.executors.routes
+    pyninja.executors.routers
 
       <ul>
-        <li><a href="index.html#module-pyninja.executors.routes">module</a>
+        <li><a href="index.html#module-pyninja.executors.routers">module</a>
 </li>
       </ul></li>
       <li>
@@ -586,8 +629,6 @@
         <li><a href="index.html#module-pyninja.features.dockerized">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyninja.features.gpu
 
@@ -609,6 +650,8 @@
         <li><a href="index.html#module-pyninja.features.process">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyninja.features.service
 
@@ -679,6 +722,41 @@
         <li><a href="index.html#module-pyninja.monitor.routes">module</a>
 </li>
       </ul></li>
+      <li>
+    pyninja.routes.fullaccess
+
+      <ul>
+        <li><a href="index.html#module-pyninja.routes.fullaccess">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyninja.routes.ipaddr
+
+      <ul>
+        <li><a href="index.html#module-pyninja.routes.ipaddr">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyninja.routes.metrics
+
+      <ul>
+        <li><a href="index.html#module-pyninja.routes.metrics">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyninja.routes.namespace
+
+      <ul>
+        <li><a href="index.html#module-pyninja.routes.namespace">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyninja.routes.orchestration
+
+      <ul>
+        <li><a href="index.html#module-pyninja.routes.orchestration">module</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -707,7 +785,9 @@
 </li>
       <li><a href="index.html#pyninja.modules.models.Session.rps">rps (pyninja.modules.models.Session attribute)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routes.run_command">run_command() (in module pyninja.executors.routes)</a>
+      <li><a href="index.html#pyninja.routes.fullaccess.run_command">run_command() (in module pyninja.routes.fullaccess)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.payloads.RunCommand">RunCommand (class in pyninja.modules.payloads)</a>
 </li>
       <li><a href="index.html#pyninja.features.service.running">running() (in module pyninja.features.service)</a>
 </li>
@@ -737,6 +817,8 @@
 </li>
       <li><a href="index.html#pyninja.modules.exceptions.SessionError">SessionError</a>
 </li>
+      <li><a href="index.html#pyninja.modules.payloads.ListFiles.show_hidden_files">show_hidden_files (pyninja.modules.payloads.ListFiles attribute)</a>
+</li>
       <li><a href="index.html#pyninja.executors.squire.size_converter">size_converter() (in module pyninja.executors.squire)</a>
 </li>
       <li><a href="index.html#pyninja.main.start">start() (in module pyninja.main)</a>
@@ -753,7 +835,7 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#pyninja.modules.models.Payload.timeout">timeout (pyninja.modules.models.Payload attribute)</a>
+      <li><a href="index.html#pyninja.modules.payloads.RunCommand.timeout">timeout (pyninja.modules.payloads.RunCommand attribute)</a>
 </li>
   </ul></td>
 </tr></table>

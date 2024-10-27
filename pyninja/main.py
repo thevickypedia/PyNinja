@@ -7,9 +7,10 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.routing import APIRoute
 
 from pyninja import version
-from pyninja.executors import routes, squire
+from pyninja.executors import routers, squire
 from pyninja.modules import exceptions, models, rate_limit
 from pyninja.monitor import get_all_monitor_routes
+from pyninja.routes import fullaccess
 
 BASE_LOGGER = logging.getLogger("BASE_LOGGER")
 BASE_LOGGER.setLevel(logging.INFO)
@@ -131,7 +132,7 @@ def start(**kwargs) -> None:
         Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
         for each_rate_limit in models.env.rate_limit
     ]
-    PyNinjaAPI.routes.extend(routes.get_all_routes(dependencies))
+    PyNinjaAPI.routes.extend(routers.get_all_routes(dependencies))
     arg1, arg2 = False, False
     # Conditional endpoint based on remote_execution and api_secret
     if all((models.env.remote_execution, models.env.api_secret)):
@@ -140,13 +141,33 @@ def start(**kwargs) -> None:
         )
         models.database = models.Database(models.env.database)
         models.database.create_table("auth_errors", ["host", "block_until"])
-        PyNinjaAPI.routes.append(
-            APIRoute(
-                path="/run-command",
-                endpoint=routes.run_command,
-                methods=["POST"],
-                dependencies=dependencies,
-            )
+        PyNinjaAPI.routes.extend(
+            [
+                APIRoute(
+                    path="/run-command",
+                    endpoint=fullaccess.run_command,
+                    methods=["POST"],
+                    dependencies=dependencies,
+                ),
+                APIRoute(
+                    path="/list-files",
+                    endpoint=fullaccess.list_files,
+                    methods=["POST"],
+                    dependencies=dependencies,
+                ),
+                APIRoute(
+                    path="/get-files",
+                    endpoint=fullaccess.get_file,
+                    methods=["POST"],
+                    dependencies=dependencies,
+                ),
+                APIRoute(
+                    path="/put-file",
+                    endpoint=fullaccess.put_file,
+                    methods=["POST"],
+                    dependencies=dependencies,
+                ),
+            ]
         )
         arg1 = True
     else:

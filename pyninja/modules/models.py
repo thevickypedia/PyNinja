@@ -7,14 +7,7 @@ import sqlite3
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List, Set, Tuple, Type
 
-from pydantic import (
-    BaseModel,
-    Field,
-    FilePath,
-    PositiveFloat,
-    PositiveInt,
-    field_validator,
-)
+from pydantic import BaseModel, Field, FilePath, PositiveInt, field_validator
 from pydantic_settings import BaseSettings
 
 from pyninja.modules import exceptions
@@ -62,17 +55,6 @@ def complexity_checker(secret: str) -> None:
     assert re.search(
         r"[ !#$%&'()*+,-./[\\\]^_`{|}~" + r'"]', secret
     ), "secret must contain at least one special character"
-
-
-class Payload(BaseModel):
-    """BaseModel that handles input data for ``Payload``.
-
-    >>> Payload
-
-    """
-
-    command: str
-    timeout: PositiveInt | PositiveFloat = 3
 
 
 class ServiceStatus(BaseModel):

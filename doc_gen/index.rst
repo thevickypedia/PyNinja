@@ -30,7 +30,27 @@ Database
 
 API Routes
 ----------
-.. automodule:: pyninja.executors.routes
+.. automodule:: pyninja.routes.fullaccess
+
+====
+
+.. automodule:: pyninja.routes.ipaddr
+
+====
+
+.. automodule:: pyninja.routes.metrics
+
+====
+
+.. automodule:: pyninja.routes.namespace
+
+====
+
+.. automodule:: pyninja.routes.orchestration
+
+====
+
+.. automodule:: pyninja.executors.routers
 
 Squire
 ------
@@ -76,10 +96,6 @@ Exceptions
 
 Models
 ------
-.. autoclass:: pyninja.modules.models.Payload(BaseModel)
-   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
-
-====
 
 .. autoclass:: pyninja.modules.models.ServiceStatus(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
@@ -118,6 +134,26 @@ Models
 
 .. automodule:: pyninja.modules.models
    :exclude-members: Payload, ServiceStatus, DiskLib, ServiceLib, ProcessorLib, EnvConfig, Session, RateLimit, env, database
+
+Payloads
+--------
+.. autoclass:: pyninja.modules.payloads.RunCommand(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
+.. autoclass:: pyninja.modules.payloads.ListFiles(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
+.. autoclass:: pyninja.modules.payloads.GetFile(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
+.. autoclass:: pyninja.modules.payloads.PutFile(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 RateLimit
 ---------
