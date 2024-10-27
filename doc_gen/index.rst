@@ -150,11 +150,6 @@ Payloads
 .. autoclass:: pyninja.modules.payloads.GetFile(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
-====
-
-.. autoclass:: pyninja.modules.payloads.PutFile(BaseModel)
-   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
-
 RateLimit
 ---------
 .. automodule:: pyninja.modules.rate_limit

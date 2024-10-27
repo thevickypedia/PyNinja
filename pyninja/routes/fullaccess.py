@@ -6,9 +6,10 @@ import subprocess
 from http import HTTPStatus
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Header, Request
+from fastapi import APIRouter, Depends, Header, Request, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
+from pydantic import DirectoryPath
 
 from pyninja.executors import auth, squire
 from pyninja.modules import exceptions, payloads, tree
@@ -139,7 +140,9 @@ async def get_file(
 
 async def put_file(
     request: Request,
-    payload: payloads.PutFile,
+    file: UploadFile,
+    directory: DirectoryPath,
+    overwrite: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
 ):
@@ -148,6 +151,7 @@ async def put_file(
     **Args:**
 
         - request: Reference to the FastAPI request object.
+        - file: Upload object for the file param.
         - payload: Payload received as request body.
         - apikey: API Key to authenticate the request.
         - token: API secret to authenticate the request.
@@ -155,21 +159,19 @@ async def put_file(
     await auth.level_2(request, apikey, token)
     LOGGER.info(
         "Requested file: '%s' for upload at %s",
-        payload.file.filename,
-        payload.directory,
+        file.filename,
+        directory,
     )
-    content = await payload.file.read()
-    if not payload.overwrite and os.path.isfile(
-        os.path.join(payload.directory, payload.file.filename)
-    ):
+    content = await file.read()
+    if not overwrite and os.path.isfile(os.path.join(directory, file.filename)):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.BAD_REQUEST.real,
-            detail=f"File {payload.file.filename!r} exists at {str(payload.directory)!r} already, "
+            detail=f"File {file.filename!r} exists at {str(directory)!r} already, "
             "set 'overwrite' flag to True to overwrite.",
         )
-    with open(os.path.join(payload.directory, payload.file.filename), "wb") as f_stream:
+    with open(os.path.join(directory, file.filename), "wb") as f_stream:
         f_stream.write(content)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.OK.real,
-        detail=f"{payload.file.filename!r} was uploaded to {payload.directory}.",
+        detail=f"{file.filename!r} was uploaded to {directory}.",
     )

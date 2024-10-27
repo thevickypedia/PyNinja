@@ -1,4 +1,3 @@
-from fastapi import UploadFile
 from pydantic import BaseModel, DirectoryPath, FilePath, PositiveFloat, PositiveInt
 
 
@@ -34,15 +33,3 @@ class GetFile(BaseModel):
     """
 
     filepath: FilePath
-
-
-class PutFile(BaseModel):
-    """Payload for put-file endpoint.
-
-    >>> PutFile
-
-    """
-
-    file: UploadFile
-    directory: DirectoryPath
-    overwrite: bool = False

@@ -24,6 +24,7 @@ packages = [
     "pyninja.features",
     "pyninja.modules",
     "pyninja.monitor",
+    "pyninja.routes",
     "pyninja.monitor.templates"
 ]
 [tool.setuptools.package-data]

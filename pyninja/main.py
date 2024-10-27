@@ -156,7 +156,7 @@ def start(**kwargs) -> None:
                     dependencies=dependencies,
                 ),
                 APIRoute(
-                    path="/get-files",
+                    path="/get-file",
                     endpoint=fullaccess.get_file,
                     methods=["POST"],
                     dependencies=dependencies,
