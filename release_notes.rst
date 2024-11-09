@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+v0.1.4 (11/08/2024)
+-------------------
+- Includes a new feature to handle IO (list, upload, and download)
+- Bug fix on monitor page blocked due to missing docker containers
+- Includes an option to host monitor page without authentication
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v0.1.3...v0.1.4
+
 v0.1.3 (10/05/2024)
 -------------------
 - Include open files metric to service/process monitoring
