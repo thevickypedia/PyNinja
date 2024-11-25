@@ -87,10 +87,13 @@ async def login_endpoint(
         status_code=HTTPStatus.OK,
     )
     response.set_cookie(**await monitor.authenticator.generate_cookie(auth_payload))
+    response.set_cookie(key="render", value=request.headers.get("Content-Type"))
     return response
 
 
-async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
+async def monitor_endpoint(
+    request: Request, session_token: str = Cookie(None), render: str = Cookie(None)
+):
     """Renders the UI for monitoring page.
 
     Args:
@@ -119,20 +122,31 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None)):
             return await monitor.config.clear_session(
                 await monitor.authenticator.session_error(request, error)
             )
-        ctx = monitor.resources.landing_page()
-        ctx["request"] = request
-        ctx["version"] = version.__version__
-        LOGGER.info("Rendering initial context for monitoring page!")
-        return monitor.config.templates.TemplateResponse(name="main.html", context=ctx)
-    else:
-        return monitor.config.templates.TemplateResponse(
-            name="index.html",
-            context={
-                "request": request,
-                "signin": "/login",
-                "version": f"v{version.__version__}",
-            },
-        )
+        if render == "monitor":
+            ctx = monitor.resources.landing_page()
+            ctx["request"] = request
+            ctx["version"] = version.__version__
+            LOGGER.info("Rendering initial context for monitoring page!")
+            return monitor.config.templates.TemplateResponse(
+                name="main.html", context=ctx
+            )
+        elif render == "drive":
+            LOGGER.info("Rendering disk report!")
+            response = monitor.drive.report()
+            # If drive option is chosen during login page, the cookie is deleted once logged in!
+            response.delete_cookie(key="render")
+            return response
+        # todo: Implement a better way to handle this
+        #   Currently if the drive option is selected, the only way to logout is refreshing the page
+        #   Add drive attributes in websocket handler is OS is Linux
+    return monitor.config.templates.TemplateResponse(
+        name="index.html",
+        context={
+            "request": request,
+            "signin": "/login",
+            "version": f"v{version.__version__}",
+        },
+    )
 
 
 async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(None)):

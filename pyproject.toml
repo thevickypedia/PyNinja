@@ -36,6 +36,11 @@ dependencies = { file = ["requirements.txt"] }
 
 [project.optional-dependencies]
 dev = ["sphinx==5.1.1", "pre-commit", "recommonmark", "gitverse"]
+extra = [
+    # "windows-only; sys_platform == 'win32'",
+    "PyUdisk>=0.0.2; sys_platform == 'linux'",
+    # "macos-only; sys_platform == 'darwin'"
+]
 
 [project.scripts]
 # sends all the args to commandline function, where the arbitary commands as processed accordingly

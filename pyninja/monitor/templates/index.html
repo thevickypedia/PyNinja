@@ -149,7 +149,10 @@
                 <input type="password" id="password" name="password" required>
                 <i class="fa-regular fa-eye" id="eye"></i>
             </div>
-            <button type="submit" onclick="submitToAPI(event)">Sign In</button>
+            <button type="submit" onclick="submitToAPI(event, 'monitor')">Sign In</button>
+            <br>
+            <!-- todo: this option should ONLY be available for Linux servers -->
+            <button type="submit" onclick="submitToAPI(event, 'drive')">Disk Report</button>
         </form>
     </div>
 </div>
@@ -165,13 +168,17 @@
 </script>
 <!-- handle authentication from login page -->
 <script>
-    async function submitToAPI(event) {
+    async function submitToAPI(event, render) {
         event.preventDefault();
         const username = $("#username").val();
         const password = $("#password").val();
         if (username === "" || password === "") {
             alert("ERROR: Username and password are required to authenticate your request!");
             return false;
+        }
+        // todo: Implement a better way to handle this
+        if (render === "drive") {
+            alert("Endpoint does not have a logout option. So refresh the page to terminate the session.");
         }
 
         async function ConvertStringToHex(str) {
@@ -210,7 +217,8 @@
             url: origin.concat("{{ signin }}"),
             headers: {
                 'accept': 'application/json',
-                'Authorization': `Bearer ${btoa(authHeaderValue)}`
+                'Authorization': `Bearer ${btoa(authHeaderValue)}`,
+                'Content-Type': render
             },
             crossDomain: "true",
             contentType: "application/json; charset=utf-8",

@@ -3,7 +3,7 @@ from typing import List
 from fastapi import Depends
 from fastapi.routing import APIRoute, APIWebSocketRoute
 
-from . import authenticator, config, resources, routes  # noqa: F401
+from . import authenticator, config, drive, resources, routes  # noqa: F401
 
 
 def get_all_monitor_routes(
