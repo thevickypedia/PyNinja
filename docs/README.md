@@ -58,6 +58,7 @@ pyninja start
 - **NINJA_PORT** - Port number for the API server.
 - **REMOTE_EXECUTION** - Boolean flag to enable remote execution.
 - **API_SECRET** - Secret access key for running commands on server remotely.
+- **DISK_REPORT** - Boolean flag to enable disk report feature using [PyUdisk].
 - **MONITOR_USERNAME** - Username to authenticate the monitoring page.
 - **MONITOR_PASSWORD** - Password to authenticate the monitoring page.
 - **MONITOR_SESSION** - Session timeout for the monitoring page.
@@ -153,3 +154,4 @@ Licensed under the [MIT License][license]
 [license]: https://github.com/thevickypedia/PyNinja/blob/master/LICENSE
 [runbook]: https://thevickypedia.github.io/PyNinja/
 [samples]: https://github.com/thevickypedia/PyNinja/tree/main/samples
+[PyUdisk]: https://github.com/thevickypedia/PyUdisk

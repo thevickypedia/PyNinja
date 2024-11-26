@@ -27,6 +27,7 @@ async def error_endpoint(request: Request) -> HTMLResponse:
         Returns an HTML response templated using Jinja2.
     """
     return await monitor.config.clear_session(
+        request,
         monitor.config.templates.TemplateResponse(
             name="unauthorized.html",
             context={
@@ -34,7 +35,7 @@ async def error_endpoint(request: Request) -> HTMLResponse:
                 "signin": "/login",
                 "version": f"v{version.__version__}",
             },
-        )
+        ),
     )
 
 
@@ -65,7 +66,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
                 "version": f"v{version.__version__}",
             },
         )
-    return await monitor.config.clear_session(response)
+    return await monitor.config.clear_session(request, response)
 
 
 async def login_endpoint(
@@ -87,7 +88,13 @@ async def login_endpoint(
         status_code=HTTPStatus.OK,
     )
     response.set_cookie(**await monitor.authenticator.generate_cookie(auth_payload))
-    response.set_cookie(key="render", value=request.headers.get("Content-Type"))
+    response.set_cookie(
+        key="render",
+        value=request.headers.get("Content-Type"),
+        expires=await monitor.config.get_expiry(
+            lease_start=time.time(), lease_duration=models.env.monitor_session
+        ),
+    )
     return response
 
 
@@ -114,15 +121,21 @@ async def monitor_endpoint(
         )
         models.ws_session.client_auth.pop(first_key, None)
     if session_token or models.env.no_auth:
-        try:
-            await monitor.authenticator.validate_session(
-                request.client.host, session_token
-            )
-        except exceptions.SessionError as error:
-            LOGGER.error("Session token mismatch: %s", error)
-            return await monitor.config.clear_session(
-                await monitor.authenticator.session_error(request, error)
-            )
+        if not models.env.no_auth:
+            try:
+                await monitor.authenticator.validate_session(
+                    request.client.host, session_token
+                )
+            except exceptions.SessionError as error:
+                LOGGER.error("Session token mismatch: %s", error)
+                return await monitor.config.clear_session(
+                    request, await monitor.authenticator.session_error(request, error)
+                )
+        if not render:
+            # no_auth mode supports render option via query params
+            # Example: http://0.0.0.0:8080/monitor?render=drive
+            render = request.query_params.get("render")
+            LOGGER.info("Render value received via query params - '%s'", render)
         if render == "monitor":
             ctx = monitor.resources.landing_page()
             ctx["request"] = request
@@ -135,18 +148,17 @@ async def monitor_endpoint(
             if models.env.disk_report:
                 LOGGER.info("Rendering disk report!")
                 try:
-                    response = await monitor.drive.report()
-                    # If drive option is chosen during login page, the cookie is deleted once logged in!
+                    return await monitor.drive.report(request)
                 except Exception as error:
                     LOGGER.error(error)
-                    response = await monitor.drive.invalid("Failed to generate disk report")
+                    return await monitor.drive.invalidate(
+                        "Failed to generate disk report"
+                    )
             else:
-                response = await monitor.drive.invalid("Disk reporting feature is not enabled in the server!")
-            response.delete_cookie(key="render")
-            return response
-        # todo: Implement a better way to handle this
-        #   Currently if the drive option is selected, the only way to logout is refreshing the page
-        #   Add drive attributes in websocket handler is OS is Linux
+                return await monitor.drive.invalidate(
+                    "Disk reporting feature is not enabled in the server!"
+                )
+        # todo: Add drive attributes in websocket handler is OS is Linux
     return monitor.config.templates.TemplateResponse(
         name="index.html",
         context={

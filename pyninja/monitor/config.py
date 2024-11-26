@@ -1,25 +1,33 @@
+import logging
 import os
 import time
 
+from fastapi.requests import Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+
+LOGGER = logging.getLogger("uvicorn.default")
 
 templates = Jinja2Templates(
     directory=os.path.join(os.path.dirname(__file__), "templates")
 )
 
 
-async def clear_session(response: HTMLResponse) -> HTMLResponse:
+async def clear_session(request: Request, response: HTMLResponse) -> HTMLResponse:
     """Clear the session token from the response.
 
     Args:
-        response: Takes the ``Response`` object as an argument.
+        request: FastAPI ``request`` object.
+        response: FastAPI ``response`` object.
 
     Returns:
-        Response:
+        HTMLResponse:
         Returns the response object with the session token cleared.
     """
-    response.delete_cookie("session_token")
+    for cookie in request.cookies:
+        # Deletes all cookies stored in current session
+        LOGGER.info("Deleting cookie: '%s'", cookie)
+        response.delete_cookie(cookie)
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Authorization"] = ""
     return response

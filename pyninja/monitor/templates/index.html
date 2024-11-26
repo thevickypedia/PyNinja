@@ -177,11 +177,6 @@
             alert("ERROR: Username and password are required to authenticate your request!");
             return false;
         }
-        // todo: Implement a better way to handle this
-        if (render === "drive") {
-            alert("Disk report endpoint does not have a logout option. So refresh the page to terminate the session.");
-        }
-
         async function ConvertStringToHex(str) {
             let arr = [];
             for (let i = 0; i < str.length; i++) {

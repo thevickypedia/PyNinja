@@ -243,3 +243,19 @@ def dynamic_numbers(string: str) -> int | float | None:
             return float(string)
         except ValueError:
             return None
+
+
+def assert_pyudisk():
+    """Ensure disk_report is enabled only for Linux machines and load ``udiskctl`` library."""
+    if models.env.disk_report:
+        assert models.OPERATING_SYSTEM == "linux", ValueError(
+            "\n\tdisk_report feature can be enabled only on Linux machines!"
+        )
+        try:
+            from pyudisk.config import EnvConfig as PyUdiskConfig
+        except (ImportError, ModuleNotFoundError):
+            raise ValueError(
+                "\n\tPyUdisk has not been installed. Use pip install 'PyNinja[extra]' to use disk reporting feature."
+            )
+        if not models.env.udisk_lib:
+            models.env.udisk_lib = PyUdiskConfig().udisk_lib

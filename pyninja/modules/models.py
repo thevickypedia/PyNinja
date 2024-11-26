@@ -190,7 +190,7 @@ class EnvConfig(BaseSettings):
     monitor_username: str | None = None
     monitor_password: str | None = None
     monitor_session: PositiveInt = 3_600
-    # todo: disk_lib env var will contradict with PyUdisk
+    udisk_lib: FilePath | None = None
     disk_report: bool = False
     max_connections: PositiveInt = 3
     no_auth: bool = False
@@ -203,28 +203,6 @@ class EnvConfig(BaseSettings):
     database: str = Field("auth.db", pattern=".*.db$")
     rate_limit: RateLimit | List[RateLimit] = []
     log_config: Dict[str, Any] | FilePath | None = None
-
-    # noinspection PyMethodParameters
-    @field_validator("disk_report", mode="after")
-    def assert_disk_report(cls, value: bool) -> bool:
-        """Ensure disk_report is enabled only for Linux machines.
-
-        Args:
-            value: Takes the user input as an argument.
-        """
-        if value:
-            assert OPERATING_SYSTEM == "linux", ValueError(
-                "disk_report feature can be enabled only on Linux machines!"
-            )
-            try:
-                from pyudisk.config import EnvConfig as PyUdiskConfig
-            except (ImportError, ModuleNotFoundError):
-                raise ValueError(
-                    "PyUdisk has not been installed. Use pip install 'PyNinja[extra]' to use disk reporting feature."
-                )
-            disk_lib = PyUdiskConfig().disk_lib
-            assert os.path.exists(disk_lib), ValueError(f"{disk_lib!r} path does not exist!")
-        return value
 
     # noinspection PyMethodParameters
     @field_validator("api_secret", mode="after")
@@ -303,3 +281,9 @@ session = Session()
 # Loaded in main:start()
 env: EnvConfig = EnvConfig  # noqa: PyTypeChecker
 database: Database = Database  # noqa: PyTypeChecker
+
+# todo: Add enums for the following:
+#   operating system names
+#   endpoints - login, logout
+#   cookie names - render -> drive, monitor, session_token
+#   HTML template filenames -> index, main, login, logout, drive etc
