@@ -182,6 +182,19 @@ async def get_system_metrics() -> Dict[str, dict]:
     )
 
 
+async def disk_utils_metrics() -> Dict[str, dict]:
+    """Placeholder for future metrics."""
+    from pyudisk.main import EnvConfig, smart_metrics
+
+    for disk in smart_metrics(EnvConfig()):
+        print(disk.Info.Model)
+        print(disk.Partition.IdLabel)
+        print(disk.Partition.MountPoints)
+        print(disk.Usage)
+        print(disk.Attributes.SmartTemperature)
+        print(disk.Attributes.SmartUpdated)
+
+
 async def system_resources() -> Dict[str, dict]:
     """Gather system resources including Docker stats asynchronously.
 
@@ -189,6 +202,7 @@ async def system_resources() -> Dict[str, dict]:
         Dict[str, dict]:
         Returns a nested dictionary.
     """
+    # await disk_utils_metrics()
     system_metrics_task = asyncio.create_task(get_system_metrics())
     docker_stats_task = asyncio.create_task(get_docker_stats())
     service_stats_task = asyncio.create_task(

@@ -132,17 +132,16 @@ async def monitor_endpoint(
                 name="main.html", context=ctx
             )
         elif render == "drive":
-            LOGGER.info("Rendering disk report!")
-            try:
-                response = await monitor.drive.report()
-                # If drive option is chosen during login page, the cookie is deleted once logged in!
-            except Exception as error:
-                LOGGER.error(error)
-                response = await monitor.config.clear_session(
-                    response=HTMLResponse(
-                        content="Failed to generate disk report", status_code=500
-                    )
-                )
+            if models.env.disk_report:
+                LOGGER.info("Rendering disk report!")
+                try:
+                    response = await monitor.drive.report()
+                    # If drive option is chosen during login page, the cookie is deleted once logged in!
+                except Exception as error:
+                    LOGGER.error(error)
+                    response = await monitor.drive.invalid("Failed to generate disk report")
+            else:
+                response = await monitor.drive.invalid("Disk reporting feature is not enabled in the server!")
             response.delete_cookie(key="render")
             return response
         # todo: Implement a better way to handle this
@@ -154,8 +153,7 @@ async def monitor_endpoint(
             "request": request,
             "signin": "/login",
             "version": f"v{version.__version__}",
-            # todo: Add an env var to enable reporting manually
-            "linux": models.OPERATING_SYSTEM == "linux",
+            "disk_report": models.env.disk_report,
         },
     )
 
