@@ -1,16 +1,17 @@
-import os
+import logging
 
 from fastapi.responses import HTMLResponse
 
+LOGGER = logging.getLogger("uvicorn.default")
 
-def report():
-    """Generated disk utility report and returns an HTMLResponse."""
-    try:
-        import pyudisk
 
-        report_file = os.path.join(os.getcwd(), "disk-report.html")
-        return HTMLResponse(
-            content=pyudisk.generate_report(filepath=report_file, raw=True)
-        )
-    except Exception:
-        return None
+async def report() -> HTMLResponse:
+    """Generates a disk report using pyudisk.
+
+    Returns:
+        HTMLResponse:
+        Returns an HTML response with the disk report.
+    """
+    import pyudisk
+
+    return HTMLResponse(content=pyudisk.generate_report(raw=True))

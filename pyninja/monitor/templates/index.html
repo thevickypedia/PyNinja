@@ -150,9 +150,10 @@
                 <i class="fa-regular fa-eye" id="eye"></i>
             </div>
             <button type="submit" onclick="submitToAPI(event, 'monitor')">Sign In</button>
-            <br>
-            <!-- todo: this option should ONLY be available for Linux servers -->
-            <button type="submit" onclick="submitToAPI(event, 'drive')">Disk Report</button>
+            {% if linux %}
+                <br>
+                <button type="submit" onclick="submitToAPI(event, 'drive')">Disk Report</button>
+            {% endif %}
         </form>
     </div>
 </div>
@@ -178,7 +179,7 @@
         }
         // todo: Implement a better way to handle this
         if (render === "drive") {
-            alert("Endpoint does not have a logout option. So refresh the page to terminate the session.");
+            alert("Disk report endpoint does not have a logout option. So refresh the page to terminate the session.");
         }
 
         async function ConvertStringToHex(str) {

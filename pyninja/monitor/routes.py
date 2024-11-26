@@ -99,6 +99,7 @@ async def monitor_endpoint(
     Args:
         request: Reference to the FastAPI request object.
         session_token: Session token set after verifying username and password.
+        render: Render option set by the UI.
 
     Returns:
         HTMLResponse:
@@ -132,8 +133,16 @@ async def monitor_endpoint(
             )
         elif render == "drive":
             LOGGER.info("Rendering disk report!")
-            response = monitor.drive.report()
-            # If drive option is chosen during login page, the cookie is deleted once logged in!
+            try:
+                response = await monitor.drive.report()
+                # If drive option is chosen during login page, the cookie is deleted once logged in!
+            except Exception as error:
+                LOGGER.error(error)
+                response = await monitor.config.clear_session(
+                    response=HTMLResponse(
+                        content="Failed to generate disk report", status_code=500
+                    )
+                )
             response.delete_cookie(key="render")
             return response
         # todo: Implement a better way to handle this
@@ -145,6 +154,8 @@ async def monitor_endpoint(
             "request": request,
             "signin": "/login",
             "version": f"v{version.__version__}",
+            # todo: Add an env var to enable reporting manually
+            "linux": models.OPERATING_SYSTEM == "linux",
         },
     )
 

@@ -63,7 +63,7 @@ def landing_page() -> Dict[str, Any]:
     )
 
 
-def container_cpu_limit(container_name: str) -> int | None:
+def container_cpu_limit(container_name: str) -> int | float | None:
     """Get CPU cores configured for a particular container using NanoCpus.
 
     Args:
