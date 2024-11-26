@@ -2,7 +2,7 @@ import logging
 import subprocess
 from http import HTTPStatus
 
-from pyninja.modules import models
+from pyninja.modules import enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -81,7 +81,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
         ServiceStatus:
         Returns an instance of the ServiceStatus object.
     """
-    if models.OPERATING_SYSTEM == "linux":
+    if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
         try:
             output = subprocess.check_output(
                 [models.env.service_lib, "is-active", service_name],
@@ -102,7 +102,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
             LOGGER.error("%d - %s", 404, error)
             return unavailable(service_name)
 
-    if models.OPERATING_SYSTEM == "darwin":
+    if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
         try:
             output = subprocess.check_output(
                 [models.env.service_lib, "list"], text=True
@@ -116,7 +116,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
             LOGGER.error("%d - %s", 404, error)
             return unavailable(service_name)
 
-    if models.OPERATING_SYSTEM == "windows":
+    if models.OPERATING_SYSTEM == enums.OperatingSystem.windows:
         try:
             output = subprocess.check_output(
                 [models.env.service_lib, "query", service_name],

@@ -3,7 +3,7 @@ import subprocess
 
 from pydantic import FilePath
 
-from pyninja.modules import models
+from pyninja.modules import enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -49,9 +49,9 @@ def get_name() -> str | None:
         Returns the processor information as a string.
     """
     os_map = {
-        "darwin": _darwin,
-        "linux": _linux,
-        "windows": _windows,
+        enums.OperatingSystem.darwin: _darwin,
+        enums.OperatingSystem.linux: _linux,
+        enums.OperatingSystem.windows: _windows,
     }
     try:
         return os_map[models.OPERATING_SYSTEM](models.env.processor_lib)

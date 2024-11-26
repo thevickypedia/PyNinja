@@ -8,7 +8,7 @@ import psutil
 from pydantic import FilePath
 
 from pyninja.executors import squire
-from pyninja.modules import models
+from pyninja.modules import enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -210,7 +210,11 @@ def _windows(lib_path: FilePath) -> List[Dict[str, str]]:
 
 def get_all_disks() -> List[Dict[str, str]]:
     """OS-agnostic function to get all disks connected to the host system."""
-    os_map = {"darwin": _darwin, "linux": _linux, "windows": _windows}
+    os_map = {
+        enums.OperatingSystem.darwin: _darwin,
+        enums.OperatingSystem.linux: _linux,
+        enums.OperatingSystem.windows: _windows,
+    }
     try:
         return os_map[models.OPERATING_SYSTEM](models.env.disk_lib)
     except Exception as error:

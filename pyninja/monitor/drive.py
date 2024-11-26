@@ -4,6 +4,7 @@ from fastapi.requests import Request
 from fastapi.responses import HTMLResponse
 
 from pyninja import monitor, version
+from pyninja.modules import enums
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -20,7 +21,7 @@ async def report(request: Request) -> HTMLResponse:
 
     data = [disk.model_dump() for disk in monitor_disk(EnvConfig())]
     return monitor.config.templates.TemplateResponse(
-        name="disk_report.html",
+        name=enums.Templates.disk_report.value,
         context=dict(
             logout="/logout",
             request=request,

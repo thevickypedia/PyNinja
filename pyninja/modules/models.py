@@ -10,13 +10,17 @@ from typing import Any, Dict, List, Set, Tuple, Type
 from pydantic import BaseModel, Field, FilePath, PositiveInt, field_validator
 from pydantic_settings import BaseSettings
 
-from pyninja.modules import exceptions
+from pyninja.modules import enums, exceptions
 
 MINIMUM_CPU_UPDATE_INTERVAL = 1
 # Use a ThreadPoolExecutor to run blocking functions in separate threads
 EXECUTOR = ThreadPoolExecutor(max_workers=os.cpu_count())
 OPERATING_SYSTEM = platform.system().lower()
-if OPERATING_SYSTEM not in ("darwin", "linux", "windows"):
+if OPERATING_SYSTEM not in (
+    enums.OperatingSystem.linux,
+    enums.OperatingSystem.darwin,
+    enums.OperatingSystem.windows,
+):
     exceptions.raise_os_error(OPERATING_SYSTEM)
 
 
@@ -75,12 +79,12 @@ class Session(BaseModel):
 
     """
 
-    auth_counter: Dict[str, int] = {}
-    forbid: Set[str] = set()
+    auth_counter: Dict[str, int] = Field(default_factory=dict)
+    forbid: Set[str] = Field(default_factory=set)
 
-    info: Dict[str, str] = {}
-    rps: Dict[str, int] = {}
-    allowed_origins: Set[str] = set()
+    info: Dict[str, str] = Field(default_factory=dict)
+    rps: Dict[str, int] = Field(default_factory=dict)
+    allowed_origins: Set[str] = Field(default_factory=set)
 
 
 class RateLimit(BaseModel):
@@ -149,8 +153,8 @@ class WSSession(BaseModel):
 
     """
 
-    invalid: Dict[str, int] = {}
-    client_auth: Dict[str, Dict[str, int]] = {}
+    invalid: Dict[str, int] = Field(default_factory=dict)
+    client_auth: Dict[str, Dict[str, int]] = Field(default_factory=dict)
 
 
 ws_session = WSSession()
@@ -194,14 +198,14 @@ class EnvConfig(BaseSettings):
     disk_report: bool = False
     max_connections: PositiveInt = 3
     no_auth: bool = False
-    processes: List[str] = []
-    services: List[str] = []
+    processes: List[str] = Field(default_factory=list)
+    services: List[str] = Field(default_factory=list)
     gpu_lib: FilePath = get_library(GPULib)
     disk_lib: FilePath = get_library(DiskLib)
     service_lib: FilePath = get_library(ServiceLib)
     processor_lib: FilePath = get_library(ProcessorLib)
     database: str = Field("auth.db", pattern=".*.db$")
-    rate_limit: RateLimit | List[RateLimit] = []
+    rate_limit: RateLimit | List[RateLimit] = Field(default_factory=list)
     log_config: Dict[str, Any] | FilePath | None = None
 
     # noinspection PyMethodParameters
@@ -234,6 +238,7 @@ class EnvConfig(BaseSettings):
             EnvConfig:
             Loads the ``EnvConfig`` model.
         """
+        # noinspection PyArgumentList
         return cls(_env_file=env_file)
 
     class Config:

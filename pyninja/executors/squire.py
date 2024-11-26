@@ -14,7 +14,7 @@ import requests
 import yaml
 from pydantic import PositiveFloat, PositiveInt
 
-from pyninja.modules import models
+from pyninja.modules import enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 IP_REGEX = re.compile(
@@ -248,7 +248,7 @@ def dynamic_numbers(string: str) -> int | float | None:
 def assert_pyudisk():
     """Ensure disk_report is enabled only for Linux machines and load ``udiskctl`` library."""
     if models.env.disk_report:
-        assert models.OPERATING_SYSTEM == "linux", ValueError(
+        assert models.OPERATING_SYSTEM == enums.OperatingSystem.linux, ValueError(
             "\n\tdisk_report feature can be enabled only on Linux machines!"
         )
         try:

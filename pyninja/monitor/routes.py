@@ -10,7 +10,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
 from pyninja import monitor, version
-from pyninja.modules import exceptions, models
+from pyninja.modules import enums, exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
@@ -29,7 +29,7 @@ async def error_endpoint(request: Request) -> HTMLResponse:
     return await monitor.config.clear_session(
         request,
         monitor.config.templates.TemplateResponse(
-            name="unauthorized.html",
+            name=enums.Templates.unauthorized.value,
             context={
                 "request": request,
                 "signin": "/login",
@@ -49,7 +49,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
         HTMLResponse:
         Redirects to login page.
     """
-    session_token = request.cookies.get("session_token")
+    session_token = request.cookies.get(enums.Cookies.session_token)
     try:
         await monitor.authenticator.validate_session(request.client.host, session_token)
     except exceptions.SessionError as error:
@@ -57,7 +57,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
     else:
         models.ws_session.client_auth.pop(request.client.host, None)
         response = monitor.config.templates.TemplateResponse(
-            name="logout.html",
+            name=enums.Templates.logout.value,
             context={
                 "request": request,
                 "signin": "/login",
@@ -92,7 +92,7 @@ async def login_endpoint(
         key="render",
         value=request.headers.get("Content-Type"),
         expires=await monitor.config.get_expiry(
-            lease_start=time.time(), lease_duration=models.env.monitor_session
+            lease_start=int(time.time()), lease_duration=models.env.monitor_session
         ),
     )
     return response
@@ -131,20 +131,23 @@ async def monitor_endpoint(
                 return await monitor.config.clear_session(
                     request, await monitor.authenticator.session_error(request, error)
                 )
+        if not models.env.disk_report:
+            render = models.enums.Cookies.monitor
         if not render:
             # no_auth mode supports render option via query params
             # Example: http://0.0.0.0:8080/monitor?render=drive
-            render = request.query_params.get("render")
-            LOGGER.info("Render value received via query params - '%s'", render)
-        if render == "monitor":
+            if qparam := request.query_params.get("render"):
+                LOGGER.info("Render value received via query params - '%s'", qparam)
+                render = qparam
+        if render == enums.Cookies.monitor:
             ctx = monitor.resources.landing_page()
             ctx["request"] = request
             ctx["version"] = version.__version__
             LOGGER.info("Rendering initial context for monitoring page!")
             return monitor.config.templates.TemplateResponse(
-                name="main.html", context=ctx
+                name=enums.Templates.main.value, context=ctx
             )
-        elif render == "drive":
+        elif render == enums.Cookies.drive:
             if models.env.disk_report:
                 LOGGER.info("Rendering disk report!")
                 try:
@@ -160,7 +163,7 @@ async def monitor_endpoint(
                 )
         # todo: Add drive attributes in websocket handler is OS is Linux
     return monitor.config.templates.TemplateResponse(
-        name="index.html",
+        name=enums.Templates.index.value,
         context={
             "request": request,
             "signin": "/login",

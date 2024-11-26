@@ -90,6 +90,10 @@ Service
 PyNinja - Modules
 =================
 
+Enums
+-----
+.. automodule:: pyninja.modules.enums
+
 Exceptions
 ----------
 .. automodule:: pyninja.modules.exceptions
@@ -168,6 +172,10 @@ Authenticator
 Configuration
 -------------
 .. automodule:: pyninja.monitor.config
+
+Drive
+-----
+.. automodule:: pyninja.monitor.drive
 
 Resources
 ---------
