@@ -24,6 +24,22 @@
             font-family: Arial, sans-serif;
             overflow-x: hidden;
         }
+        /* Simplify CSS for all the 'stats' */
+
+        .pyudisk-stats {
+            height: 100%;
+            margin: 2%;
+            overflow-x: visible;
+            display: none; /* Hide the container initially */
+            align-items: center;
+            justify-content: center;
+            flex-direction: column; /* Ensure vertical alignment */
+        }
+
+        .pyudisk-stats h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
         .docker-stats {
             height: 100%;
@@ -427,6 +443,15 @@
         </tbody>
     </table>
 </div>
+<div id="pyudisk-stats" class="pyudisk-stats">
+    <h3>PyUdisk Stats</h3>
+    <table id="pyudiskStatsTable">
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
@@ -536,6 +561,15 @@
             } else {
                 // Hide the container if no data is available
                 document.getElementById("process-stats").style.display = "none";
+            }
+
+            const pyudiskStatsJSON = data.pyudisk_stats;
+            // Check if dockerStatsJSON is valid
+            if (pyudiskStatsJSON && pyudiskStatsJSON.length > 0) {
+                handleTable(pyudiskStatsJSON, "pyudiskStatsTable", "pyudisk-stats");
+            } else {
+                // Hide the container if no data is available
+                document.getElementById("pyudisk-stats").style.display = "none";
             }
 
             // Update CPU usage

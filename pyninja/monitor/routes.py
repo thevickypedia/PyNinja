@@ -132,7 +132,7 @@ async def monitor_endpoint(
                     request, await monitor.authenticator.session_error(request, error)
                 )
         if not models.env.disk_report:
-            render = models.enums.Cookies.monitor
+            render = enums.Cookies.monitor
         if not render:
             # no_auth mode supports render option via query params
             # Example: http://0.0.0.0:8080/monitor?render=drive
@@ -161,7 +161,6 @@ async def monitor_endpoint(
                 return await monitor.drive.invalidate(
                     "Disk reporting feature is not enabled in the server!"
                 )
-        # todo: Add drive attributes in websocket handler is OS is Linux
     return monitor.config.templates.TemplateResponse(
         name=enums.Templates.index.value,
         context={

@@ -97,7 +97,14 @@ async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
             tasks.append(
                 loop.run_in_executor(models.EXECUTOR, get_process_info, proc, None)
             )
-    return [await task for task in asyncio.as_completed(tasks)]
+    # List comprehension can't be done, since exception handler will skip all the tasks
+    completed_tasks = []
+    for task in asyncio.as_completed(tasks):
+        try:
+            completed_tasks.append(await task)
+        except psutil.Error as error:
+            LOGGER.debug(error)
+    return completed_tasks
 
 
 async def service_monitor(services: List[str]) -> List[Dict[str, str]]:

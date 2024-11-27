@@ -7,14 +7,14 @@ import re
 import shutil
 import subprocess
 import time
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any, Dict, List
 
 import psutil
 
 from pyninja.executors import squire
 from pyninja.features import cpu, disks, gpu, operations
-from pyninja.modules import models
+from pyninja.modules import cache, enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -182,17 +182,27 @@ async def get_system_metrics() -> Dict[str, dict]:
     )
 
 
-async def disk_utils_metrics() -> Dict[str, dict]:
+@cache.timed_cache(60)
+def disk_utils_metrics() -> List[Dict[str, int | str | float | dict]]:
     """Placeholder for future metrics."""
     from pyudisk.main import EnvConfig, smart_metrics
+    from pyudisk.util import kelvin_to_fahrenheit
 
-    for disk in smart_metrics(EnvConfig()):
-        print(disk.Info.Model)
-        print(disk.Partition.IdLabel)
-        print(disk.Partition.MountPoints)
-        print(disk.Usage)
-        print(disk.Attributes.SmartTemperature)
-        print(disk.Attributes.SmartUpdated)
+    return [
+        {
+            **{
+                "Model": disk.Info.Model,
+                "Mountpoint": str(disk.Partition.MountPoints),
+                "Temperature": f"{kelvin_to_fahrenheit(disk.Attributes.SmartTemperature)} °F",
+                "Bad Sectors": disk.Attributes.SmartNumBadSectors,
+                "Timestamp": datetime.fromtimestamp(
+                    disk.Attributes.SmartUpdated
+                ).strftime("%Y-%m-%d %H:%M:%S"),
+            },
+            **disk.Usage.model_dump(),
+        }
+        for disk in smart_metrics(EnvConfig())
+    ]
 
 
 async def system_resources() -> Dict[str, dict]:
@@ -202,7 +212,6 @@ async def system_resources() -> Dict[str, dict]:
         Dict[str, dict]:
         Returns a nested dictionary.
     """
-    # await disk_utils_metrics()
     system_metrics_task = asyncio.create_task(get_system_metrics())
     docker_stats_task = asyncio.create_task(get_docker_stats())
     service_stats_task = asyncio.create_task(
@@ -223,6 +232,11 @@ async def system_resources() -> Dict[str, dict]:
     service_stats = await service_stats_task
     process_stats = await process_stats_task
     cpu_usage = await cpu_usage_task
+    if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
+        try:
+            system_metrics["pyudisk_stats"] = disk_utils_metrics()
+        except Exception as error:
+            LOGGER.debug(error)
 
     system_metrics["cpu_usage"] = cpu_usage
     system_metrics["docker_stats"] = docker_stats

@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Welcome to PyNinja’s documentation! &#8212; PyNinja  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -1466,6 +1466,38 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </section>
 <section id="pyninja-modules">
 <h1>PyNinja - Modules<a class="headerlink" href="#pyninja-modules" title="Permalink to this heading">¶</a></h1>
+<section id="module-pyninja.modules.cache">
+<span id="cache"></span><h2>Cache<a class="headerlink" href="#module-pyninja.modules.cache" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.modules.cache.timed_cache">
+<span class="sig-prename descclassname"><span class="pre">pyninja.modules.cache.</span></span><span class="sig-name descname"><span class="pre">timed_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_age</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.cache.timed_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Least-recently-used cache decorator with time-based cache invalidation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_age</strong> – Time to live for cached results (in seconds).</p></li>
+<li><p><strong>maxsize</strong> – Maximum cache size (see <cite>functools.lru_cache</cite>).</p></li>
+<li><p><strong>typed</strong> – Cache on distinct input types (see <cite>functools.lru_cache</cite>).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">lru_cache</span></code> takes all params of the function and creates a key.</p></li>
+<li><p>If even one key is changed, it will map to new entry thus refreshed.</p></li>
+<li><p>This is just a trick to force lru_cache lib to provide TTL on top of max size.</p></li>
+<li><p>Uses <code class="docutils literal notranslate"><span class="pre">time.monotonic</span></code> since <code class="docutils literal notranslate"><span class="pre">time.time</span></code> relies on the system clock and may not be monotonic.</p></li>
+<li><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">time.time()</span></code> not always guaranteed to increase,</div>
+<div class="line">it may in fact decrease if the machine syncs its system clock over a network.</div>
+</div>
+</li>
+</ul>
+</div>
+</dd></dl>
+
+</section>
 <section id="module-pyninja.modules.enums">
 <span id="enums"></span><h2>Enums<a class="headerlink" href="#module-pyninja.modules.enums" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
@@ -2664,7 +2696,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.monitor.resources.disk_utils_metrics">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.resources.</span></span><span class="sig-name descname"><span class="pre">disk_utils_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.monitor.resources.disk_utils_metrics" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.monitor.resources.</span></span><span class="sig-name descname"><span class="pre">disk_utils_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.monitor.resources.disk_utils_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Placeholder for future metrics.</p>
 </dd></dl>
 
@@ -2809,6 +2841,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </ul>
 </li>
 <li><a class="reference internal" href="#pyninja-modules">PyNinja - Modules</a><ul>
+<li><a class="reference internal" href="#module-pyninja.modules.cache">Cache</a></li>
 <li><a class="reference internal" href="#module-pyninja.modules.enums">Enums</a></li>
 <li><a class="reference internal" href="#module-pyninja.modules.exceptions">Exceptions</a></li>
 <li><a class="reference internal" href="#models">Models</a></li>

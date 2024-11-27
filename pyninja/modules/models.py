@@ -286,9 +286,3 @@ session = Session()
 # Loaded in main:start()
 env: EnvConfig = EnvConfig  # noqa: PyTypeChecker
 database: Database = Database  # noqa: PyTypeChecker
-
-# todo: Add enums for the following:
-#   operating system names
-#   endpoints - login, logout
-#   cookie names - render -> drive, monitor, session_token
-#   HTML template filenames -> index, main, login, logout, drive etc

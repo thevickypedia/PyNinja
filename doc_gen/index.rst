@@ -89,6 +89,9 @@ Service
 
 PyNinja - Modules
 =================
+Cache
+-----
+.. automodule:: pyninja.modules.cache
 
 Enums
 -----
