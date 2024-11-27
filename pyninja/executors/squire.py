@@ -259,3 +259,73 @@ def assert_pyudisk():
             )
         if not models.env.udisk_lib:
             models.env.udisk_lib = PyUdiskConfig().udisk_lib
+
+
+def comma_separator(list_: list) -> str:
+    """Separates commas using simple ``.join()`` function and includes ``and`` based on length of the list taken as argument.
+
+    Args:
+        list_: Takes a list of elements as an argument.
+
+    Returns:
+        str:
+        Comma separated list of elements.
+    """
+    return ", and ".join(
+        [", ".join(list_[:-1]), list_[-1]] if len(list_) > 2 else list_
+    )
+
+
+def convert_seconds(seconds: int, n_elem: int = 2):
+    """Calculate years, months, days, hours, minutes, and seconds from given input."""
+    # Define the number of seconds in a year and month (approximations)
+    seconds_in_year = 365 * 24 * 3600  # 365 days in a year
+    seconds_in_month = 30 * 24 * 3600  # 30 days in a month
+
+    # Calculate years
+    years = seconds // seconds_in_year
+    seconds %= seconds_in_year
+
+    # Calculate months
+    months = seconds // seconds_in_month
+    seconds %= seconds_in_month
+
+    # Calculate days
+    days = seconds // (24 * 3600)
+    seconds %= (24 * 3600)
+
+    # Calculate hours
+    hours = seconds // 3600
+    seconds %= 3600
+
+    # Calculate minutes
+    minutes = seconds // 60
+    seconds %= 60
+
+    # Create a list to hold time components
+    time_parts = []
+
+    # Add non-zero time components to the list
+    if years > 0:
+        time_parts.append(f"{years} year{'s' if years > 1 else ''}")
+    if months > 0:
+        time_parts.append(f"{months} month{'s' if months > 1 else ''}")
+    if days > 0:
+        time_parts.append(f"{days} day{'s' if days > 1 else ''}")
+    if hours > 0:
+        time_parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
+    if minutes > 0:
+        time_parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
+    if seconds > 0:
+        time_parts.append(f"{seconds} second{'s' if seconds > 1 else ''}")
+
+    # If no time components were added, it means the input was 0 seconds
+    if not time_parts:
+        return "0 seconds"
+
+    # If only 1 element was requested, return the first element
+    if n_elem == 1:
+        return time_parts[0]
+
+    # Join the time components into a string with commas
+    return comma_separator(time_parts[:n_elem])

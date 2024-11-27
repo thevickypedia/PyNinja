@@ -451,6 +451,7 @@
         <tbody>
         </tbody>
     </table>
+    <i id="pyudisk_updated" style="font-size: small;"></i>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -567,6 +568,7 @@
             // Check if dockerStatsJSON is valid
             if (pyudiskStatsJSON && pyudiskStatsJSON.length > 0) {
                 handleTable(pyudiskStatsJSON, "pyudiskStatsTable", "pyudisk-stats");
+                document.getElementById("pyudisk_updated").innerHTML = `Last updated: ${data.pyudisk_updated}`
             } else {
                 // Hide the container if no data is available
                 document.getElementById("pyudisk-stats").style.display = "none";

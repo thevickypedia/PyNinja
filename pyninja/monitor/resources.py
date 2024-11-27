@@ -183,21 +183,33 @@ async def get_system_metrics() -> Dict[str, dict]:
 
 
 @cache.timed_cache(60)
-def disk_utils_metrics() -> List[Dict[str, int | str | float | dict]]:
-    """Placeholder for future metrics."""
-    from pyudisk.main import EnvConfig, smart_metrics
-    from pyudisk.util import kelvin_to_fahrenheit
+def pyudisk_metrics() -> List[Dict[str, int | str | float]]:
+    """Retrieves metrics from PyUdisk library.
+
+    See Also:
+        - This is a timed-cache function. Meaning: The output from this function will be cached for 60s.
+        - This is avoid gathering the metrics every 2s, to improve latency and avoid extra overhead.
+
+    Returns:
+        List[Dict[str, int | str | float]]:
+        List of required metrics as a dictionary of key-value pairs.
+    """
+    from pyudisk import EnvConfig, smart_metrics, util
 
     return [
         {
             **{
                 "Model": disk.Info.Model,
                 "Mountpoint": str(disk.Partition.MountPoints),
-                "Temperature": f"{kelvin_to_fahrenheit(disk.Attributes.SmartTemperature)} °F",
+                "Temperature": (
+                    f"{util.kelvin_to_fahrenheit(disk.Attributes.SmartTemperature)} °F"
+                    + " / "
+                    + f"{util.kelvin_to_celsius(disk.Attributes.SmartTemperature)} °C"
+                ),
                 "Bad Sectors": disk.Attributes.SmartNumBadSectors,
-                "Timestamp": datetime.fromtimestamp(
-                    disk.Attributes.SmartUpdated
-                ).strftime("%Y-%m-%d %H:%M:%S"),
+                "Test Status": disk.Attributes.SmartSelftestStatus,
+                "Uptime": squire.convert_seconds(disk.Attributes.SmartPowerOnSeconds),
+                "updated": disk.Attributes.SmartUpdated,
             },
             **disk.Usage.model_dump(),
         }
@@ -234,9 +246,18 @@ async def system_resources() -> Dict[str, dict]:
     cpu_usage = await cpu_usage_task
     if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
         try:
-            system_metrics["pyudisk_stats"] = disk_utils_metrics()
-        except Exception as error:
-            LOGGER.debug(error)
+            pyudisk_stats = pyudisk_metrics()
+            updated = round(time.time() - pyudisk_stats[0].get("updated"))
+            system_metrics["pyudisk_updated"] = f"{squire.convert_seconds(updated, 1)} ago" if updated >= 100 else f"{updated} seconds ago"
+            system_metrics["pyudisk_stats"] = [
+                {key: value for key, value in d.items() if key != "updated"}
+                for d in pyudisk_stats
+            ]
+        except ModuleNotFoundError:
+            # Expected if module is not installed
+            pass
+        except Exception as warn:
+            LOGGER.warning(warn)
 
     system_metrics["cpu_usage"] = cpu_usage
     system_metrics["docker_stats"] = docker_stats
