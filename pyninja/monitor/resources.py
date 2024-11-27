@@ -7,7 +7,7 @@ import re
 import shutil
 import subprocess
 import time
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Any, Dict, List
 
 import psutil
@@ -196,25 +196,38 @@ def pyudisk_metrics() -> List[Dict[str, int | str | float]]:
     """
     from pyudisk import EnvConfig, smart_metrics, util
 
-    return [
-        {
-            **{
-                "Model": disk.Info.Model,
-                "Mountpoint": str(disk.Partition.MountPoints),
-                "Temperature": (
-                    f"{util.kelvin_to_fahrenheit(disk.Attributes.SmartTemperature)} °F"
-                    + " / "
-                    + f"{util.kelvin_to_celsius(disk.Attributes.SmartTemperature)} °C"
-                ),
-                "Bad Sectors": disk.Attributes.SmartNumBadSectors,
-                "Test Status": disk.Attributes.SmartSelftestStatus,
-                "Uptime": squire.convert_seconds(disk.Attributes.SmartPowerOnSeconds),
-                "updated": disk.Attributes.SmartUpdated,
-            },
-            **disk.Usage.model_dump(),
-        }
-        for disk in smart_metrics(EnvConfig())
-    ]
+    pyudisk_stats = []
+    disk = None
+    for disk in smart_metrics(EnvConfig(udisk_lib=models.env.udisk_lib)):
+        pyudisk_stats.append(
+            {
+                **{
+                    "Model": disk.Info.Model,
+                    "Mountpoint": str(disk.Partition.MountPoints),
+                    "Temperature": (
+                        f"{util.kelvin_to_fahrenheit(disk.Attributes.SmartTemperature)} °F"
+                        + " / "
+                        + f"{util.kelvin_to_celsius(disk.Attributes.SmartTemperature)} °C"
+                    ),
+                    "Bad Sectors": disk.Attributes.SmartNumBadSectors,
+                    "Test Status": disk.Attributes.SmartSelftestStatus,
+                    "Uptime": squire.convert_seconds(
+                        disk.Attributes.SmartPowerOnSeconds
+                    ),
+                },
+                **disk.Usage.model_dump(),
+            }
+        )
+    # Smart metrics are gathered at certain system intervals - so no need to get this attr from all the drives
+    updated = round(time.time() - disk.Attributes.SmartUpdated)
+    return {
+        "pyudisk_updated": (
+            f"{squire.convert_seconds(updated, 1)} ago"
+            if updated >= 100
+            else f"{updated} seconds ago"
+        ),
+        "pyudisk_stats": pyudisk_stats,
+    }
 
 
 async def system_resources() -> Dict[str, dict]:
@@ -224,6 +237,10 @@ async def system_resources() -> Dict[str, dict]:
         Dict[str, dict]:
         Returns a nested dictionary.
     """
+    # todo: Redo disk charts entirely
+    #   1. Change "Disk Information" collapsible section similar to docker/service/process stats table
+    #   2. Remove "Disk" from "Memory and Storage" and move the remaining under "System Information"
+    #   3. Create a 4th section for disk usage - that includes PIE charts for all the attached disks
     system_metrics_task = asyncio.create_task(get_system_metrics())
     docker_stats_task = asyncio.create_task(get_docker_stats())
     service_stats_task = asyncio.create_task(
@@ -246,13 +263,7 @@ async def system_resources() -> Dict[str, dict]:
     cpu_usage = await cpu_usage_task
     if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
         try:
-            pyudisk_stats = pyudisk_metrics()
-            updated = round(time.time() - pyudisk_stats[0].get("updated"))
-            system_metrics["pyudisk_updated"] = f"{squire.convert_seconds(updated, 1)} ago" if updated >= 100 else f"{updated} seconds ago"
-            system_metrics["pyudisk_stats"] = [
-                {key: value for key, value in d.items() if key != "updated"}
-                for d in pyudisk_stats
-            ]
+            system_metrics.update(pyudisk_metrics())
         except ModuleNotFoundError:
             # Expected if module is not installed
             pass

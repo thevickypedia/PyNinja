@@ -869,6 +869,43 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dd><p>Ensure disk_report is enabled only for Linux machines and load <code class="docutils literal notranslate"><span class="pre">udiskctl</span></code> library.</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.executors.squire.comma_separator">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">comma_separator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.executors.squire.comma_separator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separates commas using simple <code class="docutils literal notranslate"><span class="pre">.join()</span></code> function and includes <code class="docutils literal notranslate"><span class="pre">and</span></code> based on input length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>list_</strong> – Takes a list of elements as an argument.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Comma separated list of elements.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.executors.squire.convert_seconds">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">convert_seconds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.executors.squire.convert_seconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate years, months, days, hours, minutes, and seconds from given input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seconds</strong> – Number of seconds to convert.</p></li>
+<li><p><strong>n_elem</strong> – Number of elements required from the converted list.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a humanized string notion of the number of seconds.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 <section id="pyninja-features">
@@ -2702,7 +2739,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <p class="admonition-title">See also</p>
 <ul class="simple">
 <li><p>This is a timed-cache function. Meaning: The output from this function will be cached for 60s.</p></li>
-<li><p>This is avoid gathering the metrics, every 2s to improve latency and avoid extra overhead.</p></li>
+<li><p>This is avoid gathering the metrics every 2s, to improve latency and avoid extra overhead.</p></li>
 </ul>
 </div>
 <dl class="field-list simple">
@@ -2710,7 +2747,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <dd class="field-odd"><p>List of required metrics as a dictionary of key-value pairs.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dict[str, int | str | float]</p>
+<dd class="field-even"><p>List[Dict[str, int | str | float]]</p>
 </dd>
 </dl>
 </dd></dl>
