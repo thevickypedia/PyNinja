@@ -204,7 +204,10 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     all_disks = disks.get_all_disks()
     disk_info = []
     for disk in all_disks:
-        disk_usage: Dict[str, str | int] = {"name": disk.get("Name"), "id": disk.get("DeviceID")}
+        disk_usage: Dict[str, str | int] = {
+            "name": disk.get("Name"),
+            "id": disk.get("DeviceID"),
+        }
         disk_usage_totals = {"total": 0, "used": 0, "free": 0}
         mountpoints = (
             disk.get("Mountpoints", "").split(", ") if disk.get("Mountpoints") else []
