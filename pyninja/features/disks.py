@@ -7,7 +7,7 @@ from typing import Dict, List
 
 from pydantic import FilePath
 
-from pyninja.executors import squire
+from pyninja.features.os_disks.windows import _windows
 from pyninja.modules import enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -143,44 +143,6 @@ def _darwin(lib_path: FilePath) -> List[Dict[str, str]]:
     for disk in physical_disks:
         disk["Mountpoints"] = ", ".join(mountpoints[disk["DeviceID"]])
     return physical_disks
-
-
-def _reformat_windows(data: Dict[str, str | int | float]) -> Dict[str, str]:
-    """Reformats each drive's information for Windows OS.
-
-    Args:
-        data: Data as a dictionary.
-
-    Returns:
-        Dict[str, str]:
-        Returns a dictionary of key-value pairs.
-    """
-    data["Size"] = squire.size_converter(data["Size"])
-    data["Name"] = data["Model"]
-    del data["Caption"]
-    del data["Model"]
-    return data
-
-
-# Windows specific method using wmic
-def _windows(lib_path: FilePath) -> List[Dict[str, str]]:
-    """Get disks attached to Windows devices.
-
-    Args:
-        lib_path: Returns the library path for disk information.
-
-    Returns:
-        List[Dict[str, str]]:
-        Returns disks information for Windows machines.
-    """
-    ps_command = "Get-CimInstance Win32_DiskDrive | Select-Object Caption, DeviceID, Model, Partitions, Size | ConvertTo-Json"  # noqa: E501
-    result = subprocess.run(
-        [lib_path, "-Command", ps_command], capture_output=True, text=True
-    )
-    disks_info = json.loads(result.stdout)
-    if isinstance(disks_info, list):
-        return [_reformat_windows(info) for info in disks_info]
-    return [_reformat_windows(disks_info)]
 
 
 def get_all_disks() -> List[Dict[str, str]]:
