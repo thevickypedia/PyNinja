@@ -179,12 +179,12 @@ async def get_system_metrics() -> Dict[str, dict]:
 
 
 @cache.timed_cache(60)
-def pyudisk_metrics() -> List[Dict[str, int | str | float]]:
+def pyudisk_metrics() -> Dict[str, str | List[dict]]:
     """Retrieves metrics from PyUdisk library.
 
     See Also:
         - This is a timed-cache function. Meaning: The output from this function will be cached for 60s.
-        - This is avoid gathering the metrics every 2s, to improve latency and avoid extra overhead.
+        - This is to avoid gathering the metrics every 2s, to improve latency and avoid extra overhead.
 
     Returns:
         List[Dict[str, int | str | float]]:
@@ -226,7 +226,7 @@ def pyudisk_metrics() -> List[Dict[str, int | str | float]]:
     }
 
 
-async def system_resources() -> Dict[str, dict]:
+async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
     """Gather system resources including Docker stats asynchronously.
 
     Returns:

@@ -103,23 +103,16 @@ def _linux(lib_path: FilePath) -> List[Dict[str, str]]:
     return disks
 
 
-def is_physical_disk(lib_path: FilePath, device_id: str) -> bool:
+def is_physical_disk(info_lines: List[str]) -> bool:
     """Check if the disk is a physical disk using diskutil info.
 
     Args:
-        lib_path: Library path to get disk info.
-        device_id: Device mount ID.
+        info_lines: Disk information split by lines.
 
     Returns:
         bool:
         Boolean to indicate virtual or physical
     """
-    result = subprocess.run(
-        [lib_path, "info", device_id],
-        capture_output=True,
-        text=True,
-    )
-    info_lines = result.stdout.strip().splitlines()
     for line in info_lines:
         if "Virtual" in line and "Yes" in line:
             return False
@@ -143,9 +136,6 @@ def _darwin(lib_path: FilePath) -> List[Dict[str, str]]:
     disk_info = []
     for line in disk_lines:
         device_id = line.split()[0]  # /dev/diskX
-        # Skip virtual disks
-        if not is_physical_disk(lib_path, device_id):
-            continue
         # Use diskutil info to get more information about the disk
         disk_info_result = subprocess.run(
             [lib_path, "info", device_id],
@@ -153,6 +143,9 @@ def _darwin(lib_path: FilePath) -> List[Dict[str, str]]:
             text=True,
         )
         info_lines = disk_info_result.stdout.strip().splitlines()
+        # Skip virtual disks
+        if not is_physical_disk(info_lines):
+            continue
         # Extract the relevant info (Name, Size, etc.)
         disk_data = {}
         for info_line in info_lines:

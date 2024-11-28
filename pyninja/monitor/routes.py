@@ -3,6 +3,7 @@ import logging
 import shutil
 import time
 from http import HTTPStatus
+from typing import Dict
 
 from fastapi import Cookie, Depends, Request
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -203,8 +204,8 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     all_disks = disks.get_all_disks()
     disk_info = []
     for disk in all_disks:
+        disk_usage: Dict[str, str | int] = {"name": disk.get("Name"), "id": disk.get("DeviceID")}
         disk_usage_totals = {"total": 0, "used": 0, "free": 0}
-        disk_usage = {"name": disk.get("Name"), "id": disk.get("DeviceID")}
         mountpoints = (
             disk.get("Mountpoints", "").split(", ") if disk.get("Mountpoints") else []
         )
