@@ -29,14 +29,12 @@ def time_it(func):
     return wrapper
 
 
-@time_it
 def parse_size(input_string):
     """Extracts size in bytes from a string like '(12345 Bytes)'."""
     match = re.search(r'\((\d+) Bytes\)', input_string)
     return int(match.group(1)) if match else None
 
 
-@time_it
 def update_mountpoints(disks, device_ids):
     """Updates mount points for physical devices based on diskutil data."""
     for disk in disks:
@@ -53,7 +51,6 @@ def update_mountpoints(disks, device_ids):
     return device_ids
 
 
-@time_it
 def parse_diskutil_output(output):
     """Parses `diskutil info -all` output into structured data."""
     disks = []
@@ -71,15 +68,14 @@ def parse_diskutil_output(output):
     return disks
 
 
-@time_it
-def extract_raw_data() -> subprocess.CompletedProcess[str]:
+def extract_raw_data(lib_path: str) -> subprocess.CompletedProcess[str]:
     """Extract all diskutil info."""
-    return subprocess.run("diskutil info -all", shell=True, capture_output=True, text=True)
+    return subprocess.run([lib_path, "info", "-all"], capture_output=True, text=True)
 
 
-def diskutil_all():
+def diskutil_all(lib_path: str):
     """Fetches disk information using `diskutil info -all`."""
-    result = extract_raw_data()
+    result = extract_raw_data(lib_path)
     disks = parse_diskutil_output(result.stdout)
     device_ids = defaultdict(list)
     physical_disks = []
@@ -95,10 +91,10 @@ def diskutil_all():
             _ = device_ids[disk["Device Identifier"]]
     mountpoints = update_mountpoints(disks, device_ids)
     for disk in physical_disks:
-        disk["Mountpoints"] = mountpoints[disk["DeviceID"]]
+        disk["Mountpoints"] = ", ".join(mountpoints[disk["DeviceID"]])
     return physical_disks
 
 
 if __name__ == '__main__':
-    dump = diskutil_all()
+    dump = diskutil_all(lib_path="diskutil")
     print(json.dumps(dump, indent=2))
