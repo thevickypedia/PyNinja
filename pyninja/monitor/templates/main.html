@@ -234,14 +234,23 @@
         .center-container {
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            margin-left: 40%;
-            text-align: left;
+            align-items: center; /* Keeps child elements centered horizontally */
+            text-align: left; /* Aligns text inside the container to the left */
+            margin: 0 auto; /* Centers the container horizontally */
         }
 
         .center-container details {
-            width: 40%;
-            text-align: center;
+            width: fit-content; /* Adapts to the content width */
+            max-width: 30%; /* Restricts the width to a maximum of 30% */
+            min-width: 25%; /* Restricts the width to a minimum of 25% */
+            text-align: left; /* Aligns text inside the details to the left */
+            margin: 0 auto; /* Ensures the details section stays centered */
+            box-sizing: border-box; /* Includes padding and borders in the width calculation */
+        }
+
+        .center-container summary {
+            text-align: center; /* Keeps the title aligned to the left */
+            cursor: pointer; /* Optional: Makes the summary text more interactive */
         }
 
         .collapsible-table {
@@ -318,19 +327,6 @@
     </details>
     <br>
     <details>
-        <summary><strong>Memory and Storage</strong></summary>
-        <br>
-        <div class="collapsible-table">
-            {% for key, value in sys_info_mem_storage.items() %}
-            <div class="collapsible-table-row">
-                <div class="collapsible-table-cell"><strong>{{ key }}</strong></div>
-                <div class="collapsible-table-cell">{{ value }}</div>
-            </div>
-            {% endfor %}
-        </div>
-    </details>
-    <br>
-    <details>
         <summary><strong>Network Information</strong></summary>
         <br>
         <div class="collapsible-table">
@@ -348,13 +344,21 @@
         <summary><strong>Disk Information</strong></summary>
         <br>
         <div class="collapsible-table">
-            {% for disk_info in sys_info_disks %}
-            {% for key, value in disk_info.items() %}
+            <!-- Header Row -->
             <div class="collapsible-table-row">
-                <div class="collapsible-table-cell"><strong>{{ key }}</strong></div>
-                <div class="collapsible-table-cell">{{ value }}</div>
+                {% if sys_info_disks|length > 0 %}
+                    {% for key in sys_info_disks[0].keys() %}
+                    <div class="collapsible-table-cell"><strong>{{ key }}</strong></div>
+                    {% endfor %}
+                {% endif %}
             </div>
-            {% endfor %}
+            <!-- Data Rows -->
+            {% for disk_info in sys_info_disks %}
+            <div class="collapsible-table-row">
+                {% for value in disk_info.values() %}
+                <div class="collapsible-table-cell">{{ value }}</div>
+                {% endfor %}
+            </div>
             {% endfor %}
         </div>
     </details>
@@ -376,7 +380,7 @@
         </div>
         <p id="memoryUsageText">Memory: 0%</p>
 
-        {% if 'Swap' in sys_info_mem_storage.keys() %}
+        {% if 'Swap' in sys_info_basic.keys() %}
         <h3>Swap Usage</h3>
         <div class="progress">
             <div id="swapUsage" class="progress-bar"></div>
@@ -402,7 +406,7 @@
         <div class="chart-container">
             <canvas id="memoryChart"></canvas>
         </div>
-        {% if 'Swap' in sys_info_mem_storage.keys() %}
+        {% if 'Swap' in sys_info_basic.keys() %}
         <h3>Swap Usage</h3>
         <h5 id="swapTotal"></h5>
         <div class="chart-container">

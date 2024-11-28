@@ -4,7 +4,6 @@ import logging
 import os
 import platform
 import re
-import shutil
 import subprocess
 import time
 from datetime import timedelta
@@ -36,28 +35,25 @@ def landing_page() -> Dict[str, Any]:
             timedelta(seconds=time.time() - psutil.boot_time())
         ),
     }
+    if processor_name := cpu.get_name():
+        LOGGER.info("Processor: %s", processor_name)
+        sys_info_basic["CPU"] = processor_name
     if gpu_names := gpu.get_names():
         LOGGER.info(gpu_names)
         sys_info_basic["GPU"] = ", ".join(
             [gpu_info.get("model") for gpu_info in gpu_names]
         )
-    if processor_name := cpu.get_name():
-        LOGGER.info("Processor: %s", processor_name)
-        sys_info_basic["CPU"] = processor_name
-    sys_info_mem_storage = {
-        "Memory": squire.size_converter(psutil.virtual_memory().total),
-        "Disk": squire.size_converter(shutil.disk_usage("/").total),
-    }
+
+    sys_info_basic["Memory"] = squire.size_converter(psutil.virtual_memory().total)
     if swap := psutil.swap_memory().total:
-        sys_info_mem_storage["Swap"] = squire.size_converter(swap)
+        sys_info_basic["Swap"] = squire.size_converter(swap)
     sys_info_network = {
         "Private IP address": squire.private_ip_address(),
         "Public IP address": squire.public_ip_address(),
     }
     return dict(
         logout="/logout",
-        sys_info_basic=dict(sorted(sys_info_basic.items())),
-        sys_info_mem_storage=dict(sorted(sys_info_mem_storage.items())),
+        sys_info_basic=sys_info_basic,
         sys_info_network=sys_info_network,
         sys_info_disks=disks.get_all_disks(),
     )
@@ -237,10 +233,7 @@ async def system_resources() -> Dict[str, dict]:
         Dict[str, dict]:
         Returns a nested dictionary.
     """
-    # todo: Redo disk charts entirely
-    #   1. Change "Disk Information" collapsible section similar to docker/service/process stats table
-    #   2. Remove "Disk" from "Memory and Storage" and move the remaining under "System Information"
-    #   3. Create a 4th section for disk usage - that includes PIE charts for all the attached disks
+    # todo: Create a 4th section for disk usage - that includes PIE charts for all the attached disks
     system_metrics_task = asyncio.create_task(get_system_metrics())
     docker_stats_task = asyncio.create_task(get_docker_stats())
     service_stats_task = asyncio.create_task(
