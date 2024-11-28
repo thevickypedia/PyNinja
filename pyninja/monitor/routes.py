@@ -203,17 +203,16 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     all_disks = disks.get_all_disks()
     disk_info = []
     for disk in all_disks:
-        total, used, free = (0, 0, 0)
+        disk_usage_totals = {"total": 0, "used": 0, "free": 0}
         disk_usage = {"name": disk.get("Name"), "id": disk.get("DeviceID")}
         mountpoints = (
             disk.get("Mountpoints", "").split(", ") if disk.get("Mountpoints") else []
         )
         for mountpoint in mountpoints:
             part_usage = shutil.disk_usage(mountpoint)
-            total += part_usage.total
-            used += part_usage.used
-            free += part_usage.free
-        disk_usage.update({"total": total, "used": used, "free": free})
+            for key in disk_usage_totals:
+                disk_usage_totals[key] += getattr(part_usage, key)
+        disk_usage.update(disk_usage_totals)
         disk_info.append(disk_usage)
     while True:
         # Validate session asynchronously (non-blocking)
