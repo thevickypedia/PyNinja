@@ -10,6 +10,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
 from pyninja import monitor, version
+from pyninja.features import disks
 from pyninja.modules import enums, exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -199,7 +200,21 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     # Base task with a placeholder asyncio sleep to start the task loop
     task = asyncio.create_task(asyncio.sleep(0.1))
     # Store disk usage information (during startup) to avoid repeated calls
-    disk_info = shutil.disk_usage("/")._asdict()
+    all_disks = disks.get_all_disks()
+    disk_info = []
+    for disk in all_disks:
+        total, used, free = (0, 0, 0)
+        disk_usage = {"name": disk.get("Name"), "id": disk.get("DeviceID")}
+        mountpoints = (
+            disk.get("Mountpoints", "").split(", ") if disk.get("Mountpoints") else []
+        )
+        for mountpoint in mountpoints:
+            part_usage = shutil.disk_usage(mountpoint)
+            total += part_usage.total
+            used += part_usage.used
+            free += part_usage.free
+        disk_usage.update({"total": total, "used": used, "free": free})
+        disk_info.append(disk_usage)
     while True:
         # Validate session asynchronously (non-blocking)
         # This way of handling session validation is more efficient than using a blocking call

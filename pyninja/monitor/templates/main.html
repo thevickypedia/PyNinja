@@ -387,13 +387,7 @@
         </div>
         <p id="swapUsageText">Swap: 0%</p>
         {% endif %}
-
-        <h3>Disk Usage</h3>
-        <div class="progress">
-            <div id="diskUsage" class="progress-bar"></div>
-        </div>
-        <p id="diskUsageText">Disk: 0%</p>
-
+        <br><br>
         <div class="graph">
             <h3>CPU Load Averages</h3>
             <canvas class="graph-canvas" id="loadChart" width="400" height="200"></canvas>
@@ -413,10 +407,11 @@
             <canvas id="swapChart"></canvas>
         </div>
         {% endif %}
+    </div>
+    <div class="box">
         <h3>Disk Usage</h3>
-        <h5 id="diskTotal"></h5>
-        <div class="chart-container">
-            <canvas id="diskChart"></canvas>
+        <div id="diskChartsContainer">
+        <!-- Charts will be dynamically appended here -->
         </div>
     </div>
 </div>
@@ -475,7 +470,6 @@
 
         let memoryChartInstance = null;
         let swapChartInstance = null;
-        let diskChartInstance = null;
         let loadChartInstance = null;
 
         ws.onmessage = function (event) {
@@ -610,13 +604,6 @@
                 updateProgressBar('swapUsage', swapUsage);
             }
 
-            // Disk Usage Progress Bar
-            const diskInfo = data.disk_info;
-            const diskUsage = (diskInfo.used / diskInfo.total) * 100;
-            document.getElementById('diskUsage').style.width = diskUsage.toFixed(2) + '%';
-            document.getElementById('diskUsageText').innerText = `Disk: ${diskUsage.toFixed(2)}%`;
-            updateProgressBar('diskUsage', diskUsage);
-
             // CPU Load Avg Graph
             const loadAverages = data.load_averages;
             if (loadChartInstance) {
@@ -734,20 +721,64 @@
             }
 
             // Disk Chart
-            document.getElementById("diskTotal").innerText = `Total: ${formatBytes(diskInfo.total)}`;
-            if (diskChartInstance) {
-                diskChartInstance.data.datasets[0].data = [diskInfo.used, diskInfo.total - diskInfo.used];
-                diskChartInstance.update();
-            } else {
-                const diskChart = document.getElementById('diskChart').getContext('2d');
-                diskChartInstance = createChartInstance(
-                    diskChart,
-                    'Disk Usage',
-                    ['#63950d', '#ca7b00'],
-                    [diskInfo.used, diskInfo.total - diskInfo.used]
-                );
-            }
+            const diskInfoList = data.disk_info;
+            const diskChartInstances = {};
+            const container = document.getElementById("diskChartsContainer");
+            // Iterate over the list of disk info
+            diskInfoList.forEach((diskInfo, index) => {
+                // Check if the chart already exists in the DOM
+                let chartBox = document.getElementById(`diskBox${index}`);
+                if (!chartBox) {
+                    // Create new chart container if it doesn't exist
+                    chartBox = document.createElement('div');
+                    chartBox.id = `diskBox${index}`;
 
+                    const diskLabel = document.createElement('h5');
+                    diskLabel.id = `diskLabel${index}`;
+                    chartBox.appendChild(diskLabel);
+
+                    const chartContainer = document.createElement('div');
+                    chartContainer.classList.add('chart-container');
+                    chartBox.appendChild(chartContainer);
+
+                    const canvas = document.createElement('canvas');
+                    canvas.id = `diskChart${index}`;
+                    chartContainer.appendChild(canvas);
+
+                    container.appendChild(chartBox);
+                }
+
+                // Update the label
+                const diskLabel = document.getElementById(`diskLabel${index}`);
+                diskLabel.innerText = `${diskInfo.name} (${diskInfo.id}) - ${formatBytes(diskInfo.total)}`;
+
+                // Create or update chart instance
+                if (diskChartInstances[index]) {
+                    // Update existing chart
+                    const chart = diskChartInstances[index];
+                    chart.data.datasets[0].data = [diskInfo.used, diskInfo.total - diskInfo.used];
+                    chart.update();
+                } else {
+                    // Create new chart instance
+                    const diskChart = document.getElementById(`diskChart${index}`).getContext('2d');
+                    diskChartInstances[index] = createChartInstance(
+                        diskChart,
+                        `Disk ${index + 1} Usage`,
+                        ['#63950d', '#ca7b00'],
+                        [diskInfo.used, diskInfo.total - diskInfo.used]
+                    );
+                }
+            });
+
+            // Remove old charts that are no longer in the data
+            Object.keys(diskChartInstances).forEach((key) => {
+                if (!diskInfoList[key]) {
+                    diskChartInstances[key].destroy();
+                    delete diskChartInstances[key];
+                    const oldBox = document.getElementById(`diskBox${key}`);
+                    if (oldBox) oldBox.remove();
+                }
+            });
         };
 
         function updateProgressBar(id, percentage) {
