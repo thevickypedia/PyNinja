@@ -170,7 +170,10 @@ async def get_system_metrics() -> Dict[str, dict]:
         Dict[str, dict]:
         Returns a nested dictionary.
     """
-    m1, m5, m15 = os.getloadavg() or (None, None, None)
+    try:
+        m1, m5, m15 = os.getloadavg() or (None, None, None)
+    except AttributeError:
+        m1, m5, m15 = psutil.getloadavg() or (None, None, None)
     return dict(
         memory_info=psutil.virtual_memory()._asdict(),
         swap_info=psutil.swap_memory()._asdict(),
