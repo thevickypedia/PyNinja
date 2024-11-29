@@ -245,20 +245,23 @@ def dynamic_numbers(string: str) -> int | float | None:
             return None
 
 
-def assert_pyudisk():
+def assert_pyudisk() -> None:
     """Ensure disk_report is enabled only for Linux machines and load ``udiskctl`` library."""
-    if models.env.disk_report:
-        assert models.OPERATING_SYSTEM == enums.OperatingSystem.linux, ValueError(
-            "\n\tdisk_report feature can be enabled only on Linux machines!"
-        )
-        try:
-            from pyudisk.config import EnvConfig as PyUdiskConfig
-        except (ImportError, ModuleNotFoundError):
+    if models.OPERATING_SYSTEM != enums.OperatingSystem.linux:
+        if models.env.disk_report:
             raise ValueError(
-                "\n\tPyUdisk has not been installed. Use pip install 'PyNinja[extra]' to use disk reporting feature."
+                "\n\tdisk_report feature can be enabled only on Linux machines!"
             )
-        if not models.env.udisk_lib:
-            models.env.udisk_lib = PyUdiskConfig().udisk_lib
+        return
+    try:
+        from pyudisk.config import EnvConfig as PyUdiskConfig
+    except (ImportError, ModuleNotFoundError):
+        if models.env.disk_report:
+            raise ValueError(
+                "\n\tPyUdisk has not been installed. Use pip install 'PyNinja[extra]' to view disk report metrics."
+            )
+        return
+    models.env.udisk_lib = models.env.udisk_lib or PyUdiskConfig().udisk_lib
 
 
 def comma_separator(list_: list) -> str:
