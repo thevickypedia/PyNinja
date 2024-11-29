@@ -3,25 +3,20 @@ import logging
 import subprocess
 from typing import Dict, List, Optional
 
-from pydantic import FilePath
-
 from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
 
-def _darwin(lib_path) -> Optional[List[Dict[str, str]]]:
+def _darwin() -> Optional[List[Dict[str, str]]]:
     """Get GPU model and vendor information for Linux operating system.
-
-    Args:
-        lib_path: Library path to get GPU information.
 
     Returns:
         List[Dict[str, str]]:
         Returns a list of GPU model and vendor information.
     """
     result = subprocess.run(
-        [lib_path, "SPDisplaysDataType", "-json"],
+        [models.env.gpu_lib, "SPDisplaysDataType", "-json"],
         capture_output=True,
         text=True,
     )
@@ -45,18 +40,15 @@ def _darwin(lib_path) -> Optional[List[Dict[str, str]]]:
     return gpu_info
 
 
-def _linux(lib_path) -> Optional[List[Dict[str, str]]]:
+def _linux() -> Optional[List[Dict[str, str]]]:
     """Get GPU model and vendor information for Linux operating system.
-
-    Args:
-        lib_path: Library path to get GPU information.
 
     Returns:
         List[Dict[str, str]]:
         Returns a list of GPU model and vendor information.
     """
     result = subprocess.run(
-        [lib_path],
+        [models.env.gpu_lib],
         capture_output=True,
         text=True,
     )
@@ -78,11 +70,8 @@ def _linux(lib_path) -> Optional[List[Dict[str, str]]]:
     return gpu_info
 
 
-def _windows(lib_path: FilePath) -> Optional[List[Dict[str, str]]]:
+def _windows() -> Optional[List[Dict[str, str]]]:
     """Get GPU model and vendor information for Windows operating system.
-
-    Args:
-        lib_path: Library path to get GPU information.
 
     Returns:
         List[Dict[str, str]]:
@@ -90,7 +79,7 @@ def _windows(lib_path: FilePath) -> Optional[List[Dict[str, str]]]:
     """
     result = subprocess.run(
         [
-            lib_path,
+            models.env.gpu_lib,
             "path",
             "win32_videocontroller",
             "get",
@@ -129,6 +118,6 @@ def get_names() -> List[Dict[str, str]]:
     """Get list of GPU model and vendor information based on the operating system."""
     fn_map = dict(linux=_linux, darwin=_darwin, windows=_windows)
     try:
-        return fn_map[models.OPERATING_SYSTEM](models.env.gpu_lib)
+        return fn_map[models.OPERATING_SYSTEM]()
     except (subprocess.SubprocessError, FileNotFoundError) as error:
         LOGGER.debug(error)

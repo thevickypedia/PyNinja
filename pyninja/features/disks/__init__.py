@@ -16,6 +16,6 @@ def get_all_disks() -> List[Dict[str, str]]:
         enums.OperatingSystem.windows: windows.drive_info,
     }
     try:
-        return os_map[models.OPERATING_SYSTEM](models.env.disk_lib)
+        return os_map[models.OPERATING_SYSTEM]()
     except Exception as error:
         LOGGER.error(error)

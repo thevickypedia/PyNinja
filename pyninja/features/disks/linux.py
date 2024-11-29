@@ -2,14 +2,11 @@ import json
 import subprocess
 from typing import Dict, List
 
-from pydantic import FilePath
+from pyninja.modules import models
 
 
-def drive_info(lib_path: FilePath) -> List[Dict[str, str]]:
+def drive_info() -> List[Dict[str, str]]:
     """Get disks attached to Linux devices.
-
-    Args:
-        lib_path: Returns the library path for disk information.
 
     Returns:
         List[Dict[str, str]]:
@@ -17,7 +14,7 @@ def drive_info(lib_path: FilePath) -> List[Dict[str, str]]:
     """
     # Using -d to list only physical disks, and filtering out loop devices
     result = subprocess.run(
-        [lib_path, "-o", "NAME,SIZE,TYPE,MODEL,MOUNTPOINT", "-J"],
+        [models.env.disk_lib, "-o", "NAME,SIZE,TYPE,MODEL,MOUNTPOINT", "-J"],
         capture_output=True,
         text=True,
     )

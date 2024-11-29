@@ -4,9 +4,8 @@ import subprocess
 from collections import defaultdict
 from typing import Dict, List
 
-from pydantic import FilePath
-
 from pyninja.executors import squire
+from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -75,17 +74,16 @@ def parse_diskutil_output(stdout: str) -> List[Dict[str, str]]:
     return disks
 
 
-def drive_info(lib_path: FilePath) -> List[Dict[str, str]]:
+def drive_info() -> List[Dict[str, str]]:
     """Get disks attached to macOS devices.
-
-    Args:
-        lib_path: Returns the library path for disk information.
 
     Returns:
         List[Dict[str, str]]:
         Returns disks information for macOS devices.
     """
-    result = subprocess.run([lib_path, "info", "-all"], capture_output=True, text=True)
+    result = subprocess.run(
+        [models.env.disk_lib, "info", "-all"], capture_output=True, text=True
+    )
     disks = parse_diskutil_output(result.stdout)
     device_ids = defaultdict(list)
     physical_disks = []

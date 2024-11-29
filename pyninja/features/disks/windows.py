@@ -5,9 +5,8 @@ import re
 import subprocess
 from typing import Dict, List, Tuple
 
-from pydantic import FilePath
-
 from pyninja.executors import squire
+from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -31,19 +30,17 @@ def reformat_windows(data: Dict[str, str | int | float]) -> Dict[str, str]:
     return data
 
 
-def get_drives(lib_path: FilePath) -> List[Dict[str, str]]:
+def get_drives() -> List[Dict[str, str]]:
     """Get physical drives connected to a Windows machine.
-
-    Args:
-        lib_path: Library path for disk information.
 
     Returns:
         List[Dict[str, str]]:
         Returns the formatted data for all the drives as a list of key-value pairs.
     """
+    # noinspection LongLine
     ps_command = "Get-CimInstance Win32_DiskDrive | Select-Object Caption, DeviceID, Model, Partitions, Size | ConvertTo-Json"  # noqa: E501
     result = subprocess.run(
-        [lib_path, "-Command", ps_command], capture_output=True, text=True
+        [models.env.disk_lib, "-Command", ps_command], capture_output=True, text=True
     )
     disks_info = json.loads(result.stdout)
     if isinstance(disks_info, list):
@@ -65,18 +62,15 @@ def clean_ansi_escape_sequences(text: str) -> str:
     return ansi_escape.sub("", text)
 
 
-def get_physical_disks_and_partitions(lib_path: FilePath) -> List[Tuple[str, str, str]]:
+def get_physical_disks_and_partitions() -> List[Tuple[str, str, str]]:
     """Powershell Core command to get physical disks and their partitions with drive letters (mount points).
-
-    Args:
-        lib_path: Library path for disk information.
 
     Returns:
         List[Tuple[str, str, str]]:
         List of tuples with disk_number, partition_number, mount_point.
     """
     command_ps = [
-        lib_path,
+        models.env.disk_lib,
         "-Command",
         """
         Get-PhysicalDisk | ForEach-Object {
@@ -100,7 +94,7 @@ def get_physical_disks_and_partitions(lib_path: FilePath) -> List[Tuple[str, str
     )
 
     if result.stderr:
-        print("Error:", result.stderr)
+        LOGGER.error(result.stderr)
         return []
 
     # Clean the output to remove ANSI escape sequences
@@ -126,17 +120,14 @@ def get_physical_disks_and_partitions(lib_path: FilePath) -> List[Tuple[str, str
     return disks_and_partitions
 
 
-def get_disk_usage(lib_path: FilePath) -> Dict[str, List[str]]:
+def get_disk_usage() -> Dict[str, List[str]]:
     """Get all physical disks and their partitions with mount points.
-
-    Args:
-        lib_path: Library path for disk information.
 
     Returns:
         Dict[str, List[str]]:
         Returns a dictionary of DeviceID as key and mount paths as value.
     """
-    disks_and_partitions = get_physical_disks_and_partitions(lib_path)
+    disks_and_partitions = get_physical_disks_and_partitions()
 
     if not disks_and_partitions:
         LOGGER.error("No disks or partitions found.")
@@ -151,18 +142,15 @@ def get_disk_usage(lib_path: FilePath) -> Dict[str, List[str]]:
     return output_data
 
 
-def drive_info(lib_path: FilePath) -> List[Dict[str, str]]:
+def drive_info() -> List[Dict[str, str]]:
     """Get disks attached to Windows devices.
-
-    Args:
-        lib_path: Library path for disk information.
 
     Returns:
         List[Dict[str, str]]:
         Returns disks information for Windows machines.
     """
-    data = get_drives(lib_path)
-    usage = get_disk_usage(lib_path)
+    data = get_drives()
+    usage = get_disk_usage()
     for item in data:
         device_id = item["ID"]
         item.pop("ID")

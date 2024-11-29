@@ -173,13 +173,14 @@ def get_service_pid_linux(service_name: str) -> Optional[int]:
     """
     try:
         output = subprocess.check_output(
-            ["systemctl", "show", service_name, "--property=MainPID"], text=True
+            [models.env.service_lib, "show", service_name, "--property=MainPID"],
+            text=True,
         )
         for line in output.splitlines():
             if line.startswith("MainPID="):
                 return int(line.split("=")[1].strip())
     except subprocess.CalledProcessError as error:
-        LOGGER.error("%s - %s", error.returncode, error.stderr)
+        LOGGER.debug("%s - %s", error.returncode, error.stderr)
 
 
 def get_service_pid_macos(service_name: str) -> Optional[int]:
@@ -193,12 +194,12 @@ def get_service_pid_macos(service_name: str) -> Optional[int]:
         Returns the PID of the service.
     """
     try:
-        output = subprocess.check_output(["launchctl", "list"], text=True)
+        output = subprocess.check_output([models.env.service_lib, "list"], text=True)
         for line in output.splitlines():
             if service_name in line:
                 return int(line.split()[0])  # Assuming PID is the first column
     except subprocess.CalledProcessError as error:
-        LOGGER.error("%s - %s", error.returncode, error.stderr)
+        LOGGER.debug("%s - %s", error.returncode, error.stderr)
 
 
 def get_service_pid_windows(service_name: str) -> Optional[int]:
@@ -212,9 +213,11 @@ def get_service_pid_windows(service_name: str) -> Optional[int]:
         Returns the PID of the service.
     """
     try:
-        output = subprocess.check_output(["sc", "query", service_name], text=True)
+        output = subprocess.check_output(
+            [models.env.service_lib, "query", service_name], text=True
+        )
         for line in output.splitlines():
             if "PID" in line:
                 return int(line.split(":")[1].strip())
     except subprocess.CalledProcessError as error:
-        LOGGER.error("%s - %s", error.returncode, error.stderr)
+        LOGGER.debug("%s - %s", error.returncode, error.stderr)

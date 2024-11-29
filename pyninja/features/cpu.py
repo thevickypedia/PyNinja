@@ -1,42 +1,28 @@
 import logging
 import subprocess
 
-from pydantic import FilePath
-
 from pyninja.modules import enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
 
-def _darwin(lib_path: FilePath) -> str:
-    """Get processor information for macOS.
-
-    Args:
-        lib_path: Path to the library executable.
-    """
-    command = [lib_path, "-n", "machdep.cpu.brand_string"]
+def _darwin() -> str:
+    """Get processor information for macOS."""
+    command = [models.env.processor_lib, "-n", "machdep.cpu.brand_string"]
     return subprocess.check_output(command).decode().strip()
 
 
-def _linux(lib_path: FilePath) -> str:
-    """Get processor information for Linux.
-
-    Args:
-        lib_path: Path to the library file.
-    """
-    with open(lib_path) as file:
+def _linux() -> str:
+    """Get processor information for Linux."""
+    with open(models.env.processor_lib) as file:
         for line in file:
             if "model name" in line:
                 return line.split(":")[1].strip()
 
 
-def _windows(lib_path: FilePath) -> str:
-    """Get processor information for Windows.
-
-    Args:
-        lib_path: Path to the library file.
-    """
-    command = f"{lib_path} cpu get name"
+def _windows() -> str:
+    """Get processor information for Windows."""
+    command = f"{models.env.processor_lib} cpu get name"
     output = subprocess.check_output(command, shell=True).decode()
     return output.strip().split("\n")[1]
 
@@ -54,6 +40,6 @@ def get_name() -> str | None:
         enums.OperatingSystem.windows: _windows,
     }
     try:
-        return os_map[models.OPERATING_SYSTEM](models.env.processor_lib)
+        return os_map[models.OPERATING_SYSTEM]()
     except Exception as error:
         LOGGER.error(error)
