@@ -1,4 +1,3 @@
-import json
 import logging
 import re
 import subprocess
@@ -7,46 +6,9 @@ from typing import Dict, List
 
 from pydantic import FilePath
 
-from pyninja.features.os_disks.windows import _windows
-from pyninja.modules import enums, models
+from pyninja.executors import squire
 
 LOGGER = logging.getLogger("uvicorn.default")
-
-
-def _linux(lib_path: FilePath) -> List[Dict[str, str]]:
-    """Get disks attached to Linux devices.
-
-    Args:
-        lib_path: Returns the library path for disk information.
-
-    Returns:
-        List[Dict[str, str]]:
-        Returns disks information for Linux distros.
-    """
-    # Using -d to list only physical disks, and filtering out loop devices
-    result = subprocess.run(
-        [lib_path, "-o", "NAME,SIZE,TYPE,MODEL,MOUNTPOINT", "-J"],
-        capture_output=True,
-        text=True,
-    )
-    data = json.loads(result.stdout)
-    disks = []
-    for device in data.get("blockdevices", []):
-        if device["type"] == "disk":
-            disk_info = {
-                "DeviceID": device["name"],
-                "Size": device["size"],
-                "Name": device.get("model", "Unknown"),
-                "Mountpoints": [],
-            }
-            # Collect mount points from partitions
-            if "children" in device:
-                for partition in device["children"]:
-                    if partition.get("mountpoint"):
-                        disk_info["Mountpoints"].append(partition["mountpoint"])
-            disk_info["Mountpoints"] = ", ".join(disk_info["Mountpoints"])
-            disks.append(disk_info)
-    return disks
 
 
 def parse_size(input_string: str) -> int:
@@ -113,7 +75,7 @@ def parse_diskutil_output(stdout: str) -> List[Dict[str, str]]:
     return disks
 
 
-def _darwin(lib_path: FilePath) -> List[Dict[str, str]]:
+def drive_info(lib_path: FilePath) -> List[Dict[str, str]]:
     """Get disks attached to macOS devices.
 
     Args:
@@ -132,7 +94,9 @@ def _darwin(lib_path: FilePath) -> List[Dict[str, str]]:
             physical_disks.append(
                 {
                     "Name": disk.get("Device / Media Name"),
-                    "Size": parse_size(disk.get("Disk Size", "")),
+                    "Size": squire.size_converter(
+                        parse_size(disk.get("Disk Size", ""))
+                    ),
                     "DeviceID": disk.get("Device Identifier"),
                     "Node": disk.get("Device Node"),
                 }
@@ -143,16 +107,3 @@ def _darwin(lib_path: FilePath) -> List[Dict[str, str]]:
     for disk in physical_disks:
         disk["Mountpoints"] = ", ".join(mountpoints[disk["DeviceID"]])
     return physical_disks
-
-
-def get_all_disks() -> List[Dict[str, str]]:
-    """OS-agnostic function to get all disks connected to the host system."""
-    os_map = {
-        enums.OperatingSystem.darwin: _darwin,
-        enums.OperatingSystem.linux: _linux,
-        enums.OperatingSystem.windows: _windows,
-    }
-    try:
-        return os_map[models.OPERATING_SYSTEM](models.env.disk_lib)
-    except Exception as error:
-        LOGGER.error(error)

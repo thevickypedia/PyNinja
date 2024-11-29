@@ -36,10 +36,10 @@ def landing_page() -> Dict[str, Any]:
         ),
     }
     if processor_name := cpu.get_name():
-        LOGGER.info("Processor: %s", processor_name)
+        LOGGER.debug("Processor: %s", processor_name)
         sys_info_basic["CPU"] = processor_name
     if gpu_names := gpu.get_names():
-        LOGGER.info(gpu_names)
+        LOGGER.debug(gpu_names)
         sys_info_basic["GPU"] = ", ".join(
             [gpu_info.get("model") for gpu_info in gpu_names]
         )

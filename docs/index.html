@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>Welcome to PyNinja’s documentation! &#8212; PyNinja  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -960,11 +960,20 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 </section>
-<section id="module-pyninja.features.disks">
-<span id="disks"></span><h2>Disks<a class="headerlink" href="#module-pyninja.features.disks" title="Permalink to this heading">¶</a></h2>
+<section id="module-pyninja.features.disks.__init__">
+<span id="disks"></span><h2>Disks<a class="headerlink" href="#module-pyninja.features.disks.__init__" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.features.disks._linux">
-<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.</span></span><span class="sig-name descname"><span class="pre">_linux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks._linux" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.features.disks.__init__.get_all_disks">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.__init__.</span></span><span class="sig-name descname"><span class="pre">get_all_disks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks.__init__.get_all_disks" title="Permalink to this definition">¶</a></dt>
+<dd><p>OS-agnostic function to get all disks connected to the host system.</p>
+</dd></dl>
+
+</section>
+<section id="module-pyninja.features.disks.linux">
+<span id="disks-linux"></span><h2>Disks - Linux<a class="headerlink" href="#module-pyninja.features.disks.linux" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.disks.linux.drive_info">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.linux.</span></span><span class="sig-name descname"><span class="pre">drive_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks.linux.drive_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get disks attached to Linux devices.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -979,9 +988,12 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dl>
 </dd></dl>
 
+</section>
+<section id="module-pyninja.features.disks.macOS">
+<span id="disks-macos"></span><h2>Disks - macOS<a class="headerlink" href="#module-pyninja.features.disks.macOS" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.features.disks.parse_size">
-<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.</span></span><span class="sig-name descname"><span class="pre">parse_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#pyninja.features.disks.parse_size" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.features.disks.macOS.parse_size">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.macOS.</span></span><span class="sig-name descname"><span class="pre">parse_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#pyninja.features.disks.macOS.parse_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts size in bytes from a string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -997,8 +1009,8 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.features.disks.update_mountpoints">
-<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.</span></span><span class="sig-name descname"><span class="pre">update_mountpoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">disks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">defaultdict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">defaultdict</span></span></span><a class="headerlink" href="#pyninja.features.disks.update_mountpoints" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.features.disks.macOS.update_mountpoints">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.macOS.</span></span><span class="sig-name descname"><span class="pre">update_mountpoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">disks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">defaultdict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">defaultdict</span></span></span><a class="headerlink" href="#pyninja.features.disks.macOS.update_mountpoints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates mount points for physical devices based on diskutil data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1017,8 +1029,8 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.features.disks.parse_diskutil_output">
-<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.</span></span><span class="sig-name descname"><span class="pre">parse_diskutil_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks.parse_diskutil_output" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.features.disks.macOS.parse_diskutil_output">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.macOS.</span></span><span class="sig-name descname"><span class="pre">parse_diskutil_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks.macOS.parse_diskutil_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parses <cite>diskutil info -all</cite> output into structured data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1034,8 +1046,8 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.features.disks._darwin">
-<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.</span></span><span class="sig-name descname"><span class="pre">_darwin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks._darwin" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.features.disks.macOS.drive_info">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.macOS.</span></span><span class="sig-name descname"><span class="pre">drive_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks.macOS.drive_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get disks attached to macOS devices.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1050,9 +1062,12 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dl>
 </dd></dl>
 
+</section>
+<section id="module-pyninja.features.disks.windows">
+<span id="disks-windows"></span><h2>Disks - Windows<a class="headerlink" href="#module-pyninja.features.disks.windows" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.features.disks._reformat_windows">
-<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.</span></span><span class="sig-name descname"><span class="pre">_reformat_windows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks._reformat_windows" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.features.disks.windows.reformat_windows">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.windows.</span></span><span class="sig-name descname"><span class="pre">reformat_windows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks.windows.reformat_windows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reformats each drive’s information for Windows OS.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1068,15 +1083,15 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.features.disks._windows">
-<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.</span></span><span class="sig-name descname"><span class="pre">_windows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks._windows" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get disks attached to Windows devices.</p>
+<dt class="sig sig-object py" id="pyninja.features.disks.windows.get_drives">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.windows.</span></span><span class="sig-name descname"><span class="pre">get_drives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks.windows.get_drives" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get physical drives connected to a Windows machine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>lib_path</strong> – Returns the library path for disk information.</p>
+<dd class="field-odd"><p><strong>lib_path</strong> – Library path for disk information.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Returns disks information for Windows machines.</p>
+<dd class="field-even"><p>Returns the formatted data for all the drives as a list of key-value pairs.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[Dict[str, str]]</p>
@@ -1085,9 +1100,71 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.features.disks.get_all_disks">
-<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.</span></span><span class="sig-name descname"><span class="pre">get_all_disks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks.get_all_disks" title="Permalink to this definition">¶</a></dt>
-<dd><p>OS-agnostic function to get all disks connected to the host system.</p>
+<dt class="sig sig-object py" id="pyninja.features.disks.windows.clean_ansi_escape_sequences">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.windows.</span></span><span class="sig-name descname"><span class="pre">clean_ansi_escape_sequences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.features.disks.windows.clean_ansi_escape_sequences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regular expression to remove ANSI escape sequences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> – Text with ansi escape characters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cleaned text.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.disks.windows.get_physical_disks_and_partitions">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.windows.</span></span><span class="sig-name descname"><span class="pre">get_physical_disks_and_partitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks.windows.get_physical_disks_and_partitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Powershell Core command to get physical disks and their partitions with drive letters (mount points).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lib_path</strong> – Library path for disk information.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of tuples with disk_number, partition_number, mount_point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Tuple[str, str, str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.disks.windows.get_disk_usage">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.windows.</span></span><span class="sig-name descname"><span class="pre">get_disk_usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks.windows.get_disk_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all physical disks and their partitions with mount points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lib_path</strong> – Library path for disk information.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a dictionary of DeviceID as key and mount paths as value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, List[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.disks.windows.drive_info">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.disks.windows.</span></span><span class="sig-name descname"><span class="pre">drive_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.disks.windows.drive_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get disks attached to Windows devices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lib_path</strong> – Library path for disk information.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns disks information for Windows machines.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Dict[str, str]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -2884,7 +2961,10 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </li>
 <li><a class="reference internal" href="#pyninja-features">PyNinja - Features</a><ul>
 <li><a class="reference internal" href="#module-pyninja.features.cpu">CPU</a></li>
-<li><a class="reference internal" href="#module-pyninja.features.disks">Disks</a></li>
+<li><a class="reference internal" href="#module-pyninja.features.disks.__init__">Disks</a></li>
+<li><a class="reference internal" href="#module-pyninja.features.disks.linux">Disks - Linux</a></li>
+<li><a class="reference internal" href="#module-pyninja.features.disks.macOS">Disks - macOS</a></li>
+<li><a class="reference internal" href="#module-pyninja.features.disks.windows">Disks - Windows</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.dockerized">Docker</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.gpu">GPU</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.operations">Operations</a></li>

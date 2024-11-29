@@ -65,7 +65,19 @@ CPU
 
 Disks
 -----
-.. automodule:: pyninja.features.disks
+.. automodule:: pyninja.features.disks.__init__
+
+Disks - Linux
+-------------
+.. automodule:: pyninja.features.disks.linux
+
+Disks - macOS
+-------------
+.. automodule:: pyninja.features.disks.macOS
+
+Disks - Windows
+---------------
+.. automodule:: pyninja.features.disks.windows
 
 Docker
 ------

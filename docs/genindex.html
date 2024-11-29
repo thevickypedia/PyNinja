@@ -78,28 +78,20 @@
       <li><a href="index.html#pyninja.features.cpu._darwin">_darwin() (in module pyninja.features.cpu)</a>
 
       <ul>
-        <li><a href="index.html#pyninja.features.disks._darwin">(in module pyninja.features.disks)</a>
-</li>
         <li><a href="index.html#pyninja.features.gpu._darwin">(in module pyninja.features.gpu)</a>
-</li>
-      </ul></li>
-      <li><a href="index.html#pyninja.features.cpu._linux">_linux() (in module pyninja.features.cpu)</a>
-
-      <ul>
-        <li><a href="index.html#pyninja.features.disks._linux">(in module pyninja.features.disks)</a>
-</li>
-        <li><a href="index.html#pyninja.features.gpu._linux">(in module pyninja.features.gpu)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#pyninja.features.disks._reformat_windows">_reformat_windows() (in module pyninja.features.disks)</a>
+      <li><a href="index.html#pyninja.features.cpu._linux">_linux() (in module pyninja.features.cpu)</a>
+
+      <ul>
+        <li><a href="index.html#pyninja.features.gpu._linux">(in module pyninja.features.gpu)</a>
 </li>
+      </ul></li>
       <li><a href="index.html#pyninja.features.cpu._windows">_windows() (in module pyninja.features.cpu)</a>
 
       <ul>
-        <li><a href="index.html#pyninja.features.disks._windows">(in module pyninja.features.disks)</a>
-</li>
         <li><a href="index.html#pyninja.features.gpu._windows">(in module pyninja.features.gpu)</a>
 </li>
       </ul></li>
@@ -144,6 +136,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.secure.calculate_hash">calculate_hash() (in module pyninja.modules.secure)</a>
+</li>
+      <li><a href="index.html#pyninja.features.disks.windows.clean_ansi_escape_sequences">clean_ansi_escape_sequences() (in module pyninja.features.disks.windows)</a>
 </li>
       <li><a href="index.html#pyninja.monitor.config.clear_session">clear_session() (in module pyninja.monitor.config)</a>
 </li>
@@ -197,8 +191,6 @@
 </li>
       <li><a href="index.html#pyninja.modules.payloads.ListFiles.directory">directory (pyninja.modules.payloads.ListFiles attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.disk_lib">disk_lib (pyninja.modules.models.EnvConfig attribute)</a>
 </li>
       <li><a href="index.html#pyninja.modules.enums.Templates.disk_report">disk_report (pyninja.modules.enums.Templates attribute)</a>
@@ -207,6 +199,8 @@
         <li><a href="index.html#pyninja.modules.models.EnvConfig.disk_report">(pyninja.modules.models.EnvConfig attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.models.DiskLib">DiskLib (class in pyninja.modules.models)</a>
 </li>
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.docker_container">docker_container (pyninja.modules.enums.APIEndpoints attribute)</a>
@@ -223,6 +217,14 @@
 </li>
       <li><a href="index.html#pyninja.modules.enums.Cookies.drive">drive (pyninja.modules.enums.Cookies attribute)</a>
 </li>
+      <li><a href="index.html#pyninja.features.disks.linux.drive_info">drive_info() (in module pyninja.features.disks.linux)</a>
+
+      <ul>
+        <li><a href="index.html#pyninja.features.disks.macOS.drive_info">(in module pyninja.features.disks.macOS)</a>
+</li>
+        <li><a href="index.html#pyninja.features.disks.windows.drive_info">(in module pyninja.features.disks.windows)</a>
+</li>
+      </ul></li>
       <li><a href="index.html#pyninja.executors.squire.dynamic_numbers">dynamic_numbers() (in module pyninja.executors.squire)</a>
 </li>
   </ul></td>
@@ -283,7 +285,7 @@
 </li>
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.get_all_disks">get_all_disks (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
-      <li><a href="index.html#pyninja.features.disks.get_all_disks">get_all_disks() (in module pyninja.features.disks)</a>
+      <li><a href="index.html#pyninja.features.disks.__init__.get_all_disks">get_all_disks() (in module pyninja.features.disks.__init__)</a>
 
       <ul>
         <li><a href="index.html#pyninja.routes.metrics.get_all_disks">(in module pyninja.routes.metrics)</a>
@@ -311,6 +313,8 @@
 </li>
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.get_disk">get_disk (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
+      <li><a href="index.html#pyninja.features.disks.windows.get_disk_usage">get_disk_usage() (in module pyninja.features.disks.windows)</a>
+</li>
       <li><a href="index.html#pyninja.routes.metrics.get_disk_utilization">get_disk_utilization() (in module pyninja.routes.metrics)</a>
 </li>
       <li><a href="index.html#pyninja.routes.orchestration.get_docker_containers">get_docker_containers() (in module pyninja.routes.orchestration)</a>
@@ -325,16 +329,18 @@
       </ul></li>
       <li><a href="index.html#pyninja.routes.orchestration.get_docker_volumes">get_docker_volumes() (in module pyninja.routes.orchestration)</a>
 </li>
+      <li><a href="index.html#pyninja.features.disks.windows.get_drives">get_drives() (in module pyninja.features.disks.windows)</a>
+</li>
       <li><a href="index.html#pyninja.monitor.config.get_expiry">get_expiry() (in module pyninja.monitor.config)</a>
 </li>
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.get_file">get_file (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
       <li><a href="index.html#pyninja.routes.fullaccess.get_file">get_file() (in module pyninja.routes.fullaccess)</a>
 </li>
-      <li><a href="index.html#pyninja.modules.enums.APIEndpoints.get_ip">get_ip (pyninja.modules.enums.APIEndpoints attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#pyninja.modules.enums.APIEndpoints.get_ip">get_ip (pyninja.modules.enums.APIEndpoints attribute)</a>
+</li>
       <li><a href="index.html#pyninja.routes.ipaddr.get_ip_address">get_ip_address() (in module pyninja.routes.ipaddr)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.get_library">get_library() (in module pyninja.modules.models)</a>
@@ -348,6 +354,8 @@
       <li><a href="index.html#pyninja.features.gpu.get_names">get_names() (in module pyninja.features.gpu)</a>
 </li>
       <li><a href="index.html#pyninja.features.process.get_performance">get_performance() (in module pyninja.features.process)</a>
+</li>
+      <li><a href="index.html#pyninja.features.disks.windows.get_physical_disks_and_partitions">get_physical_disks_and_partitions() (in module pyninja.features.disks.windows)</a>
 </li>
       <li><a href="index.html#pyninja.features.operations.get_process_info">get_process_info() (in module pyninja.features.operations)</a>
 </li>
@@ -535,7 +543,13 @@
 </li>
         <li><a href="index.html#module-pyninja.features.cpu">pyninja.features.cpu</a>
 </li>
-        <li><a href="index.html#module-pyninja.features.disks">pyninja.features.disks</a>
+        <li><a href="index.html#module-pyninja.features.disks.__init__">pyninja.features.disks.__init__</a>
+</li>
+        <li><a href="index.html#module-pyninja.features.disks.linux">pyninja.features.disks.linux</a>
+</li>
+        <li><a href="index.html#module-pyninja.features.disks.macOS">pyninja.features.disks.macOS</a>
+</li>
+        <li><a href="index.html#module-pyninja.features.disks.windows">pyninja.features.disks.windows</a>
 </li>
         <li><a href="index.html#module-pyninja.features.dockerized">pyninja.features.dockerized</a>
 </li>
@@ -628,9 +642,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.parse_api_secret">parse_api_secret() (pyninja.modules.models.EnvConfig class method)</a>
 </li>
-      <li><a href="index.html#pyninja.features.disks.parse_diskutil_output">parse_diskutil_output() (in module pyninja.features.disks)</a>
+      <li><a href="index.html#pyninja.features.disks.macOS.parse_diskutil_output">parse_diskutil_output() (in module pyninja.features.disks.macOS)</a>
 </li>
-      <li><a href="index.html#pyninja.features.disks.parse_size">parse_size() (in module pyninja.features.disks)</a>
+      <li><a href="index.html#pyninja.features.disks.macOS.parse_size">parse_size() (in module pyninja.features.disks.macOS)</a>
 </li>
       <li><a href="index.html#pyninja.executors.squire.private_ip_address">private_ip_address() (in module pyninja.executors.squire)</a>
 </li>
@@ -692,10 +706,31 @@
 </li>
       </ul></li>
       <li>
-    pyninja.features.disks
+    pyninja.features.disks.__init__
 
       <ul>
-        <li><a href="index.html#module-pyninja.features.disks">module</a>
+        <li><a href="index.html#module-pyninja.features.disks.__init__">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyninja.features.disks.linux
+
+      <ul>
+        <li><a href="index.html#module-pyninja.features.disks.linux">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyninja.features.disks.macOS
+
+      <ul>
+        <li><a href="index.html#module-pyninja.features.disks.macOS">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyninja.features.disks.windows
+
+      <ul>
+        <li><a href="index.html#module-pyninja.features.disks.windows">module</a>
 </li>
       </ul></li>
       <li>
@@ -719,6 +754,8 @@
         <li><a href="index.html#module-pyninja.features.operations">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyninja.features.process
 
@@ -733,8 +770,6 @@
         <li><a href="index.html#module-pyninja.features.service">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyninja.main
 
@@ -878,6 +913,8 @@
 </li>
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.redoc">redoc (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
+      <li><a href="index.html#pyninja.features.disks.windows.reformat_windows">reformat_windows() (in module pyninja.features.disks.windows)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.remote_execution">remote_execution (pyninja.modules.models.EnvConfig attribute)</a>
@@ -976,7 +1013,7 @@
 </li>
       <li><a href="index.html#pyninja.modules.exceptions.UnSupportedOS">UnSupportedOS</a>
 </li>
-      <li><a href="index.html#pyninja.features.disks.update_mountpoints">update_mountpoints() (in module pyninja.features.disks)</a>
+      <li><a href="index.html#pyninja.features.disks.macOS.update_mountpoints">update_mountpoints() (in module pyninja.features.disks.macOS)</a>
 </li>
   </ul></td>
 </tr></table>
