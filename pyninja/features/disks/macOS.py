@@ -24,7 +24,9 @@ def parse_size(input_string: str) -> int:
     return int(match.group(1)) if match else 0
 
 
-def update_mountpoints(disks, device_ids: defaultdict) -> defaultdict:
+def update_mountpoints(
+    disks: List[Dict[str, str]], device_ids: defaultdict
+) -> defaultdict:
     """Updates mount points for physical devices based on diskutil data.
 
     Args:
@@ -39,14 +41,14 @@ def update_mountpoints(disks, device_ids: defaultdict) -> defaultdict:
         part_of_whole = disk.get("Part of Whole")
         apfs_store = disk.get("APFS Physical Store", "")
         mount_point = disk.get("Mount Point")
+        read_only = "Yes" in disk.get("Volume Read-Only")
         if mount_point and not mount_point.startswith("/System/Volumes/"):
             if part_of_whole in device_ids:
                 device_ids[part_of_whole].append(mount_point)
             else:
                 for device_id in device_ids:
-                    if apfs_store.startswith(device_id):
+                    if apfs_store.startswith(device_id) and read_only:
                         device_ids[device_id].append(mount_point)
-    # todo: verify this logic in macOS
     for device_id, mountpoints in device_ids.items():
         if not mountpoints:
             device_ids[device_id] = ["Not Mounted"]

@@ -198,7 +198,6 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     # Base task with a placeholder asyncio sleep to start the task loop
     task = asyncio.create_task(asyncio.sleep(0.1))
     # Store disk usage information (during startup) to avoid repeated calls
-    # todo: Make this an async call or simply render via websocket but cache the response
     disk_info = list(monitor.resources.get_disk_info())
     while True:
         # Validate session asynchronously (non-blocking)

@@ -277,7 +277,6 @@ async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
         Dict[str, dict]:
         Returns a nested dictionary.
     """
-    # todo: Create a 4th section for disk usage - that includes PIE charts for all the attached disks
     system_metrics_task = asyncio.create_task(get_system_metrics())
     docker_stats_task = asyncio.create_task(get_docker_stats())
     service_stats_task = asyncio.create_task(
