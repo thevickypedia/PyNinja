@@ -4,8 +4,10 @@ import logging
 import os
 import platform
 import re
+import shutil
 import subprocess
 import time
+from collections.abc import Generator
 from datetime import timedelta
 from typing import Any, Dict, List
 
@@ -57,6 +59,31 @@ def landing_page() -> Dict[str, Any]:
         sys_info_network=sys_info_network,
         sys_info_disks=disks.get_all_disks(),
     )
+
+
+def get_disk_info() -> Generator[Dict[str, str | int]]:
+    """Get partition and usage information for each physical drive.
+
+    Yields:
+        Dict[str, str | int]:
+        Yields a dictionary of key-value pairs with ID, name, and usage.
+    """
+    all_disks = disks.get_all_disks()
+    for disk in all_disks:
+        disk_usage: Dict[str, str | int] = {
+            "name": disk.get("Name"),
+            "id": disk.get("DeviceID"),
+        }
+        disk_usage_totals = {"total": 0, "used": 0, "free": 0}
+        if not disk.get("Mountpoints") or disk.get("Mountpoints") == "Not Mounted":
+            continue
+        mountpoints = disk.get("Mountpoints", "").split(", ")
+        for mountpoint in mountpoints:
+            part_usage = shutil.disk_usage(mountpoint)
+            for key in disk_usage_totals:
+                disk_usage_totals[key] += getattr(part_usage, key)
+        disk_usage.update(disk_usage_totals)
+        yield disk_usage
 
 
 def container_cpu_limit(container_name: str) -> int | float | None:
@@ -198,23 +225,37 @@ def pyudisk_metrics() -> Dict[str, str | List[dict]]:
     pyudisk_stats = []
     disk = None
     for disk in smart_metrics(EnvConfig(udisk_lib=models.env.udisk_lib)):
+        info = disk.Info
+        attributes = disk.Attributes
+        usage = disk.Usage.model_dump() if disk.Usage else {}
+        partition = disk.Partition
         pyudisk_stats.append(
             {
                 **{
-                    "Model": disk.Info.Model,
-                    "Mountpoint": str(disk.Partition.MountPoints),
+                    "Model": info.Model if info else "N/A",
+                    "Mountpoint": str(partition.MountPoints) if partition else "N/A",
                     "Temperature": (
-                        f"{util.kelvin_to_fahrenheit(disk.Attributes.SmartTemperature)} °F"
-                        + " / "
-                        + f"{util.kelvin_to_celsius(disk.Attributes.SmartTemperature)} °C"
+                        (
+                            f"{util.kelvin_to_fahrenheit(attributes.SmartTemperature)} °F"
+                            + " / "
+                            + f"{util.kelvin_to_celsius(attributes.SmartTemperature)} °C"
+                        )
+                        if attributes
+                        else "N/A"
                     ),
-                    "Bad Sectors": disk.Attributes.SmartNumBadSectors,
-                    "Test Status": disk.Attributes.SmartSelftestStatus,
-                    "Uptime": squire.convert_seconds(
-                        disk.Attributes.SmartPowerOnSeconds
+                    "Bad Sectors": (
+                        attributes.SmartNumBadSectors if attributes else "N/A"
+                    ),
+                    "Test Status": (
+                        attributes.SmartSelftestStatus if attributes else "N/A"
+                    ),
+                    "Uptime": (
+                        squire.convert_seconds(attributes.SmartPowerOnSeconds)
+                        if attributes
+                        else "N/A"
                     ),
                 },
-                **disk.Usage.model_dump(),
+                **usage,
             }
         )
     # Smart metrics are gathered at certain system intervals - so no need to get this attr from all the drives

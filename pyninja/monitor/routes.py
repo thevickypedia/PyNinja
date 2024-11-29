@@ -1,9 +1,7 @@
 import asyncio
 import logging
-import shutil
 import time
 from http import HTTPStatus
-from typing import Dict
 
 from fastapi import Cookie, Depends, Request
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -11,7 +9,6 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
 from pyninja import monitor, version
-from pyninja.features import disks
 from pyninja.modules import enums, exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -201,27 +198,12 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     # Base task with a placeholder asyncio sleep to start the task loop
     task = asyncio.create_task(asyncio.sleep(0.1))
     # Store disk usage information (during startup) to avoid repeated calls
-    all_disks = disks.get_all_disks()
-    disk_info = []
-    for disk in all_disks:
-        disk_usage: Dict[str, str | int] = {
-            "name": disk.get("Name"),
-            "id": disk.get("DeviceID"),
-        }
-        disk_usage_totals = {"total": 0, "used": 0, "free": 0}
-        mountpoints = (
-            disk.get("Mountpoints", "").split(", ") if disk.get("Mountpoints") else []
-        )
-        for mountpoint in mountpoints:
-            part_usage = shutil.disk_usage(mountpoint)
-            for key in disk_usage_totals:
-                disk_usage_totals[key] += getattr(part_usage, key)
-        disk_usage.update(disk_usage_totals)
-        disk_info.append(disk_usage)
+    # todo: Make this an async call or simply render via websocket but cache the response
+    disk_info = list(monitor.resources.get_disk_info())
     while True:
         # Validate session asynchronously (non-blocking)
         # This way of handling session validation is more efficient than using a blocking call
-        # This might slip through one iteration even after the session has expired, but it just means one more iteration
+        # This might slip through one iteration even after the session has expired, but it just means <1s delay
         try:
             if task.done():
                 await task

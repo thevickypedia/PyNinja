@@ -156,4 +156,7 @@ def drive_info() -> List[Dict[str, str]]:
         item.pop("ID")
         if device_id in usage:
             item["Mountpoints"] = ", ".join(usage[device_id])
+        else:
+            # todo: verify this logic in Windows
+            item["Mountpoints"] = ["Not Mounted"]
     return data

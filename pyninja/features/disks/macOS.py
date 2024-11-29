@@ -46,6 +46,10 @@ def update_mountpoints(disks, device_ids: defaultdict) -> defaultdict:
                 for device_id in device_ids:
                     if apfs_store.startswith(device_id):
                         device_ids[device_id].append(mount_point)
+    # todo: verify this logic in macOS
+    for device_id, mountpoints in device_ids.items():
+        if not mountpoints:
+            device_ids[device_id] = ["Not Mounted"]
     return device_ids
 
 
