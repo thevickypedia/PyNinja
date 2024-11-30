@@ -24,8 +24,8 @@
             font-family: Arial, sans-serif;
             overflow-x: hidden;
         }
-        /* Simplify CSS for all the 'stats' */
 
+        /* Simplify CSS for all the 'stats' */
         .pyudisk-stats {
             height: 100%;
             margin: 2%;
@@ -227,7 +227,6 @@
         .graph-canvas {
             max-width: 600px;
         }
-
     </style>
     <style>
         /* This container will only take up the space needed */
@@ -275,13 +274,12 @@
 
         /* Ensures that the details are collapsed initially and expand on click
         details[open] summary:before {
-            content: '-';
-            padding-right: 10px;
+        content: '-';
+        padding-right: 10px;
         }
-
         details summary:before {
-            content: '+';
-            padding-right: 10px;
+        content: '+';
+        padding-right: 10px;
         }
         */
     </style>
@@ -347,9 +345,9 @@
             <!-- Header Row -->
             <div class="collapsible-table-row">
                 {% if sys_info_disks|length > 0 %}
-                    {% for key in sys_info_disks[0].keys() %}
-                    <div class="collapsible-table-cell"><strong>{{ key }}</strong></div>
-                    {% endfor %}
+                {% for key in sys_info_disks[0].keys() %}
+                <div class="collapsible-table-cell"><strong>{{ key }}</strong></div>
+                {% endfor %}
                 {% endif %}
             </div>
             <!-- Data Rows -->
@@ -379,7 +377,6 @@
             <div id="memoryUsage" class="progress-bar"></div>
         </div>
         <p id="memoryUsageText">Memory: 0%</p>
-
         {% if 'Swap' in sys_info_basic.keys() %}
         <h3>Swap Usage</h3>
         <div class="progress">
@@ -411,7 +408,7 @@
     <div class="box">
         <h3>Disk Usage</h3>
         <div id="diskChartsContainer">
-        <!-- Charts will be dynamically appended here -->
+            <!-- Charts will be dynamically appended here -->
         </div>
     </div>
 </div>
@@ -579,11 +576,11 @@
             cpuUsage.forEach((usage, index) => {
                 const cpuDiv = document.createElement('div');
                 cpuDiv.innerHTML = `
-                        <strong>CPU ${index + 1}:</strong> ${usage}%
-                        <div class="progress">
-                            <div id="cpu${index}" class="progress-bar"></div>
-                        </div>
-                    `;
+                                <strong>CPU ${index + 1}:</strong> ${usage}%
+                                <div class="progress">
+                                    <div id="cpu${index}" class="progress-bar"></div>
+                                </div>
+                            `;
                 cpuContainer.appendChild(cpuDiv);
                 updateProgressBar(`cpu${index}`, usage);
             });
@@ -695,10 +692,10 @@
             } else {
                 const memoryChart = document.getElementById('memoryChart').getContext('2d');
                 memoryChartInstance = createChartInstance(
-                    memoryChart,
-                    'Memory Usage',
-                    ['#36A2EB', '#FFCE56'],
-                    [memoryInfo.used, memoryInfo.total - memoryInfo.used]
+                        memoryChart,
+                        'Memory Usage',
+                        ['#36A2EB', '#FFCE56'],
+                        [memoryInfo.used, memoryInfo.total - memoryInfo.used]
                 );
             }
 
@@ -713,10 +710,10 @@
             } else if (swapChart) {
                 // swapChart is an optional chart, so create context only when available
                 swapChartInstance = createChartInstance(
-                    swapChart.getContext('2d'),
-                    'Swap Usage',
-                    ['#FFCE56', '#E7E9ED'],
-                    [swapInfo.used, swapInfo.total - swapInfo.used]
+                        swapChart.getContext('2d'),
+                        'Swap Usage',
+                        ['#FFCE56', '#E7E9ED'],
+                        [swapInfo.used, swapInfo.total - swapInfo.used]
                 );
             }
 
@@ -762,10 +759,10 @@
                     // Create new chart instance
                     const diskChart = document.getElementById(`diskChart${index}`).getContext('2d');
                     diskChartInstances[index] = createChartInstance(
-                        diskChart,
-                        `Disk ${index + 1} Usage`,
-                        ['#63950d', '#ca7b00'],
-                        [diskInfo.used, diskInfo.total - diskInfo.used]
+                            diskChart,
+                            `Disk ${index + 1} Usage`,
+                            ['#63950d', '#ca7b00'],
+                            [diskInfo.used, diskInfo.total - diskInfo.used]
                     );
                 }
             });

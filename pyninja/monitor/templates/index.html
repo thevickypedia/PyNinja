@@ -99,7 +99,7 @@
         }
 
         .password-container input[type="password"],
-        .password-container input[type="text"]{
+        .password-container input[type="text"] {
             width: 100%;
             padding: 12px 36px 12px 12px;
             box-sizing: border-box;
@@ -151,8 +151,8 @@
             </div>
             <button type="submit" onclick="submitToAPI(event, 'monitor')">Sign In</button>
             {% if disk_report %}
-                <br>
-                <button type="submit" onclick="submitToAPI(event, 'drive')">Disk Report</button>
+            <br>
+            <button type="submit" onclick="submitToAPI(event, 'drive')">Disk Report</button>
             {% endif %}
         </form>
     </div>
@@ -160,7 +160,7 @@
 </body>
 <!-- control the behavior of the browser's navigation without triggering a full page reload -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         history.pushState(null, document.title, location.href);
         window.addEventListener('popstate', function (event) {
             history.pushState(null, document.title, location.href);
@@ -177,6 +177,7 @@
             alert("ERROR: Username and password are required to authenticate your request!");
             return false;
         }
+
         async function ConvertStringToHex(str) {
             let arr = [];
             for (let i = 0; i < str.length; i++) {
@@ -229,7 +230,7 @@
                     console.log(data);
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 console.error(`Status: ${textStatus}, Error: ${errorThrown}`);
                 if (jqXHR.hasOwnProperty("responseJSON")) {
                     alert(jqXHR.responseJSON.detail);
@@ -250,7 +251,7 @@
 <script>
     const passwordInput = document.querySelector("#password")
     const eye = document.querySelector("#eye")
-    eye.addEventListener("click", function() {
+    eye.addEventListener("click", function () {
         if (passwordInput.type === "password") {
             passwordInput.type = "text";
             eye.className = "fa-regular fa-eye-slash"

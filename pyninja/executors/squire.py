@@ -123,7 +123,7 @@ def size_converter(byte_size: int | float) -> str:
 
     Returns:
         str:
-        Converted understandable size.
+        Converted human-readable size.
     """
     if byte_size:
         size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
@@ -131,6 +131,7 @@ def size_converter(byte_size: int | float) -> str:
         return (
             f"{format_nos(round(byte_size / pow(1024, index), 2))} {size_name[index]}"
         )
+    return "0 B"
 
 
 def process_command(
