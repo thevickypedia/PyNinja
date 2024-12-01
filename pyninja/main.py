@@ -9,8 +9,6 @@ from fastapi.routing import APIRoute
 from pyninja import version
 from pyninja.executors import routers, squire
 from pyninja.modules import exceptions, models, rate_limit
-from pyninja.monitor import get_all_monitor_routes
-from pyninja.routes import fullaccess
 
 BASE_LOGGER = logging.getLogger("BASE_LOGGER")
 BASE_LOGGER.setLevel(logging.INFO)
@@ -22,27 +20,35 @@ PyNinjaAPI = FastAPI(
     license_info={"name": "MIT License", "identifier": "MIT"},
 )
 PyNinjaAPI.__name__ = "PyNinjaAPI"
+PyNinjaAPI.routes.append(
+    APIRoute(
+        path="/health",
+        endpoint=routers.health,
+        methods=["GET"],
+        include_in_schema=False,
+    ),
+)
 
 
-def get_desc(remote_flag: bool, monitor_flag: bool) -> str:
+def get_desc(get_api: bool, post_api: bool, monitoring_ui: bool) -> str:
     """Construct a detailed description for the API docs.
 
     Args:
-        remote_flag: Boolean flag to indicate remote execution state.
-        monitor_flag: Boolean flag to indicate monitoring page state.
+        get_api: Boolean flag to indicate basic API state.
+        post_api: Boolean flag to indicate remote execution state.
+        monitoring_ui: Boolean flag to indicate monitoring page state.
 
     Returns:
         str:
         Returns the description as a string.
     """
-    if remote_flag:
+    basic_fl, remote_fl, monitor_fl = ("Disabled",) * 3
+    if get_api:
+        basic_fl = "All basic GET calls have been enabled"
+    if post_api:
         remote_fl = "Enabled at <a href='/docs#/default/run_command_run_command_post'>/run-command</a>"
-    else:
-        remote_fl = "Disabled"
-    if monitor_flag:
+    if monitoring_ui:
         monitor_fl = "Enabled at <a href='/monitor'>/monitor</a>"
-    else:
-        monitor_fl = "Disabled"
     description = "**Lightweight OS-agnostic service monitoring API**"
     description += (
         "\n\nIn addition to monitoring services, processes, and containers,"
@@ -68,16 +74,17 @@ def get_desc(remote_flag: bool, monitor_flag: bool) -> str:
         "\n- <a href='/docs#/default/monitor_endpoint_monitor_get'>/monitor</a><br>"
     )
     description += "\n\n#### Current State"
+    description += f"\n- **Basic Execution:** {basic_fl}"
     description += f"\n- **Remote Execution:** {remote_fl}"
     description += f"\n- **Monitoring Page:** {monitor_fl}"
     description += "\n\n#### Links"
+    description += "\n- <a href='https://pypi.org/project/PyNinja/'>PyPi</a><br>"
     description += (
-        "\n- <a href='https://pypi.org/project/PyNinja/'>PyPi Repository</a><br>"
+        "\n- <a href='https://github.com/thevickypedia/PyNinja'>GitHub</a><br>"
     )
     description += (
-        "\n- <a href='https://github.com/thevickypedia/PyNinja'>GitHub Homepage</a><br>"
+        "\n- <a href='https://thevickypedia.github.io/PyNinja/'>Runbook</a><br>"
     )
-    description += "\n- <a href='https://thevickypedia.github.io/PyNinja/'>Sphinx Documentation</a><br>"
     return description
 
 
@@ -128,66 +135,70 @@ def start(**kwargs) -> None:
         log_config: Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.
     """
     models.env = squire.load_env(**kwargs)
+    squire.assert_tokens()
     squire.assert_pyudisk()
+    squire.handle_warnings()
     dependencies = [
         Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
         for each_rate_limit in models.env.rate_limit
     ]
-    PyNinjaAPI.routes.extend(routers.get_all_routes(dependencies))
-    arg1, arg2 = False, False
-    # Conditional endpoint based on remote_execution and api_secret
-    if all((models.env.remote_execution, models.env.api_secret)):
+    arg1, arg2, arg3 = False, False, False
+
+    # Conditional endpoints based on 'apikey' value
+    if models.env.apikey:
+        # Redirect to docs page if apikey is set
+        PyNinjaAPI.routes.append(
+            APIRoute(
+                path="/",
+                endpoint=routers.docs_redirect,
+                methods=["GET"],
+                include_in_schema=False,
+            ),
+        )
+        PyNinjaAPI.routes.extend(routers.get_api(dependencies))
+        arg1 = True
+    else:
+        BASE_LOGGER.warning("Basic API functionality disabled")
+
+    # Conditional endpoints based on 'remote_execution' and 'api_secret' values
+    if all((models.env.apikey, models.env.api_secret, models.env.remote_execution)):
         BASE_LOGGER.info(
             "Creating '%s' to handle authentication errors", models.env.database
         )
         models.database = models.Database(models.env.database)
         models.database.create_table("auth_errors", ["host", "block_until"])
-        PyNinjaAPI.routes.extend(
-            [
-                APIRoute(
-                    path="/run-command",
-                    endpoint=fullaccess.run_command,
-                    methods=["POST"],
-                    dependencies=dependencies,
-                ),
-                APIRoute(
-                    path="/list-files",
-                    endpoint=fullaccess.list_files,
-                    methods=["POST"],
-                    dependencies=dependencies,
-                ),
-                APIRoute(
-                    path="/get-file",
-                    endpoint=fullaccess.get_file,
-                    methods=["POST"],
-                    dependencies=dependencies,
-                ),
-                APIRoute(
-                    path="/put-file",
-                    endpoint=fullaccess.put_file,
-                    methods=["POST"],
-                    dependencies=dependencies,
-                ),
-            ]
-        )
-        arg1 = True
+        PyNinjaAPI.routes.extend(routers.post_api(dependencies))
+        arg2 = True
     else:
         BASE_LOGGER.warning("Remote execution disabled")
-    # Conditional endpoint based on monitor_username and monitor_password
+
+    # Conditional endpoints based on 'monitor_username' and 'monitor_password' values
     if all((models.env.monitor_username, models.env.monitor_password)):
-        PyNinjaAPI.routes.extend(get_all_monitor_routes(dependencies))
+        PyNinjaAPI.routes.extend(routers.monitoring_ui(dependencies))
         PyNinjaAPI.add_exception_handler(
             exc_class_or_status_code=exceptions.RedirectException,
             handler=redirect_exception_handler,  # noqa: PyTypeChecker
         )
-        arg2 = True
+        if not models.env.apikey:
+            # Redirect to /monitor page if apikey is not set
+            PyNinjaAPI.routes.append(
+                APIRoute(
+                    path="/",
+                    endpoint=routers.monitor_redirect,
+                    methods=["GET"],
+                    include_in_schema=False,
+                ),
+            )
+        arg3 = True
     else:
         BASE_LOGGER.warning("Monitoring feature disabled")
-    PyNinjaAPI.description = get_desc(arg1, arg2)
+
+    PyNinjaAPI.description = get_desc(arg1, arg2, arg3)
     module_name = pathlib.Path(__file__)
     kwargs = dict(
         host=models.env.ninja_host,
         port=models.env.ninja_port,
+        workers=models.env.workers,
         app=f"{module_name.parent.stem}.{module_name.stem}:{PyNinjaAPI.__name__}",
     )
     if models.env.log_config:

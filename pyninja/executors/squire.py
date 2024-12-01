@@ -7,6 +7,7 @@ import re
 import secrets
 import socket
 import subprocess
+import warnings
 from datetime import timedelta
 from typing import Dict, List
 
@@ -17,6 +18,7 @@ from pydantic import PositiveFloat, PositiveInt
 from pyninja.modules import enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
+# noinspection LongLine
 IP_REGEX = re.compile(
     r"""^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"""  # noqa: E501
 )
@@ -263,6 +265,49 @@ def assert_pyudisk() -> None:
             )
         return
     models.env.udisk_lib = models.env.udisk_lib or PyUdiskConfig().udisk_lib
+
+
+def assert_tokens() -> None:
+    """Ensure at least any of apikey or monitor username and monitor password is set."""
+    if models.env.apikey:
+        return
+    if models.env.monitor_username and models.env.monitor_password:
+        return
+    raise ValueError(
+        "\n\tTo start the API, either an 'apikey' [OR] both 'monitor_username' and 'monitor_password' are required."
+    )
+
+
+def handle_warnings() -> None:
+    """Raises security warnings."""
+
+    class SecurityWarning(Warning):
+        """Custom security warning."""
+
+    try:
+        term_size = os.get_terminal_size().columns
+    except OSError:
+        term_size = 80
+    base = "*" * term_size
+
+    if models.env.no_auth:
+        warnings.warn(
+            f"\n{base}"
+            "\nThe 'no_auth' flag is enabled, allowing access to the '/monitor' page without authentication."
+            "\nThis page may expose sensitive information, including personally identifiable information (PII)."
+            "\nThis setting should only be used in local development or with proxy authentication."
+            f"\n{base}",
+            SecurityWarning,
+        )
+    if all((models.env.remote_execution, models.env.api_secret, models.env.apikey)):
+        warnings.warn(
+            f"\n{base}"
+            "\nThe 'remote_execution' flag is enabled, allowing shell command execution via the API."
+            "\nThis feature poses significant security risks and should be used with caution, along with rate limiting."
+            "\nRepeated authentication failures will result in permanent lockout for the user."
+            f"\n{base}",
+            SecurityWarning,
+        )
 
 
 def comma_separator(list_: list) -> str:

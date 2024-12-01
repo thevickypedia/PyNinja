@@ -58,6 +58,7 @@ pyninja start
 - **APIKEY** - API Key for authentication.
 - **NINJA_HOST** - Hostname for the API server.
 - **NINJA_PORT** - Port number for the API server.
+- **WORKERS** - Number of workers to parallelize app execution.
 - **REMOTE_EXECUTION** - Boolean flag to enable remote execution.
 - **API_SECRET** - Secret access key for running commands on server remotely.
 - **DISK_REPORT** - Boolean flag to enable disk report feature using [PyUdisk].

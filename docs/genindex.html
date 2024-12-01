@@ -107,13 +107,15 @@
 </li>
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints">APIEndpoints (class in pyninja.modules.enums)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.apikey">apikey (pyninja.modules.models.EnvConfig attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.exceptions.APIResponse">APIResponse</a>
 </li>
       <li><a href="index.html#pyninja.executors.squire.assert_pyudisk">assert_pyudisk() (in module pyninja.executors.squire)</a>
+</li>
+      <li><a href="index.html#pyninja.executors.squire.assert_tokens">assert_tokens() (in module pyninja.executors.squire)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.Session.auth_counter">auth_counter (pyninja.modules.models.Session attribute)</a>
 </li>
@@ -213,7 +215,7 @@
 </li>
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.docs">docs (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routers.docs">docs() (in module pyninja.executors.routers)</a>
+      <li><a href="index.html#pyninja.executors.routers.docs_redirect">docs_redirect() (in module pyninja.executors.routers)</a>
 </li>
       <li><a href="index.html#pyninja.modules.enums.Cookies.drive">drive (pyninja.modules.enums.Cookies attribute)</a>
 </li>
@@ -293,9 +295,9 @@
       </ul></li>
       <li><a href="index.html#pyninja.features.dockerized.get_all_images">get_all_images() (in module pyninja.features.dockerized)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routers.get_all_routes">get_all_routes() (in module pyninja.executors.routers)</a>
-</li>
       <li><a href="index.html#pyninja.features.dockerized.get_all_volumes">get_all_volumes() (in module pyninja.features.dockerized)</a>
+</li>
+      <li><a href="index.html#pyninja.executors.routers.get_api">get_api() (in module pyninja.executors.routers)</a>
 </li>
       <li><a href="index.html#pyninja.features.dockerized.get_container_status">get_container_status() (in module pyninja.features.dockerized)</a>
 </li>
@@ -409,12 +411,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.executors.auth.handle_auth_error">handle_auth_error() (in module pyninja.executors.auth)</a>
 </li>
-      <li><a href="index.html#pyninja.modules.enums.APIEndpoints.health">health (pyninja.modules.enums.APIEndpoints attribute)</a>
+      <li><a href="index.html#pyninja.executors.squire.handle_warnings">handle_warnings() (in module pyninja.executors.squire)</a>
 </li>
-      <li><a href="index.html#pyninja.executors.routers.health">health() (in module pyninja.executors.routers)</a>
+      <li><a href="index.html#pyninja.modules.enums.APIEndpoints.health">health (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#pyninja.executors.routers.health">health() (in module pyninja.executors.routers)</a>
+</li>
       <li><a href="index.html#pyninja.modules.secure.hex_decode">hex_decode() (in module pyninja.modules.secure)</a>
 </li>
       <li><a href="index.html#pyninja.modules.secure.hex_encode">hex_encode() (in module pyninja.modules.secure)</a>
@@ -610,9 +614,13 @@
 </li>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.monitor_password">monitor_password (pyninja.modules.models.EnvConfig attribute)</a>
 </li>
+      <li><a href="index.html#pyninja.executors.routers.monitor_redirect">monitor_redirect() (in module pyninja.executors.routers)</a>
+</li>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.monitor_session">monitor_session (pyninja.modules.models.EnvConfig attribute)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.monitor_username">monitor_username (pyninja.modules.models.EnvConfig attribute)</a>
+</li>
+      <li><a href="index.html#pyninja.executors.routers.monitoring_ui">monitoring_ui() (in module pyninja.executors.routers)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -644,9 +652,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.parse_api_secret">parse_api_secret() (pyninja.modules.models.EnvConfig class method)</a>
 </li>
+      <li><a href="index.html#pyninja.modules.models.EnvConfig.parse_apikey">parse_apikey() (pyninja.modules.models.EnvConfig class method)</a>
+</li>
       <li><a href="index.html#pyninja.features.disks.macOS.parse_diskutil_output">parse_diskutil_output() (in module pyninja.features.disks.macOS)</a>
 </li>
       <li><a href="index.html#pyninja.features.disks.macOS.parse_size">parse_size() (in module pyninja.features.disks.macOS)</a>
+</li>
+      <li><a href="index.html#pyninja.executors.routers.post_api">post_api() (in module pyninja.executors.routers)</a>
 </li>
       <li><a href="index.html#pyninja.executors.squire.private_ip_address">private_ip_address() (in module pyninja.executors.squire)</a>
 </li>
@@ -1051,6 +1063,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#pyninja.modules.models.EnvConfig.workers">workers (pyninja.modules.models.EnvConfig attribute)</a>
+</li>
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.ws_system">ws_system (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.WSSession">WSSession (class in pyninja.modules.models)</a>

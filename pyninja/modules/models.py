@@ -24,7 +24,7 @@ if OPERATING_SYSTEM not in (
     exceptions.raise_os_error(OPERATING_SYSTEM)
 
 
-def complexity_checker(secret: str) -> None:
+def complexity_checker(key: str, value: str, min_length: int) -> None:
     """Verifies the strength of a secret.
 
     See Also:
@@ -39,26 +39,30 @@ def complexity_checker(secret: str) -> None:
     Raises:
         AssertionError: When at least 1 of the above conditions fail to match.
     """
+    assert value.strip(), f"{key!r} CANNOT be an empty space!!"
+
     # calculates the length
-    assert len(secret) >= 32, f"Minimum secret length is 32, received {len(secret)}"
+    assert (
+        len(value) >= min_length
+    ), f"Minimum {key!r} length is {min_length}, received {len(value)}"
 
     # searches for digits
-    assert re.search(r"\d", secret), "secret must include an integer"
+    assert re.search(r"\d", value), f"{key!r} must include an integer"
 
     # searches for uppercase
     assert re.search(
-        r"[A-Z]", secret
-    ), "secret must include at least one uppercase letter"
+        r"[A-Z]", value
+    ), f"{key!r} must include at least one uppercase letter"
 
     # searches for lowercase
     assert re.search(
-        r"[a-z]", secret
-    ), "secret must include at least one lowercase letter"
+        r"[a-z]", value
+    ), f"{key!r} must include at least one lowercase letter"
 
     # searches for symbols
     assert re.search(
-        r"[ !#$%&'()*+,-./[\\\]^_`{|}~" + r'"]', secret
-    ), "secret must contain at least one special character"
+        r"[ !@#$%&'()*+,-./[\\\]^_`{|}~" + r'"]', value
+    ), f"{key!r} must contain at least one special character"
 
 
 class ServiceStatus(BaseModel):
@@ -186,12 +190,22 @@ class EnvConfig(BaseSettings):
 
     """
 
-    # todo: make apikey optional but validate if either apikey or (monitor username and password) is available
-    apikey: str
+    # Basic API
+    apikey: str | None = None
     ninja_host: str = socket.gethostbyname("localhost") or "0.0.0.0"
     ninja_port: PositiveInt = 8000
+    workers: PositiveInt = Field(1, le=os.cpu_count())
+
+    # Functional improvements
+    rate_limit: RateLimit | List[RateLimit] = Field(default_factory=list)
+    log_config: Dict[str, Any] | FilePath | None = None
+
+    # Remote exec and fileIO
     remote_execution: bool = False
     api_secret: str | None = None
+    database: str = Field("auth.db", pattern=".*.db$")
+
+    # Monitoring UI
     monitor_username: str | None = None
     monitor_password: str | None = None
     monitor_session: PositiveInt = 3_600
@@ -205,9 +219,25 @@ class EnvConfig(BaseSettings):
     disk_lib: FilePath = get_library(DiskLib)
     service_lib: FilePath = get_library(ServiceLib)
     processor_lib: FilePath = get_library(ProcessorLib)
-    database: str = Field("auth.db", pattern=".*.db$")
-    rate_limit: RateLimit | List[RateLimit] = Field(default_factory=list)
-    log_config: Dict[str, Any] | FilePath | None = None
+
+    # noinspection PyMethodParameters
+    @field_validator("apikey", mode="after")
+    def parse_apikey(cls, value: str | None) -> str | None:
+        """Parse API key to validate complexity.
+
+        Args:
+            value: Takes the user input as an argument.
+
+        Returns:
+            str:
+            Returns the parsed value.
+        """
+        if value:
+            try:
+                complexity_checker("apikey", value, min_length=8)
+            except AssertionError as error:
+                raise ValueError(error.__str__())
+            return value
 
     # noinspection PyMethodParameters
     @field_validator("api_secret", mode="after")
@@ -223,7 +253,7 @@ class EnvConfig(BaseSettings):
         """
         if value:
             try:
-                complexity_checker(value)
+                complexity_checker("api_secret", value, min_length=32)
             except AssertionError as error:
                 raise ValueError(error.__str__())
             return value
