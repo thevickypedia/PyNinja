@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+v1.0.0 (11/30/2024)
+-------------------
+- Includes a new feature to get ``S.M.A.R.T`` disk metrics (for Linux OS)
+- Creates a new column dedicated for disks' usage PIE charts
+- Fully restructured disk usage information which accounts for multiple drives, yet ignoring partitions.
+- Includes general improvements across the app for better performance and code readability.
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v0.1.4...v1.0.0
+
 v0.1.4 (11/08/2024)
 -------------------
 - Includes a new feature to handle IO (list, upload, and download)
