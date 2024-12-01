@@ -130,6 +130,7 @@ async def monitor_endpoint(
                 return await monitor.config.clear_session(
                     request, await monitor.authenticator.session_error(request, error)
                 )
+        # If disk_report was not enabled on the server, the Content-Type header or Cookie for render is not honored
         if not models.env.disk_report:
             render = enums.Cookies.monitor.value
         if not render:
@@ -147,19 +148,12 @@ async def monitor_endpoint(
                 name=enums.Templates.main.value, context=ctx
             )
         elif render == enums.Cookies.drive.value:
-            if models.env.disk_report:
-                LOGGER.info("Rendering disk report!")
-                try:
-                    return await monitor.drive.report(request)
-                except Exception as error:
-                    LOGGER.error(error)
-                    return await monitor.drive.invalidate(
-                        "Failed to generate disk report"
-                    )
-            else:
-                return await monitor.drive.invalidate(
-                    "Disk reporting feature is not enabled in the server!"
-                )
+            LOGGER.info("Rendering disk report!")
+            try:
+                return await monitor.drive.report(request)
+            except Exception as error:
+                LOGGER.error(error)
+                return await monitor.drive.invalidate("Failed to generate disk report")
     return monitor.config.templates.TemplateResponse(
         name=enums.Templates.index.value,
         context={

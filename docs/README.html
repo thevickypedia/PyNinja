@@ -67,6 +67,9 @@
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pyninja
 </pre></div>
 </div>
+<blockquote>
+<div><p>For Linux machines, use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pyninja[extra]</span></code> to include functionalities from <a class="reference external" href="https://github.com/thevickypedia/PyUdisk">PyUdisk</a> (S.M.A.R.T metrics)</p>
+</div></blockquote>
 <p><strong>Initiate - IDE</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyninja</span>
 
@@ -96,6 +99,7 @@
 <li><p><strong>REMOTE_EXECUTION</strong> - Boolean flag to enable remote execution.</p></li>
 <li><p><strong>API_SECRET</strong> - Secret access key for running commands on server remotely.</p></li>
 <li><p><strong>DISK_REPORT</strong> - Boolean flag to enable disk report feature using <a class="reference external" href="https://github.com/thevickypedia/PyUdisk">PyUdisk</a>.</p></li>
+<li><p><strong>UDISK_LIB</strong> - Udisk library for Linux machines to use <a class="reference external" href="https://github.com/thevickypedia/PyUdisk">PyUdisk</a>.</p></li>
 <li><p><strong>MONITOR_USERNAME</strong> - Username to authenticate the monitoring page.</p></li>
 <li><p><strong>MONITOR_PASSWORD</strong> - Password to authenticate the monitoring page.</p></li>
 <li><p><strong>MONITOR_SESSION</strong> - Session timeout for the monitoring page.</p></li>

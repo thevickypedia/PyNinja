@@ -29,6 +29,8 @@ Lightweight OS-agnostic service monitoring API
 python -m pip install pyninja
 ```
 
+> For Linux machines, use `pip install pyninja[extra]` to include functionalities from [PyUdisk] (S.M.A.R.T metrics)
+
 **Initiate - IDE**
 ```python
 import pyninja
@@ -59,6 +61,7 @@ pyninja start
 - **REMOTE_EXECUTION** - Boolean flag to enable remote execution.
 - **API_SECRET** - Secret access key for running commands on server remotely.
 - **DISK_REPORT** - Boolean flag to enable disk report feature using [PyUdisk].
+- **UDISK_LIB** - Udisk library for Linux machines to use [PyUdisk].
 - **MONITOR_USERNAME** - Username to authenticate the monitoring page.
 - **MONITOR_PASSWORD** - Password to authenticate the monitoring page.
 - **MONITOR_SESSION** - Session timeout for the monitoring page.

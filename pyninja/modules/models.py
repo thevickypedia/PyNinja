@@ -186,6 +186,7 @@ class EnvConfig(BaseSettings):
 
     """
 
+    # todo: make apikey optional but validate if either apikey or (monitor username and password) is available
     apikey: str
     ninja_host: str = socket.gethostbyname("localhost") or "0.0.0.0"
     ninja_port: PositiveInt = 8000
