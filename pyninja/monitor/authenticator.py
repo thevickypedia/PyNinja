@@ -113,7 +113,7 @@ async def generate_cookie(auth_payload: dict) -> Dict[str, str | bool | int]:
     encoded_payload = str(auth_payload).encode("ascii")
     client_token = base64.b64encode(encoded_payload).decode("ascii")
     return dict(
-        key=enums.Cookies.session_token,
+        key=enums.Cookies.session_token.value,
         value=client_token,
         samesite="strict",
         path="/",

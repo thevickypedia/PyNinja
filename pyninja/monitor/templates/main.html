@@ -370,7 +370,7 @@
             <!-- CPU Usage will be dynamically added here -->
         </div>
     </div>
-    <!-- Box to display Memory, Swap and Disk usage along with CPU load avg -->
+    <!-- Box to display Memory, Swap (progress bars) and CPU load avg (2D graph) -->
     <div class="box">
         <h3>Memory Usage</h3>
         <div class="progress">
@@ -390,7 +390,7 @@
             <canvas class="graph-canvas" id="loadChart" width="400" height="200"></canvas>
         </div>
     </div>
-    <!-- Box to display Memory, Swap and Disk usage as Pie charts -->
+    <!-- Box to display Memory, and Swap usage as Pie charts -->
     <div class="box">
         <h3>Memory Usage</h3>
         <h5 id="memoryTotal"></h5>
@@ -405,10 +405,11 @@
         </div>
         {% endif %}
     </div>
+    <!-- Box to display Disks' usage as Pie charts -->
     <div class="box">
         <h3>Disk Usage</h3>
         <div id="diskChartsContainer">
-            <!-- Charts will be dynamically appended here -->
+            <!-- Charts will be dynamically appended here based on # of disks -->
         </div>
     </div>
 </div>
@@ -465,9 +466,11 @@
             return 0;
         };
 
+        // Instantiate all charts' instances at the top-level
         let memoryChartInstance = null;
         let swapChartInstance = null;
         let loadChartInstance = null;
+        let diskChartInstances = {};  // Disk chart should be an object since it is generated dynamically
 
         ws.onmessage = function (event) {
             let data;
@@ -669,6 +672,7 @@
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: true,
                         plugins: {
                             tooltip: {
                                 callbacks: {
@@ -719,7 +723,6 @@
 
             // Disk Chart
             const diskInfoList = data.disk_info;
-            const diskChartInstances = {};
             const container = document.getElementById("diskChartsContainer");
             // Iterate over the list of disk info
             diskInfoList.forEach((diskInfo, index) => {

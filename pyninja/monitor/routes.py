@@ -48,7 +48,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
         HTMLResponse:
         Redirects to login page.
     """
-    session_token = request.cookies.get(enums.Cookies.session_token)
+    session_token = request.cookies.get(enums.Cookies.session_token.value)
     try:
         await monitor.authenticator.validate_session(request.client.host, session_token)
     except exceptions.SessionError as error:
@@ -131,14 +131,14 @@ async def monitor_endpoint(
                     request, await monitor.authenticator.session_error(request, error)
                 )
         if not models.env.disk_report:
-            render = enums.Cookies.monitor
+            render = enums.Cookies.monitor.value
         if not render:
             # no_auth mode supports render option via query params
             # Example: http://0.0.0.0:8080/monitor?render=drive
             if qparam := request.query_params.get("render"):
                 LOGGER.info("Render value received via query params - '%s'", qparam)
                 render = qparam
-        if render == enums.Cookies.monitor:
+        if render == enums.Cookies.monitor.value:
             ctx = monitor.resources.landing_page()
             ctx["request"] = request
             ctx["version"] = version.__version__
@@ -146,7 +146,7 @@ async def monitor_endpoint(
             return monitor.config.templates.TemplateResponse(
                 name=enums.Templates.main.value, context=ctx
             )
-        elif render == enums.Cookies.drive:
+        elif render == enums.Cookies.drive.value:
             if models.env.disk_report:
                 LOGGER.info("Rendering disk report!")
                 try:
