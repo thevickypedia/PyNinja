@@ -194,7 +194,6 @@ class EnvConfig(BaseSettings):
     apikey: str | None = None
     ninja_host: str = socket.gethostbyname("localhost") or "0.0.0.0"
     ninja_port: PositiveInt = 8000
-    workers: PositiveInt = Field(1, le=os.cpu_count())
 
     # Functional improvements
     rate_limit: RateLimit | List[RateLimit] = Field(default_factory=list)

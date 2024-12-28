@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v1.1.0 (12/28/2024)
+-------------------
+- Includes security improvements
+- No longer requires apikey for hosting a monitoring page
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v1.0.0...v1.1.0
+
 v1.0.0 (11/30/2024)
 -------------------
 - Includes a new feature to get ``S.M.A.R.T`` disk metrics (for Linux OS)

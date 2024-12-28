@@ -134,15 +134,6 @@ def start(**kwargs) -> None:
         rate_limit: List of dictionaries with ``max_requests`` and ``seconds`` to apply as rate limit.
         log_config: Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.
     """
-    # todo: Raise an issue with uvicorn or use a different server to host the API
-    #   Problem:
-    #   1. Setting > 1 worker ignores all the routes since multiprocessing in python will ignore function calls
-    #   2. Unable to declare app within the 'start' function
-    #       WARNING:  You must pass the application as an import string to enable 'reload' or 'workers'.
-    #   3. Worker parameter is ignored when server is initiated from Config
-    #       https://github.com/encode/uvicorn/discussions/2215
-    #   4. FastAPI ignores lifespan function since the app is already initiated and routes can't be added after startup
-    #   5. Overriding `uvicorn.Server` may be a solution but first figure out the above
     models.env = squire.load_env(**kwargs)
     squire.assert_tokens()
     squire.assert_pyudisk()
@@ -207,7 +198,6 @@ def start(**kwargs) -> None:
     kwargs = dict(
         host=models.env.ninja_host,
         port=models.env.ninja_port,
-        # workers=models.env.workers,
         app=f"{module_name.parent.stem}.{module_name.stem}:{PyNinjaAPI.__name__}",
     )
     if models.env.log_config:
