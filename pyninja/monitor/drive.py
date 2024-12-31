@@ -4,7 +4,7 @@ from fastapi.requests import Request
 from fastapi.responses import HTMLResponse
 
 from pyninja import monitor, version
-from pyninja.modules import enums
+from pyninja.modules import enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -16,12 +16,17 @@ async def report(request: Request) -> HTMLResponse:
         HTMLResponse:
         Returns an HTML response with the disk report.
     """
-    from pyudisk.config import EnvConfig
-    from pyudisk.main import monitor_disk
+    import pyudisk
 
-    data = [disk.model_dump() for disk in monitor_disk(EnvConfig())]
+    data = [disk.model_dump() for disk in pyudisk.smart_metrics(pyudisk.EnvConfig())]
+    if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
+        template = enums.Templates.disk_report_linux
+    elif models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
+        template = enums.Templates.disk_report_darwin
+    else:
+        raise
     return monitor.config.templates.TemplateResponse(
-        name=enums.Templates.disk_report.value,
+        name=template.value,
         context=dict(
             logout="/logout",
             request=request,

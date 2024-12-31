@@ -250,10 +250,13 @@ def dynamic_numbers(string: str) -> int | float | None:
 
 def assert_pyudisk() -> None:
     """Ensure disk_report is enabled only for Linux machines and load ``udiskctl`` library."""
-    if models.OPERATING_SYSTEM != enums.OperatingSystem.linux:
+    if models.OPERATING_SYSTEM not in (
+        enums.OperatingSystem.linux,
+        enums.OperatingSystem.darwin,
+    ):
         if models.env.disk_report:
             raise ValueError(
-                "\n\tdisk_report feature can be enabled only on Linux machines!"
+                "\n\tdisk_report feature can be enabled only on Linux and macOS machines!"
             )
         return
     try:
@@ -264,7 +267,7 @@ def assert_pyudisk() -> None:
                 "\n\tPyUdisk has not been installed. Use pip install 'PyNinja[extra]' to view disk report metrics."
             )
         return
-    models.env.udisk_lib = models.env.udisk_lib or PyUdiskConfig().udisk_lib
+    models.env.smart_lib = models.env.smart_lib or PyUdiskConfig().smart_lib
 
 
 def assert_tokens() -> None:
@@ -387,4 +390,48 @@ def convert_seconds(seconds: int, n_elem: int = 2) -> str:
         return time_parts[0]
 
     # Join the time components into a string with commas
+    return comma_separator(time_parts[:n_elem])
+
+
+def convert_hours(hours: float, n_elem: int = 2) -> str:
+    """Convert hours to a human-readable format, focusing on hours, minutes, and seconds.
+
+    Args:
+        hours: Number of hours to convert (can be a float).
+        n_elem: Number of elements (hours, minutes, seconds) required in the output.
+
+    Returns:
+        str:
+        A humanized string representing the time in hours, minutes, and seconds.
+    """
+    if hours == 0:
+        return "0 hours"
+
+    # Calculate the number of whole hours
+    whole_hours = int(hours)
+
+    # Calculate remaining minutes
+    minutes = (hours - whole_hours) * 60
+    whole_minutes = int(minutes)
+
+    # Calculate remaining seconds
+    seconds = (minutes - whole_minutes) * 60
+    whole_seconds = int(seconds)
+
+    time_parts = []
+
+    if whole_hours > 0:
+        time_parts.append(f"{whole_hours} hour{'s' if whole_hours > 1 else ''}")
+    if whole_minutes > 0 or whole_hours > 0:  # Show minutes if there's at least 1 hour
+        time_parts.append(f"{whole_minutes} minute{'s' if whole_minutes > 1 else ''}")
+    if whole_seconds > 0 or (
+        whole_minutes > 0 or whole_hours > 0
+    ):  # Show seconds if any time unit exists
+        time_parts.append(f"{whole_seconds} second{'s' if whole_seconds > 1 else ''}")
+
+    # If only 1 element was requested, return the first element
+    if n_elem == 1:
+        return time_parts[0]
+
+    # Join the components with commas, returning up to the first n_elem parts
     return comma_separator(time_parts[:n_elem])

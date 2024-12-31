@@ -88,5 +88,6 @@ class Templates(StrEnum):
     index: str = "index.html"
     logout: str = "logout.html"
     session: str = "session.html"
-    disk_report: str = "disk_report.html"
     unauthorized: str = "unauthorized.html"
+    disk_report_linux: str = "disk_report_linux.html"
+    disk_report_darwin: str = "disk_report_darwin.html"

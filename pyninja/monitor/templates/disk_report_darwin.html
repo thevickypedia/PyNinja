@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>PyNinja - Disk Monitor</title>
+    <meta property="og:type" content="DiskMonitor">
+    <meta name="keywords" content="Python, Monitor, fastapi, JavaScript, HTML, CSS">
+    <meta name="author" content="Vignesh Rao">
+    <!-- Favicon.ico and Apple Touch Icon -->
+    <link property="og:image" rel="icon" href="https://thevickypedia.github.io/open-source/images/logo/pyninja.ico">
+    <link property="og:image" rel="apple-touch-icon"
+          href="https://thevickypedia.github.io/open-source/images/logo/pyninja.png">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <!-- CSS and JS for night mode -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://thevickypedia.github.io/open-source/nightmode/night.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="https://thevickypedia.github.io/open-source/nightmode/night.css">
+    <style>
+        body {
+            overflow-x: hidden;
+            margin-left: 2%;
+        }
+
+        h2 {
+            font-family: "Courier", Courier, monospace;
+            font-size: 100%;
+        }
+
+        h1 {
+            width: 100%;
+            text-align: center;
+            align-content: center;
+        }
+
+        .docs {
+            position: absolute;
+            top: 7%;
+            right: 230px;
+            border: none;
+            padding: 10px 14px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .redoc {
+            position: absolute;
+            top: 7%;
+            right: 130px;
+            border: none;
+            padding: 10px 14px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .logout {
+            position: absolute;
+            top: 7%;
+            right: 30px;
+            border: none;
+            padding: 10px 14px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        footer {
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            align-content: center;
+            font-size: small;
+        }
+
+        table {
+            max-width: 80%;
+            border: 1px solid black;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-family: "Courier", Courier, monospace;
+            font-size: 100%;
+            min-width: 20%
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .nested-table {
+            margin-left: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .nested-table th, .nested-table td {
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+
+        details {
+            margin-bottom: 20px;
+        }
+
+        summary {
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body translate="no">
+<div class="toggler fa fa-moon-o"></div>
+<button class="docs" onclick="goDocs()"><i class="fa fa-book"></i> Docs</button>
+<button class="redoc" onclick="goReDoc()"><i class="fa fa-file"></i> ReDoc</button>
+<button class="logout" onclick="logOut()"><i class="fa fa-sign-out"></i> Logout</button>
+<h1>PyNinja - Disk Monitor</h1>
+{% for row in data %}
+    <details>
+        <summary>
+            <strong>{{ row.model_name | default(row.id) }}</strong>
+        </summary>
+
+        <div>
+            <h2>Basic Information</h2>
+            <table class="nested-table">
+                <thead>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Model Name</td><td>{{ row.model_name }}</td></tr>
+                    <tr><td>Serial Number</td><td>{{ row.serial_number }}</td></tr>
+                    <tr><td>Firmware Version</td><td>{{ row.firmware_version }}</td></tr>
+                    <tr><td>NVMe PCI Vendor ID</td><td>{{ row.nvme_pci_vendor.id if row.nvme_pci_vendor else 'N/A' }}</td></tr>
+                    <tr><td>NVMe Controller ID</td><td>{{ row.nvme_controller_id }}</td></tr>
+                    <tr><td>NVMe Version</td><td>{{ row.nvme_version.string if row.nvme_version else 'N/A' }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <h2>SMART Status</h2>
+            {% if row.smart_status %}
+                <table class="nested-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Passed</td><td>{{ row.smart_status.passed if row.smart_status.passed is not none else 'N/A' }}</td></tr>
+                        <tr><td>NVMe Value</td><td>{{ row.smart_status.nvme.value if row.smart_status.nvme else 'N/A' }}</td></tr>
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No SMART status available.</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <h2>SMART Health Information</h2>
+            {% if row.nvme_smart_health_information_log %}
+                <table class="nested-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Critical Warning</td><td>{{ row.nvme_smart_health_information_log.critical_warning if row.nvme_smart_health_information_log.critical_warning is not none else 'N/A' }}</td></tr>
+                        <tr><td>Temperature</td><td>{{ row.nvme_smart_health_information_log.temperature if row.nvme_smart_health_information_log.temperature is not none else 'N/A' }}</td></tr>
+                        <tr><td>Available Spare</td><td>{{ row.nvme_smart_health_information_log.available_spare if row.nvme_smart_health_information_log.available_spare is not none else 'N/A' }}</td></tr>
+                        <tr><td>Percentage Used</td><td>{{ row.nvme_smart_health_information_log.percentage_used if row.nvme_smart_health_information_log.percentage_used is not none else 'N/A' }}</td></tr>
+                        <tr><td>Data Units Read</td><td>{{ row.nvme_smart_health_information_log.data_units_read if row.nvme_smart_health_information_log.data_units_read is not none else 'N/A' }}</td></tr>
+                        <tr><td>Data Units Written</td><td>{{ row.nvme_smart_health_information_log.data_units_written if row.nvme_smart_health_information_log.data_units_written is not none else 'N/A' }}</td></tr>
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No SMART health information available.</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <h2>Usage</h2>
+            {% if row.usage %}
+                <table class="nested-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Total</td><td>{{ row.usage.Total }}</td></tr>
+                        <tr><td>Used</td><td>{{ row.usage.Used }}</td></tr>
+                        <tr><td>Free</td><td>{{ row.usage.Free }}</td></tr>
+                        <tr><td>Percent Used</td><td>{{ row.usage.Percent }}%</td></tr>
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No usage information available.</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <h2>Temperature</h2>
+            {% if row.temperature %}
+                <table class="nested-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Current Temperature</td><td>{{ row.temperature.current if row.temperature.current is not none else 'N/A' }}°C</td></tr>
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No temperature information available.</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <h2>Power On Time</h2>
+            {% if row.power_on_time %}
+                <table class="nested-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Power On Time (hours)</td><td>{{ row.power_on_time.hours if row.power_on_time.hours is not none else 'N/A' }}</td></tr>
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No power on time information available.</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <h2>SMARTCTL</h2>
+            {% if row.smartctl %}
+                <table class="nested-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Version</td><td>{{ row.smartctl.version if row.smartctl.version else 'N/A' }}</td></tr>
+                        <tr><td>Platform Info</td><td>{{ row.smartctl.platform_info if row.smartctl.platform_info else 'N/A' }}</td></tr>
+                        <tr><td>Messages</td><td>{{ row.smartctl.messages | join(', ') if row.smartctl.messages else 'N/A' }}</td></tr>
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No SMARTCTL information available.</p>
+            {% endif %}
+        </div>
+
+    </details>
+{% endfor %}
+<script>
+    setInterval(() => {
+        window.location.reload()
+    }, interval);
+
+    function logOut() {
+        window.location.href = window.location.origin + "{{ logout }}";
+    }
+
+    function goDocs() {
+        window.location.href = window.location.origin + "/docs";
+    }
+
+    function goReDoc() {
+        window.location.href = window.location.origin + "/redoc";
+    }
+</script>
+<footer>
+    <div class="footer">
+        PyNinja - {{ version }}<br>
+        <a href="https://github.com/thevickypedia/PyNinja">https://github.com/thevickypedia/PyNinja</a>
+    </div>
+</footer>
+</body>
+</html>

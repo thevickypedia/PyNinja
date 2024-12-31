@@ -208,6 +208,62 @@ async def get_system_metrics() -> Dict[str, dict]:
     )
 
 
+def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
+    """Retrieves OS-agnostic PyUdisk metrics.
+
+    Returns:
+        Dict[str, Any]:
+        Returns a dictionary of retrieved values.
+    """
+    from pyudisk import EnvConfig, smart_metrics, util
+
+    rendered = {}
+    for disk in smart_metrics(EnvConfig(smart_lib=models.env.smart_lib)):
+        if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
+            info = disk.Info
+            attributes = disk.Attributes
+            partition = disk.Partition
+            if disk.Usage:
+                rendered["usage"] = disk.Usage.model_dump()
+            if info:
+                rendered["model"] = info.Model
+            if partition:
+                rendered["mountpoint"] = partition.MountPoints
+            if attributes:
+                rendered["temperature"] = (
+                    f"{util.kelvin_to_fahrenheit(attributes.SmartTemperature)} °F"
+                    + " / "
+                    + f"{util.kelvin_to_celsius(attributes.SmartTemperature)} °C"
+                )
+                rendered["uptime"] = squire.convert_seconds(
+                    attributes.SmartPowerOnSeconds
+                )
+                rendered["bad_sectors"] = attributes.SmartNumBadSectors
+                rendered["test_status"] = attributes.SmartSelftestStatus
+                rendered["updated"] = round(time.time() - disk.Attributes.SmartUpdated)
+        if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
+            rendered["model"] = disk.model_name
+            rendered["mountpoint"] = [
+                partition.mountpoint
+                for partition in psutil.disk_partitions()
+                if not partition.mountpoint.startswith("/System/Volumes")
+            ]
+            if disk.usage:
+                rendered["usage"] = disk.usage.model_dump()
+            if disk.temperature and disk.temperature.current:
+                rendered["temperature"] = (
+                    f"{util.celsius_to_fahrenheit(disk.temperature.current)} °F"
+                    + " / "
+                    + f"{disk.temperature.current} °C"
+                )
+            if disk.power_on_time and disk.power_on_time.hours:
+                rendered["uptime"] = squire.convert_hours(disk.power_on_time.hours)
+            if disk.smart_status and disk.smart_status.passed:
+                rendered["test_status"] = "PASSED"
+            rendered["updated"] = round(time.time() - disk.local_time.time_t) or 60
+        yield rendered
+
+
 @cache.timed_cache(60)
 def pyudisk_metrics() -> Dict[str, str | List[dict]]:
     """Retrieves metrics from PyUdisk library.
@@ -220,46 +276,24 @@ def pyudisk_metrics() -> Dict[str, str | List[dict]]:
         List[Dict[str, int | str | float]]:
         List of required metrics as a dictionary of key-value pairs.
     """
-    from pyudisk import EnvConfig, smart_metrics, util
-
     pyudisk_stats = []
-    disk = None
-    for disk in smart_metrics(EnvConfig(udisk_lib=models.env.udisk_lib)):
-        info = disk.Info
-        attributes = disk.Attributes
-        usage = disk.Usage.model_dump() if disk.Usage else {}
-        partition = disk.Partition
+    metric = None
+    for metric in get_os_agnostic_metrics():
         pyudisk_stats.append(
             {
                 **{
-                    "Model": info.Model if info else "N/A",
-                    "Mountpoint": str(partition.MountPoints) if partition else "N/A",
-                    "Temperature": (
-                        (
-                            f"{util.kelvin_to_fahrenheit(attributes.SmartTemperature)} °F"
-                            + " / "
-                            + f"{util.kelvin_to_celsius(attributes.SmartTemperature)} °C"
-                        )
-                        if attributes
-                        else "N/A"
-                    ),
-                    "Bad Sectors": (
-                        attributes.SmartNumBadSectors if attributes else "N/A"
-                    ),
-                    "Test Status": (
-                        attributes.SmartSelftestStatus if attributes else "N/A"
-                    ),
-                    "Uptime": (
-                        squire.convert_seconds(attributes.SmartPowerOnSeconds)
-                        if attributes
-                        else "N/A"
-                    ),
+                    "Model": metric.get("model", "N/A"),
+                    "Mountpoint": metric.get("mountpoint", "N/A"),
+                    "Temperature": metric.get("temperature", "N/A"),
+                    "Bad Sectors": metric.get("bad_sectors", "N/A"),
+                    "Test Status": metric.get("test_status", "N/A"),
+                    "Uptime": metric.get("uptime", "N/A"),
                 },
-                **usage,
+                **metric.get("usage", {}),
             }
         )
     # Smart metrics are gathered at certain system intervals - so no need to get this attr from all the drives
-    updated = round(time.time() - disk.Attributes.SmartUpdated)
+    updated = metric.get("updated", 0)
     return {
         "pyudisk_updated": (
             f"{squire.convert_seconds(updated, 1)} ago"
@@ -297,7 +331,10 @@ async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
     service_stats = await service_stats_task
     process_stats = await process_stats_task
     cpu_usage = await cpu_usage_task
-    if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
+    if models.OPERATING_SYSTEM in (
+        enums.OperatingSystem.linux,
+        enums.OperatingSystem.darwin,
+    ):
         try:
             system_metrics.update(pyudisk_metrics())
         except ModuleNotFoundError:
