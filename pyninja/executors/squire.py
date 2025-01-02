@@ -11,6 +11,7 @@ import warnings
 from datetime import timedelta
 from typing import Dict, List
 
+import pyarchitecture.gpu
 import requests
 import yaml
 from pydantic import PositiveFloat, PositiveInt
@@ -217,6 +218,23 @@ def load_env(**kwargs) -> models.EnvConfig:
         file_env = {}
     merged_env = {**file_env, **kwargs}
     return models.EnvConfig(**merged_env)
+
+
+def load_architecture(env: models.EnvConfig) -> models.Architecture:
+    """Load architecture details from environment variables.
+
+    Args:
+        env: Environment variables.
+
+    Returns:
+        Architecture:
+        Returns a reference to the ``Architecture`` object.
+    """
+    return models.Architecture(
+        gpu=pyarchitecture.gpu.get_gpu_info(env.gpu_lib),
+        cpu=pyarchitecture.cpu.get_cpu_info(env.processor_lib),
+        disks=pyarchitecture.disks.get_all_disks(env.disk_lib),
+    )
 
 
 def keygen() -> str:

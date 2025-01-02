@@ -76,6 +76,18 @@ class ServiceStatus(BaseModel):
     description: str
 
 
+class Architecture(BaseModel):
+    """Object to store the architecture of the system.
+
+    >>> Architecture
+
+    """
+
+    cpu: str = Field(default_factory=str)
+    gpu: List[Dict[str, str]] = Field(default_factory=list)
+    disks: List[Dict[str, str]] = Field(default_factory=list)
+
+
 class Session(BaseModel):
     """Object to store session information.
 
@@ -316,3 +328,4 @@ session = Session()
 # Loaded in main:start()
 env: EnvConfig = EnvConfig  # noqa: PyTypeChecker
 database: Database = Database  # noqa: PyTypeChecker
+architecture: Architecture = Architecture  # noqa: PyTypeChecker

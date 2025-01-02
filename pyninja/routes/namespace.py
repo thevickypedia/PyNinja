@@ -7,8 +7,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
 from pyninja.executors import auth
-from pyninja.features import cpu, operations, process, service
-from pyninja.modules import exceptions
+from pyninja.features import operations, process, service
+from pyninja.modules import exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 BASIC_AUTH = HTTPBasic()
@@ -153,9 +153,9 @@ async def get_processor_name(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_1(request, apikey)
-    if processor_info := cpu.get_name():
+    if models.architecture.cpu:
         raise exceptions.APIResponse(
-            status_code=HTTPStatus.OK.real, detail=processor_info
+            status_code=HTTPStatus.OK.real, detail=models.architecture.cpu
         )
     raise exceptions.APIResponse(
         status_code=HTTPStatus.NOT_FOUND.real,

@@ -7,8 +7,7 @@ from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 
 from pyninja.executors import auth, squire
-from pyninja.features import disks
-from pyninja.modules import exceptions
+from pyninja.modules import exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 BASIC_AUTH = HTTPBasic()
@@ -143,5 +142,5 @@ async def get_all_disks(
     await auth.level_1(request, apikey)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.OK.real,
-        detail=disks.get_all_disks(),
+        detail=models.architecture.disks,
     )

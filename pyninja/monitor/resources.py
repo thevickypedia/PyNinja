@@ -14,7 +14,7 @@ from typing import Any, Dict, List
 import psutil
 
 from pyninja.executors import squire
-from pyninja.features import cpu, disks, gpu, operations
+from pyninja.features import operations
 from pyninja.modules import cache, enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -37,14 +37,12 @@ def landing_page() -> Dict[str, Any]:
             timedelta(seconds=time.time() - psutil.boot_time())
         ),
     }
-    if processor_name := cpu.get_name():
-        LOGGER.debug("Processor: %s", processor_name)
-        sys_info_basic["CPU"] = processor_name
-    if gpu_names := gpu.get_names():
-        LOGGER.debug(gpu_names)
-        sys_info_basic["GPU"] = ", ".join(
-            [gpu_info.get("model") for gpu_info in gpu_names]
-        )
+    if models.architecture.cpu:
+        LOGGER.debug("Processor: %s", models.architecture.cpu)
+        sys_info_basic["CPU"] = models.architecture.cpu
+    if gpus := models.architecture.gpu:
+        LOGGER.debug(gpus)
+        sys_info_basic["GPU"] = ", ".join([gpu_info.get("model") for gpu_info in gpus])
 
     sys_info_basic["Memory"] = squire.size_converter(psutil.virtual_memory().total)
     if swap := psutil.swap_memory().total:
@@ -57,7 +55,7 @@ def landing_page() -> Dict[str, Any]:
         logout="/logout",
         sys_info_basic=sys_info_basic,
         sys_info_network=sys_info_network,
-        sys_info_disks=disks.get_all_disks(),
+        sys_info_disks=models.architecture.disks,
     )
 
 
@@ -68,16 +66,16 @@ def get_disk_info() -> Generator[Dict[str, str | int]]:
         Dict[str, str | int]:
         Yields a dictionary of key-value pairs with ID, name, and usage.
     """
-    all_disks = disks.get_all_disks()
+    all_disks = models.architecture.disks
     for disk in all_disks:
         disk_usage: Dict[str, str | int] = {
-            "name": disk.get("Name"),
-            "id": disk.get("DeviceID"),
+            "name": disk.get("name"),
+            "id": disk.get("device_id"),
         }
         disk_usage_totals = {"total": 0, "used": 0, "free": 0}
-        if not disk.get("Mountpoints") or disk.get("Mountpoints") == "Not Mounted":
+        if not disk.get("mountpoints") or disk.get("mountpoints") == "Not Mounted":
             continue
-        mountpoints = disk.get("Mountpoints", "").split(", ")
+        mountpoints = disk.get("mountpoints", "").split(", ")
         for mountpoint in mountpoints:
             part_usage = shutil.disk_usage(mountpoint)
             for key in disk_usage_totals:

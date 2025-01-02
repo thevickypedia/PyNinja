@@ -135,6 +135,7 @@ def start(**kwargs) -> None:
         log_config: Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.
     """
     models.env = squire.load_env(**kwargs)
+    models.architecture = squire.load_architecture(models.env)
     squire.assert_tokens()
     squire.assert_pyudisk()
     squire.handle_warnings()
