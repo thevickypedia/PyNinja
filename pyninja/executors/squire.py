@@ -5,6 +5,7 @@ import os
 import pathlib
 import re
 import secrets
+import shutil
 import socket
 import subprocess
 import warnings
@@ -411,45 +412,40 @@ def convert_seconds(seconds: int, n_elem: int = 2) -> str:
     return comma_separator(time_parts[:n_elem])
 
 
-def convert_hours(hours: float, n_elem: int = 2) -> str:
-    """Convert hours to a human-readable format, focusing on hours, minutes, and seconds.
+def humanize_usage_metrics(**kwargs) -> Dict[str, str]:
+    """Convert the usage metrics into human-readable format."""
+    percent = round((kwargs["used"] / kwargs["total"]) * 100, 2)
+    return {
+        "Total": size_converter(kwargs["total"]),
+        "Used": size_converter(kwargs["used"]),
+        "Free": size_converter(kwargs["free"]),
+        "Percent": format_nos(percent),
+    }
+
+
+def total_mountpoints_usage(
+    mountpoints: List[str], as_bytes: bool = False
+) -> Dict[str, int | str]:
+    """Sums up the bytes used on all the mountpoint locations.
 
     Args:
-        hours: Number of hours to convert (can be a float).
-        n_elem: Number of elements (hours, minutes, seconds) required in the output.
+        mountpoints: List of mountpoints.
+        as_bytes: Boolean flag to return the dict as bytes.
 
     Returns:
-        str:
-        A humanized string representing the time in hours, minutes, and seconds.
+        Dict[str, int | str]:
+        Returns the usage dictionary as key-value pairs.
     """
-    if hours == 0:
-        return "0 hours"
-
-    # Calculate the number of whole hours
-    whole_hours = int(hours)
-
-    # Calculate remaining minutes
-    minutes = (hours - whole_hours) * 60
-    whole_minutes = int(minutes)
-
-    # Calculate remaining seconds
-    seconds = (minutes - whole_minutes) * 60
-    whole_seconds = int(seconds)
-
-    time_parts = []
-
-    if whole_hours > 0:
-        time_parts.append(f"{whole_hours} hour{'s' if whole_hours > 1 else ''}")
-    if whole_minutes > 0 or whole_hours > 0:  # Show minutes if there's at least 1 hour
-        time_parts.append(f"{whole_minutes} minute{'s' if whole_minutes > 1 else ''}")
-    if whole_seconds > 0 or (
-        whole_minutes > 0 or whole_hours > 0
-    ):  # Show seconds if any time unit exists
-        time_parts.append(f"{whole_seconds} second{'s' if whole_seconds > 1 else ''}")
-
-    # If only 1 element was requested, return the first element
-    if n_elem == 1:
-        return time_parts[0]
-
-    # Join the components with commas, returning up to the first n_elem parts
-    return comma_separator(time_parts[:n_elem])
+    usage_dict = {"total": 0, "used": 0, "free": 0}
+    for mountpoint in mountpoints:
+        if os.path.exists(mountpoint):
+            part_usage = shutil.disk_usage(mountpoint)
+            for key in usage_dict:
+                usage_dict[key] += getattr(part_usage, key)
+        else:
+            # Theoretically the path for each mountpoint should exist at least as a symlink
+            # Since os.path.exists will work for symlinks, this should catch if there are any discrepancies
+            LOGGER.warning("%s doesn't exist!", mountpoint)
+    if as_bytes:
+        return usage_dict
+    return humanize_usage_metrics(**usage_dict)

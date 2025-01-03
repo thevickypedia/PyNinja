@@ -4,7 +4,6 @@ import logging
 import os
 import platform
 import re
-import shutil
 import subprocess
 import time
 from collections.abc import Generator
@@ -66,21 +65,16 @@ def get_disk_info() -> Generator[Dict[str, str | int]]:
         Dict[str, str | int]:
         Yields a dictionary of key-value pairs with ID, name, and usage.
     """
-    all_disks = models.architecture.disks
-    for disk in all_disks:
+    for disk in models.architecture.disks:
         disk_usage: Dict[str, str | int] = {
             "name": disk.get("name"),
             "id": disk.get("device_id"),
         }
-        disk_usage_totals = {"total": 0, "used": 0, "free": 0}
-        if not disk.get("mountpoints") or disk.get("mountpoints") == "Not Mounted":
+        if not disk.get("mountpoints"):
             continue
-        mountpoints = disk.get("mountpoints", "").split(", ")
-        for mountpoint in mountpoints:
-            part_usage = shutil.disk_usage(mountpoint)
-            for key in disk_usage_totals:
-                disk_usage_totals[key] += getattr(part_usage, key)
-        disk_usage.update(disk_usage_totals)
+        disk_usage.update(
+            squire.total_mountpoints_usage(disk["mountpoints"], as_bytes=True)
+        )
         yield disk_usage
 
 
@@ -209,9 +203,9 @@ async def get_system_metrics() -> Dict[str, dict]:
 def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
     """Retrieves OS-agnostic PyUdisk metrics.
 
-    Returns:
+    Yields:
         Dict[str, Any]:
-        Returns a dictionary of retrieved values.
+        Yields a dictionary of retrieved values.
     """
     from pyudisk import EnvConfig, smart_metrics, util
 
@@ -220,13 +214,12 @@ def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
         if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
             info = disk.Info
             attributes = disk.Attributes
-            partition = disk.Partition
-            if disk.Usage:
-                rendered["usage"] = disk.Usage.model_dump()
             if info:
                 rendered["model"] = info.Model
-            if partition:
-                rendered["mountpoint"] = partition.MountPoints
+            if disk.Partition:
+                rendered["mountpoint"] = [
+                    partition.MountPoints for partition in disk.Partition
+                ]
             if attributes:
                 rendered["temperature"] = (
                     f"{util.kelvin_to_fahrenheit(attributes.SmartTemperature)} °F"
@@ -238,16 +231,10 @@ def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
                 )
                 rendered["bad_sectors"] = attributes.SmartNumBadSectors
                 rendered["test_status"] = attributes.SmartSelftestStatus
-                rendered["updated"] = round(time.time() - disk.Attributes.SmartUpdated)
+                rendered["updated"] = disk.Attributes.SmartUpdated
         if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
-            rendered["model"] = disk.model_name
-            rendered["mountpoint"] = [
-                partition.mountpoint
-                for partition in psutil.disk_partitions()
-                if not partition.mountpoint.startswith("/System/Volumes")
-            ]
-            if disk.usage:
-                rendered["usage"] = disk.usage.model_dump()
+            rendered["model"] = disk.model_name or disk.device.name
+            rendered["mountpoint"] = disk.mountpoints
             if disk.temperature and disk.temperature.current:
                 rendered["temperature"] = (
                     f"{util.celsius_to_fahrenheit(disk.temperature.current)} °F"
@@ -255,15 +242,22 @@ def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
                     + f"{disk.temperature.current} °C"
                 )
             if disk.power_on_time and disk.power_on_time.hours:
-                rendered["uptime"] = squire.convert_hours(disk.power_on_time.hours)
+                rendered["uptime"] = squire.convert_seconds(
+                    disk.power_on_time.hours * 3_600
+                )
             if disk.smart_status and disk.smart_status.passed:
                 rendered["test_status"] = "PASSED"
-            rendered["updated"] = round(time.time() - disk.local_time.time_t) or 60
+            rendered["updated"] = disk.local_time.time_t
+        # Commonly retrieved for both OS based on the mountpoint location
+        if rendered["mountpoint"]:
+            rendered["usage"] = squire.total_mountpoints_usage(rendered["mountpoint"])
         yield rendered
+        # Clear the dict to avoid values being re-used
+        rendered.clear()
 
 
 @cache.timed_cache(60)
-def pyudisk_metrics() -> Dict[str, str | List[dict]]:
+def pyudisk_metrics() -> Dict[str, str | List[dict] | int]:
     """Retrieves metrics from PyUdisk library.
 
     See Also:
@@ -275,8 +269,9 @@ def pyudisk_metrics() -> Dict[str, str | List[dict]]:
         List of required metrics as a dictionary of key-value pairs.
     """
     pyudisk_stats = []
-    metric = None
+    updated = 0
     for metric in get_os_agnostic_metrics():
+        updated = metric.get("updated", 60)
         pyudisk_stats.append(
             {
                 **{
@@ -291,13 +286,8 @@ def pyudisk_metrics() -> Dict[str, str | List[dict]]:
             }
         )
     # Smart metrics are gathered at certain system intervals - so no need to get this attr from all the drives
-    updated = metric.get("updated", 0)
     return {
-        "pyudisk_updated": (
-            f"{squire.convert_seconds(updated, 1)} ago"
-            if updated >= 100
-            else f"{updated} seconds ago"
-        ),
+        "updated": updated,
         "pyudisk_stats": pyudisk_stats,
     }
 
@@ -334,7 +324,14 @@ async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
         enums.OperatingSystem.darwin,
     ):
         try:
-            system_metrics.update(pyudisk_metrics())
+            metrics = pyudisk_metrics()
+            updated = round(time.time() - metrics["updated"])
+            metrics["pyudisk_updated"] = (
+                f"{squire.convert_seconds(updated, 1)} ago"
+                if updated >= 100
+                else f"{updated} seconds ago"
+            )
+            system_metrics.update(metrics)
         except ModuleNotFoundError:
             # Expected if module is not installed
             pass

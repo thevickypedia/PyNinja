@@ -97,21 +97,6 @@ Models
 
 ====
 
-.. autoclass:: pyninja.modules.models.DiskLib(BaseModel)
-   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
-
-====
-
-.. autoclass:: pyninja.modules.models.ServiceLib(BaseModel)
-   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
-
-====
-
-.. autoclass:: pyninja.modules.models.ProcessorLib(BaseModel)
-   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
-
-====
-
 .. autoclass:: pyninja.modules.models.Session(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
@@ -128,7 +113,7 @@ Models
 ====
 
 .. automodule:: pyninja.modules.models
-   :exclude-members: Payload, ServiceStatus, DiskLib, ServiceLib, ProcessorLib, EnvConfig, Session, RateLimit, env, database
+   :exclude-members: Payload, ServiceStatus, EnvConfig, Session, RateLimit, env, database
 
 Payloads
 --------

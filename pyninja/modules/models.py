@@ -5,8 +5,9 @@ import re
 import socket
 import sqlite3
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Dict, List, Set, Tuple, Type
+from typing import Any, Callable, Dict, List, Set, Tuple
 
+from pyarchitecture.config import default_cpu_lib, default_disk_lib, default_gpu_lib
 from pydantic import BaseModel, Field, FilePath, PositiveInt, field_validator
 from pydantic_settings import BaseSettings
 
@@ -85,7 +86,7 @@ class Architecture(BaseModel):
 
     cpu: str = Field(default_factory=str)
     gpu: List[Dict[str, str]] = Field(default_factory=list)
-    disks: List[Dict[str, str]] = Field(default_factory=list)
+    disks: List[Dict[str, Any]] = Field(default_factory=list)
 
 
 class Session(BaseModel):
@@ -103,63 +104,7 @@ class Session(BaseModel):
     allowed_origins: Set[str] = Field(default_factory=set)
 
 
-class RateLimit(BaseModel):
-    """Object to store the rate limit settings.
-
-    >>> RateLimit
-
-    """
-
-    max_requests: PositiveInt
-    seconds: PositiveInt
-
-
-class ServiceLib(BaseModel):
-    """Default service library dedicated to each supported operating system.
-
-    >>> ServiceLib
-
-    """
-
-    linux: FilePath = "/usr/bin/systemctl"
-    darwin: FilePath = "/bin/launchctl"
-    windows: FilePath = "C:\\Windows\\System32\\sc.exe"
-
-
-class ProcessorLib(BaseModel):
-    """Default processor library dedicated to each supported operating system.
-
-    >>> ProcessorLib
-
-    """
-
-    linux: FilePath = "/proc/cpuinfo"
-    darwin: FilePath = "/usr/sbin/sysctl"
-    windows: FilePath = "C:\\Windows\\System32\\wbem\\wmic.exe"
-
-
-class DiskLib(BaseModel):
-    """Default disks library dedicated to each supported operating system.
-
-    >>> DiskLib
-
-    """
-
-    linux: FilePath = "/usr/bin/lsblk"
-    darwin: FilePath = "/usr/sbin/diskutil"
-    windows: FilePath = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
-
-
-class GPULib(BaseModel):
-    """Default GPU library dedicated to each supported operating system.
-
-    >>> GPULib
-
-    """
-
-    linux: FilePath = "/usr/bin/lspci"
-    darwin: FilePath = "/usr/sbin/system_profiler"
-    windows: FilePath = "C:\\Windows\\System32\\wbem\\wmic.exe"
+session = Session()
 
 
 class WSSession(BaseModel):
@@ -176,20 +121,43 @@ class WSSession(BaseModel):
 ws_session = WSSession()
 
 
-def get_library(
-    library: Type[ServiceLib] | Type[ProcessorLib] | Type[DiskLib] | Type[GPULib],
-) -> FilePath:
-    """Get service/processor/disk library filepath for the host operating system.
+class RateLimit(BaseModel):
+    """Object to store the rate limit settings.
 
-    Args:
-        library: Library class inherited from BaseModel.
+    >>> RateLimit
+
+    """
+
+    max_requests: PositiveInt
+    seconds: PositiveInt
+
+
+def default_service_lib() -> FilePath:
+    """Get default service library filepath for the host operating system.
 
     Returns:
         FilePath:
         Returns the ``FilePath`` referencing the appropriate library.
     """
+    return dict(
+        linux="/usr/bin/systemctl",
+        darwin="/bin/launchctl",
+        windows="C:\\Windows\\System32\\sc.exe",
+    )
+
+
+def retrieve_library_path(func: Callable) -> FilePath:
+    """Retrieves the library path from the mapping created for each operating system.
+
+    Args:
+        func: Function to call to get the mapping.
+
+    Returns:
+        FilePath:
+        Returns the library path as a ``FilePath`` object.
+    """
     try:
-        return FilePath(library().model_dump()[OPERATING_SYSTEM])
+        return FilePath(func()[OPERATING_SYSTEM])
     except KeyError:
         # This shouldn't happen programmatically, but just in case
         exceptions.raise_os_error(OPERATING_SYSTEM)
@@ -226,10 +194,10 @@ class EnvConfig(BaseSettings):
     no_auth: bool = False
     processes: List[str] = Field(default_factory=list)
     services: List[str] = Field(default_factory=list)
-    gpu_lib: FilePath = get_library(GPULib)
-    disk_lib: FilePath = get_library(DiskLib)
-    service_lib: FilePath = get_library(ServiceLib)
-    processor_lib: FilePath = get_library(ProcessorLib)
+    gpu_lib: FilePath = retrieve_library_path(default_gpu_lib)
+    disk_lib: FilePath = retrieve_library_path(default_disk_lib)
+    service_lib: FilePath = retrieve_library_path(default_service_lib)
+    processor_lib: FilePath = retrieve_library_path(default_cpu_lib)
 
     # noinspection PyMethodParameters
     @field_validator("apikey", mode="after")
@@ -322,8 +290,6 @@ class Database:
                 f"CREATE TABLE IF NOT EXISTS {table_name} ({', '.join(columns)})"
             )
 
-
-session = Session()
 
 # Loaded in main:start()
 env: EnvConfig = EnvConfig  # noqa: PyTypeChecker

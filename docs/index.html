@@ -985,21 +985,27 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.squire.convert_hours">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">convert_hours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hours</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.executors.squire.convert_hours" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert hours to a human-readable format, focusing on hours, minutes, and seconds.</p>
+<dt class="sig sig-object py" id="pyninja.executors.squire.humanize_usage_metrics">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">humanize_usage_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.executors.squire.humanize_usage_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the usage metrics into human-readable format.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.executors.squire.total_mountpoints_usage">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">total_mountpoints_usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mountpoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.executors.squire.total_mountpoints_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sums up the bytes used on all the mountpoint locations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>hours</strong> – Number of hours to convert (can be a float).</p></li>
-<li><p><strong>n_elem</strong> – Number of elements (hours, minutes, seconds) required in the output.</p></li>
+<li><p><strong>mountpoints</strong> – List of mountpoints.</p></li>
+<li><p><strong>as_bytes</strong> – Boolean flag to return the dict as bytes.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A humanized string representing the time in hours, minutes, and seconds.</p>
+<dd class="field-even"><p>Returns the usage dictionary as key-value pairs.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>Dict[str, int | str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1722,81 +1728,6 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 
 <hr class="docutils" />
 <dl class="py class">
-<dt class="sig sig-object py" id="pyninja.modules.models.DiskLib">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">DiskLib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.DiskLib" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default disks library dedicated to each supported operating system.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DiskLib</span>
-</pre></div>
-</div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.DiskLib.linux">
-<span class="sig-name descname"><span class="pre">linux</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.DiskLib.linux" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.DiskLib.darwin">
-<span class="sig-name descname"><span class="pre">darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.DiskLib.darwin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.DiskLib.windows">
-<span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.DiskLib.windows" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<hr class="docutils" />
-<dl class="py class">
-<dt class="sig sig-object py" id="pyninja.modules.models.ServiceLib">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">ServiceLib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.ServiceLib" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default service library dedicated to each supported operating system.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ServiceLib</span>
-</pre></div>
-</div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.ServiceLib.linux">
-<span class="sig-name descname"><span class="pre">linux</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.ServiceLib.linux" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.ServiceLib.darwin">
-<span class="sig-name descname"><span class="pre">darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.ServiceLib.darwin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.ServiceLib.windows">
-<span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.ServiceLib.windows" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<hr class="docutils" />
-<dl class="py class">
-<dt class="sig sig-object py" id="pyninja.modules.models.ProcessorLib">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">ProcessorLib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.ProcessorLib" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default processor library dedicated to each supported operating system.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ProcessorLib</span>
-</pre></div>
-</div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.ProcessorLib.linux">
-<span class="sig-name descname"><span class="pre">linux</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.ProcessorLib.linux" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.ProcessorLib.darwin">
-<span class="sig-name descname"><span class="pre">darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.ProcessorLib.darwin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.ProcessorLib.windows">
-<span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.ProcessorLib.windows" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<hr class="docutils" />
-<dl class="py class">
 <dt class="sig sig-object py" id="pyninja.modules.models.Session">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">Session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.Session" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object to store session information.</p>
@@ -2057,7 +1988,7 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyninja.modules.models.Architecture">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">Architecture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.Architecture" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">Architecture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.Architecture" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object to store the architecture of the system.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Architecture</span>
 </pre></div>
@@ -2074,7 +2005,7 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.Architecture.disks">
-<span class="sig-name descname"><span class="pre">disks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.Architecture.disks" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">disks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.Architecture.disks" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -2096,56 +2027,7 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.Architecture.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'cpu':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default_factory=str),</span> <span class="pre">'disks':</span> <span class="pre">FieldInfo(annotation=List[Dict[str,</span> <span class="pre">str]],</span> <span class="pre">required=False,</span> <span class="pre">default_factory=list),</span> <span class="pre">'gpu':</span> <span class="pre">FieldInfo(annotation=List[Dict[str,</span> <span class="pre">str]],</span> <span class="pre">required=False,</span> <span class="pre">default_factory=list)}</span></em><a class="headerlink" href="#pyninja.modules.models.Architecture.model_fields" title="Permalink to this definition">¶</a></dt>
-<dd><p>Metadata about the fields defined on the model,
-mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
-<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pyninja.modules.models.GPULib">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">GPULib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linux</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/usr/bin/lspci'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">darwin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/usr/sbin/system_profiler'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'C:\\Windows\\System32\\wbem\\wmic.exe'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.GPULib" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default GPU library dedicated to each supported operating system.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GPULib</span>
-</pre></div>
-</div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.GPULib.linux">
-<span class="sig-name descname"><span class="pre">linux</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.GPULib.linux" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.GPULib.darwin">
-<span class="sig-name descname"><span class="pre">darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.GPULib.darwin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.GPULib.windows">
-<span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.GPULib.windows" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.GPULib._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pyninja.modules.models.GPULib._abc_impl" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.GPULib.model_computed_fields">
-<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#pyninja.modules.models.GPULib.model_computed_fields" title="Permalink to this definition">¶</a></dt>
-<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.GPULib.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#pyninja.modules.models.GPULib.model_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.GPULib.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'darwin':</span> <span class="pre">FieldInfo(annotation=Path,</span> <span class="pre">required=False,</span> <span class="pre">default='/usr/sbin/system_profiler',</span> <span class="pre">metadata=[PathType(path_type='file')]),</span> <span class="pre">'linux':</span> <span class="pre">FieldInfo(annotation=Path,</span> <span class="pre">required=False,</span> <span class="pre">default='/usr/bin/lspci',</span> <span class="pre">metadata=[PathType(path_type='file')]),</span> <span class="pre">'windows':</span> <span class="pre">FieldInfo(annotation=Path,</span> <span class="pre">required=False,</span> <span class="pre">default='C:\\Windows\\System32\\wbem\\wmic.exe',</span> <span class="pre">metadata=[PathType(path_type='file')])}</span></em><a class="headerlink" href="#pyninja.modules.models.GPULib.model_fields" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'cpu':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default_factory=str),</span> <span class="pre">'disks':</span> <span class="pre">FieldInfo(annotation=List[Dict[str,</span> <span class="pre">Any]],</span> <span class="pre">required=False,</span> <span class="pre">default_factory=list),</span> <span class="pre">'gpu':</span> <span class="pre">FieldInfo(annotation=List[Dict[str,</span> <span class="pre">str]],</span> <span class="pre">required=False,</span> <span class="pre">default_factory=list)}</span></em><a class="headerlink" href="#pyninja.modules.models.Architecture.model_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -2198,15 +2080,29 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.modules.models.get_library">
-<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">get_library</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">library</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.modules.models.ServiceLib" title="pyninja.modules.models.ServiceLib"><span class="pre">ServiceLib</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.modules.models.ProcessorLib" title="pyninja.modules.models.ProcessorLib"><span class="pre">ProcessorLib</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.modules.models.DiskLib" title="pyninja.modules.models.DiskLib"><span class="pre">DiskLib</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.modules.models.GPULib" title="pyninja.modules.models.GPULib"><span class="pre">GPULib</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#pyninja.modules.models.get_library" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get service/processor/disk library filepath for the host operating system.</p>
+<dt class="sig sig-object py" id="pyninja.modules.models.default_service_lib">
+<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">default_service_lib</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#pyninja.modules.models.default_service_lib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get default service library filepath for the host operating system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns the <code class="docutils literal notranslate"><span class="pre">FilePath</span></code> referencing the appropriate library.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>FilePath</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.modules.models.retrieve_library_path">
+<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">retrieve_library_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#pyninja.modules.models.retrieve_library_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the library path from the mapping created for each operating system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>library</strong> – Library class inherited from BaseModel.</p>
+<dd class="field-odd"><p><strong>func</strong> – Function to call to get the mapping.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Returns the <code class="docutils literal notranslate"><span class="pre">FilePath</span></code> referencing the appropriate library.</p>
+<dd class="field-even"><p>Returns the library path as a <code class="docutils literal notranslate"><span class="pre">FilePath</span></code> object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>FilePath</p>
@@ -2681,18 +2577,15 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <span class="sig-prename descclassname"><span class="pre">pyninja.monitor.resources.</span></span><span class="sig-name descname"><span class="pre">get_os_agnostic_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.monitor.resources.get_os_agnostic_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves OS-agnostic PyUdisk metrics.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Returns a dictionary of retrieved values.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dict[str, Any]</p>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Dict[str, Any]</em> – Yields a dictionary of retrieved values.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.monitor.resources.pyudisk_metrics">
-<span class="sig-prename descclassname"><span class="pre">pyninja.monitor.resources.</span></span><span class="sig-name descname"><span class="pre">pyudisk_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.monitor.resources.pyudisk_metrics" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.monitor.resources.</span></span><span class="sig-name descname"><span class="pre">pyudisk_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.monitor.resources.pyudisk_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves metrics from PyUdisk library.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>

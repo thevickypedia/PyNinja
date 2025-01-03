@@ -25,7 +25,6 @@ packages = [
     "pyninja.modules",
     "pyninja.features",
     "pyninja.executors",
-    "pyninja.features.disks",
     "pyninja.monitor.templates"
 ]
 [tool.setuptools.package-data]
@@ -37,10 +36,11 @@ dependencies = { file = ["requirements.txt"] }
 
 [project.optional-dependencies]
 dev = ["sphinx==5.1.1", "pre-commit", "recommonmark", "gitverse"]
+# todo: Change to prod version
 extra = [
     # "windows-only; sys_platform == 'win32'",
-    "PyUdisk>=0.2.0; sys_platform == 'linux'",
-    "PyUdisk>=0.2.0; sys_platform == 'darwin'",
+    "PyUdisk>=1.1.0a0; sys_platform == 'linux'",
+    "PyUdisk>=1.1.0a0; sys_platform == 'darwin'",
 ]
 
 [project.scripts]
