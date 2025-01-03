@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v1.2.0 (01/03/2025)
+-------------------
+- Includes redesigned architecture information retrieval for GPU, CPU, and disks
+- Restructured `PyUdisk` metrics compatible with `macOS`
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v1.1.0...v1.2.0
+
 v1.1.0 (12/28/2024)
 -------------------
 - Includes security improvements
