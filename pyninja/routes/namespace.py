@@ -1,8 +1,8 @@
 import logging
 from http import HTTPStatus
-from typing import List
+from typing import List, Optional
 
-from fastapi import Depends, Request
+from fastapi import Depends, Header, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
@@ -124,6 +124,72 @@ async def get_service_status(
     """
     await auth.level_1(request, apikey)
     response = service.get_service_status(service_name)
+    LOGGER.info(
+        "%s: %d - %s",
+        service_name,
+        response.status_code,
+        response.description,
+    )
+    raise exceptions.APIResponse(
+        status_code=response.status_code, detail=response.description
+    )
+
+
+async def stop_service(
+    request: Request,
+    service_name: str,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    token: Optional[str] = Header(None),
+):
+    """**API function to stop a service.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - service_name: Name of the service to check status.
+        - apikey: API Key to authenticate the request.
+        - token: API secret to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_2(request, apikey, token)
+    response = service.stop_service(service_name)
+    LOGGER.info(
+        "%s: %d - %s",
+        service_name,
+        response.status_code,
+        response.description,
+    )
+    raise exceptions.APIResponse(
+        status_code=response.status_code, detail=response.description
+    )
+
+
+async def start_service(
+    request: Request,
+    service_name: str,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    token: Optional[str] = Header(None),
+):
+    """**API function to start a service.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - service_name: Name of the service to check status.
+        - apikey: API Key to authenticate the request.
+        - token: API secret to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_2(request, apikey, token)
+    response = service.start_service(service_name)
     LOGGER.info(
         "%s: %d - %s",
         service_name,

@@ -88,3 +88,35 @@ def get_all_volumes() -> Dict[str, str] | None:
     except DockerException as error:
         LOGGER.error(error)
         return
+
+
+def stop_container(container_name: str):
+    """Stop a container by name.
+
+    Args:
+        container_name: Name of the container.
+
+    Returns:
+        str:
+        Returns the status of the container.
+    """
+    for container in get_running_containers():
+        if container_name in container.get("Names"):
+            docker.from_env().api.stop(container.get("Id"))
+            return f"Container {container_name} stopped."
+
+
+def start_container(container_name: str):
+    """Start a container by name.
+
+    Args:
+        container_name: Name of the container.
+
+    Returns:
+        str:
+        Returns the status of the container.
+    """
+    for container in get_all_containers():
+        if container_name in container.get("Names"):
+            docker.from_env().api.start(container.get("Id"))
+            return f"Container {container_name} has been started."

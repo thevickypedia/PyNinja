@@ -1,7 +1,8 @@
 import logging
 from http import HTTPStatus
+from typing import Optional
 
-from fastapi import Depends, Request
+from fastapi import Depends, Header, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
 
 from pyninja.executors import auth
@@ -65,6 +66,66 @@ async def get_docker_containers(
     raise exceptions.APIResponse(
         status_code=HTTPStatus.BAD_REQUEST.real,
         detail="Either 'container_name' or 'get_all' or 'get_running' should be set",
+    )
+
+
+async def stop_docker_container(
+    request: Request,
+    container_name: str,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    token: Optional[str] = Header(None),
+):
+    """**API function to stop a docker container.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - container_name: Name of the container to stop.
+        - apikey: API Key to authenticate the request.
+        - token: API secret to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_2(request, apikey, token)
+    if response := dockerized.stop_container(container_name):
+        LOGGER.info(response)
+        raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.NOT_FOUND.real,
+        detail=f"Container {container_name} not found or not running.",
+    )
+
+
+async def start_docker_container(
+    request: Request,
+    container_name: str,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    token: Optional[str] = Header(None),
+):
+    """**API function to start a docker container.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - container_name: Name of the container to start.
+        - apikey: API Key to authenticate the request.
+        - token: API secret to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_2(request, apikey, token)
+    if response := dockerized.start_container(container_name):
+        LOGGER.info(response)
+        raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.NOT_FOUND.real,
+        detail=f"Container {container_name} not found.",
     )
 
 

@@ -106,6 +106,18 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
             dependencies=dependencies,
         ),
         APIRoute(
+            path="/stop-service",
+            endpoint=namespace.stop_service,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path="/start-service",
+            endpoint=namespace.start_service,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
             path="/service-usage",
             endpoint=namespace.get_service_usage,
             methods=["POST"],
@@ -127,6 +139,18 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
             path="/docker-container",
             endpoint=orchestration.get_docker_containers,
             methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path="/stop-docker-container",
+            endpoint=orchestration.stop_docker_container,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path="/start-docker-container",
+            endpoint=orchestration.start_docker_container,
+            methods=["POST"],
             dependencies=dependencies,
         ),
         APIRoute(

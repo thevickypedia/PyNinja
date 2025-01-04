@@ -253,7 +253,12 @@ def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
             rendered["usage"] = squire.total_mountpoints_usage(rendered["mountpoint"])
         else:
             # Usage will be displayed in a table, so this is required
-            rendered["usage"] = {"Total": "N/A", "Used": "N/A", "Free": "N/A", "Percent": "N/A"}
+            rendered["usage"] = {
+                "Total": "N/A",
+                "Used": "N/A",
+                "Free": "N/A",
+                "Percent": "N/A",
+            }
         yield rendered
         # Clear the dict to avoid values being re-used
         rendered.clear()

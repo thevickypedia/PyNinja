@@ -20,6 +20,7 @@ def running(service_name: str) -> models.ServiceStatus:
     return models.ServiceStatus(
         status_code=HTTPStatus.OK.real,
         description=f"{service_name} is running",
+        service_name=service_name,
     )
 
 
@@ -36,6 +37,7 @@ def stopped(service_name: str) -> models.ServiceStatus:
     return models.ServiceStatus(
         status_code=HTTPStatus.NOT_IMPLEMENTED.real,
         description=f"{service_name} has been stopped",
+        service_name=service_name,
     )
 
 
@@ -52,6 +54,7 @@ def unknown(service_name) -> models.ServiceStatus:
     return models.ServiceStatus(
         status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
         description=f"{service_name} - status unknown",
+        service_name=service_name,
     )
 
 
@@ -68,6 +71,7 @@ def unavailable(service_name: str) -> models.ServiceStatus:
     return models.ServiceStatus(
         status_code=HTTPStatus.NOT_FOUND.real,
         description=f"{service_name} - not found",
+        service_name=service_name,
     )
 
 
@@ -95,6 +99,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
                 return models.ServiceStatus(
                     status_code=HTTPStatus.NOT_IMPLEMENTED.real,
                     description=f"{service_name} - {output}",
+                    service_name=service_name,
                 )
         except subprocess.CalledProcessError as error:
             if error.returncode == 3:
@@ -109,7 +114,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
             )
             for line in output.splitlines():
                 if service_name in line:
-                    return running(service_name)
+                    return running(line.split()[-1])
             else:
                 return stopped(service_name)
         except subprocess.CalledProcessError as error:
@@ -131,3 +136,55 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
         except subprocess.CalledProcessError as error:
             LOGGER.error("%d - %s", 404, error)
             return unavailable(service_name)
+
+
+def stop_service(service_name: str):
+    """Stop a service by name.
+
+    Args:
+        service_name: Name of the service.
+
+    Returns:
+        ServiceStatus:
+        Returns an instance of the ServiceStatus object.
+    """
+    service_status = get_service_status(service_name)
+    if service_status.status_code != HTTPStatus.OK.real:
+        return service_status
+    # Update service_name to the one fetched from launchctl (for macOS)
+    service_name = service_status.service_name
+    try:
+        subprocess.check_output(
+            [models.env.service_lib, "stop", service_name],
+            text=True,
+        )
+        return stopped(service_name)
+    except subprocess.CalledProcessError as error:
+        LOGGER.error("%d - %s", 404, error)
+        return unavailable(service_name)
+
+
+def start_service(service_name: str):
+    """Start a service by name.
+
+    Args:
+        service_name: Name of the service.
+
+    Returns:
+        ServiceStatus:
+        Returns an instance of the ServiceStatus object.
+    """
+    service_status = get_service_status(service_name)
+    if service_status.status_code == HTTPStatus.OK.real:
+        return service_status
+    # Update service_name to the one fetched from launchctl (for macOS)
+    service_name = service_status.service_name
+    try:
+        subprocess.check_output(
+            [models.env.service_lib, "start", service_name],
+            text=True,
+        )
+        return stopped(service_name)
+    except subprocess.CalledProcessError as error:
+        LOGGER.error("%d - %s", 404, error)
+        return unavailable(service_name)

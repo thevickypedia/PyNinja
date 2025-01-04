@@ -2,6 +2,7 @@ import os
 import pathlib
 import platform
 import re
+import shutil
 import socket
 import sqlite3
 from concurrent.futures import ThreadPoolExecutor
@@ -75,6 +76,7 @@ class ServiceStatus(BaseModel):
 
     status_code: int
     description: str
+    service_name: str
 
 
 class Architecture(BaseModel):
@@ -140,9 +142,9 @@ def default_service_lib() -> FilePath:
         Returns the ``FilePath`` referencing the appropriate library.
     """
     return dict(
-        linux="/usr/bin/systemctl",
-        darwin="/bin/launchctl",
-        windows="C:\\Windows\\System32\\sc.exe",
+        linux=shutil.which("systemctl") or "/usr/bin/systemctl",
+        darwin=shutil.which("launchctl") or "/bin/launchctl",
+        windows=shutil.which("sc") or "C:\\Windows\\System32\\sc.exe",
     )
 
 
