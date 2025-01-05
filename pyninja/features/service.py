@@ -92,13 +92,31 @@ def get_all_services() -> Generator[Dict[str, str]]:
     if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
         try:
             output = subprocess.check_output(
-                [models.env.service_lib, "list-units", "--output=json"],
+                [
+                    models.env.service_lib,
+                    "list-units",
+                    "--type=service",
+                    "--output=json",
+                ],
                 text=True,
             ).strip()
             service_list = json.loads(output)
             for service in service_list:
-                if service["unit"].endswith(".service"):
-                    yield service
+                cmd = f"{str(models.env.service_lib)} show -p MainPID --value {service['unit']}"
+                pid = subprocess.check_output(cmd, text=True, shell=True).strip()
+                try:
+                    proc = psutil.Process(int(pid))
+                except ValueError:
+                    LOGGER.critical("Invalid PID '%s' for service: %s", pid, service)
+                    continue
+                except psutil.NoSuchProcess:
+                    continue
+                except (psutil.Error, psutil.AccessDenied) as error:
+                    LOGGER.error(error)
+                    continue
+                if usage := process.get_performance(proc, 0):
+                    service.update(usage)
+                yield service
             return
         except subprocess.CalledProcessError as error:
             LOGGER.error("%s", error)

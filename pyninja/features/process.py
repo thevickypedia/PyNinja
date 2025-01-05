@@ -69,7 +69,10 @@ def get_performance(
             for k, v in process.memory_info()._asdict().items()
         }
         threads = process.num_threads()
-        open_files = len(process.open_files())
+        try:
+            open_files = len(process.open_files())
+        except psutil.AccessDenied:
+            open_files = "N/A"
         perf_report = {
             "pid": process.pid.real,
             "pname": process.name(),
