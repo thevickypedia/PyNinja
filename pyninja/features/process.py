@@ -5,6 +5,7 @@ from typing import Dict, List
 import psutil
 from pydantic import PositiveInt
 
+from pyninja.executors import squire
 from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -58,18 +59,26 @@ def get_performance(
         Returns the process metrics as key-value pairs.
     """
     try:
-        cpu = process.cpu_percent(interval=cpu_interval)
+        cpu = (
+            process.cpu_percent(interval=cpu_interval)
+            if cpu_interval
+            else process.cpu_times()._asdict()
+        )
+        memory = {
+            k: squire.size_converter(v)
+            for k, v in process.memory_info()._asdict().items()
+        }
         threads = process.num_threads()
         open_files = len(process.open_files())
         perf_report = {
             "pid": process.pid.real,
             "pname": process.name(),
             "cpu": cpu,
+            "memory": memory,
             "threads": threads,
             "open_files": open_files,
             "zombie": False,
         }
-        LOGGER.info({f"{process.name()} [{process.pid}]": perf_report})
     except psutil.ZombieProcess as warn:
         LOGGER.warning(warn)
         perf_report = {"zombie": True, "process_name": process.name()}

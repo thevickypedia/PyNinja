@@ -6,6 +6,9 @@ from collections.abc import Generator
 from http import HTTPStatus
 from typing import Dict
 
+import psutil
+
+from pyninja.features import process
 from pyninja.modules import enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -116,7 +119,20 @@ def get_all_services() -> Generator[Dict[str, str]]:
                     LOGGER.debug("Unknown service state: %s", line)
                     state = "unknown"
                 if label.startswith("application."):
-                    yield {"PID": pid, "status": state, "label": label}
+                    try:
+                        proc = psutil.Process(int(pid))
+                    except ValueError:
+                        LOGGER.critical("Invalid PID '%s' in line: %s", pid, line)
+                        continue
+                    except psutil.NoSuchProcess:
+                        continue
+                    except psutil.Error as error:
+                        LOGGER.error(error)
+                        continue
+                    response_dict = {"PID": pid, "status": state, "label": label}
+                    if usage := process.get_performance(proc, 0):
+                        response_dict.update(usage)
+                    yield response_dict
             return
         except subprocess.CalledProcessError as error:
             LOGGER.error("%s", error)
@@ -127,31 +143,37 @@ def get_all_services() -> Generator[Dict[str, str]]:
             powershell = shutil.which("pwsh") or shutil.which("powershell")
             # command = f"{models.env.service_lib} query type=service state=all | ConvertTo-Json -Depth 3"
             result = subprocess.run(
-                [powershell, '-Command', '$WarningPreference = "SilentlyContinue"; Get-Service | ConvertTo-Json -Depth 3'],
-                capture_output=True, text=True, check=False
+                [
+                    powershell,
+                    "-Command",
+                    '$WarningPreference = "SilentlyContinue"; Get-Service | ConvertTo-Json -Depth 3',
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
             )
             # output = "\n".join(result.stdout.splitlines()[1:]).strip()
             keys_required = [
-                'CanPauseAndContinue',
-                'CanShutdown',
-                'CanStop',
-                'DisplayName',
+                "CanPauseAndContinue",
+                "CanShutdown",
+                "CanStop",
+                "DisplayName",
                 # 'DependentServices',
-                'MachineName',
-                'ServiceName',
+                "MachineName",
+                "ServiceName",
                 # 'ServicesDependedOn',
-                'StartType',
-                'ServiceHandle',
-                'Status',
-                'ServiceType',
-                'Site',
-                'Container',
-                'UserName',
-                'Description',
-                'DelayedAutoStart',
-                'BinaryPathName',
-                'StartupType',
-                'Name',
+                "StartType",
+                "ServiceHandle",
+                "Status",
+                "ServiceType",
+                "Site",
+                "Container",
+                "UserName",
+                "Description",
+                "DelayedAutoStart",
+                "BinaryPathName",
+                "StartupType",
+                "Name",
                 # 'RequiredServices'
             ]
             output = json.loads(result.stdout)
@@ -176,6 +198,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
         ServiceStatus:
         Returns an instance of the ServiceStatus object.
     """
+    # todo: Once perf_report is updated in 'get_all_services' fn for all 3 OS, do the same for this fn
     if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
         try:
             output = subprocess.check_output(

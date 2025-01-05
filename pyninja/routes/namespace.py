@@ -102,8 +102,10 @@ async def get_process_usage(
                     detail=f"{process_names[0]!r} not found or not running",
                 )
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
-    raise exceptions.APIResponse(status_code=HTTPStatus.NOT_FOUND.real,
-                                detail=f"Process names not found: {', '.join(process_names)}")
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.NOT_FOUND.real,
+        detail=f"Process names not found: {', '.join(process_names)}",
+    )
 
 
 async def get_all_services(
