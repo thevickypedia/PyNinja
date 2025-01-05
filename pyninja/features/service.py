@@ -79,7 +79,7 @@ def unavailable(service_name: str) -> models.ServiceStatus:
 
 
 def get_all_services() -> Generator[Dict[str, str]]:
-    """OS agnostic function to list all the services available and their status.
+    """OS-agnostic function to list all the services available and their status.
 
     Yields:
         Dict[str, str]:
@@ -105,7 +105,18 @@ def get_all_services() -> Generator[Dict[str, str]]:
             output = subprocess.check_output(
                 [models.env.service_lib, "list"], text=True
             )
-            return output.splitlines()
+            for line in output.splitlines()[1:]:
+                pid, status, label = line.split("\t", 2)
+                if status == "0":
+                    state = "running"
+                elif status == "-9":
+                    state = "killed"
+                else:
+                    LOGGER.debug("Unknown service state: %s", line)
+                    state = "unknown"
+                if label.startswith("application."):
+                    yield {"PID": pid, "status": state, "label": label}
+            return
         except subprocess.CalledProcessError as error:
             LOGGER.error("%s", error)
             return

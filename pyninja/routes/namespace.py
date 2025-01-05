@@ -122,7 +122,6 @@ async def get_all_services(
     """
     await auth.level_1(request, apikey)
     if response := list(service.get_all_services()):
-        LOGGER.info("Services retrieved: %d", len(response))
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.INTERNAL_SERVER_ERROR.real,

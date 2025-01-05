@@ -7,7 +7,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from fastapi.security import HTTPBasic, HTTPBearer
 
-from pyninja.modules import exceptions
+from pyninja.modules import enums, exceptions, models
 from pyninja.monitor import routes as ui
 from pyninja.routes import fullaccess, ipaddr, metrics, namespace, orchestration
 
@@ -55,6 +55,12 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
     Returns:
         List[APIRoute]:
         Returns the routes as a list of APIRoute objects.
+    """
+    if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
+        namespace.stop_service.__doc__ += """
+    **Warning:**
+
+        Note that macOS services CANNOT be started remotely, once they're stopped.
     """
     return [
         APIRoute(
