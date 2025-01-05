@@ -8,7 +8,7 @@ from fastapi.routing import APIRoute
 
 from pyninja import version
 from pyninja.executors import routers, squire
-from pyninja.modules import exceptions, models, rate_limit
+from pyninja.modules import enums, exceptions, models, rate_limit
 
 BASE_LOGGER = logging.getLogger("BASE_LOGGER")
 BASE_LOGGER.setLevel(logging.INFO)
@@ -22,7 +22,7 @@ PyNinjaAPI = FastAPI(
 PyNinjaAPI.__name__ = "PyNinjaAPI"
 PyNinjaAPI.routes.append(
     APIRoute(
-        path="/health",
+        path=enums.APIEndpoints.health,
         endpoint=routers.health,
         methods=["GET"],
         include_in_schema=False,
@@ -42,6 +42,7 @@ def get_desc(get_api: bool, post_api: bool, monitoring_ui: bool) -> str:
         str:
         Returns the description as a string.
     """
+    # todo: Remove hard coding and update this programmatically based on available endpoints
     basic_fl, remote_fl, monitor_fl = ("Disabled",) * 3
     if get_api:
         basic_fl = "All basic GET calls have been enabled"
@@ -103,7 +104,7 @@ async def redirect_exception_handler(
     """
     LOGGER.debug("Exception headers: %s", request.headers)
     LOGGER.debug("Exception cookies: %s", request.cookies)
-    if request.url.path == "/login":
+    if request.url.path == enums.APIEndpoints.login:
         response = JSONResponse(
             content={"redirect_url": exception.location}, status_code=200
         )
@@ -150,7 +151,7 @@ def start(**kwargs) -> None:
         # Redirect to docs page if apikey is set
         PyNinjaAPI.routes.append(
             APIRoute(
-                path="/",
+                path=enums.APIEndpoints.root,
                 endpoint=routers.docs_redirect,
                 methods=["GET"],
                 include_in_schema=False,
@@ -184,7 +185,7 @@ def start(**kwargs) -> None:
             # Redirect to /monitor page if apikey is not set
             PyNinjaAPI.routes.append(
                 APIRoute(
-                    path="/",
+                    path=enums.APIEndpoints.root,
                     endpoint=routers.monitor_redirect,
                     methods=["GET"],
                     include_in_schema=False,

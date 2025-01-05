@@ -51,7 +51,7 @@ def landing_page() -> Dict[str, Any]:
         "Public IP address": squire.public_ip_address(),
     }
     return dict(
-        logout="/logout",
+        logout=enums.APIEndpoints.logout,
         sys_info_basic=sys_info_basic,
         sys_info_network=sys_info_network,
         sys_info_disks=models.architecture.disks,

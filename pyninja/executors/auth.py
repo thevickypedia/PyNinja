@@ -36,7 +36,7 @@ async def forbidden(request: Request) -> None:
                 datetime.fromtimestamp(timestamp).strftime("%c"),
             )
             raise exceptions.APIResponse(
-                status_code=HTTPStatus.FORBIDDEN.value,
+                status_code=HTTPStatus.FORBIDDEN.real,
                 detail=f"{request.client.host!r} is not allowed",
             )
 

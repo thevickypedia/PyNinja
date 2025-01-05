@@ -99,6 +99,7 @@ async def get_cpu_load_avg(
 
 async def get_disk_utilization(
     request: Request,
+    path: str = "/",
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**Get disk utilization.**
@@ -118,7 +119,7 @@ async def get_disk_utilization(
         status_code=HTTPStatus.OK.real,
         detail={
             k: squire.size_converter(v)
-            for k, v in shutil.disk_usage("/")._asdict().items()
+            for k, v in shutil.disk_usage(path)._asdict().items()
         },
     )
 

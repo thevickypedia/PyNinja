@@ -28,7 +28,7 @@ async def failed_auth_counter(host) -> None:
     except KeyError:
         models.ws_session.invalid[host] = 1
     if models.ws_session.invalid[host] >= 3:
-        raise exceptions.RedirectException(location="/error")
+        raise exceptions.RedirectException(location=enums.APIEndpoints.error)
 
 
 async def raise_error(host: str) -> NoReturn:
@@ -113,10 +113,10 @@ async def generate_cookie(auth_payload: dict) -> Dict[str, str | bool | int]:
     encoded_payload = str(auth_payload).encode("ascii")
     client_token = base64.b64encode(encoded_payload).decode("ascii")
     return dict(
-        key=enums.Cookies.session_token.value,
+        key=enums.Cookies.session_token,
         value=client_token,
         samesite="strict",
-        path="/",
+        path=enums.APIEndpoints.root,
         httponly=False,  # Set to False explicitly, for WebSocket
         expires=expiration,
     )
@@ -139,7 +139,7 @@ async def session_error(
         name=enums.Templates.session.value,
         context={
             "request": request,
-            "signin": "/login",
+            "signin": enums.APIEndpoints.login,
             "reason": error.detail,
             "version": f"v{version.__version__}",
         },

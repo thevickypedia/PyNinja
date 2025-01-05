@@ -36,11 +36,14 @@ class APIEndpoints(StrEnum):
 
     get_processor: str = "/get-processor"
 
-    service_usage: str = "/service-usage"
-    process_usage: str = "/process-usage"
+    get_all_services: str = "/get-all-services"
+    get_service_status: str = "/get-service-status"
+    get_service_usage: str = "/get-service-usage"
+    stop_service: str = "/stop-service"
+    start_service: str = "/start-service"
 
-    process_status: str = "/process-status"
-    service_status: str = "/service-status"
+    get_process_status: str = "/get-process-status"
+    get_process_usage: str = "/get-process-usage"
 
     monitor: str = "/monitor"
     ws_system: str = "/ws/system"
@@ -50,10 +53,13 @@ class APIEndpoints(StrEnum):
     get_memory: str = "/get-memory"
     get_all_disks: str = "/get-all-disks"
 
-    docker_image: str = "/docker-image"
-    docker_stats: str = "/docker-stats"
-    docker_volume: str = "/docker-volume"
-    docker_container: str = "/docker-container"
+    get_docker_images: str = "/get-docker-images"
+    get_docker_stats: str = "/get-docker-stats"
+    get_docker_volumes: str = "/get-docker-volumes"
+    get_docker_containers: str = "/get-docker-containers"
+
+    stop_docker_container: str = "/stop-docker-container"
+    start_docker_container: str = "/start-docker-container"
 
     get_ip: str = "/get-ip"
     get_cpu: str = "/get-cpu"

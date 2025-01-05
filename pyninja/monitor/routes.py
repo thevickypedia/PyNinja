@@ -31,7 +31,7 @@ async def error_endpoint(request: Request) -> HTMLResponse:
             name=enums.Templates.unauthorized.value,
             context={
                 "request": request,
-                "signin": "/login",
+                "signin": enums.APIEndpoints.login,
                 "version": f"v{version.__version__}",
             },
         ),
@@ -48,7 +48,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
         HTMLResponse:
         Redirects to login page.
     """
-    session_token = request.cookies.get(enums.Cookies.session_token.value)
+    session_token = request.cookies.get(enums.Cookies.session_token)
     try:
         await monitor.authenticator.validate_session(request.client.host, session_token)
     except exceptions.SessionError as error:
@@ -59,7 +59,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
             name=enums.Templates.logout.value,
             context={
                 "request": request,
-                "signin": "/login",
+                "signin": enums.APIEndpoints.login,
                 "detail": "You have been logged out successfully.",
                 "show_login": False,
                 "version": f"v{version.__version__}",
@@ -83,7 +83,7 @@ async def login_endpoint(
     # AJAX calls follow redirect and return the response instead of replacing the URL
     # Solution is to revert to Form, but that won't allow header auth and additional customization done by JavaScript
     response = JSONResponse(
-        content={"redirect_url": "/monitor"},
+        content={"redirect_url": enums.APIEndpoints.monitor},
         status_code=HTTPStatus.OK,
     )
     response.set_cookie(**await monitor.authenticator.generate_cookie(auth_payload))
@@ -132,14 +132,14 @@ async def monitor_endpoint(
                 )
         # If disk_report was not enabled on the server, the Content-Type header or Cookie for render is not honored
         if not models.env.disk_report:
-            render = enums.Cookies.monitor.value
+            render = enums.Cookies.monitor
         if not render:
             # no_auth mode supports render option via query params
             # Example: http://0.0.0.0:8080/monitor?render=drive
             if qparam := request.query_params.get("render"):
                 LOGGER.info("Render value received via query params - '%s'", qparam)
                 render = qparam
-        if render == enums.Cookies.monitor.value:
+        if render == enums.Cookies.monitor:
             ctx = monitor.resources.landing_page()
             ctx["request"] = request
             ctx["version"] = version.__version__
@@ -147,7 +147,7 @@ async def monitor_endpoint(
             return monitor.config.templates.TemplateResponse(
                 name=enums.Templates.main.value, context=ctx
             )
-        elif render == enums.Cookies.drive.value:
+        elif render == enums.Cookies.drive:
             LOGGER.info("Rendering disk report!")
             try:
                 return await monitor.drive.report(request)
@@ -158,7 +158,7 @@ async def monitor_endpoint(
         name=enums.Templates.index.value,
         context={
             "request": request,
-            "signin": "/login",
+            "signin": enums.APIEndpoints.login,
             "version": f"v{version.__version__}",
             "disk_report": models.env.disk_report,
         },

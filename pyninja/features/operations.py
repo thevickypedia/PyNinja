@@ -195,9 +195,12 @@ def get_service_pid_macos(service_name: str) -> Optional[int]:
     """
     try:
         output = subprocess.check_output([models.env.service_lib, "list"], text=True)
-        for line in output.splitlines():
+        for line in output.splitlines()[1:]:
             if service_name in line:
-                return int(line.split()[0])  # Assuming PID is the first column
+                try:
+                    return int(line.split()[0])
+                except ValueError:
+                    return 0
     except subprocess.CalledProcessError as error:
         LOGGER.debug("%s - %s", error.returncode, error.stderr)
 

@@ -29,7 +29,7 @@ class RateLimiter:
         self.seconds = rps.seconds
         self.start_time = time.time()
         self.exception = exceptions.APIResponse(
-            status_code=HTTPStatus.TOO_MANY_REQUESTS.value,
+            status_code=HTTPStatus.TOO_MANY_REQUESTS.real,
             detail=HTTPStatus.TOO_MANY_REQUESTS.phrase,
             # reset headers, which will invalidate auth token
             headers={"Retry-After": str(math.ceil(self.seconds))},

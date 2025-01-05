@@ -23,7 +23,7 @@ async def monitor_redirect() -> RedirectResponse:
         RedirectResponse:
         Redirects the user to ``/monitor`` page.
     """
-    return RedirectResponse("/monitor")
+    return RedirectResponse(enums.APIEndpoints.monitor)
 
 
 async def docs_redirect() -> RedirectResponse:
@@ -33,7 +33,7 @@ async def docs_redirect() -> RedirectResponse:
         RedirectResponse:
         Redirects the user to ``/docs`` page.
     """
-    return RedirectResponse("/docs")
+    return RedirectResponse(enums.APIEndpoints.docs)
 
 
 async def health():
@@ -64,121 +64,97 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
     """
     return [
         APIRoute(
-            path="/get-ip",
+            path=enums.APIEndpoints.get_ip,
             endpoint=ipaddr.get_ip_address,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/get-cpu",
+            path=enums.APIEndpoints.get_cpu,
             endpoint=metrics.get_cpu_utilization,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/get-cpu-load",
+            path=enums.APIEndpoints.get_cpu_load,
             endpoint=metrics.get_cpu_load_avg,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/get-processor",
+            path=enums.APIEndpoints.get_processor,
             endpoint=namespace.get_processor_name,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/get-memory",
+            path=enums.APIEndpoints.get_memory,
             endpoint=metrics.get_memory_utilization,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/get-disk",
+            path=enums.APIEndpoints.get_disk,
             endpoint=metrics.get_disk_utilization,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/get-all-disks",
+            path=enums.APIEndpoints.get_all_disks,
             endpoint=metrics.get_all_disks,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/get-all-services",
+            path=enums.APIEndpoints.get_all_services,
             endpoint=namespace.get_all_services,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/service-status",
+            path=enums.APIEndpoints.get_service_status,
             endpoint=namespace.get_service_status,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/service-usage",
+            path=enums.APIEndpoints.get_service_usage,
             endpoint=namespace.get_service_usage,
-            methods=["POST"],
+            methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/stop-service",
-            endpoint=namespace.stop_service,
-            methods=["POST"],
-            dependencies=dependencies,
-        ),
-        APIRoute(
-            path="/start-service",
-            endpoint=namespace.start_service,
-            methods=["POST"],
-            dependencies=dependencies,
-        ),
-        APIRoute(
-            path="/process-status",
+            path=enums.APIEndpoints.get_process_status,
             endpoint=namespace.get_process_status,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/process-usage",
+            path=enums.APIEndpoints.get_process_usage,
             endpoint=namespace.get_process_usage,
-            methods=["POST"],
+            methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/docker-container",
+            path=enums.APIEndpoints.get_docker_containers,
             endpoint=orchestration.get_docker_containers,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/stop-docker-container",
-            endpoint=orchestration.stop_docker_container,
-            methods=["POST"],
-            dependencies=dependencies,
-        ),
-        APIRoute(
-            path="/start-docker-container",
-            endpoint=orchestration.start_docker_container,
-            methods=["POST"],
-            dependencies=dependencies,
-        ),
-        APIRoute(
-            path="/docker-image",
+            path=enums.APIEndpoints.get_docker_images,
             endpoint=orchestration.get_docker_images,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/docker-volume",
+            path=enums.APIEndpoints.get_docker_volumes,
             endpoint=orchestration.get_docker_volumes,
             methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/docker-stats",
+            path=enums.APIEndpoints.get_docker_stats,
             endpoint=orchestration.get_docker_stats,
             methods=["GET"],
             dependencies=dependencies,
@@ -198,25 +174,49 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
     """
     return [
         APIRoute(
-            path="/run-command",
+            path=enums.APIEndpoints.stop_service,
+            endpoint=namespace.stop_service,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path=enums.APIEndpoints.start_service,
+            endpoint=namespace.start_service,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path=enums.APIEndpoints.stop_docker_container,
+            endpoint=orchestration.stop_docker_container,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path=enums.APIEndpoints.start_docker_container,
+            endpoint=orchestration.start_docker_container,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path=enums.APIEndpoints.run_command,
             endpoint=fullaccess.run_command,
             methods=["POST"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/list-files",
+            path=enums.APIEndpoints.list_files,
             endpoint=fullaccess.list_files,
             methods=["POST"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/get-file",
+            path=enums.APIEndpoints.get_file,
             endpoint=fullaccess.get_file,
             methods=["POST"],
             dependencies=dependencies,
         ),
         APIRoute(
-            path="/put-file",
+            path=enums.APIEndpoints.put_file,
             endpoint=fullaccess.put_file,
             methods=["POST"],
             dependencies=dependencies,
@@ -236,32 +236,34 @@ def monitoring_ui(dependencies: List[Depends]) -> List[APIRoute | APIWebSocketRo
     """
     return [
         APIRoute(
-            path="/login",
+            path=enums.APIEndpoints.login,
             endpoint=ui.login_endpoint,
             methods=["POST"],
             dependencies=dependencies,
             include_in_schema=False,
         ),
         APIRoute(
-            path="/error",
+            path=enums.APIEndpoints.error,
             endpoint=ui.error_endpoint,
             methods=["GET"],
             dependencies=dependencies,
             include_in_schema=False,
         ),
         APIRoute(
-            path="/monitor",
+            path=enums.APIEndpoints.monitor,
             endpoint=ui.monitor_endpoint,
             methods=["GET"],
             dependencies=dependencies,
             include_in_schema=False,
         ),
         APIRoute(
-            path="/logout",
+            path=enums.APIEndpoints.logout,
             endpoint=ui.logout_endpoint,
             methods=["GET"],
             dependencies=dependencies,
             include_in_schema=False,
         ),
-        APIWebSocketRoute(path="/ws/system", endpoint=ui.websocket_endpoint),
+        APIWebSocketRoute(
+            path=enums.APIEndpoints.ws_system, endpoint=ui.websocket_endpoint
+        ),
     ]

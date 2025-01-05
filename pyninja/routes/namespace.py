@@ -1,6 +1,6 @@
 import logging
 from http import HTTPStatus
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import Depends, Header, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
@@ -46,7 +46,7 @@ async def get_process_status(
 
 async def get_service_usage(
     request: Request,
-    service_names: List[str],
+    service_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to monitor a service.**
@@ -54,7 +54,7 @@ async def get_service_usage(
     **Args:**
 
         - request: Reference to the FastAPI request object.
-        - service_names: Name of the service to check status.
+        - process_name: Comma separated list of service names.
         - apikey: API Key to authenticate the request.
 
     **Raises:**
@@ -63,10 +63,11 @@ async def get_service_usage(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_1(request, apikey)
+    service_names = [sname.strip() for sname in service_name.split(",")]
     response = await operations.service_monitor(service_names)
     if len(service_names) == 1:
         response = response[0]
-        if response.get("PID") == 0000:
+        if response.get("PID") == 0000 or response.get("PID") == 0:
             raise exceptions.APIResponse(
                 status_code=HTTPStatus.NOT_FOUND.real,
                 detail=f"{service_names[0]!r} not found or not running",
@@ -76,7 +77,7 @@ async def get_service_usage(
 
 async def get_process_usage(
     request: Request,
-    process_names: List[str],
+    process_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**API function to monitor a process.**
@@ -84,7 +85,7 @@ async def get_process_usage(
     **Args:**
 
         - request: Reference to the FastAPI request object.
-        - process_names: Name of the service to check status.
+        - process_name: Comma separated list of process names.
         - apikey: API Key to authenticate the request.
 
     **Raises:**
@@ -93,10 +94,11 @@ async def get_process_usage(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_1(request, apikey)
+    process_names = [pname.strip() for pname in process_name.split(",")]
     if response := await operations.process_monitor(process_names):
         if len(process_names) == 1:
             response = response[0]
-            if response.get("PID") == 0000:
+            if response.get("PID") == 0000 or response.get("PID") == 0:
                 raise exceptions.APIResponse(
                     status_code=HTTPStatus.NOT_FOUND.real,
                     detail=f"{process_names[0]!r} not found or not running",

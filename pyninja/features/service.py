@@ -223,9 +223,12 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
             output = subprocess.check_output(
                 [models.env.service_lib, "list"], text=True
             )
-            for line in output.splitlines():
+            for line in output.splitlines()[1:]:
                 if service_name in line:
-                    return running(line.split()[-1])
+                    try:
+                        return running(line.split()[-1])
+                    except ValueError:
+                        return unknown(service_name)
             else:
                 return stopped(service_name)
         except subprocess.CalledProcessError as error:

@@ -28,7 +28,7 @@ async def report(request: Request) -> HTMLResponse:
     return monitor.config.templates.TemplateResponse(
         name=template.value,
         context=dict(
-            logout="/logout",
+            logout=enums.APIEndpoints.logout,
             request=request,
             data=data,
             version=f"v{version.__version__}",
