@@ -38,8 +38,8 @@ dependencies = { file = ["requirements.txt"] }
 dev = ["sphinx==5.1.1", "pre-commit", "recommonmark", "gitverse"]
 extra = [
     # "windows-only; sys_platform == 'win32'",
-    "PyUdisk>=1.1.0; sys_platform == 'linux'",
-    "PyUdisk>=1.1.0; sys_platform == 'darwin'",
+    "PyUdisk>=2.0.1; sys_platform == 'linux'",
+    "PyUdisk>=2.0.1; sys_platform == 'darwin'",
 ]
 
 [project.scripts]

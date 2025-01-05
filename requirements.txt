@@ -3,7 +3,7 @@ docker==7.1.*
 fastapi==0.112.*
 Jinja2==3.1.*
 psutil==6.0.*
-PyArchitecture>=0.2.1
+PyArchitecture>=0.3.0
 pydantic==2.*
 pydantic-settings==2.*
 python-multipart>=0.0.19

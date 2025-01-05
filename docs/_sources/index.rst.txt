@@ -84,6 +84,7 @@ Cache
 Enums
 -----
 .. automodule:: pyninja.modules.enums
+   :exclude-members: StrEnum
 
 Exceptions
 ----------
@@ -97,7 +98,17 @@ Models
 
 ====
 
+.. autoclass:: pyninja.modules.models.Architecture(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
 .. autoclass:: pyninja.modules.models.Session(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
+.. autoclass:: pyninja.modules.models.WSSession(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 ====
@@ -113,7 +124,7 @@ Models
 ====
 
 .. automodule:: pyninja.modules.models
-   :exclude-members: Payload, ServiceStatus, EnvConfig, Session, RateLimit, env, database
+   :exclude-members: ServiceStatus, Architecture, Session, WSSession, RateLimit, EnvConfig, session, ws_session, env, database, architecture
 
 Payloads
 --------

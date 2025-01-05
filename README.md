@@ -143,7 +143,7 @@ Licensed under the [MIT License][license]
 [3.10]: https://docs.python.org/3/whatsnew/3.10.html
 [3.11]: https://docs.python.org/3/whatsnew/3.11.html
 [virtual environment]: https://docs.python.org/3/tutorial/venv.html
-[release-notes]: https://github.com/thevickypedia/PyNinja/blob/master/release_notes.rst
+[release-notes]: https://github.com/thevickypedia/PyNinja/blob/main/release_notes.rst
 [gha_pages]: https://github.com/thevickypedia/PyNinja/actions/workflows/pages/pages-build-deployment
 [gha_pypi]: https://github.com/thevickypedia/PyNinja/actions/workflows/python-publish.yaml
 [gha_md_valid]: https://github.com/thevickypedia/PyNinja/actions/workflows/markdown.yaml
@@ -154,7 +154,7 @@ Licensed under the [MIT License][license]
 [pypi]: https://pypi.org/project/PyNinja
 [pypi-files]: https://pypi.org/project/PyNinja/#files
 [pypi-repo]: https://packaging.python.org/tutorials/packaging-projects/
-[license]: https://github.com/thevickypedia/PyNinja/blob/master/LICENSE
+[license]: https://github.com/thevickypedia/PyNinja/blob/main/LICENSE
 [runbook]: https://thevickypedia.github.io/PyNinja/
 [samples]: https://github.com/thevickypedia/PyNinja/tree/main/samples
 [PyUdisk]: https://github.com/thevickypedia/PyUdisk
