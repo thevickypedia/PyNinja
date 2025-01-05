@@ -104,6 +104,32 @@ async def get_process_usage(
     raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
 
 
+async def get_all_services(
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """**API function to get a list of all the services.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_1(request, apikey)
+    if response := list(service.get_all_services()):
+        LOGGER.info("Services retrieved: %d", len(response))
+        raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.INTERNAL_SERVER_ERROR.real,
+        detail="Failed to retrieve service list",
+    )
+
+
 async def get_service_status(
     request: Request,
     service_name: str,

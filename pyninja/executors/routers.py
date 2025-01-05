@@ -100,6 +100,12 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
             dependencies=dependencies,
         ),
         APIRoute(
+            path="/get-all-services",
+            endpoint=namespace.get_all_services,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
             path="/service-status",
             endpoint=namespace.get_service_status,
             methods=["GET"],

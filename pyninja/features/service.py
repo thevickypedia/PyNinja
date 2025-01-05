@@ -1,6 +1,9 @@
+import json
 import logging
 import subprocess
+from collections.abc import Generator
 from http import HTTPStatus
+from typing import Dict
 
 from pyninja.modules import enums, models
 
@@ -73,6 +76,49 @@ def unavailable(service_name: str) -> models.ServiceStatus:
         description=f"{service_name} - not found",
         service_name=service_name,
     )
+
+
+def get_all_services() -> Generator[Dict[str, str]]:
+    """OS agnostic function to list all the services available and their status.
+
+    Yields:
+        Dict[str, str]:
+        Yields all the services as key-value pairs.
+    """
+    if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
+        try:
+            output = subprocess.check_output(
+                [models.env.service_lib, "list-units", "--output=json"],
+                text=True,
+            ).strip()
+            service_list = json.loads(output)
+            for service in service_list:
+                if service["unit"].endswith(".service"):
+                    yield service
+            return
+        except subprocess.CalledProcessError as error:
+            LOGGER.error("%s", error)
+            return
+
+    if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
+        try:
+            output = subprocess.check_output(
+                [models.env.service_lib, "list"], text=True
+            )
+            return output.splitlines()
+        except subprocess.CalledProcessError as error:
+            LOGGER.error("%s", error)
+            return
+
+    if models.OPERATING_SYSTEM == enums.OperatingSystem.windows:
+        try:
+            output = subprocess.check_output(
+                [models.env.service_lib, "query"],
+                text=True,
+            )
+        except subprocess.CalledProcessError as error:
+            LOGGER.error("%s", error)
+            return
 
 
 def get_service_status(service_name: str) -> models.ServiceStatus:

@@ -93,9 +93,12 @@ async def stop_docker_container(
     if response := dockerized.stop_container(container_name):
         LOGGER.info(response)
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
+    running = [
+        container.get("Names") for container in dockerized.get_running_containers()
+    ]
     raise exceptions.APIResponse(
         status_code=HTTPStatus.NOT_FOUND.real,
-        detail=f"Container {container_name} not found or not running.",
+        detail=f"Container {container_name} not found or not running.\nRunning: {running}",
     )
 
 
@@ -123,9 +126,12 @@ async def start_docker_container(
     if response := dockerized.start_container(container_name):
         LOGGER.info(response)
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
+    available = [
+        container.get("Names") for container in dockerized.get_all_containers()
+    ]
     raise exceptions.APIResponse(
         status_code=HTTPStatus.NOT_FOUND.real,
-        detail=f"Container {container_name} not found.",
+        detail=f"Container {container_name} not found.\nAvailable: {available}",
     )
 
 
