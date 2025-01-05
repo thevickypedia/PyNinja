@@ -153,7 +153,7 @@ async def get_service_status(
     """
     await auth.level_1(request, apikey)
     response = service.get_service_status(service_name)
-    LOGGER.info(
+    LOGGER.debug(
         "%s: %d - %s",
         service_name,
         response.status_code,

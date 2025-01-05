@@ -118,6 +118,12 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
             dependencies=dependencies,
         ),
         APIRoute(
+            path="/service-usage",
+            endpoint=namespace.get_service_usage,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
             path="/stop-service",
             endpoint=namespace.stop_service,
             methods=["POST"],
@@ -126,12 +132,6 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
         APIRoute(
             path="/start-service",
             endpoint=namespace.start_service,
-            methods=["POST"],
-            dependencies=dependencies,
-        ),
-        APIRoute(
-            path="/service-usage",
-            endpoint=namespace.get_service_usage,
             methods=["POST"],
             dependencies=dependencies,
         ),

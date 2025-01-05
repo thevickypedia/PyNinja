@@ -82,6 +82,28 @@ def unavailable(service_name: str) -> models.ServiceStatus:
     )
 
 
+def get_process_object(pid: str, service: str) -> psutil.Process | None:
+    """Creates a process object using the service PID.
+
+    Args:
+        pid: Process ID as a string.
+        service: Name of the service.
+
+    Returns:
+        psutil.Process:
+        Returns a reference to the psutil.Process object.
+    """
+    try:
+        return psutil.Process(int(pid))
+    except ValueError:
+        LOGGER.critical("Invalid PID '%s' for service: %s", pid, service)
+        return
+    except psutil.NoSuchProcess:
+        return
+    except (psutil.Error, psutil.AccessDenied) as error:
+        LOGGER.error(error)
+
+
 def get_all_services() -> Generator[Dict[str, str]]:
     """OS-agnostic function to list all the services available and their status.
 
@@ -104,15 +126,8 @@ def get_all_services() -> Generator[Dict[str, str]]:
             for service in service_list:
                 cmd = f"{str(models.env.service_lib)} show -p MainPID --value {service['unit']}"
                 pid = subprocess.check_output(cmd, text=True, shell=True).strip()
-                try:
-                    proc = psutil.Process(int(pid))
-                except ValueError:
-                    LOGGER.critical("Invalid PID '%s' for service: %s", pid, service)
-                    continue
-                except psutil.NoSuchProcess:
-                    continue
-                except (psutil.Error, psutil.AccessDenied) as error:
-                    LOGGER.error(error)
+                proc = get_process_object(pid, service)
+                if not proc:
                     continue
                 if usage := process.get_performance(proc, 0):
                     service.update(usage)
@@ -137,15 +152,8 @@ def get_all_services() -> Generator[Dict[str, str]]:
                     LOGGER.debug("Unknown service state: %s", line)
                     state = "unknown"
                 if label.startswith("application."):
-                    try:
-                        proc = psutil.Process(int(pid))
-                    except ValueError:
-                        LOGGER.critical("Invalid PID '%s' in line: %s", pid, line)
-                        continue
-                    except psutil.NoSuchProcess:
-                        continue
-                    except psutil.Error as error:
-                        LOGGER.error(error)
+                    proc = get_process_object(pid, line)
+                    if not proc:
                         continue
                     response_dict = {"PID": pid, "status": state, "label": label}
                     if usage := process.get_performance(proc, 0):
@@ -157,23 +165,19 @@ def get_all_services() -> Generator[Dict[str, str]]:
             return
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.windows:
-        pwsh = 'Get-CimInstance -ClassName Win32_Service | Where-Object { $_.ProcessId } | Select-Object Name, DisplayName, ProcessId, StartMode, State, Status, ExitCode, PathName | ConvertTo-Json'
+        pwsh = "Get-CimInstance -ClassName Win32_Service | Where-Object { $_.ProcessId } | Select-Object Name, DisplayName, ProcessId, StartMode, State, Status, ExitCode, PathName | ConvertTo-Json"  # noqa: E501
         try:
             powershell = shutil.which("pwsh") or shutil.which("powershell")
             result = subprocess.run(
-                [powershell, '-Command', pwsh],
-                capture_output=True, text=True, check=False
+                [powershell, "-Command", pwsh],
+                capture_output=True,
+                text=True,
+                check=False,
             )
             for service in json.loads(result.stdout):
-                try:
-                    proc = psutil.Process(int(service.get("ProcessId")))
-                except ValueError:
-                    LOGGER.critical("Invalid PID '%s' for service: %s", pid, service)
-                    continue
-                except psutil.NoSuchProcess:
-                    continue
-                except (psutil.Error, psutil.AccessDenied) as error:
-                    LOGGER.error(error)
+                pid = service.get("ProcessId")
+                proc = get_process_object(pid, service)
+                if not proc:
                     continue
                 if usage := process.get_performance(proc, 0):
                     service.update(usage)
@@ -192,7 +196,6 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
         ServiceStatus:
         Returns an instance of the ServiceStatus object.
     """
-    # todo: Once perf_report is updated in 'get_all_services' fn for all 3 OS, do the same for this fn
     if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
         try:
             output = subprocess.check_output(
