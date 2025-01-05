@@ -93,15 +93,17 @@ async def get_process_usage(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_1(request, apikey)
-    response = await operations.process_monitor(process_names)
-    if len(process_names) == 1:
-        response = response[0]
-        if response.get("PID") == 0000:
-            raise exceptions.APIResponse(
-                status_code=HTTPStatus.NOT_FOUND.real,
-                detail=f"{process_names[0]!r} not found or not running",
-            )
-    raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
+    if response := await operations.process_monitor(process_names):
+        if len(process_names) == 1:
+            response = response[0]
+            if response.get("PID") == 0000:
+                raise exceptions.APIResponse(
+                    status_code=HTTPStatus.NOT_FOUND.real,
+                    detail=f"{process_names[0]!r} not found or not running",
+                )
+        raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
+    raise exceptions.APIResponse(status_code=HTTPStatus.NOT_FOUND.real,
+                                detail=f"Process names not found: {', '.join(process_names)}")
 
 
 async def get_all_services(

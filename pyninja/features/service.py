@@ -1,5 +1,6 @@
 import json
 import logging
+import shutil
 import subprocess
 from collections.abc import Generator
 from http import HTTPStatus
@@ -123,10 +124,43 @@ def get_all_services() -> Generator[Dict[str, str]]:
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.windows:
         try:
-            output = subprocess.check_output(
-                [models.env.service_lib, "query"],
-                text=True,
+            powershell = shutil.which("pwsh") or shutil.which("powershell")
+            # command = f"{models.env.service_lib} query type=service state=all | ConvertTo-Json -Depth 3"
+            result = subprocess.run(
+                [powershell, '-Command', '$WarningPreference = "SilentlyContinue"; Get-Service | ConvertTo-Json -Depth 3'],
+                capture_output=True, text=True, check=False
             )
+            # output = "\n".join(result.stdout.splitlines()[1:]).strip()
+            keys_required = [
+                'CanPauseAndContinue',
+                'CanShutdown',
+                'CanStop',
+                'DisplayName',
+                # 'DependentServices',
+                'MachineName',
+                'ServiceName',
+                # 'ServicesDependedOn',
+                'StartType',
+                'ServiceHandle',
+                'Status',
+                'ServiceType',
+                'Site',
+                'Container',
+                'UserName',
+                'Description',
+                'DelayedAutoStart',
+                'BinaryPathName',
+                'StartupType',
+                'Name',
+                # 'RequiredServices'
+            ]
+            output = json.loads(result.stdout)
+            for service in output:
+                service_info = {}
+                for key, value in service.items():
+                    if key in keys_required:
+                        service_info[key] = value
+                yield service_info
         except subprocess.CalledProcessError as error:
             LOGGER.error("%s", error)
             return
