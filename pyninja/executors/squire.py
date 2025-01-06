@@ -12,7 +12,7 @@ import warnings
 from datetime import timedelta
 from typing import Dict, List
 
-import pyarchitecture.gpu
+import pyarchitecture
 import requests
 import yaml
 from pydantic import PositiveFloat, PositiveInt

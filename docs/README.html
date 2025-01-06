@@ -92,28 +92,39 @@
 <summary><strong>Sourcing environment variables from an env file</strong></summary><blockquote>
 <div><p><em>By default, <code class="docutils literal notranslate"><span class="pre">PyNinja</span></code> will look for a <code class="docutils literal notranslate"><span class="pre">.env</span></code> file in the current working directory.</em></p>
 </div></blockquote>
-</details><ul class="simple">
+</details><p><strong>Basic API</strong></p>
+<ul class="simple">
 <li><p><strong>APIKEY</strong> - API Key for authentication.</p></li>
+<li><p><strong>SWAGGER_UI_PARAMETERS</strong> - Dictionary of parameters to be included in the Swagger UI.</p></li>
 <li><p><strong>NINJA_HOST</strong> - Hostname for the API server.</p></li>
 <li><p><strong>NINJA_PORT</strong> - Port number for the API server.</p></li>
+</ul>
+<p><strong>Functional improvements</strong></p>
+<ul class="simple">
+<li><p><strong>RATE_LIMIT</strong> - List of dictionaries with <code class="docutils literal notranslate"><span class="pre">max_requests</span></code> and <code class="docutils literal notranslate"><span class="pre">seconds</span></code> to apply as rate limit.</p></li>
+<li><p><strong>LOG_CONFIG</strong> - Logging configuration file path.</p></li>
+</ul>
+<p><strong>Remote execution and FileIO</strong></p>
+<ul class="simple">
 <li><p><strong>REMOTE_EXECUTION</strong> - Boolean flag to enable remote execution.</p></li>
 <li><p><strong>API_SECRET</strong> - Secret access key for running commands on server remotely.</p></li>
-<li><p><strong>DISK_REPORT</strong> - Boolean flag to enable disk report feature using <a class="reference external" href="https://github.com/thevickypedia/PyUdisk">PyUdisk</a>.</p></li>
-<li><p><strong>UDISK_LIB</strong> - Udisk library for Linux machines to use <a class="reference external" href="https://github.com/thevickypedia/PyUdisk">PyUdisk</a>.</p></li>
+<li><p><strong>DATABASE</strong> - FilePath to store the auth database that handles the authentication errors.</p></li>
+</ul>
+<p><strong>Monitoring UI</strong></p>
+<ul class="simple">
 <li><p><strong>MONITOR_USERNAME</strong> - Username to authenticate the monitoring page.</p></li>
 <li><p><strong>MONITOR_PASSWORD</strong> - Password to authenticate the monitoring page.</p></li>
 <li><p><strong>MONITOR_SESSION</strong> - Session timeout for the monitoring page.</p></li>
-<li><p><strong>NO_AUTH</strong> - Boolean flag to host monitoring page without authentication.</p></li>
+<li><p><strong>DISK_REPORT</strong> - Boolean flag to enable disk report feature using <a class="reference external" href="https://github.com/thevickypedia/PyUdisk">PyUdisk</a>.</p></li>
 <li><p><strong>MAX_CONNECTIONS</strong> - Maximum number of monitoring sessions allowed in parallel.</p></li>
+<li><p><strong>NO_AUTH</strong> - Boolean flag to host monitoring page without authentication.</p></li>
 <li><p><strong>PROCESSES</strong> - List of process names to include in the monitor page.</p></li>
 <li><p><strong>SERVICES</strong> - List of service names to include in the monitor page.</p></li>
+<li><p><strong>SMART_LIB</strong> - Library path for S.M.A.R.T metrics using <a class="reference external" href="https://github.com/thevickypedia/PyUdisk">PyUdisk</a>.</p></li>
 <li><p><strong>GPU_LIB</strong> - GPU library filepath to use for monitoring.</p></li>
 <li><p><strong>DISK_LIB</strong> - Disk library filepath to use for monitoring.</p></li>
 <li><p><strong>SERVICE_LIB</strong> - Memory library filepath to use for monitoring.</p></li>
 <li><p><strong>PROCESSOR_LIB</strong> - Processor library filepath to use for monitoring.</p></li>
-<li><p><strong>DATABASE</strong> - FilePath to store the auth database that handles the authentication errors.</p></li>
-<li><p><strong>RATE_LIMIT</strong> - List of dictionaries with <code class="docutils literal notranslate"><span class="pre">max_requests</span></code> and <code class="docutils literal notranslate"><span class="pre">seconds</span></code> to apply as rate limit.</p></li>
-<li><p><strong>LOG_CONFIG</strong> - Logging configuration file path.</p></li>
 </ul>
 <p>⚠️ Enabling remote execution can be extremely risky and a major security threat.
 So use <strong>caution</strong> and set the <strong>API_SECRET</strong> to a strong value.</p>

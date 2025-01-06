@@ -207,10 +207,10 @@ def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
         Dict[str, Any]:
         Yields a dictionary of retrieved values.
     """
-    from pyudisk import EnvConfig, smart_metrics, util
+    from pyudisk import smart_metrics, util
 
     rendered = {}
-    for disk in smart_metrics(EnvConfig(smart_lib=models.env.smart_lib)):
+    for disk in smart_metrics(smart_lib=models.env.smart_lib):
         if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
             info = disk.Info
             attributes = disk.Attributes

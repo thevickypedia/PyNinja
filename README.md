@@ -55,27 +55,35 @@ pyninja start
 > _By default, `PyNinja` will look for a `.env` file in the current working directory._
 </details>
 
+**Basic API**
 - **APIKEY** - API Key for authentication.
+- **SWAGGER_UI_PARAMETERS** - Dictionary of parameters to be included in the Swagger UI.
 - **NINJA_HOST** - Hostname for the API server.
 - **NINJA_PORT** - Port number for the API server.
+
+**Functional improvements**
+- **RATE_LIMIT** - List of dictionaries with `max_requests` and `seconds` to apply as rate limit.
+- **LOG_CONFIG** - Logging configuration file path.
+
+**Remote execution and FileIO**
 - **REMOTE_EXECUTION** - Boolean flag to enable remote execution.
 - **API_SECRET** - Secret access key for running commands on server remotely.
-- **DISK_REPORT** - Boolean flag to enable disk report feature using [PyUdisk].
-- **UDISK_LIB** - Udisk library for Linux machines to use [PyUdisk].
+- **DATABASE** - FilePath to store the auth database that handles the authentication errors.
+
+**Monitoring UI**
 - **MONITOR_USERNAME** - Username to authenticate the monitoring page.
 - **MONITOR_PASSWORD** - Password to authenticate the monitoring page.
 - **MONITOR_SESSION** - Session timeout for the monitoring page.
-- **NO_AUTH** - Boolean flag to host monitoring page without authentication.
+- **DISK_REPORT** - Boolean flag to enable disk report feature using [PyUdisk].
 - **MAX_CONNECTIONS** - Maximum number of monitoring sessions allowed in parallel.
+- **NO_AUTH** - Boolean flag to host monitoring page without authentication.
 - **PROCESSES** - List of process names to include in the monitor page.
 - **SERVICES** - List of service names to include in the monitor page.
+- **SMART_LIB** - Library path for S.M.A.R.T metrics using [PyUdisk].
 - **GPU_LIB** - GPU library filepath to use for monitoring.
 - **DISK_LIB** - Disk library filepath to use for monitoring.
 - **SERVICE_LIB** - Memory library filepath to use for monitoring.
 - **PROCESSOR_LIB** - Processor library filepath to use for monitoring.
-- **DATABASE** - FilePath to store the auth database that handles the authentication errors.
-- **RATE_LIMIT** - List of dictionaries with `max_requests` and `seconds` to apply as rate limit.
-- **LOG_CONFIG** - Logging configuration file path.
 
 ⚠️ Enabling remote execution can be extremely risky and a major security threat.
 So use **caution** and set the **API_SECRET** to a strong value.

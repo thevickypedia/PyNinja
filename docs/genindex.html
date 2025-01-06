@@ -136,8 +136,6 @@
 </li>
       <li><a href="index.html#pyninja.modules.models.Database.create_table">create_table() (pyninja.modules.models.Database method)</a>
 </li>
-      <li><a href="index.html#pyninja.main.custom_swagger_ui">custom_swagger_ui() (in module pyninja.main)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -175,6 +173,8 @@
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.docs">docs (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
       <li><a href="index.html#pyninja.main.docs">docs() (in module pyninja.main)</a>
+</li>
+      <li><a href="index.html#pyninja.startup.docs_handler">docs_handler() (in module pyninja.startup)</a>
 </li>
       <li><a href="index.html#pyninja.executors.routers.docs_redirect">docs_redirect() (in module pyninja.executors.routers)</a>
 </li>
@@ -216,6 +216,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.monitor.authenticator.failed_auth_counter">failed_auth_counter() (in module pyninja.monitor.authenticator)</a>
 </li>
+      <li><a href="index.html#pyninja.modules.models.FileIO">FileIO (class in pyninja.modules.models)</a>
+</li>
       <li><a href="index.html#pyninja.modules.payloads.GetFile.filepath">filepath (pyninja.modules.payloads.GetFile attribute)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.Session.forbid">forbid (pyninja.modules.models.Session attribute)</a>
@@ -238,7 +240,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.monitor.authenticator.generate_cookie">generate_cookie() (in module pyninja.monitor.authenticator)</a>
 </li>
-      <li><a href="index.html#pyninja.main.generate_hyperlink">generate_hyperlink() (in module pyninja.main)</a>
+      <li><a href="index.html#pyninja.startup.generate_hyperlink">generate_hyperlink() (in module pyninja.startup)</a>
 </li>
       <li><a href="index.html#pyninja.modules.enums.APIRouteType.get">get (pyninja.modules.enums.APIRouteType attribute)</a>
 </li>
@@ -274,7 +276,7 @@
 </li>
       <li><a href="index.html#pyninja.routes.metrics.get_cpu_utilization">get_cpu_utilization() (in module pyninja.routes.metrics)</a>
 </li>
-      <li><a href="index.html#pyninja.main.get_desc">get_desc() (in module pyninja.main)</a>
+      <li><a href="index.html#pyninja.startup.get_desc">get_desc() (in module pyninja.startup)</a>
 </li>
       <li><a href="index.html#pyninja.monitor.resources.get_disk_info">get_disk_info() (in module pyninja.monitor.resources)</a>
 </li>
@@ -448,11 +450,13 @@
 </li>
       <li><a href="index.html#pyninja.modules.payloads.ListFiles">ListFiles (class in pyninja.modules.payloads)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.executors.squire.load_architecture">load_architecture() (in module pyninja.executors.squire)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.executors.squire.load_env">load_env() (in module pyninja.executors.squire)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.models.load_swagger_ui">load_swagger_ui() (in module pyninja.modules.models)</a>
 </li>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.log_config">log_config (pyninja.modules.models.EnvConfig attribute)</a>
 </li>
@@ -535,6 +539,8 @@
         <li><a href="index.html#module-pyninja.routes.namespace">pyninja.routes.namespace</a>
 </li>
         <li><a href="index.html#module-pyninja.routes.orchestration">pyninja.routes.orchestration</a>
+</li>
+        <li><a href="index.html#module-pyninja.startup">pyninja.startup</a>
 </li>
       </ul></li>
   </ul></td>
@@ -790,6 +796,13 @@
         <li><a href="index.html#module-pyninja.routes.orchestration">module</a>
 </li>
       </ul></li>
+      <li>
+    pyninja.startup
+
+      <ul>
+        <li><a href="index.html#module-pyninja.startup">module</a>
+</li>
+      </ul></li>
       <li><a href="index.html#pyninja.monitor.resources.pyudisk_metrics">pyudisk_metrics() (in module pyninja.monitor.resources)</a>
 </li>
   </ul></td>
@@ -808,7 +821,7 @@
 </li>
       <li><a href="index.html#pyninja.modules.rate_limit.RateLimiter">RateLimiter (class in pyninja.modules.rate_limit)</a>
 </li>
-      <li><a href="index.html#pyninja.main.redirect_exception_handler">redirect_exception_handler() (in module pyninja.main)</a>
+      <li><a href="index.html#pyninja.startup.redirect_exception_handler">redirect_exception_handler() (in module pyninja.startup)</a>
 </li>
       <li><a href="index.html#pyninja.modules.exceptions.RedirectException">RedirectException</a>
 </li>
@@ -878,10 +891,10 @@
 </li>
       <li><a href="index.html#pyninja.main.start">start() (in module pyninja.main)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.features.dockerized.start_container">start_container() (in module pyninja.features.dockerized)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.start_docker_container">start_docker_container (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
       <li><a href="index.html#pyninja.routes.orchestration.start_docker_container">start_docker_container() (in module pyninja.routes.orchestration)</a>
@@ -912,7 +925,9 @@
       </ul></li>
       <li><a href="index.html#pyninja.features.service.stopped">stopped() (in module pyninja.features.service)</a>
 </li>
-      <li><a href="index.html#pyninja.modules.models.EnvConfig.swagger_ui_configuration">swagger_ui_configuration (pyninja.modules.models.EnvConfig attribute)</a>
+      <li><a href="index.html#pyninja.modules.models.FileIO.swagger_ui">swagger_ui (pyninja.modules.models.FileIO attribute)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.models.EnvConfig.swagger_ui_parameters">swagger_ui_parameters (pyninja.modules.models.EnvConfig attribute)</a>
 </li>
       <li><a href="index.html#pyninja.monitor.resources.system_resources">system_resources() (in module pyninja.monitor.resources)</a>
 </li>

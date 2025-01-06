@@ -2,17 +2,15 @@ import logging
 import pathlib
 
 import uvicorn
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI
 from fastapi.openapi.docs import get_swagger_ui_html
-from fastapi.responses import JSONResponse, RedirectResponse
-from fastapi.routing import APIRoute, APIWebSocketRoute
+from fastapi.responses import HTMLResponse
+from fastapi.routing import APIRoute
 
-from pyninja import version
+from pyninja import startup, version
 from pyninja.executors import routers, squire
 from pyninja.modules import enums, exceptions, models, rate_limit
 
-BASE_LOGGER = logging.getLogger("BASE_LOGGER")
-BASE_LOGGER.setLevel(logging.INFO)
 LOGGER = logging.getLogger("uvicorn.default")
 
 PyNinjaAPI = FastAPI(
@@ -31,190 +29,76 @@ PyNinjaAPI.routes.append(
 )
 
 
-async def docs():
-    """Custom docs endpoint for the Swagger UI."""
+async def docs() -> HTMLResponse:
+    """Custom docs endpoint for the Swagger UI.
+
+    See Also:
+        The Swagger UI is customized to scroll to the operation when a hyperlink from the description block is selected.
+
+    Returns:
+        HTMLResponse:
+        Returns an HTMLResponse object with the customized UI.
+    """
     html_content = get_swagger_ui_html(
         title=PyNinjaAPI.__dict__.get("title", PyNinjaAPI.__name__),
         openapi_url=PyNinjaAPI.__dict__.get("openapi_url", "/openapi.json"),
-        swagger_ui_parameters=models.env.swagger_ui_configuration,
+        swagger_ui_parameters=models.env.swagger_ui_parameters,
     )
-    custom_script = """
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const waitForLinks = () => {
-                const anchors = document.querySelectorAll('a[href^="#"]');
-                if (anchors.length === 0) {
-                    setTimeout(waitForLinks, 100);
-                } else {
-                    anchors.forEach(anchor => {
-                        // console.log("Attaching listener to:", anchor.href);  // debug statement
-                        anchor.addEventListener('click', function(event) {
-                            const str = anchor.getAttribute('href').substring(1);
-                            // legacy approach - scroll stops half way through
-                            // const targetElement = document.querySelector(`a[href='#${str}']`);
-                            // this is sneaky way to find the targetElement, not sure if this will work always
-                            // basically strip off the '/default/' to construct the operations endpoint
-                            let result = str.startsWith('/default/') ? str.slice('/default/'.length) : str;
-                            const targetElement = document.getElementById(`operations-default-${result}`);
-                            if (targetElement) {
-                                targetElement.scrollIntoView({
-                                    behavior: 'smooth'
-                                });
-                                var expandButton = targetElement.querySelector(".opblock-control-arrow");
-                                expandButton.setAttribute("aria-expanded", "true");
-                                expandButton.click();
-                            }
-                        });
-                    });
-                }
-            };
-            waitForLinks();
-        });
-    </script>
-    """
-    from fastapi.responses import HTMLResponse
-
     new_content = html_content.body.decode().replace(
-        "</body>", custom_script + "</body>"
+        "</body>", models.fileio.swagger_ui + "</body>"
     )
     return HTMLResponse(new_content)
-
-
-def custom_swagger_ui() -> None:
-    """Creates a custom swagger UI.
-
-    References:
-        https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
-    """
-    PyNinjaAPI.routes.append(
-        APIRoute(
-            path=enums.APIEndpoints.docs,
-            endpoint=docs,
-            methods=["GET"],
-            include_in_schema=False,
-        ),
-    )
-    for __route in PyNinjaAPI.routes:
-        if __route.name == "swagger_ui_html":
-            PyNinjaAPI.routes.remove(__route)
-
-
-def generate_hyperlink(route: APIRoute | APIWebSocketRoute) -> str:
-    """Generates hyperlink for a particular API route."""
-    method = list(route.methods)[0].lower()
-    route_path = route.path.lstrip("/").replace("-", "_")
-    return f"\n- <a href='#/default/{route.name}_{route_path}_{method}'>{route.path}</a><br>"
-
-
-def get_desc(
-    get_routes: models.RoutingHandler,
-    post_routes: models.RoutingHandler,
-    monitor_routes: models.RoutingHandler,
-) -> str:
-    """Construct a detailed description for the API docs.
-
-    Args:
-        get_routes: RoutingHandler object for GET endpoints.
-        post_routes: RoutingHandler object for POST endpoints.
-        monitor_routes: RoutingHandler object for MONITOR endpoints.
-
-    Returns:
-        str:
-        Returns the description as a string.
-    """
-    basic_fl, remote_fl, monitor_fl = ("Disabled",) * 3
-    if get_routes.enabled:
-        basic_fl = "All basic GET calls have been enabled"
-    if post_routes.enabled:
-        n = enums.APIEndpoints.run_command.name
-        v = enums.APIEndpoints.run_command.value
-        remote_fl = f"Enabled at <a href='#/default/{n}_{n}_post'>{v}</a>"
-    monitor_ui = enums.APIEndpoints.monitor.value
-    if monitor_routes.enabled:
-        monitor_fl = f"Enabled at <a href='{monitor_ui}'>{monitor_ui}</a>"
-    description = "**Lightweight OS-agnostic service monitoring API**"
-    description += (
-        "\n\nIn addition to monitoring services, processes, and containers,"
-        "the PyNinja API provides optional features for executing remote commands "
-        "and hosting a real-time system resource monitoring page. 🚀"
-    )
-    description += "\n\n#### Basic Features"
-    for route in get_routes.routes:
-        description += generate_hyperlink(route)
-    description += "\n\n#### Additional Features**"
-    for route in post_routes.routes:
-        description += generate_hyperlink(route)
-    description += f"\n- <a href='{monitor_ui}'>{monitor_ui}</a><br>"
-    description += (
-        "\n> **Additional features are available based on server configuration."
-    )
-    description += "\n\n#### Current State"
-    description += f"\n- **Basic Execution:** {basic_fl}"
-    description += f"\n- **Remote Execution:** {remote_fl}"
-    description += f"\n- **Monitoring Page:** {monitor_fl}"
-    description += "\n\n#### Links"
-    description += "\n- <a href='https://pypi.org/project/PyNinja/'>PyPi</a><br>"
-    description += (
-        "\n- <a href='https://github.com/thevickypedia/PyNinja'>GitHub</a><br>"
-    )
-    description += (
-        "\n- <a href='https://thevickypedia.github.io/PyNinja/'>Runbook</a><br>"
-    )
-    return description
-
-
-async def redirect_exception_handler(
-    request: Request, exception: exceptions.RedirectException
-) -> JSONResponse:
-    """Custom exception handler to handle redirect.
-
-    Args:
-        request: Takes the ``Request`` object as an argument.
-        exception: Takes the ``RedirectException`` object inherited from ``Exception`` as an argument.
-
-    Returns:
-        JSONResponse:
-        Returns the JSONResponse with content, status code and cookie.
-    """
-    LOGGER.debug("Exception headers: %s", request.headers)
-    LOGGER.debug("Exception cookies: %s", request.cookies)
-    if request.url.path == enums.APIEndpoints.login:
-        response = JSONResponse(
-            content={"redirect_url": exception.location}, status_code=200
-        )
-    else:
-        response = RedirectResponse(url=exception.location)
-    if exception.detail:
-        response.set_cookie(
-            "detail", exception.detail.upper(), httponly=True, samesite="strict"
-        )
-    return response
 
 
 def start(**kwargs) -> None:
     """Starter function for the API, which uses uvicorn server as trigger.
 
     Keyword Args:
-        env_file: Env filepath to load the environment variables.
-        apikey: API Key for authentication.
-        ninja_host: Hostname for the API server.
-        ninja_port: Port number for the API server.
-        remote_execution: Boolean flag to enable remote execution.
-        api_secret: Secret access key for running commands on server remotely.
-        monitor_username: Username to authenticate the monitoring page.
-        monitor_password: Password to authenticate the monitoring page.
-        monitor_session: Session timeout for the monitoring page.
-        service_manager: Service manager filepath to handle the service status requests.
-        database: FilePath to store the auth database that handles the authentication errors.
-        rate_limit: List of dictionaries with ``max_requests`` and ``seconds`` to apply as rate limit.
-        log_config: Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.
+
+        Environment_variables_configuration
+
+            - **env_file:** Env filepath to load the environment variables.
+
+        Basic_API_functionalities
+
+            - **apikey:** API Key for authentication.
+            - **swagger_ui_parameters:** Parameters for the Swagger UI.
+            - **ninja_host:** Hostname for the API server.
+            - **ninja_port:** Port number for the API server.
+
+        Functional_improvements
+
+            - **rate_limit:** List of dictionaries with ``max_requests`` and ``seconds`` to apply as rate limit.
+            - **log_config:** Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.
+
+        Remote_execution_and_FileIO
+
+            - **remote_execution:** Boolean flag to enable remote execution.
+            - **api_secret:** Secret access key for running commands on server remotely.
+            - **database:** FilePath to store the auth database that handles the authentication errors.
+
+        Monitoring_UI
+
+            - **monitor_username:** Username to authenticate the monitoring page.
+            - **monitor_password:** Password to authenticate the monitoring page.
+            - **monitor_session:** Session timeout for the monitoring page.
+            - **disk_report:** Boolean flag to enable disk report generation.
+            - **max_connections:** Maximum number of connections to handle.
+            - **no_auth:** Boolean flag to disable authentication for monitoring page.
+            - **processes:** List of process names to include in the monitoring page.
+            - **services:** List of service names to include in the monitoring page.
+            - **smart_lib:** FilePath to the smart library to get S.M.A.R.T metrics.
+            - **gpu_lib:** FilePath to the GPU library to get GPU metrics.
+            - **disk_lib:** FilePath to the disk library to get disk metrics.
+            - **service_lib:** FilePath to the service library to get service status.
+            - **processor_lib:** FilePath to the processor library to get processor metrics
     """
     models.env = squire.load_env(**kwargs)
     models.architecture = squire.load_architecture(models.env)
     squire.assert_tokens()
     squire.assert_pyudisk()
     squire.handle_warnings()
-    custom_swagger_ui()
+    startup.docs_handler(api=PyNinjaAPI, func=docs)
     dependencies = [
         Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
         for each_rate_limit in models.env.rate_limit
@@ -242,20 +126,13 @@ def start(**kwargs) -> None:
         )
         PyNinjaAPI.routes.extend(get_routes.routes)
         get_routes.enabled = True
-    else:
-        BASE_LOGGER.warning("Basic API functionality disabled")
 
     # Conditional endpoints based on 'remote_execution' and 'api_secret' values
     if all((models.env.apikey, models.env.api_secret, models.env.remote_execution)):
-        BASE_LOGGER.info(
-            "Creating '%s' to handle authentication errors", models.env.database
-        )
         models.database = models.Database(models.env.database)
         models.database.create_table("auth_errors", ["host", "block_until"])
         PyNinjaAPI.routes.extend(post_routes.routes)
         post_routes.enabled = True
-    else:
-        BASE_LOGGER.warning("Remote execution disabled")
 
     # Conditional endpoints based on 'monitor_username' and 'monitor_password' values
     if all((models.env.monitor_username, models.env.monitor_password)):
@@ -263,7 +140,7 @@ def start(**kwargs) -> None:
         monitor_routes.enabled = True
         PyNinjaAPI.add_exception_handler(
             exc_class_or_status_code=exceptions.RedirectException,
-            handler=redirect_exception_handler,  # noqa: PyTypeChecker
+            handler=startup.redirect_exception_handler,  # noqa: PyTypeChecker
         )
         if not models.env.apikey:
             # Redirect to /monitor page if apikey is not set
@@ -275,10 +152,8 @@ def start(**kwargs) -> None:
                     include_in_schema=False,
                 ),
             )
-    else:
-        BASE_LOGGER.warning("Monitoring feature disabled")
 
-    PyNinjaAPI.description = get_desc(get_routes, post_routes, monitor_routes)
+    PyNinjaAPI.description = startup.get_desc(get_routes, post_routes, monitor_routes)
     module_name = pathlib.Path(__file__)
     kwargs = dict(
         host=models.env.ninja_host,

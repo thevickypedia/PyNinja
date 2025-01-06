@@ -66,27 +66,109 @@
 <span id="pyninja-main"></span><h1>PyNinja - Main<a class="headerlink" href="#module-pyninja.main" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.main.docs">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">docs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.main.docs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">docs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">HTMLResponse</span></span></span><a class="headerlink" href="#pyninja.main.docs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Custom docs endpoint for the Swagger UI.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The Swagger UI is customized to scroll to the operation when a hyperlink from the description block is selected.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns an HTMLResponse object with the customized UI.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>HTMLResponse</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.main.custom_swagger_ui">
-<span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">custom_swagger_ui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.main.custom_swagger_ui" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a custom swagger UI.</p>
+<dt class="sig sig-object py" id="pyninja.main.start">
+<span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.main.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starter function for the API, which uses uvicorn server as trigger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Environment_variables_configuration</strong> – <ul>
+<li><p><strong>env_file:</strong> Env filepath to load the environment variables.</p></li>
+</ul>
+</p></li>
+<li><p><strong>Basic_API_functionalities</strong> – <ul>
+<li><p><strong>apikey:</strong> API Key for authentication.</p></li>
+<li><p><strong>swagger_ui_parameters:</strong> Parameters for the Swagger UI.</p></li>
+<li><p><strong>ninja_host:</strong> Hostname for the API server.</p></li>
+<li><p><strong>ninja_port:</strong> Port number for the API server.</p></li>
+</ul>
+</p></li>
+<li><p><strong>Functional_improvements</strong> – <ul>
+<li><p><strong>rate_limit:</strong> List of dictionaries with <code class="docutils literal notranslate"><span class="pre">max_requests</span></code> and <code class="docutils literal notranslate"><span class="pre">seconds</span></code> to apply as rate limit.</p></li>
+<li><p><strong>log_config:</strong> Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.</p></li>
+</ul>
+</p></li>
+<li><p><strong>Remote_execution_and_FileIO</strong> – <ul>
+<li><p><strong>remote_execution:</strong> Boolean flag to enable remote execution.</p></li>
+<li><p><strong>api_secret:</strong> Secret access key for running commands on server remotely.</p></li>
+<li><p><strong>database:</strong> FilePath to store the auth database that handles the authentication errors.</p></li>
+</ul>
+</p></li>
+<li><p><strong>Monitoring_UI</strong> – <ul>
+<li><p><strong>monitor_username:</strong> Username to authenticate the monitoring page.</p></li>
+<li><p><strong>monitor_password:</strong> Password to authenticate the monitoring page.</p></li>
+<li><p><strong>monitor_session:</strong> Session timeout for the monitoring page.</p></li>
+<li><p><strong>disk_report:</strong> Boolean flag to enable disk report generation.</p></li>
+<li><p><strong>max_connections:</strong> Maximum number of connections to handle.</p></li>
+<li><p><strong>no_auth:</strong> Boolean flag to disable authentication for monitoring page.</p></li>
+<li><p><strong>processes:</strong> List of process names to include in the monitoring page.</p></li>
+<li><p><strong>services:</strong> List of service names to include in the monitoring page.</p></li>
+<li><p><strong>smart_lib:</strong> FilePath to the smart library to get S.M.A.R.T metrics.</p></li>
+<li><p><strong>gpu_lib:</strong> FilePath to the GPU library to get GPU metrics.</p></li>
+<li><p><strong>disk_lib:</strong> FilePath to the disk library to get disk metrics.</p></li>
+<li><p><strong>service_lib:</strong> FilePath to the service library to get service status.</p></li>
+<li><p><strong>processor_lib:</strong> FilePath to the processor library to get processor metrics</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<span class="target" id="module-pyninja.startup"></span><dl class="py function">
+<dt class="sig sig-object py" id="pyninja.startup.docs_handler">
+<span class="sig-prename descclassname"><span class="pre">pyninja.startup.</span></span><span class="sig-name descname"><span class="pre">docs_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FastAPI</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.startup.docs_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the default Swagger UI endpoint and adds a custom <code class="docutils literal notranslate"><span class="pre">docs</span></code> endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api</strong> – FastAPI object to modify the routes.</p></li>
+<li><p><strong>func</strong> – Callable function to be used as the endpoint for the custom docs.</p></li>
+</ul>
+</dd>
+</dl>
 <p class="rubric">References</p>
 <p><a class="reference external" href="https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/">https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/</a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.main.generate_hyperlink">
-<span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">generate_hyperlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">fastapi.routing.APIRoute</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">fastapi.routing.APIWebSocketRoute</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.main.generate_hyperlink" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates hyperlink for a particular API route.</p>
+<dt class="sig sig-object py" id="pyninja.startup.generate_hyperlink">
+<span class="sig-prename descclassname"><span class="pre">pyninja.startup.</span></span><span class="sig-name descname"><span class="pre">generate_hyperlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">fastapi.routing.APIRoute</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">fastapi.routing.APIWebSocketRoute</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.startup.generate_hyperlink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates hyperlink for a particular API route to be included in the description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>route</strong> – APIRoute or APIWebSocketRoute object.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the hyperlink as a string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.main.get_desc">
-<span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">get_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">get_routes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.RoutingHandler" title="pyninja.modules.models.RoutingHandler"><span class="pre">RoutingHandler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_routes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.RoutingHandler" title="pyninja.modules.models.RoutingHandler"><span class="pre">RoutingHandler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor_routes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.RoutingHandler" title="pyninja.modules.models.RoutingHandler"><span class="pre">RoutingHandler</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.main.get_desc" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.startup.get_desc">
+<span class="sig-prename descclassname"><span class="pre">pyninja.startup.</span></span><span class="sig-name descname"><span class="pre">get_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">get_routes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.RoutingHandler" title="pyninja.modules.models.RoutingHandler"><span class="pre">RoutingHandler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_routes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.RoutingHandler" title="pyninja.modules.models.RoutingHandler"><span class="pre">RoutingHandler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor_routes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.RoutingHandler" title="pyninja.modules.models.RoutingHandler"><span class="pre">RoutingHandler</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.startup.get_desc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct a detailed description for the API docs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -106,8 +188,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.main.redirect_exception_handler">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">redirect_exception_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.exceptions.RedirectException" title="pyninja.modules.exceptions.RedirectException"><span class="pre">RedirectException</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JSONResponse</span></span></span><a class="headerlink" href="#pyninja.main.redirect_exception_handler" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.startup.redirect_exception_handler">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.startup.</span></span><span class="sig-name descname"><span class="pre">redirect_exception_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.exceptions.RedirectException" title="pyninja.modules.exceptions.RedirectException"><span class="pre">RedirectException</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JSONResponse</span></span></span><a class="headerlink" href="#pyninja.startup.redirect_exception_handler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Custom exception handler to handle redirect.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -121,31 +203,6 @@
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>JSONResponse</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.main.start">
-<span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.main.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Starter function for the API, which uses uvicorn server as trigger.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>env_file</strong> – Env filepath to load the environment variables.</p></li>
-<li><p><strong>apikey</strong> – API Key for authentication.</p></li>
-<li><p><strong>ninja_host</strong> – Hostname for the API server.</p></li>
-<li><p><strong>ninja_port</strong> – Port number for the API server.</p></li>
-<li><p><strong>remote_execution</strong> – Boolean flag to enable remote execution.</p></li>
-<li><p><strong>api_secret</strong> – Secret access key for running commands on server remotely.</p></li>
-<li><p><strong>monitor_username</strong> – Username to authenticate the monitoring page.</p></li>
-<li><p><strong>monitor_password</strong> – Password to authenticate the monitoring page.</p></li>
-<li><p><strong>monitor_session</strong> – Session timeout for the monitoring page.</p></li>
-<li><p><strong>service_manager</strong> – Service manager filepath to handle the service status requests.</p></li>
-<li><p><strong>database</strong> – FilePath to store the auth database that handles the authentication errors.</p></li>
-<li><p><strong>rate_limit</strong> – List of dictionaries with <code class="docutils literal notranslate"><span class="pre">max_requests</span></code> and <code class="docutils literal notranslate"><span class="pre">seconds</span></code> to apply as rate limit.</p></li>
-<li><p><strong>log_config</strong> – Logging configuration as a dict or a FilePath. Supports .yaml/.yml, .json or .ini formats.</p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -2135,6 +2192,21 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 
 <hr class="docutils" />
 <dl class="py class">
+<dt class="sig sig-object py" id="pyninja.modules.models.FileIO">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">FileIO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.FileIO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object to load the file I/O settings.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">FileIO</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.FileIO.swagger_ui">
+<span class="sig-name descname"><span class="pre">swagger_ui</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.FileIO.swagger_ui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py class">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">EnvConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.EnvConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object to load environment variables.</p>
@@ -2147,8 +2219,8 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.swagger_ui_configuration">
-<span class="sig-name descname"><span class="pre">swagger_ui_configuration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.swagger_ui_configuration" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.swagger_ui_parameters">
+<span class="sig-name descname"><span class="pre">swagger_ui_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.swagger_ui_parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -2202,11 +2274,6 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.smart_lib">
-<span class="sig-name descname"><span class="pre">smart_lib</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.smart_lib" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.disk_report">
 <span class="sig-name descname"><span class="pre">disk_report</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.disk_report" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2229,6 +2296,11 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.services">
 <span class="sig-name descname"><span class="pre">services</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.services" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.smart_lib">
+<span class="sig-name descname"><span class="pre">smart_lib</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.smart_lib" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -2372,6 +2444,12 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dd class="field-odd"><p>FilePath</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.modules.models.load_swagger_ui">
+<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">load_swagger_ui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.modules.models.load_swagger_ui" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the custom JavaScript for Swagger UI.</p>
 </dd></dl>
 
 <dl class="py class">

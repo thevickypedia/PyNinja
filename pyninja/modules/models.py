@@ -192,8 +192,13 @@ class EnvConfig(BaseSettings):
 
     # Basic API
     apikey: str | None = None
-    swagger_ui_configuration: Dict[str, Any] = Field(
-        {"deepLinking": True, "persistAuthorization": False}
+    swagger_ui_parameters: Dict[str, Any] = Field(
+        {
+            "deepLinking": True,
+            "persistAuthorization": False,
+            "displayRequestDuration": True,
+            "docExpansion": "list",
+        }
     )
     ninja_host: str = socket.gethostbyname("localhost") or "0.0.0.0"
     ninja_port: PositiveInt = 8000
@@ -211,12 +216,12 @@ class EnvConfig(BaseSettings):
     monitor_username: str | None = None
     monitor_password: str | None = None
     monitor_session: PositiveInt = 3_600
-    smart_lib: FilePath | None = None
     disk_report: bool = False
     max_connections: PositiveInt = 3
     no_auth: bool = False
     processes: List[str] = Field(default_factory=list)
     services: List[str] = Field(default_factory=list)
+    smart_lib: FilePath | None = None
     gpu_lib: FilePath = retrieve_library_path(default_gpu_lib)
     disk_lib: FilePath = retrieve_library_path(default_disk_lib)
     service_lib: FilePath = retrieve_library_path(default_service_lib)
@@ -279,6 +284,26 @@ class EnvConfig(BaseSettings):
 
         extra = "ignore"
         hide_input_in_errors = True
+
+
+def load_swagger_ui() -> str:
+    """Get the custom JavaScript for Swagger UI."""
+    swagger_js = os.path.join(os.path.dirname(__file__), "swaggerUI.js")
+    with open(swagger_js) as file:
+        return "<script>\n" + file.read() + "\n</script>"
+
+
+class FileIO(BaseModel):
+    """Object to load the file I/O settings.
+
+    >>> FileIO
+
+    """
+
+    swagger_ui: str = Field(load_swagger_ui())
+
+
+fileio = FileIO()
 
 
 class Database:

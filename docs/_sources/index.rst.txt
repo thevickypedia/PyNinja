@@ -17,6 +17,10 @@ PyNinja - Main
 
 .. automodule:: pyninja.main
 
+====
+
+.. automodule:: pyninja.startup
+
 PyNinja - Executors
 ===================
 
@@ -123,13 +127,18 @@ Models
 
 ====
 
+.. autoclass:: pyninja.modules.models.FileIO(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
 .. autoclass:: pyninja.modules.models.EnvConfig(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
 ====
 
 .. automodule:: pyninja.modules.models
-   :exclude-members: RoutingHandler, ServiceStatus, Architecture, Session, WSSession, RateLimit, EnvConfig, session, ws_session, env, database, architecture
+   :exclude-members: RoutingHandler, ServiceStatus, Architecture, Session, WSSession, RateLimit, FileIO, EnvConfig, session, ws_session, env, database, architecture
 
 Payloads
 --------
