@@ -192,6 +192,9 @@ class EnvConfig(BaseSettings):
 
     # Basic API
     apikey: str | None = None
+    swagger_ui_configuration: Dict[str, Any] = Field(
+        {"deepLinking": True, "persistAuthorization": False}
+    )
     ninja_host: str = socket.gethostbyname("localhost") or "0.0.0.0"
     ninja_port: PositiveInt = 8000
 

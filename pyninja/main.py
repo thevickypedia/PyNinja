@@ -3,6 +3,7 @@ import pathlib
 
 import uvicorn
 from fastapi import Depends, FastAPI, Request
+from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.routing import APIRoute, APIWebSocketRoute
 
@@ -30,11 +31,79 @@ PyNinjaAPI.routes.append(
 )
 
 
+async def docs():
+    """Custom docs endpoint for the Swagger UI."""
+    html_content = get_swagger_ui_html(
+        title=PyNinjaAPI.__dict__.get("title", PyNinjaAPI.__name__),
+        openapi_url=PyNinjaAPI.__dict__.get("openapi_url", "/openapi.json"),
+        swagger_ui_parameters=models.env.swagger_ui_configuration,
+    )
+    custom_script = """
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const waitForLinks = () => {
+                const anchors = document.querySelectorAll('a[href^="#"]');
+                if (anchors.length === 0) {
+                    setTimeout(waitForLinks, 100);
+                } else {
+                    anchors.forEach(anchor => {
+                        // console.log("Attaching listener to:", anchor.href);  // debug statement
+                        anchor.addEventListener('click', function(event) {
+                            const str = anchor.getAttribute('href').substring(1);
+                            // legacy approach - scroll stops half way through
+                            // const targetElement = document.querySelector(`a[href='#${str}']`);
+                            // this is sneaky way to find the targetElement, not sure if this will work always
+                            // basically strip off the '/default/' to construct the operations endpoint
+                            let result = str.startsWith('/default/') ? str.slice('/default/'.length) : str;
+                            const targetElement = document.getElementById(`operations-default-${result}`);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({
+                                    behavior: 'smooth'
+                                });
+                                var expandButton = targetElement.querySelector(".opblock-control-arrow");
+                                expandButton.setAttribute("aria-expanded", "true");
+                                expandButton.click();
+                            }
+                        });
+                    });
+                }
+            };
+            waitForLinks();
+        });
+    </script>
+    """
+    from fastapi.responses import HTMLResponse
+
+    new_content = html_content.body.decode().replace(
+        "</body>", custom_script + "</body>"
+    )
+    return HTMLResponse(new_content)
+
+
+def custom_swagger_ui() -> None:
+    """Creates a custom swagger UI.
+
+    References:
+        https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
+    """
+    PyNinjaAPI.routes.append(
+        APIRoute(
+            path=enums.APIEndpoints.docs,
+            endpoint=docs,
+            methods=["GET"],
+            include_in_schema=False,
+        ),
+    )
+    for __route in PyNinjaAPI.routes:
+        if __route.name == "swagger_ui_html":
+            PyNinjaAPI.routes.remove(__route)
+
+
 def generate_hyperlink(route: APIRoute | APIWebSocketRoute) -> str:
     """Generates hyperlink for a particular API route."""
     method = list(route.methods)[0].lower()
     route_path = route.path.lstrip("/").replace("-", "_")
-    return f"\n- <a href='/docs#/default/{route.name}_{route_path}_{method}'>{route.path}</a><br>"
+    return f"\n- <a href='#/default/{route.name}_{route_path}_{method}'>{route.path}</a><br>"
 
 
 def get_desc(
@@ -59,10 +128,10 @@ def get_desc(
     if post_routes.enabled:
         n = enums.APIEndpoints.run_command.name
         v = enums.APIEndpoints.run_command.value
-        remote_fl = f"Enabled at <a href='/docs#/default/{n}_{n}_post'>{v}</a>"
+        remote_fl = f"Enabled at <a href='#/default/{n}_{n}_post'>{v}</a>"
+    monitor_ui = enums.APIEndpoints.monitor.value
     if monitor_routes.enabled:
-        v = enums.APIEndpoints.monitor.value
-        monitor_fl = f"Enabled at <a href='{v}'>{v}</a>"
+        monitor_fl = f"Enabled at <a href='{monitor_ui}'>{monitor_ui}</a>"
     description = "**Lightweight OS-agnostic service monitoring API**"
     description += (
         "\n\nIn addition to monitoring services, processes, and containers,"
@@ -75,9 +144,7 @@ def get_desc(
     description += "\n\n#### Additional Features**"
     for route in post_routes.routes:
         description += generate_hyperlink(route)
-    for route in monitor_routes.routes:
-        if route.path == enums.APIEndpoints.monitor:
-            description += generate_hyperlink(route)
+    description += f"\n- <a href='{monitor_ui}'>{monitor_ui}</a><br>"
     description += (
         "\n> **Additional features are available based on server configuration."
     )
@@ -147,6 +214,7 @@ def start(**kwargs) -> None:
     squire.assert_tokens()
     squire.assert_pyudisk()
     squire.handle_warnings()
+    custom_swagger_ui()
     dependencies = [
         Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
         for each_rate_limit in models.env.rate_limit
