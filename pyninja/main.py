@@ -4,7 +4,7 @@ import pathlib
 import uvicorn
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
-from fastapi.routing import APIRoute
+from fastapi.routing import APIRoute, APIWebSocketRoute
 
 from pyninja import version
 from pyninja.executors import routers, squire
@@ -30,26 +30,39 @@ PyNinjaAPI.routes.append(
 )
 
 
-def get_desc(get_api: bool, post_api: bool, monitoring_ui: bool) -> str:
+def generate_hyperlink(route: APIRoute | APIWebSocketRoute) -> str:
+    """Generates hyperlink for a particular API route."""
+    method = list(route.methods)[0].lower()
+    route_path = route.path.lstrip("/").replace("-", "_")
+    return f"\n- <a href='/docs#/default/{route.name}_{route_path}_{method}'>{route.path}</a><br>"
+
+
+def get_desc(
+    get_routes: models.RoutingHandler,
+    post_routes: models.RoutingHandler,
+    monitor_routes: models.RoutingHandler,
+) -> str:
     """Construct a detailed description for the API docs.
 
     Args:
-        get_api: Boolean flag to indicate basic API state.
-        post_api: Boolean flag to indicate remote execution state.
-        monitoring_ui: Boolean flag to indicate monitoring page state.
+        get_routes: RoutingHandler object for GET endpoints.
+        post_routes: RoutingHandler object for POST endpoints.
+        monitor_routes: RoutingHandler object for MONITOR endpoints.
 
     Returns:
         str:
         Returns the description as a string.
     """
-    # todo: Remove hard coding and update this programmatically based on available endpoints
     basic_fl, remote_fl, monitor_fl = ("Disabled",) * 3
-    if get_api:
+    if get_routes.enabled:
         basic_fl = "All basic GET calls have been enabled"
-    if post_api:
-        remote_fl = "Enabled at <a href='/docs#/default/run_command_run_command_post'>/run-command</a>"
-    if monitoring_ui:
-        monitor_fl = "Enabled at <a href='/monitor'>/monitor</a>"
+    if post_routes.enabled:
+        n = enums.APIEndpoints.run_command.name
+        v = enums.APIEndpoints.run_command.value
+        remote_fl = f"Enabled at <a href='/docs#/default/{n}_{n}_post'>{v}</a>"
+    if monitor_routes.enabled:
+        v = enums.APIEndpoints.monitor.value
+        monitor_fl = f"Enabled at <a href='{v}'>{v}</a>"
     description = "**Lightweight OS-agnostic service monitoring API**"
     description += (
         "\n\nIn addition to monitoring services, processes, and containers,"
@@ -57,22 +70,16 @@ def get_desc(get_api: bool, post_api: bool, monitoring_ui: bool) -> str:
         "and hosting a real-time system resource monitoring page. 🚀"
     )
     description += "\n\n#### Basic Features"
-    description += "\n- <a href='/docs#/default/get_ip_get_ip_get'>/get-ip</a><br>"
-    description += "\n- <a href='/docs#/default/get_cpu_get_cpu_get'>/get-cpu</a><br>"
+    for route in get_routes.routes:
+        description += generate_hyperlink(route)
+    description += "\n\n#### Additional Features**"
+    for route in post_routes.routes:
+        description += generate_hyperlink(route)
+    for route in monitor_routes.routes:
+        if route.path == enums.APIEndpoints.monitor:
+            description += generate_hyperlink(route)
     description += (
-        "\n- <a href='/docs#/default/get_memory_get_memory_get'>/get-memory</a><br>"
-    )
-    description += "\n- <a href='/docs#/default/service_status_service_status_get'>/service-status</a><br>"
-    description += "\n- <a href='/docs#/default/process_status_process_status_get'>/process-status</a><br>"
-    description += "\n- <a href='/docs#/default/docker_containers_docker_container_get'>/docker-container</a><br>"
-    description += "\n- <a href='/docs#/default/docker_images_docker_image_get'>/docker-image</a><br>"
-    description += "\n- <a href='/docs#/default/docker_volumes_docker_volume_get'>/docker-volume</a><br>"
-    description += "\n\n#### Additional Features"
-    description += (
-        "\n- <a href='/docs#/default/run_command_run_command_post'>/run-command</a><br>"
-    )
-    description += (
-        "\n- <a href='/docs#/default/monitor_endpoint_monitor_get'>/monitor</a><br>"
+        "\n> **Additional features are available based on server configuration."
     )
     description += "\n\n#### Current State"
     description += f"\n- **Basic Execution:** {basic_fl}"
@@ -144,7 +151,15 @@ def start(**kwargs) -> None:
         Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
         for each_rate_limit in models.env.rate_limit
     ]
-    arg1, arg2, arg3 = False, False, False
+    get_routes = models.RoutingHandler(
+        type=enums.APIRouteType.get, routes=routers.get_api(dependencies)
+    )
+    post_routes = models.RoutingHandler(
+        type=enums.APIRouteType.post, routes=routers.post_api(dependencies)
+    )
+    monitor_routes = models.RoutingHandler(
+        type=enums.APIRouteType.monitor, routes=routers.monitoring_ui(dependencies)
+    )
 
     # Conditional endpoints based on 'apikey' value
     if models.env.apikey:
@@ -157,8 +172,8 @@ def start(**kwargs) -> None:
                 include_in_schema=False,
             ),
         )
-        PyNinjaAPI.routes.extend(routers.get_api(dependencies))
-        arg1 = True
+        PyNinjaAPI.routes.extend(get_routes.routes)
+        get_routes.enabled = True
     else:
         BASE_LOGGER.warning("Basic API functionality disabled")
 
@@ -169,14 +184,15 @@ def start(**kwargs) -> None:
         )
         models.database = models.Database(models.env.database)
         models.database.create_table("auth_errors", ["host", "block_until"])
-        PyNinjaAPI.routes.extend(routers.post_api(dependencies))
-        arg2 = True
+        PyNinjaAPI.routes.extend(post_routes.routes)
+        post_routes.enabled = True
     else:
         BASE_LOGGER.warning("Remote execution disabled")
 
     # Conditional endpoints based on 'monitor_username' and 'monitor_password' values
     if all((models.env.monitor_username, models.env.monitor_password)):
-        PyNinjaAPI.routes.extend(routers.monitoring_ui(dependencies))
+        PyNinjaAPI.routes.extend(monitor_routes.routes)
+        monitor_routes.enabled = True
         PyNinjaAPI.add_exception_handler(
             exc_class_or_status_code=exceptions.RedirectException,
             handler=redirect_exception_handler,  # noqa: PyTypeChecker
@@ -191,11 +207,10 @@ def start(**kwargs) -> None:
                     include_in_schema=False,
                 ),
             )
-        arg3 = True
     else:
         BASE_LOGGER.warning("Monitoring feature disabled")
 
-    PyNinjaAPI.description = get_desc(arg1, arg2, arg3)
+    PyNinjaAPI.description = get_desc(get_routes, post_routes, monitor_routes)
     module_name = pathlib.Path(__file__)
     kwargs = dict(
         host=models.env.ninja_host,

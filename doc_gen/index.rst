@@ -93,6 +93,11 @@ Exceptions
 Models
 ------
 
+.. autoclass:: pyninja.modules.models.RoutingHandler(BaseModel)
+   :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
+
+====
+
 .. autoclass:: pyninja.modules.models.ServiceStatus(BaseModel)
    :exclude-members: _abc_impl, model_config, model_fields, model_computed_fields
 
@@ -124,7 +129,7 @@ Models
 ====
 
 .. automodule:: pyninja.modules.models
-   :exclude-members: ServiceStatus, Architecture, Session, WSSession, RateLimit, EnvConfig, session, ws_session, env, database, architecture
+   :exclude-members: RoutingHandler, ServiceStatus, Architecture, Session, WSSession, RateLimit, EnvConfig, session, ws_session, env, database, architecture
 
 Payloads
 --------

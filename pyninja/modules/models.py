@@ -8,6 +8,7 @@ import sqlite3
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Callable, Dict, List, Set, Tuple
 
+from fastapi.routing import APIRoute, APIWebSocketRoute
 from pyarchitecture.config import default_cpu_lib, default_disk_lib, default_gpu_lib
 from pydantic import BaseModel, Field, FilePath, PositiveInt, field_validator
 from pydantic_settings import BaseSettings
@@ -65,6 +66,23 @@ def complexity_checker(key: str, value: str, min_length: int) -> None:
     assert re.search(
         r"[ !@#$%&'()*+,-./[\\\]^_`{|}~" + r'"]', value
     ), f"{key!r} must contain at least one special character"
+
+
+class RoutingHandler(BaseModel):
+    """Routing handler to update the API routes to the server.
+
+    >>> RoutingHandler
+
+    """
+
+    type: enums.APIRouteType
+    routes: List[APIRoute | APIWebSocketRoute]
+    enabled: bool = False
+
+    class Config:
+        """Configuration for routing handler."""
+
+        arbitrary_types_allowed = True
 
 
 class ServiceStatus(BaseModel):

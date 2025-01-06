@@ -94,7 +94,7 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
             dependencies=dependencies,
         ),
         APIRoute(
-            path=enums.APIEndpoints.get_disk,
+            path=enums.APIEndpoints.get_disk_utilization,
             endpoint=metrics.get_disk_utilization,
             methods=["GET"],
             dependencies=dependencies,

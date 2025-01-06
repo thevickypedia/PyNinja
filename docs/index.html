@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Welcome to PyNinja’s documentation! &#8212; PyNinja  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -65,15 +65,21 @@
 <section id="module-pyninja.main">
 <span id="pyninja-main"></span><h1>PyNinja - Main<a class="headerlink" href="#module-pyninja.main" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.main.generate_hyperlink">
+<span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">generate_hyperlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">fastapi.routing.APIRoute</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">fastapi.routing.APIWebSocketRoute</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.main.generate_hyperlink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates hyperlink for a particular API route.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.main.get_desc">
-<span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">get_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">get_api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitoring_ui</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.main.get_desc" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.main.</span></span><span class="sig-name descname"><span class="pre">get_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">get_routes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.RoutingHandler" title="pyninja.modules.models.RoutingHandler"><span class="pre">RoutingHandler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_routes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.RoutingHandler" title="pyninja.modules.models.RoutingHandler"><span class="pre">RoutingHandler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor_routes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.RoutingHandler" title="pyninja.modules.models.RoutingHandler"><span class="pre">RoutingHandler</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.main.get_desc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct a detailed description for the API docs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>get_api</strong> – Boolean flag to indicate basic API state.</p></li>
-<li><p><strong>post_api</strong> – Boolean flag to indicate remote execution state.</p></li>
-<li><p><strong>monitoring_ui</strong> – Boolean flag to indicate monitoring page state.</p></li>
+<li><p><strong>get_routes</strong> – RoutingHandler object for GET endpoints.</p></li>
+<li><p><strong>post_routes</strong> – RoutingHandler object for POST endpoints.</p></li>
+<li><p><strong>monitor_routes</strong> – RoutingHandler object for MONITOR endpoints.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1714,11 +1720,6 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.get_disk">
-<span class="sig-name descname"><span class="pre">get_disk</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/get-disk'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.get_disk" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.get_memory">
 <span class="sig-name descname"><span class="pre">get_memory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/get-memory'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.get_memory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1726,6 +1727,11 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.get_all_disks">
 <span class="sig-name descname"><span class="pre">get_all_disks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/get-all-disks'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.get_all_disks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.get_disk_utilization">
+<span class="sig-name descname"><span class="pre">get_disk_utilization</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/get-disk-utilization'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.get_disk_utilization" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1863,6 +1869,30 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="pyninja.modules.enums.APIRouteType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.enums.</span></span><span class="sig-name descname"><span class="pre">APIRouteType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.enums.APIRouteType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Types of API routes available.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">APIRouteType</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.APIRouteType.get">
+<span class="sig-name descname"><span class="pre">get</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'get'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIRouteType.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.APIRouteType.post">
+<span class="sig-name descname"><span class="pre">post</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'post'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIRouteType.post" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.APIRouteType.monitor">
+<span class="sig-name descname"><span class="pre">monitor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'monitor'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIRouteType.monitor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-pyninja.modules.exceptions">
 <span id="exceptions"></span><h2>Exceptions<a class="headerlink" href="#module-pyninja.modules.exceptions" title="Permalink to this heading">¶</a></h2>
@@ -1929,6 +1959,42 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </section>
 <section id="models">
 <h2>Models<a class="headerlink" href="#models" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyninja.modules.models.RoutingHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">RoutingHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.RoutingHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Routing handler to update the API routes to the server.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">RoutingHandler</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.RoutingHandler.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pyninja.modules.enums.APIRouteType" title="pyninja.modules.enums.APIRouteType"><span class="pre">APIRouteType</span></a></em><a class="headerlink" href="#pyninja.modules.models.RoutingHandler.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.RoutingHandler.routes">
+<span class="sig-name descname"><span class="pre">routes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">fastapi.routing.APIRoute</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">fastapi.routing.APIWebSocketRoute</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.RoutingHandler.routes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.RoutingHandler.enabled">
+<span class="sig-name descname"><span class="pre">enabled</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pyninja.modules.models.RoutingHandler.enabled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyninja.modules.models.RoutingHandler.Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#pyninja.modules.models.RoutingHandler.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration for routing handler.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.RoutingHandler.Config.arbitrary_types_allowed">
+<span class="sig-name descname"><span class="pre">arbitrary_types_allowed</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#pyninja.modules.models.RoutingHandler.Config.arbitrary_types_allowed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="pyninja.modules.models.ServiceStatus">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">ServiceStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BaseModel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.ServiceStatus" title="Permalink to this definition">¶</a></dt>

@@ -49,9 +49,9 @@ class APIEndpoints(StrEnum):
     ws_system: str = "/ws/system"
     run_command: str = "/run-command"
 
-    get_disk: str = "/get-disk"
     get_memory: str = "/get-memory"
     get_all_disks: str = "/get-all-disks"
+    get_disk_utilization: str = "/get-disk-utilization"
 
     get_docker_images: str = "/get-docker-images"
     get_docker_stats: str = "/get-docker-stats"
@@ -97,3 +97,15 @@ class Templates(StrEnum):
     unauthorized: str = "unauthorized.html"
     disk_report_linux: str = "disk_report_linux.html"
     disk_report_darwin: str = "disk_report_darwin.html"
+
+
+class APIRouteType(StrEnum):
+    """Types of API routes available.
+
+    >>> APIRouteType
+
+    """
+
+    get: str = "get"
+    post: str = "post"
+    monitor: str = "monitor"
