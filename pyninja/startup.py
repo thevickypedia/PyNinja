@@ -1,4 +1,5 @@
 import logging
+import sys
 from typing import Callable
 
 from fastapi import FastAPI, Request
@@ -80,6 +81,7 @@ def get_desc(
         "the PyNinja API provides optional features for executing remote commands "
         "and hosting a real-time system resource monitoring page. 🚀"
     )
+    description += f"\n\n**Python version:** {sys.version.split()[0]} - {sys.version_info.releaselevel}"
     description += "\n\n#### Basic Features"
     for route in get_routes.routes:
         description += generate_hyperlink(route)
