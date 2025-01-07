@@ -87,11 +87,11 @@ def start(**kwargs) -> None:
             - **no_auth:** Boolean flag to disable authentication for monitoring page.
             - **processes:** List of process names to include in the monitoring page.
             - **services:** List of service names to include in the monitoring page.
-            - **smart_lib:** FilePath to the smart library to get S.M.A.R.T metrics.
-            - **gpu_lib:** FilePath to the GPU library to get GPU metrics.
-            - **disk_lib:** FilePath to the disk library to get disk metrics.
-            - **service_lib:** FilePath to the service library to get service status.
-            - **processor_lib:** FilePath to the processor library to get processor metrics
+            - **service_lib:** Library path to retrieve service info.
+            - **smart_lib:** Library path for S.M.A.R.T metrics using PyUdisk.
+            - **gpu_lib:** Library path to retrieve GPU names using PyArchitecture.
+            - **disk_lib:** Library path to retrieve disk info using PyArchitecture.
+            - **processor_lib:** Library path to retrieve processor name using PyArchitecture.
     """
     models.env = squire.load_env(**kwargs)
     models.architecture = squire.load_architecture(models.env)

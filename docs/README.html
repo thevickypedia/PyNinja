@@ -46,7 +46,7 @@
   <section id="pyninja">
 <h1>PyNinja<a class="headerlink" href="#pyninja" title="Permalink to this heading">¶</a></h1>
 <p>Lightweight OS-agnostic service monitoring API</p>
-<p><img alt="Python" src="https://img.shields.io/badge/python-3.10%20%7C%203.11-blue" /></p>
+<p><img alt="Python" src="https://img.shields.io/badge/python-3.11%20%7C%203.12-blue" /></p>
 <p><strong>Platform Supported</strong></p>
 <p><img alt="Platform" src="https://img.shields.io/badge/Platform-Linux%7CmacOS%7CWindows-1f425f.svg" /></p>
 <p><strong>Deployments</strong></p>
@@ -67,9 +67,6 @@
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pyninja
 </pre></div>
 </div>
-<blockquote>
-<div><p>For Linux machines, use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pyninja[extra]</span></code> to include functionalities from <a class="reference external" href="https://github.com/thevickypedia/PyUdisk">PyUdisk</a> (S.M.A.R.T metrics)</p>
-</div></blockquote>
 <p><strong>Initiate - IDE</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyninja</span>
 
@@ -110,6 +107,8 @@
 <li><p><strong>API_SECRET</strong> - Secret access key for running commands on server remotely.</p></li>
 <li><p><strong>DATABASE</strong> - FilePath to store the auth database that handles the authentication errors.</p></li>
 </ul>
+<p>⚠️ Enabling remote execution can be extremely risky and poses a major security threat.
+So use <strong>caution</strong> and set the <strong>API_SECRET</strong> to a strong value.</p>
 <p><strong>Monitoring UI</strong></p>
 <ul class="simple">
 <li><p><strong>MONITOR_USERNAME</strong> - Username to authenticate the monitoring page.</p></li>
@@ -117,17 +116,15 @@
 <li><p><strong>MONITOR_SESSION</strong> - Session timeout for the monitoring page.</p></li>
 <li><p><strong>DISK_REPORT</strong> - Boolean flag to enable disk report feature using <a class="reference external" href="https://github.com/thevickypedia/PyUdisk">PyUdisk</a>.</p></li>
 <li><p><strong>MAX_CONNECTIONS</strong> - Maximum number of monitoring sessions allowed in parallel.</p></li>
-<li><p><strong>NO_AUTH</strong> - Boolean flag to host monitoring page without authentication.</p></li>
+<li><p><strong>NO_AUTH</strong> - Boolean flag to disable authentication for monitoring page.</p></li>
 <li><p><strong>PROCESSES</strong> - List of process names to include in the monitor page.</p></li>
 <li><p><strong>SERVICES</strong> - List of service names to include in the monitor page.</p></li>
+<li><p><strong>SERVICE_LIB</strong> - Library path to retrieve service info.</p></li>
 <li><p><strong>SMART_LIB</strong> - Library path for S.M.A.R.T metrics using <a class="reference external" href="https://github.com/thevickypedia/PyUdisk">PyUdisk</a>.</p></li>
-<li><p><strong>GPU_LIB</strong> - GPU library filepath to use for monitoring.</p></li>
-<li><p><strong>DISK_LIB</strong> - Disk library filepath to use for monitoring.</p></li>
-<li><p><strong>SERVICE_LIB</strong> - Memory library filepath to use for monitoring.</p></li>
-<li><p><strong>PROCESSOR_LIB</strong> - Processor library filepath to use for monitoring.</p></li>
+<li><p><strong>GPU_LIB</strong> - Library path to retrieve GPU names using <a class="reference external" href="https://github.com/thevickypedia/PyArchitecture">PyArchitecture</a>.</p></li>
+<li><p><strong>DISK_LIB</strong> - Library path to retrieve disk info using <a class="reference external" href="https://github.com/thevickypedia/PyArchitecture">PyArchitecture</a>.</p></li>
+<li><p><strong>PROCESSOR_LIB</strong> - Library path to retrieve processor name using <a class="reference external" href="https://github.com/thevickypedia/PyArchitecture">PyArchitecture</a>.</p></li>
 </ul>
-<p>⚠️ Enabling remote execution can be extremely risky and a major security threat.
-So use <strong>caution</strong> and set the <strong>API_SECRET</strong> to a strong value.</p>
 <blockquote>
 <div><p>Refer <a class="reference external" href="https://github.com/thevickypedia/PyNinja/tree/main/samples">samples</a> directory for examples.</p>
 </div></blockquote>

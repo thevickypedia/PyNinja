@@ -29,8 +29,6 @@ Lightweight OS-agnostic service monitoring API
 python -m pip install pyninja
 ```
 
-> For Linux machines, use `pip install pyninja[extra]` to include functionalities from [PyUdisk] (S.M.A.R.T metrics)
-
 **Initiate - IDE**
 ```python
 import pyninja
@@ -70,23 +68,23 @@ pyninja start
 - **API_SECRET** - Secret access key for running commands on server remotely.
 - **DATABASE** - FilePath to store the auth database that handles the authentication errors.
 
+⚠️ Enabling remote execution can be extremely risky and poses a major security threat.
+So use **caution** and set the **API_SECRET** to a strong value.
+
 **Monitoring UI**
 - **MONITOR_USERNAME** - Username to authenticate the monitoring page.
 - **MONITOR_PASSWORD** - Password to authenticate the monitoring page.
 - **MONITOR_SESSION** - Session timeout for the monitoring page.
 - **DISK_REPORT** - Boolean flag to enable disk report feature using [PyUdisk].
 - **MAX_CONNECTIONS** - Maximum number of monitoring sessions allowed in parallel.
-- **NO_AUTH** - Boolean flag to host monitoring page without authentication.
+- **NO_AUTH** - Boolean flag to disable authentication for monitoring page.
 - **PROCESSES** - List of process names to include in the monitor page.
 - **SERVICES** - List of service names to include in the monitor page.
+- **SERVICE_LIB** - Library path to retrieve service info.
 - **SMART_LIB** - Library path for S.M.A.R.T metrics using [PyUdisk].
-- **GPU_LIB** - GPU library filepath to use for monitoring.
-- **DISK_LIB** - Disk library filepath to use for monitoring.
-- **SERVICE_LIB** - Memory library filepath to use for monitoring.
-- **PROCESSOR_LIB** - Processor library filepath to use for monitoring.
-
-⚠️ Enabling remote execution can be extremely risky and a major security threat.
-So use **caution** and set the **API_SECRET** to a strong value.
+- **GPU_LIB** - Library path to retrieve GPU names using [PyArchitecture].
+- **DISK_LIB** - Library path to retrieve disk info using [PyArchitecture].
+- **PROCESSOR_LIB** - Library path to retrieve processor name using [PyArchitecture].
 
 > Refer [samples] directory for examples.
 
@@ -140,7 +138,7 @@ Licensed under the [MIT License][license]
 [label-actions-markdown]: https://github.com/thevickypedia/PyNinja/actions/workflows/markdown.yaml/badge.svg
 [label-pypi-package]: https://img.shields.io/badge/Pypi%20Package-pyninja-blue?style=for-the-badge&logo=Python
 [label-sphinx-doc]: https://img.shields.io/badge/Made%20with-Sphinx-blue?style=for-the-badge&logo=Sphinx
-[label-pyversion]: https://img.shields.io/badge/python-3.10%20%7C%203.11-blue
+[label-pyversion]: https://img.shields.io/badge/python-3.11%20%7C%203.12-blue
 [label-platform]: https://img.shields.io/badge/Platform-Linux|macOS|Windows-1f425f.svg
 [label-actions-pages]: https://github.com/thevickypedia/PyNinja/actions/workflows/pages/pages-build-deployment/badge.svg
 [label-actions-pypi]: https://github.com/thevickypedia/PyNinja/actions/workflows/python-publish.yaml/badge.svg
@@ -165,3 +163,4 @@ Licensed under the [MIT License][license]
 [runbook]: https://thevickypedia.github.io/PyNinja/
 [samples]: https://github.com/thevickypedia/PyNinja/tree/main/samples
 [PyUdisk]: https://github.com/thevickypedia/PyUdisk
+[PyArchitecture]: https://github.com/thevickypedia/PyArchitecture
