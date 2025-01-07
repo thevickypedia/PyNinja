@@ -86,6 +86,8 @@ So use **caution** and set the **API_SECRET** to a strong value.
 - **DISK_LIB** - Library path to retrieve disk info using [PyArchitecture].
 - **PROCESSOR_LIB** - Library path to retrieve processor name using [PyArchitecture].
 
+> Certain environment variables like `SERVICES` and `PROCESSS` are case-sensitive
+
 > Refer [samples] directory for examples.
 
 ## Coding Standards
