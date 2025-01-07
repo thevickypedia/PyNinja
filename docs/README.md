@@ -21,7 +21,7 @@ Lightweight OS-agnostic service monitoring API
 
 **Recommendations**
 
-- Install `python` [3.10] or [3.11]
+- Install `python` [3.11] or above
 - Use a dedicated [virtual environment]
 
 **Install PyNinja**
@@ -148,7 +148,6 @@ Licensed under the [MIT License][license]
 [label-pypi-format]: https://img.shields.io/pypi/format/PyNinja
 [label-pypi-status]: https://img.shields.io/pypi/status/PyNinja
 
-[3.10]: https://docs.python.org/3/whatsnew/3.10.html
 [3.11]: https://docs.python.org/3/whatsnew/3.11.html
 [virtual environment]: https://docs.python.org/3/tutorial/venv.html
 [release-notes]: https://github.com/thevickypedia/PyNinja/blob/main/release_notes.rst

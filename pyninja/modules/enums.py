@@ -1,10 +1,4 @@
-try:
-    from enum import StrEnum
-except ImportError:
-    from enum import Enum
-
-    class StrEnum(str, Enum):
-        """Custom StrEnum object for python3.10"""
+from enum import StrEnum
 
 
 class OperatingSystem(StrEnum):

@@ -15,7 +15,7 @@ classifiers = [
     "Topic :: System :: Monitoring",
 ]
 keywords = ["service-monitor", "PyNinja"]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 [tool.setuptools]
 packages = [
@@ -28,6 +28,7 @@ packages = [
     "pyninja.monitor.templates"
 ]
 [tool.setuptools.package-data]
+"pyninja.modules" = ["*.js"]
 "pyninja.monitor.templates" = ["*.html"]
 
 [tool.setuptools.dynamic]
