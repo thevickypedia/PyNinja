@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+v2.0.0 (01/06/2025)
+-------------------
+- Redefined SwaggerUI with options to further customize it
+- Includes new API endpoints to start, stop and list all services and docker containers
+- Includes full support for `PyUdisk` by default (without `extra` installation)
+- Removed support for python3.10 and lower
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v1.2.0...v2.0.0
+
 v1.2.0 (01/03/2025)
 -------------------
 - Includes redesigned architecture information retrieval for GPU, CPU, and disks
