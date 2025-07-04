@@ -19,3 +19,5 @@ logging.ini
 
 !samples/*
 discard/
+ninja.py
+ninja.sh

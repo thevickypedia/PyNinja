@@ -50,21 +50,27 @@ def landing_page() -> Dict[str, Any]:
         "Private IP address": squire.private_ip_address(),
         "Public IP address": squire.public_ip_address(),
     }
+    sys_info_disks = [
+        {k.replace("_", " ").title(): v for k, v in disk.items()}
+        for disk in models.architecture.disks
+    ]
     return dict(
         logout=enums.APIEndpoints.logout,
         sys_info_basic=sys_info_basic,
         sys_info_network=sys_info_network,
-        sys_info_disks=models.architecture.disks,
+        sys_info_disks=sys_info_disks,
     )
 
 
-def get_disk_info() -> Generator[Dict[str, str | int]]:
+@cache.timed_cache(30)
+async def get_disk_info() -> List[Dict[str, str | int]]:
     """Get partition and usage information for each physical drive.
 
-    Yields:
-        Dict[str, str | int]:
-        Yields a dictionary of key-value pairs with ID, name, and usage.
+    Returns:
+        List[Dict[str, str | int]]:
+        Returns a list of key-value pairs with ID, name, and usage.
     """
+    usage_metrics = []
     for disk in models.architecture.disks:
         disk_usage: Dict[str, str | int] = {
             "name": disk.get("name"),
@@ -75,20 +81,21 @@ def get_disk_info() -> Generator[Dict[str, str | int]]:
         disk_usage.update(
             squire.total_mountpoints_usage(disk["mountpoints"], as_bytes=True)
         )
-        yield disk_usage
+        usage_metrics.append(disk_usage)
+    return usage_metrics
 
 
-def container_cpu_limit(container_name: str) -> int | float | None:
+def container_cpu_limit(container_id: str) -> int | float | None:
     """Get CPU cores configured for a particular container using NanoCpus.
 
     Args:
-        container_name: Name of the docker container.
+        container_id: ID of the Docker container to inspect.
 
     Returns:
         int:
         Returns the number of CPU cores.
     """
-    cmd = r"docker inspect --format '{{.HostConfig.NanoCpus}}' " + container_name
+    cmd = r"docker inspect --format '{{.HostConfig.NanoCpus}}' " + container_id
     inspector = subprocess.run(
         cmd,
         stdout=asyncio.subprocess.PIPE,
@@ -100,6 +107,23 @@ def container_cpu_limit(container_name: str) -> int | float | None:
         return
     if nano_cpus := inspector.stdout.decode().strip():
         return int(nano_cpus) / 1_000_000_000
+
+
+def floater(value: float) -> int | float:
+    """Convert a float to an int if it is a whole number, otherwise return the float.
+
+    Args:
+        value: Value to convert.
+
+    Returns:
+        int | float:
+        Returns an int if the value is a whole number, otherwise returns the float.
+    """
+    if value == 0.0:
+        return 0
+    if "." in str(value):
+        return value
+    return int(value)
 
 
 def map_docker_stats(json_data: Dict[str, str]) -> Dict[str, str]:
@@ -117,11 +141,15 @@ def map_docker_stats(json_data: Dict[str, str]) -> Dict[str, str]:
         "Container Name": json_data.get("Name"),
         "CPU": json_data.get("CPUPerc"),
     }
-    if cpu_limit := container_cpu_limit(json_data.get("Name")):
-        if perc := re.findall(r"\d+\.\d+|\d+", json_data.get("CPUPerc")):
-            docker_dump["CPU Usage"] = (
-                f"{round((float(perc[0]) / 100) * cpu_limit, 2)} / {cpu_limit}"
-            )
+    if cpu_percent := re.findall(r"\d+\.\d+|\d+", json_data.get("CPUPerc")):
+        cpu_limit = int(
+            container_cpu_limit(json_data.get("ID")) or psutil.cpu_count(logical=True)
+        )
+        docker_dump["CPU Usage"] = (
+            f"{floater(round((float(cpu_percent[0]) / 100) * cpu_limit, 2))} / {cpu_limit}"
+        )
+    else:
+        docker_dump["CPU Usage"] = "N/A"
     docker_dump["Memory"] = json_data.get("MemPerc")
     docker_dump["Memory Usage"] = json_data.get("MemUsage")
     docker_dump["Block I/O"] = json_data.get("BlockIO")
@@ -142,7 +170,7 @@ def get_cpu_percent(cpu_interval: int) -> List[float]:
     return psutil.cpu_percent(interval=cpu_interval, percpu=True)
 
 
-def containers() -> bool:
+def containers() -> bool | None:
     """Check if any Docker containers are running."""
     docker_ps = subprocess.run(
         "docker ps -q",
@@ -175,10 +203,11 @@ async def get_docker_stats() -> List[Dict[str, str]]:
     if stderr:
         LOGGER.debug(stderr.decode().strip())
         return []
-    return [
+    docker_stats = [
         map_docker_stats(json.loads(line))
         for line in stdout.decode().strip().splitlines()
     ]
+    return sorted(docker_stats, key=lambda x: x["Container Name"])
 
 
 # noinspection PyProtectedMember
@@ -307,8 +336,10 @@ async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
         Dict[str, dict]:
         Returns a nested dictionary.
     """
+    # Create tasks for each asynchronous operation
     system_metrics_task = asyncio.create_task(get_system_metrics())
     docker_stats_task = asyncio.create_task(get_docker_stats())
+    disk_stats_task = asyncio.create_task(get_disk_info())
     service_stats_task = asyncio.create_task(
         operations.service_monitor(models.env.services)
     )
@@ -322,11 +353,14 @@ async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
         models.EXECUTOR, get_cpu_percent, *(models.MINIMUM_CPU_UPDATE_INTERVAL,)
     )
 
+    # Await all the tasks to complete
     system_metrics = await system_metrics_task
     docker_stats = await docker_stats_task
+    disk_stats = await disk_stats_task
     service_stats = await service_stats_task
     process_stats = await process_stats_task
     cpu_usage = await cpu_usage_task
+
     if models.OPERATING_SYSTEM in (
         enums.OperatingSystem.linux,
         enums.OperatingSystem.darwin,
@@ -350,4 +384,5 @@ async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
     system_metrics["docker_stats"] = docker_stats
     system_metrics["service_stats"] = service_stats
     system_metrics["process_stats"] = process_stats
+    system_metrics["disk_info"] = disk_stats
     return system_metrics

@@ -191,8 +191,7 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         ).get("timestamp")
     # Base task with a placeholder asyncio sleep to start the task loop
     task = asyncio.create_task(asyncio.sleep(0.1))
-    # Store disk usage information (during startup) to avoid repeated calls
-    disk_info = list(monitor.resources.get_disk_info())
+    connections = 0
     while True:
         # Validate session asynchronously (non-blocking)
         # This way of handling session validation is more efficient than using a blocking call
@@ -222,15 +221,16 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
             await websocket.close()
             break
         data = await monitor.resources.system_resources()
-        data["disk_info"] = disk_info
         try:
             await websocket.send_json(data)
+            connections += 1
         except WebSocketDisconnect:
             break
         except KeyboardInterrupt:
             await websocket.send_text("Server Disconnected")
             await websocket.close()
             break
+    LOGGER.info("WS connections made: %s", connections)
     try:
         if task.done():
             await asyncio.wait_for(task, timeout=1)

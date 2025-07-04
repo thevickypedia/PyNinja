@@ -179,8 +179,8 @@ async def validate_session(host: str, cookie_string: str, log: bool = True) -> N
                 poached.strftime("%Y-%m-%d %H:%M:%S"),
             )
     except (KeyError, ValueError, TypeError) as error:
-        LOGGER.critical(error)
+        LOGGER.critical("Invalid session: %s", error)
         raise exceptions.SessionError("Invalid Session")
     except AssertionError as error:
-        LOGGER.debug(error)
+        LOGGER.debug("Expired session: %s", error)
         raise exceptions.SessionError("Session Expired")

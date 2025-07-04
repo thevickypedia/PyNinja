@@ -66,7 +66,7 @@ def get_process_info(
         }
     except psutil.Error as error:
         LOGGER.debug(error)
-        return default(process_name or proc.name())
+        return default(process_name)
 
 
 async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
@@ -91,13 +91,14 @@ async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
         ["pid", "name", "cpu_percent", "memory_info", "create_time"]
     ):
         if any(
-            name.lower() in proc.name().lower() or name == str(proc.pid)
+            name.lower() == proc.name().lower() or name == str(proc.pid)
             for name in processes
         ):
             tasks.append(
-                loop.run_in_executor(models.EXECUTOR, get_process_info, proc, None)
+                loop.run_in_executor(
+                    models.EXECUTOR, get_process_info, proc, proc.name()
+                )
             )
-    # List comprehension can't be done, since exception handler will skip all the tasks
     completed_tasks = []
     for task in asyncio.as_completed(tasks):
         try:
@@ -193,10 +194,11 @@ def get_service_pid_macos(service_name: str) -> Optional[int]:
         Optional[int]:
         Returns the PID of the service.
     """
+    service_name = service_name.lower()
     try:
         output = subprocess.check_output([models.env.service_lib, "list"], text=True)
-        for line in output.splitlines()[1:]:
-            if service_name in line:
+        for line in output.splitlines()[1:]:  # Skip the header
+            if service_name in line.lower():
                 try:
                     return int(line.split()[0])
                 except ValueError:

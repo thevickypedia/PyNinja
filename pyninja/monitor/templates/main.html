@@ -421,6 +421,8 @@
         <tbody>
         </tbody>
     </table>
+    <br>
+    <i id="docker_notes" style="font-size: small;"></i>
 </div>
 <div id="service-stats" class="service-stats">
     <h3>Service Stats</h3>
@@ -430,6 +432,8 @@
         <tbody>
         </tbody>
     </table>
+    <br>
+    <i id="service_notes" style="font-size: small;"></i>
 </div>
 <div id="process-stats" class="process-stats">
     <h3>Process Stats</h3>
@@ -439,6 +443,8 @@
         <tbody>
         </tbody>
     </table>
+    <br>
+    <i id="process_notes" style="font-size: small;"></i>
 </div>
 <div id="pyudisk-stats" class="pyudisk-stats">
     <h3>PyUdisk Stats</h3>
@@ -449,7 +455,7 @@
         </tbody>
     </table>
     <br>
-    <i id="pyudisk_updated" style="font-size: small;"></i>
+    <i id="pyudisk_notes" style="font-size: small;"></i>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -525,11 +531,11 @@
                 // Clear the existing table rows
                 tableBody.innerHTML = '';
                 // Loop through the JSON data and populate the table
-                data.forEach(service => {
+                data.forEach(elements => {
                     const row = document.createElement('tr');
-                    for (const key in service) {
+                    for (const key in elements) {
                         const td = document.createElement('td');
-                        td.innerText = service[key];
+                        td.innerText = elements[key];
                         row.appendChild(td);
                     }
                     tableBody.appendChild(row);
@@ -540,6 +546,7 @@
             // Check if dockerStatsJSON is valid
             if (dockerStatsJSON && dockerStatsJSON.length > 0) {
                 handleTable(dockerStatsJSON, "dockerStatsTable", "docker-stats");
+                document.getElementById("docker_notes").textContent = "CPU and Memory usage reflect container resource limits.";
             } else {
                 // Hide the container if no data is available
                 document.getElementById("docker-stats").style.display = "none";
@@ -549,6 +556,7 @@
             // Check if serviceStatsJSON is valid
             if (serviceStatsJSON && serviceStatsJSON.length > 0) {
                 handleTable(serviceStatsJSON, "serviceStatsTable", "service-stats");
+                document.getElementById("service_notes").innerHTML = "One service can have multiple processes, but the usage metrics are isolated to process stats.";
             } else {
                 // Hide the container if no data is available
                 document.getElementById("service-stats").style.display = "none";
@@ -558,6 +566,7 @@
             // Check if processStatsJSON is valid
             if (processStatsJSON && processStatsJSON.length > 0) {
                 handleTable(processStatsJSON, "processStatsTable", "process-stats");
+                document.getElementById("process_notes").innerHTML = "Multiple processes can belong to a single service, but the usage metrics are not aggregated.";
             } else {
                 // Hide the container if no data is available
                 document.getElementById("process-stats").style.display = "none";
@@ -567,7 +576,7 @@
             // Check if dockerStatsJSON is valid
             if (pyudiskStatsJSON && pyudiskStatsJSON.length > 0) {
                 handleTable(pyudiskStatsJSON, "pyudiskStatsTable", "pyudisk-stats");
-                document.getElementById("pyudisk_updated").innerHTML = `Last updated: ${data.pyudisk_updated}`
+                document.getElementById("pyudisk_notes").innerHTML = `PyUdisk last updated: ${data.pyudisk_updated}`
             } else {
                 // Hide the container if no data is available
                 document.getElementById("pyudisk-stats").style.display = "none";

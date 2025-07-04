@@ -18,7 +18,7 @@ async def report(request: Request) -> HTMLResponse:
     """
     import pyudisk
 
-    data = [disk.model_dump() for disk in pyudisk.smart_metrics(pyudisk.EnvConfig())]
+    data = [disk.model_dump() for disk in pyudisk.smart_metrics()]
     if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
         template = enums.Templates.disk_report_linux
     elif models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
