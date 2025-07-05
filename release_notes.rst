@@ -1,6 +1,15 @@
 Release Notes
 =============
 
+v2.0.1 (07/04/2025)
+-------------------
+- Includes support for timed cache functionality in async mode
+- Bug fix for disk report on login page
+- Includes footer notes for tables in the UI
+- Logs number of connections made during a WS session
+- Includes python version in SwaggerUI
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v2.0.0...v2.0.1
+
 v2.0.0 (01/06/2025)
 -------------------
 - Redefined SwaggerUI with options to further customize it
