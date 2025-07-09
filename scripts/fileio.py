@@ -99,25 +99,30 @@ async def upload_large_file(
         directory: str,
         chunk_size: int = 1024 * 1024 * 5,  # 5MB default chunk size
         overwrite: bool = False,
-):
-    filename = os.path.basename(file_path)
-    url = urljoin(
-        NINJA_API_URL, f"/put-large-file?filename={quote(filename)}"
-    )
+) -> None:
+    """Uploads a large file to the Ninja API in chunks.
+
+    Args:
+        file_path: Path to the file to upload.
+        directory: Directory on the server to upload the file to.
+        chunk_size: Chunk size in bytes for the upload. Defaults to 5MB.
+        overwrite: Boolean flag to overwrite the file if it already exists. Defaults to False.
+    """
+    url = urljoin(NINJA_API_URL, "/put-large-file")
     params = {
         "directory": directory,
         "overwrite": str(overwrite).lower(),
         "chunk_size": chunk_size,
     }
     async with aiohttp.ClientSession() as session:
-        with open(file_path, "rb") as f:
+        with open(file_path, "rb") as fstream:
             async with session.post(
                     url,
                     params=params,
-                    data={"file": f},
+                    data={"file": fstream},
                     headers=SESSION.headers,
             ) as resp:
-                return await resp.json()
+                print(await resp.json())
 
 
 if __name__ == '__main__':
