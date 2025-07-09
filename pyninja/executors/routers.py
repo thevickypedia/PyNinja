@@ -221,6 +221,18 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
             methods=["POST"],
             dependencies=dependencies,
         ),
+        APIRoute(
+            path=enums.APIEndpoints.put_large_file,
+            endpoint=fullaccess.put_large_file,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path=enums.APIEndpoints.delete_content,
+            endpoint=fullaccess.delete_content,
+            methods=["DELETE"],
+            dependencies=dependencies,
+        ),
     ]
 
 

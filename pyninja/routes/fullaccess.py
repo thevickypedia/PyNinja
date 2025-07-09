@@ -2,6 +2,7 @@ import logging
 import mimetypes
 import os
 import pathlib
+import shutil
 import subprocess
 from http import HTTPStatus
 from typing import Optional
@@ -55,13 +56,91 @@ async def run_command(
     return response
 
 
+async def delete_content(
+    request: Request,
+    payload: payloads.DeleteContent,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    token: Optional[str] = Header(None),
+):
+    """**List files in a directory or scan the directory tree.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - payload: Payload received as request body.
+        - apikey: API Key to authenticate the request.
+        - token: API secret to authenticate the request.
+
+    **Returns:**
+
+        Dict[str, List[str]]:
+        Dictionary of files that can be downloaded or uploaded.
+    """
+    await auth.level_2(request, apikey, token)
+    if not any((payload.filepath, payload.directory)):
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.BAD_REQUEST.real,
+            detail="Either 'filepath' or 'directory' must be provided.",
+        )
+    if all((payload.filepath, payload.directory)):
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.BAD_REQUEST.real,
+            detail="Only one of 'filepath' or 'directory' can be provided.",
+        )
+    LOGGER.info("Requested file: '%s' for deletion.", payload.filepath)
+
+    if payload.filepath:
+        if not os.path.isfile(payload.filepath):
+            raise exceptions.APIResponse(
+                status_code=HTTPStatus.NOT_FOUND.real,
+                detail=f"File {payload.filepath!r} does not exist.",
+            )
+        try:
+            os.remove(payload.filepath)
+        except OSError as err:
+            LOGGER.error("Error deleting file: %s", err)
+            raise exceptions.APIResponse(
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR.real,
+                detail=f"Error deleting file {payload.filepath.__str__()!r}: {err}",
+            )
+        LOGGER.info("File %s deleted successfully.", payload.filepath.__str__())
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.OK.real,
+            detail=f"File {payload.filepath.__str__()!r} deleted successfully.",
+        )
+
+    if payload.directory:
+        if not os.path.isdir(payload.directory):
+            raise exceptions.APIResponse(
+                status_code=HTTPStatus.NOT_FOUND.real,
+                detail=f"Directory {payload.directory.__str__()!r} does not exist.",
+            )
+        try:
+            if payload.recursive:
+                shutil.rmtree(payload.directory)
+            else:
+                # Only delete the directory if it's empty
+                os.rmdir(payload.directory)
+        except OSError as err:
+            LOGGER.error("Error deleting directory: %s", err)
+            raise exceptions.APIResponse(
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR.real,
+                detail=f"Error deleting directory {payload.directory.__str__()!r}: {err}",
+            )
+        LOGGER.info("Directory %s deleted successfully.", payload.directory)
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.OK.real,
+            detail=f"Directory {payload.directory.__str__()!r} deleted successfully.",
+        )
+
+
 async def list_files(
     request: Request,
     payload: payloads.ListFiles,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
 ):
-    """**Get all YAML files from fileio and all log files from logs directory.**
+    """**List files in a directory or scan the directory tree.**
 
     **Args:**
 
@@ -174,4 +253,54 @@ async def put_file(
     raise exceptions.APIResponse(
         status_code=HTTPStatus.OK.real,
         detail=f"{file.filename!r} was uploaded to {directory}.",
+    )
+
+
+async def put_large_file(
+    request: Request,
+    file: UploadFile,
+    directory: DirectoryPath,
+    overwrite: bool = False,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    token: Optional[str] = Header(None),
+    chunk_size: int = 1024 * 1024 * 5,  # 5MB default chunk size
+):
+    """**Upload a large file in chunks.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - file: Upload object for the file param.
+        - directory: Target directory for upload.
+        - overwrite: Whether to overwrite existing file.
+        - apikey: API Key to authenticate the request.
+        - token: API secret to authenticate the request.
+        - chunk_size: Size of each chunk to write (in bytes).
+    """
+    await auth.level_2(request, apikey, token)
+    LOGGER.info(
+        "Requested large file: '%s' for upload at %s",
+        file.filename,
+        directory,
+    )
+    file_path = os.path.join(directory, file.filename)
+    if not overwrite and os.path.isfile(file_path):
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.BAD_REQUEST.real,
+            detail=f"File {file.filename!r} exists at {str(directory)!r} already, "
+            "set 'overwrite' flag to True to overwrite.",
+        )
+    with open(file_path, "wb") as f_stream:
+        n = 0
+        while True:
+            n += 1
+            chunk = await file.read(chunk_size)
+            if not chunk:
+                break
+            LOGGER.debug("Writing chunk of size %d bytes", len(chunk))
+            f_stream.write(chunk)
+    LOGGER.info("Total chunks written: %d", n)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.OK.real,
+        detail=f"{file.filename!r} was uploaded to {directory} in {n} chunks.",
     )

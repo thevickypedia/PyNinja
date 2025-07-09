@@ -28,7 +28,7 @@ def docs_handler(api: FastAPI, func: Callable) -> None:
         APIRoute(
             path=enums.APIEndpoints.docs,
             endpoint=func,
-            methods=["GET"],
+            methods=["GET", "POST", "DELETE"],
             include_in_schema=False,
         ),
     )

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, DirectoryPath, FilePath, PositiveFloat, PositiveInt
 
 
@@ -33,3 +35,15 @@ class GetFile(BaseModel):
     """
 
     filepath: FilePath
+
+
+class DeleteContent(BaseModel):
+    """Payload for delete-file endpoint.
+
+    >>> DeleteContent
+
+    """
+
+    filepath: Optional[FilePath] = None
+    directory: Optional[DirectoryPath] = None
+    recursive: bool = False

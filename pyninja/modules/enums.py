@@ -27,6 +27,8 @@ class APIEndpoints(StrEnum):
 
     get_file: str = "/get-file"
     put_file: str = "/put-file"
+    put_large_file: str = "/put-large-file"
+    delete_content: str = "/delete-content"
 
     get_processor: str = "/get-processor"
 
