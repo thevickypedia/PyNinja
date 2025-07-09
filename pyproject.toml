@@ -36,7 +36,7 @@ version = {attr = "pyninja.version.__version__"}
 dependencies = { file = ["requirements.txt"] }
 
 [project.optional-dependencies]
-dev = ["sphinx==5.1.1", "pre-commit", "recommonmark", "gitverse"]
+dev = ["sphinx==5.1.1", "pre-commit", "recommonmark", "gitverse", "aiohttp", "python-dotenv"]
 
 [project.scripts]
 # sends all the args to commandline function, where the arbitary commands as processed accordingly
