@@ -5,12 +5,12 @@ import pathlib
 import shutil
 import subprocess
 from http import HTTPStatus
-from typing import Optional
+from typing import NoReturn, Optional
 
 from fastapi import APIRouter, Depends, Header, Request, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
-from pydantic import DirectoryPath
+from pydantic import DirectoryPath, NewPath
 
 from pyninja.executors import auth, squire
 from pyninja.modules import exceptions, payloads, tree
@@ -20,6 +20,26 @@ BASIC_AUTH = HTTPBasic()
 BEARER_AUTH = HTTPBearer()
 
 router = APIRouter()
+
+
+def create_directory(directory: DirectoryPath | NewPath) -> None | NoReturn:
+    """Create a directory if it does not exist.
+
+    Args:
+        directory: Directory path to create.
+
+    Raises:
+        APIResponse:
+        Raises an INTERNAL_SERVER_ERROR if the directory cannot be created.
+    """
+    try:
+        os.makedirs(directory, exist_ok=True)
+    except OSError as err:
+        LOGGER.error("Error creating directory: %s", err)
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.real,
+            detail=f"Error creating directory {directory.__str__()!r}: {err}",
+        )
 
 
 async def run_command(
@@ -220,7 +240,7 @@ async def get_file(
 async def put_file(
     request: Request,
     file: UploadFile,
-    directory: DirectoryPath,
+    directory: DirectoryPath | NewPath,
     overwrite: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
@@ -241,14 +261,16 @@ async def put_file(
         file.filename,
         directory,
     )
-    content = await file.read()
-    if not overwrite and os.path.isfile(os.path.join(directory, file.filename)):
+    filepath = os.path.join(directory, file.filename)
+    if not overwrite and os.path.isfile(filepath):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.BAD_REQUEST.real,
             detail=f"File {file.filename!r} exists at {str(directory)!r} already, "
             "set 'overwrite' flag to True to overwrite.",
         )
-    with open(os.path.join(directory, file.filename), "wb") as f_stream:
+    create_directory(directory)
+    content = await file.read()
+    with open(filepath, "wb") as f_stream:
         f_stream.write(content)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.OK.real,
@@ -258,14 +280,19 @@ async def put_file(
 
 async def put_large_file(
     request: Request,
-    file: UploadFile,
-    directory: DirectoryPath,
+    filename: str,
+    directory: DirectoryPath | NewPath,
     overwrite: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
-    chunk_size: int = 1024 * 1024 * 5,  # 5MB default chunk size
 ):
     """**Upload a large file in chunks.**
+
+    **Note:**
+
+        - This endpoint is designed to handle large files that may not fit in memory.
+        - It streams the file in chunks directly to the specified directory.
+        - The chunk size is determined by the client's request stream.
 
     **Args:**
 
@@ -275,32 +302,28 @@ async def put_large_file(
         - overwrite: Whether to overwrite existing file.
         - apikey: API Key to authenticate the request.
         - token: API secret to authenticate the request.
-        - chunk_size: Size of each chunk to write (in bytes).
     """
     await auth.level_2(request, apikey, token)
     LOGGER.info(
         "Requested large file: '%s' for upload at %s",
-        file.filename,
+        filename,
         directory,
     )
-    file_path = os.path.join(directory, file.filename)
-    if not overwrite and os.path.isfile(file_path):
+    filepath = os.path.join(directory, filename)
+    if not overwrite and os.path.isfile(filepath):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.BAD_REQUEST.real,
-            detail=f"File {file.filename!r} exists at {str(directory)!r} already, "
+            detail=f"File {filename!r} exists at {str(directory)!r} already, "
             "set 'overwrite' flag to True to overwrite.",
         )
-    with open(file_path, "wb") as f_stream:
+    create_directory(directory)
+    with open(filepath, "wb") as fstream:
         n = 0
-        while True:
+        async for chunk in request.stream():
             n += 1
-            chunk = await file.read(chunk_size)
-            if not chunk:
-                break
-            LOGGER.debug("Writing chunk of size %d bytes", len(chunk))
-            f_stream.write(chunk)
-    LOGGER.info("Total chunks written: %d", n)
+            fstream.write(chunk)
+    LOGGER.info("File %s uploaded in %d chunks.", filename, n)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.OK.real,
-        detail=f"{file.filename!r} was uploaded to {directory} in {n} chunks.",
+        detail=f"{filename!r} was uploaded to {directory} in {n} chunks.",
     )

@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import mimetypes
 import os
 import pathlib
@@ -105,58 +106,31 @@ def delete_content(
     print(response.json())
 
 
-async def file_chunker(filepath: str, chunk_size: int) -> AsyncIterable[bytes]:
-    """Asynchronously reads a file in chunks.
-
-    Args:
-        filepath (str): Path to the file to read.
-        chunk_size (int): Size of each chunk in bytes. Defaults to 5MB.
-
-    Yields:
-        bytes: A chunk of the file.
-    """
-    with open(filepath, "rb") as fstream:
-        while True:
-            chunk = fstream.read(chunk_size)
-            if not chunk:
-                break
-            yield chunk
-
-
 async def upload_large_file(
         file_path: str,
         directory: str,
-        chunk_size: int = 1024 * 1024 * 5,
-        overwrite: bool = False,
-) -> None:
-    """Uploads a large file to the Ninja API in chunks.
-
-    Args:
-        file_path: Path to the file to upload.
-        directory: Directory on the server to upload the file to.
-        chunk_size: Chunk size in bytes for the upload. Defaults to 5MB.
-        overwrite: Boolean flag to overwrite the file if it already exists. Defaults to False.
-    """
-    url = urljoin(NINJA_API_URL, "/put-large-file")
-    params = {
-        "directory": directory,
-        "overwrite": str(overwrite).lower(),
-        "chunk_size": chunk_size,
-    }
-    form = aiohttp.FormData()
-    async for chunk in file_chunker(file_path, chunk_size):
-        form.add_field('file', chunk, filename=os.path.basename(file_path),
-                       content_type=mimetypes.guess_type(file_path)[0])
+        overwrite: bool = False
+):
+    """Uploads a large file to the Ninja API using aiohttp."""
+    assert os.path.isfile(file_path), f"File {file_path} does not exist"
+    url = urljoin(
+        NINJA_API_URL,
+        f"/put-large-file"
+    )
+    filename = os.path.basename(file_path)
+    params = {"directory": directory, "filename": filename}
+    headers = copy.deepcopy(SESSION.headers)
+    headers["Content-Type"] = "application/octet-stream"
     async with aiohttp.ClientSession() as session:
-        async with session.put(
-                url,
+        with open(file_path, "rb") as fstream:
+            async with session.put(
+                url=url,
                 params=params,
-                data=form,
-                headers=SESSION.headers,
-        ) as response:
-            response.raise_for_status()
-            json_response = await response.json()
-            print(json_response)
+                data=fstream,
+                headers=headers,
+            ) as response:
+                response.raise_for_status()
+                print(await response.json())
 
 
 if __name__ == '__main__':
@@ -164,7 +138,9 @@ if __name__ == '__main__':
     upload_file(".keep", overwrite=True)
     delete_content(".keep")
     asyncio.run(upload_large_file(
+        # Client side path (source)
         file_path=os.path.join(os.path.expanduser("~"), "Desktop", "png.zip"),
-        directory=os.getcwd(),
+        # Server side path (destination)
+        directory=os.path.join(get_current_working_directory(), "tmp"),
         overwrite=True,
     ))

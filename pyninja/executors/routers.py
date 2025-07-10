@@ -218,14 +218,16 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
         APIRoute(
             path=enums.APIEndpoints.put_file,
             endpoint=fullaccess.put_file,
-            methods=["POST"],
+            methods=["PUT"],
             dependencies=dependencies,
         ),
+        # Large file upload is not included in the docs page
         APIRoute(
             path=enums.APIEndpoints.put_large_file,
             endpoint=fullaccess.put_large_file,
-            methods=["POST"],
+            methods=["PUT"],
             dependencies=dependencies,
+            include_in_schema=False,
         ),
         APIRoute(
             path=enums.APIEndpoints.delete_content,
