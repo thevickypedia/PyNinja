@@ -3,12 +3,13 @@ import copy
 import mimetypes
 import os
 import pathlib
-from collections.abc import AsyncIterable
 from urllib.parse import quote
 
 import aiohttp
 import dotenv
 import requests
+from tqdm import tqdm
+from pyninja.executors.squire import size_converter
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
@@ -106,31 +107,49 @@ def delete_content(
     print(response.json())
 
 
+CHUNK_SIZE = 1024 * 1024 * 9  # 9MB
+
+
 async def upload_large_file(
         file_path: str,
         directory: str,
         overwrite: bool = False
 ):
-    """Uploads a large file to the Ninja API using aiohttp."""
+    """Uploads a large file to the Ninja API using aiohttp in chunks, with a progress bar."""
     assert os.path.isfile(file_path), f"File {file_path} does not exist"
     url = urljoin(
         NINJA_API_URL,
         f"/put-large-file"
     )
     filename = os.path.basename(file_path)
-    params = {"directory": directory, "filename": filename}
+    params = {"directory": directory, "filename": filename, "overwrite": str(overwrite).lower()}
     headers = copy.deepcopy(SESSION.headers)
     headers["Content-Type"] = "application/octet-stream"
-    async with aiohttp.ClientSession() as session:
-        with open(file_path, "rb") as fstream:
-            async with session.put(
-                url=url,
-                params=params,
-                data=fstream,
-                headers=headers,
-            ) as response:
-                response.raise_for_status()
-                print(await response.json())
+
+    with open(file_path, "rb") as fstream:
+        file_size = os.path.getsize(file_path)
+        total_chunks = (file_size // CHUNK_SIZE) + (1 if file_size % CHUNK_SIZE > 0 else 0)
+        print(f"Uploading {filename!r} of size {size_converter(file_size)} in {total_chunks} chunks!")
+
+        with tqdm(total=total_chunks, desc="Uploading", unit="chunk") as progress_bar:
+            n = 0
+            async with aiohttp.ClientSession() as session:
+                while True:
+                    chunk = fstream.read(CHUNK_SIZE)
+                    if not chunk:
+                        break
+                    async with session.put(
+                            url=url,
+                            params=params,
+                            data=chunk,
+                            headers=headers,
+                    ) as response:
+                        response.raise_for_status()
+                    # Update the progress bar after each chunk
+                    progress_bar.update(1)
+                    n += 1
+                    # await asyncio.sleep(0.1)
+    print(f"File uploaded successfully in {n} chunks")
 
 
 if __name__ == '__main__':
@@ -139,7 +158,7 @@ if __name__ == '__main__':
     delete_content(".keep")
     asyncio.run(upload_large_file(
         # Client side path (source)
-        file_path=os.path.join(os.path.expanduser("~"), "Desktop", "png.zip"),
+        file_path=os.environ["FILEPATH"],
         # Server side path (destination)
         directory=os.path.join(get_current_working_directory(), "tmp"),
         overwrite=True,

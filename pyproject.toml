@@ -32,18 +32,27 @@ packages = [
 "pyninja.monitor.templates" = ["*.html"]
 
 [tool.setuptools.dynamic]
-version = {attr = "pyninja.version.__version__"}
+version = { attr = "pyninja.version.__version__" }
 dependencies = { file = ["requirements.txt"] }
 
 [project.optional-dependencies]
-dev = ["sphinx==5.1.1", "pre-commit", "recommonmark", "gitverse", "aiohttp", "python-dotenv"]
+dev = [
+    "sphinx==5.1.1",
+    "pre-commit",
+    "recommonmark",
+    "gitverse",
+    "aiohttp==3.12.*",
+    "python-dotenv==1.1.*",
+    "tqdm==4.67.*",
+    "requests==2.*"
+]
 
 [project.scripts]
 # sends all the args to commandline function, where the arbitary commands as processed accordingly
 pyninja = "pyninja:commandline"
 
 [build-system]
-requires      = ["setuptools", "wheel"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project.urls]

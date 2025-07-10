@@ -282,13 +282,14 @@ async def put_large_file(
     request: Request,
     filename: str,
     directory: DirectoryPath | NewPath,
+    write_mode: str = "wb",  # todo: make this enum
     overwrite: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
 ):
     """**Upload a large file in chunks.**
 
-    **Note:**
+    **Notes:**
 
         - This endpoint is designed to handle large files that may not fit in memory.
         - It streams the file in chunks directly to the specified directory.
@@ -299,10 +300,11 @@ async def put_large_file(
         - request: Reference to the FastAPI request object.
         - file: Upload object for the file param.
         - directory: Target directory for upload.
-        - overwrite: Whether to overwrite existing file.
+        - overwrite: Whether to overwrite an existing file.
         - apikey: API Key to authenticate the request.
         - token: API secret to authenticate the request.
     """
+    # todo: Support zipfile uploads, with automatic unzip and deletion flags to support directory uploads
     await auth.level_2(request, apikey, token)
     LOGGER.info(
         "Requested large file: '%s' for upload at %s",
@@ -310,14 +312,16 @@ async def put_large_file(
         directory,
     )
     filepath = os.path.join(directory, filename)
-    if not overwrite and os.path.isfile(filepath):
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.BAD_REQUEST.real,
-            detail=f"File {filename!r} exists at {str(directory)!r} already, "
-            "set 'overwrite' flag to True to overwrite.",
-        )
+    if write_mode == "wb":
+        # Overwrite flag is honored only for write - not append
+        if not overwrite and os.path.isfile(filepath):
+            raise exceptions.APIResponse(
+                status_code=HTTPStatus.BAD_REQUEST.real,
+                detail=f"File {filename!r} exists at {str(directory)!r} already, "
+                "set 'overwrite' flag to True to overwrite.",
+            )
     create_directory(directory)
-    with open(filepath, "wb") as fstream:
+    with open(filepath, write_mode) as fstream:
         n = 0
         async for chunk in request.stream():
             n += 1
