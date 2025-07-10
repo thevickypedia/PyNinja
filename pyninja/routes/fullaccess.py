@@ -282,7 +282,7 @@ async def put_large_file(
     request: Request,
     filename: str,
     directory: DirectoryPath | NewPath,
-    write_mode: str = "wb",  # todo: make this enum
+    recurring: bool = False,
     overwrite: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
@@ -295,16 +295,31 @@ async def put_large_file(
         - It streams the file in chunks directly to the specified directory.
         - The chunk size is determined by the client's request stream.
 
+    **Warnings:**
+
+        - If recurring is set to False,
+            - The server will treat each PUT request as a completely new file, overwriting the previous one.
+            - The overwrite flag will be ignored.
+            - There is a risk of corrupting existing files.
+
+        - To overcome these shortcomings,
+            - The client should be aware of any existing files of the same in the server.
+            - The client should use a dynamic filename.
+
     **Args:**
 
         - request: Reference to the FastAPI request object.
-        - file: Upload object for the file param.
+        - filename: Incoming file's basename.
         - directory: Target directory for upload.
+        - recurring: If true, the file content will be appended.
         - overwrite: Whether to overwrite an existing file.
         - apikey: API Key to authenticate the request.
         - token: API secret to authenticate the request.
     """
-    # todo: Support zipfile uploads, with automatic unzip and deletion flags to support directory uploads
+    # todo:
+    #   Support zipfile uploads, with automatic unzip and deletion flags to support directory uploads
+    #   Recurring requests don't have an overwrite functionality
+    #   Recurring requests may corrupt existing files (if any)
     await auth.level_2(request, apikey, token)
     LOGGER.info(
         "Requested large file: '%s' for upload at %s",
@@ -312,14 +327,16 @@ async def put_large_file(
         directory,
     )
     filepath = os.path.join(directory, filename)
-    if write_mode == "wb":
-        # Overwrite flag is honored only for write - not append
+    if recurring:
+        write_mode = "ab"
+    else:
         if not overwrite and os.path.isfile(filepath):
             raise exceptions.APIResponse(
                 status_code=HTTPStatus.BAD_REQUEST.real,
                 detail=f"File {filename!r} exists at {str(directory)!r} already, "
                 "set 'overwrite' flag to True to overwrite.",
             )
+        write_mode = "wb"
     create_directory(directory)
     with open(filepath, write_mode) as fstream:
         n = 0

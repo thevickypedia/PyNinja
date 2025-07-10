@@ -119,10 +119,15 @@ async def upload_large_file(
     assert os.path.isfile(file_path), f"File {file_path} does not exist"
     url = urljoin(
         NINJA_API_URL,
-        f"/put-large-file"
+        "/put-large-file"
     )
     filename = os.path.basename(file_path)
-    params = {"directory": directory, "filename": filename, "overwrite": str(overwrite).lower()}
+    params = dict(
+        directory=directory,
+        filename=filename,
+        overwrite=str(overwrite).lower(),  # this flag is useless atm
+        recurring="true",
+    )
     headers = copy.deepcopy(SESSION.headers)
     headers["Content-Type"] = "application/octet-stream"
 
