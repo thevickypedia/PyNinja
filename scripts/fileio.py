@@ -1,6 +1,8 @@
 import asyncio
 import mimetypes
 import os
+import pathlib
+from collections.abc import AsyncIterable
 from urllib.parse import quote
 
 import aiohttp
@@ -59,7 +61,11 @@ def get_current_working_directory() -> str:
     return stdout[0] if isinstance(stdout, list) else stdout
 
 
-def upload_file(filepath: str, destination: str = None, overwrite: bool = False) -> None:
+def upload_file(
+        filepath: str,
+        destination: str = None,
+        overwrite: bool = False
+) -> None:
     """Uploads a file to the Ninja API.
 
     Args:
@@ -75,12 +81,16 @@ def upload_file(filepath: str, destination: str = None, overwrite: bool = False)
     assert os.path.isfile(filepath), f"File {filepath} does not exist"
     with open(filepath, "rb") as f:
         files = {"file": (os.path.basename(filepath), f), "type": mimetypes.guess_type(filepath)[0]}
-        response = SESSION.post(url, files=files)
+        response = SESSION.put(url, files=files)
         assert response.ok, response.text
         print(response.json())
 
 
-def delete_content(filepath: str, directory: str = None, recursive: bool = False) -> None:
+def delete_content(
+        filepath: str = None,
+        directory: str = None,
+        recursive: bool = False
+) -> None:
     """Deletes a file or directory from the Ninja API.
 
     Args:
@@ -88,16 +98,35 @@ def delete_content(filepath: str, directory: str = None, recursive: bool = False
         directory (str, optional): Directory containing the file. Defaults to None.
         recursive (bool, optional): Whether to delete directories recursively. Defaults to False.
     """
+    assert any((filepath, directory)), "Either filepath or directory must be provided"
     url = urljoin(NINJA_API_URL, "/delete-content")
     response = SESSION.delete(url, json={"filepath": filepath, "directory": directory, "recursive": recursive})
     response.raise_for_status()
     print(response.json())
 
 
+async def file_chunker(filepath: str, chunk_size: int) -> AsyncIterable[bytes]:
+    """Asynchronously reads a file in chunks.
+
+    Args:
+        filepath (str): Path to the file to read.
+        chunk_size (int): Size of each chunk in bytes. Defaults to 5MB.
+
+    Yields:
+        bytes: A chunk of the file.
+    """
+    with open(filepath, "rb") as fstream:
+        while True:
+            chunk = fstream.read(chunk_size)
+            if not chunk:
+                break
+            yield chunk
+
+
 async def upload_large_file(
         file_path: str,
         directory: str,
-        chunk_size: int = 1024 * 1024 * 5,  # 5MB default chunk size
+        chunk_size: int = 1024 * 1024 * 5,
         overwrite: bool = False,
 ) -> None:
     """Uploads a large file to the Ninja API in chunks.
@@ -114,25 +143,28 @@ async def upload_large_file(
         "overwrite": str(overwrite).lower(),
         "chunk_size": chunk_size,
     }
+    form = aiohttp.FormData()
+    async for chunk in file_chunker(file_path, chunk_size):
+        form.add_field('file', chunk, filename=os.path.basename(file_path),
+                       content_type=mimetypes.guess_type(file_path)[0])
     async with aiohttp.ClientSession() as session:
-        with open(file_path, "rb") as fstream:
-            async with session.post(
-                    url,
-                    params=params,
-                    data={"file": fstream},
-                    headers=SESSION.headers,
-            ) as resp:
-                print(await resp.json())
+        async with session.put(
+                url,
+                params=params,
+                data=form,
+                headers=SESSION.headers,
+        ) as response:
+            response.raise_for_status()
+            json_response = await response.json()
+            print(json_response)
 
 
 if __name__ == '__main__':
-    filepath_ = os.path.join(os.getcwd(), ".keep")
-    upload_file(str(filepath_), overwrite=True)
-    delete_content(str(filepath_))
-    run_command("touch scripts/.keep")
+    pathlib.Path(".keep").touch(exist_ok=True)
+    upload_file(".keep", overwrite=True)
+    delete_content(".keep")
     asyncio.run(upload_large_file(
         file_path=os.path.join(os.path.expanduser("~"), "Desktop", "png.zip"),
         directory=os.getcwd(),
-        chunk_size=1024 * 1024 * 5,  # 5MB
         overwrite=True,
     ))
