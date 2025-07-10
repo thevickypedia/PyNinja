@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import mimetypes
 import os
@@ -281,13 +282,27 @@ async def put_file(
 async def put_large_file(
     request: Request,
     filename: str,
-    directory: DirectoryPath | NewPath,
-    recurring: bool = False,
+    directory: str,
+    part_number: int = 0,
+    is_last: bool = False,
+    checksum: Optional[str] = None,
     overwrite: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
 ):
     """**Upload a large file in chunks.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - filename: Incoming file's basename.
+        - directory: Target directory for upload.
+        - part_number: Incoming file part number.
+        - is_last: Boolean flag to indicate that the incoming chunk is final.
+        - checksum: Incoming file checksum.
+        - overwrite: Boolean flag to remove existing file.
+        - apikey: API Key to authenticate the request.
+        - token: API secret to authenticate the request.
 
     **Notes:**
 
@@ -305,45 +320,54 @@ async def put_large_file(
         - To overcome these shortcomings,
             - The client should be aware of any existing files of the same in the server.
             - The client should use a dynamic filename.
-
-    **Args:**
-
-        - request: Reference to the FastAPI request object.
-        - filename: Incoming file's basename.
-        - directory: Target directory for upload.
-        - recurring: If true, the file content will be appended.
-        - overwrite: Whether to overwrite an existing file.
-        - apikey: API Key to authenticate the request.
-        - token: API secret to authenticate the request.
     """
     # todo:
     #   Support zipfile uploads, with automatic unzip and deletion flags to support directory uploads
-    #   Recurring requests don't have an overwrite functionality
-    #   Recurring requests may corrupt existing files (if any)
     await auth.level_2(request, apikey, token)
-    LOGGER.info(
-        "Requested large file: '%s' for upload at %s",
-        filename,
-        directory,
-    )
     filepath = os.path.join(directory, filename)
-    if recurring:
-        write_mode = "ab"
-    else:
-        if not overwrite and os.path.isfile(filepath):
+    tmp_filepath = os.path.join(directory, f"{filename}.part")
+    if part_number == 0:
+        LOGGER.info(
+            "Requested large file: '%s' for upload at %s",
+            filename,
+            directory,
+        )
+        if overwrite:
+            os.remove(filepath) if os.path.isfile(filepath) else None
+            os.remove(tmp_filepath) if os.path.isfile(tmp_filepath) else None
+        elif os.path.isfile(filepath):
+            LOGGER.warning("File '%s' already exists at '%s'", filename, directory)
             raise exceptions.APIResponse(
                 status_code=HTTPStatus.BAD_REQUEST.real,
                 detail=f"File {filename!r} exists at {str(directory)!r} already, "
                 "set 'overwrite' flag to True to overwrite.",
             )
-        write_mode = "wb"
-    create_directory(directory)
-    with open(filepath, write_mode) as fstream:
+        create_directory(directory)
+    with open(tmp_filepath, "ab") as fstream:
         n = 0
         async for chunk in request.stream():
             n += 1
             fstream.write(chunk)
-    LOGGER.info("File %s uploaded in %d chunks.", filename, n)
+    if is_last:
+        if os.path.isfile(tmp_filepath):
+            os.rename(tmp_filepath, filepath)
+        else:
+            raise exceptions.APIResponse(
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR.real,
+                detail=f"Failed to store {filename!r} at {directory!r}",
+            )
+        LOGGER.info("File '%s' uploaded in %d chunks.", filename, n)
+        if checksum:
+            with open(filepath, "rb") as f:
+                checksum_server = hashlib.md5(f.read()).hexdigest()
+            if checksum_server != checksum:
+                LOGGER.error("Checksum mismatch for file '%s'", filepath)
+                raise exceptions.APIResponse(
+                    status_code=HTTPStatus.INTERNAL_SERVER_ERROR.real,
+                    detail=f"File {filename!r} checksum does not match with client.",
+                )
+        else:
+            LOGGER.warning("Checksum was not provided.")
     raise exceptions.APIResponse(
         status_code=HTTPStatus.OK.real,
         detail=f"{filename!r} was uploaded to {directory} in {n} chunks.",

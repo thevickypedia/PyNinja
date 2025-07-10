@@ -1,5 +1,6 @@
 import asyncio
 import copy
+import hashlib
 import mimetypes
 import os
 import pathlib
@@ -9,7 +10,6 @@ import aiohttp
 import dotenv
 import requests
 from tqdm import tqdm
-from pyninja.executors.squire import size_converter
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
@@ -101,60 +101,63 @@ def delete_content(
         recursive (bool, optional): Whether to delete directories recursively. Defaults to False.
     """
     assert any((filepath, directory)), "Either filepath or directory must be provided"
+    if directory and recursive:
+        flag = input("Both directory path and recursive are set to True. Do you want to continue? [y/N]\n")
+        if flag != "y":
+            return
+        print(f"Deleting directory: {directory!r} and all it's subdirectories.")
     url = urljoin(NINJA_API_URL, "/delete-content")
     response = SESSION.delete(url, json={"filepath": filepath, "directory": directory, "recursive": recursive})
     response.raise_for_status()
     print(response.json())
 
 
-CHUNK_SIZE = 1024 * 1024 * 9  # 9MB
+CHUNK_SIZE = 9 * 1024 * 1024  # 9MB
 
 
 async def upload_large_file(
-        file_path: str,
-        directory: str,
-        overwrite: bool = False
+    file_path: str,
+    directory: str,
+    overwrite: bool = False,
 ):
-    """Uploads a large file to the Ninja API using aiohttp in chunks, with a progress bar."""
     assert os.path.isfile(file_path), f"File {file_path} does not exist"
-    url = urljoin(
-        NINJA_API_URL,
-        "/put-large-file"
-    )
+    url = urljoin(NINJA_API_URL, "/put-large-file")
     filename = os.path.basename(file_path)
-    params = dict(
-        directory=directory,
-        filename=filename,
-        overwrite=str(overwrite).lower(),  # this flag is useless atm
-        recurring="true",
-    )
+    file_size = os.path.getsize(file_path)
+    total_chunks = (file_size + CHUNK_SIZE - 1) // CHUNK_SIZE
+
+    # Calculate checksum in advance (optional, but good for validation)
+    with open(file_path, "rb") as f:
+        checksum = hashlib.md5(f.read()).hexdigest()
+
     headers = copy.deepcopy(SESSION.headers)
     headers["Content-Type"] = "application/octet-stream"
+    overwrite = str(overwrite).lower()
 
-    with open(file_path, "rb") as fstream:
-        file_size = os.path.getsize(file_path)
-        total_chunks = (file_size // CHUNK_SIZE) + (1 if file_size % CHUNK_SIZE > 0 else 0)
-        print(f"Uploading {filename!r} of size {size_converter(file_size)} in {total_chunks} chunks!")
-
-        with tqdm(total=total_chunks, desc="Uploading", unit="chunk") as progress_bar:
-            n = 0
-            async with aiohttp.ClientSession() as session:
-                while True:
-                    chunk = fstream.read(CHUNK_SIZE)
-                    if not chunk:
-                        break
-                    async with session.put(
-                            url=url,
-                            params=params,
-                            data=chunk,
-                            headers=headers,
-                    ) as response:
-                        response.raise_for_status()
-                    # Update the progress bar after each chunk
-                    progress_bar.update(1)
-                    n += 1
-                    # await asyncio.sleep(0.1)
-    print(f"File uploaded successfully in {n} chunks")
+    async with aiohttp.ClientSession() as session:
+        with open(file_path, "rb") as fstream, tqdm(total=total_chunks, unit="chunk",
+                                                    desc=f"Uploading {filename}") as pbar:
+            for part_number in range(total_chunks):
+                chunk = fstream.read(CHUNK_SIZE)
+                is_last = part_number == total_chunks - 1
+                params = dict(
+                    directory=directory,
+                    filename=filename,
+                    part_number=part_number,
+                    is_last=str(is_last).lower(),
+                    overwrite=overwrite,
+                )
+                if is_last:
+                    params["checksum"] = checksum
+                async with session.put(
+                        url,
+                        params=params,
+                        data=chunk,
+                        headers=headers,
+                ) as response:
+                    assert response.ok, await response.text()
+                pbar.update(1)
+                await asyncio.sleep(0.1)  # prevent server overload (tune as needed)
 
 
 if __name__ == '__main__':
