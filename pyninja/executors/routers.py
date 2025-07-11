@@ -9,7 +9,7 @@ from fastapi.security import HTTPBasic, HTTPBearer
 
 from pyninja.modules import enums, exceptions, models
 from pyninja.monitor import routes as ui
-from pyninja.routes import fullaccess, ipaddr, metrics, namespace, orchestration
+from pyninja.routes import fullaccess, ipaddr, metrics, namespace, orchestration, upload
 
 LOGGER = logging.getLogger("uvicorn.default")
 BASIC_AUTH = HTTPBasic()
@@ -224,7 +224,7 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
         # Large file upload is not included in the docs page
         APIRoute(
             path=enums.APIEndpoints.put_large_file,
-            endpoint=fullaccess.put_large_file,
+            endpoint=upload.put_large_file,
             methods=["PUT"],
             dependencies=dependencies,
             include_in_schema=False,
