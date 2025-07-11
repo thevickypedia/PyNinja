@@ -4,13 +4,12 @@ from http import HTTPStatus
 
 import psutil
 from fastapi import Depends, Request
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from pyninja.executors import auth, squire
 from pyninja.modules import exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
-BASIC_AUTH = HTTPBasic()
 BEARER_AUTH = HTTPBearer()
 
 

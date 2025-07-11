@@ -1,40 +1,9 @@
-import asyncio
-import copy
-import hashlib
 import mimetypes
 import os
 import pathlib
 from urllib.parse import quote
 
-import aiohttp
-import dotenv
-import requests
-from tqdm import tqdm
-
-dotenv.load_dotenv(dotenv.find_dotenv())
-
-NINJA_API_KEY = os.environ["NINJA_APIKEY"]
-NINJA_API_URL = os.environ["NINJA_API_URL"]
-NINJA_API_TIMEOUT = os.environ["NINJA_API_TIMEOUT"]
-NINJA_API_TOKEN = os.environ["NINJA_API_TOKEN"]
-CHUNK_SIZE = 9 * 1024 * 1024  # 9MB
-
-SESSION = requests.Session()
-SESSION.headers = {
-    "Authorization": f"Bearer {NINJA_API_KEY}",
-    "Token": NINJA_API_TOKEN,
-    "Accept": "application/json",
-}
-
-
-def urljoin(*args) -> str:
-    """Joins given arguments into a url. Trailing but not leading slashes are stripped for each argument.
-
-    Returns:
-        str:
-        Joined url.
-    """
-    return "/".join(map(lambda x: str(x).rstrip("/").lstrip("/"), args))
+from init import urljoin, NINJA_API_URL, NINJA_API_TIMEOUT, SESSION
 
 
 def run_command(command: str, timeout: int = NINJA_API_TIMEOUT) -> dict:
@@ -113,78 +82,7 @@ def delete_content(
     print(response.json())
 
 
-async def upload_large_file(
-    directory: str,
-    dir_path: str = None,
-    file_path: str = None,
-    overwrite: bool = False,
-):
-    """Uploads a large file to the Ninja API in chunks.
-
-    Args:
-        directory: Directory on the server where the file will be uploaded.
-        dir_path: Directory path to upload.
-        file_path: File path to the large file to upload.
-        overwrite: Boolean flag to overwrite existing files.
-    """
-    assert any((dir_path, file_path)), "Either dir_path or file_path must be provided"
-    if dir_path:
-        from zipper import archive
-        file_path = archive(pathlib.Path(dir_path))
-    assert os.path.isfile(file_path), f"File {file_path} does not exist"
-    url = urljoin(NINJA_API_URL, "/put-large-file")
-    filename = os.path.basename(file_path)
-    file_size = os.path.getsize(file_path)
-    total_chunks = (file_size + CHUNK_SIZE - 1) // CHUNK_SIZE
-
-    # Calculate checksum in advance (optional, but good for validation)
-    with open(file_path, "rb") as f:
-        checksum = hashlib.md5(f.read()).hexdigest()
-
-    headers = copy.deepcopy(SESSION.headers)
-    headers["Content-Type"] = "application/octet-stream"
-    overwrite = str(overwrite).lower()
-
-    async with aiohttp.ClientSession() as session:
-        with open(file_path, "rb") as fstream, tqdm(
-                total=total_chunks,
-                unit="chunk",
-                desc=f"Uploading {filename}"
-        ) as pbar:
-            for part_number in range(total_chunks):
-                chunk = fstream.read(CHUNK_SIZE)
-                is_last = part_number == total_chunks - 1
-                params = dict(
-                    directory=directory,
-                    filename=filename,
-                    part_number=part_number,
-                    is_last=str(is_last).lower(),
-                    overwrite=overwrite,
-                    unzip="true",
-                    delete_after_unzip="true"
-                )
-                if is_last:
-                    params["checksum"] = checksum
-                async with session.put(
-                        url,
-                        params=params,
-                        data=chunk,
-                        headers=headers,
-                ) as response:
-                    assert response.ok, await response.text()
-                pbar.update(1)
-                await asyncio.sleep(0.1)  # prevent server overload (tune as needed)
-
-
 if __name__ == '__main__':
     pathlib.Path("keep").touch(exist_ok=True)
     upload_file("keep", overwrite=True)
     delete_content("keep")
-    asyncio.run(upload_large_file(
-        # Client side path (source)
-        file_path=os.environ.get("FILEPATH"),
-        dir_path=os.environ.get("DIRECTORY"),
-        # Server side path (destination)
-        directory=os.path.join(get_current_working_directory(), "tmp"),
-        overwrite=True,
-    ))

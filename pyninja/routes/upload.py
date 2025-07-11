@@ -1,3 +1,5 @@
+"""Module to handle large file uploads in chunks via FastAPI with optional server-side unzip and checksum validation."""
+
 import hashlib
 import logging
 import os
@@ -5,17 +7,16 @@ import shutil
 from http import HTTPStatus
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Header, Request
+from fastapi import Depends, Header, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from pyninja.executors import auth
+from pyninja.features import zipper
 from pyninja.modules import exceptions
 from pyninja.routes import fullaccess
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
-
-router = APIRouter()
 
 
 async def entry_fn(
@@ -94,7 +95,7 @@ async def exit_fn(
         # Unzip will be skipped if checksum is not provided or does not match
         if unzip:
             try:
-                shutil.unpack_archive(filepath, directory)
+                filename = zipper.unarchive(zip_file=filepath, directory=directory)
                 if delete_after_unzip:
                     os.remove(filepath)
                     LOGGER.info("File '%s' deleted after unzipping.", filepath)
@@ -130,10 +131,9 @@ async def put_large_file(
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
 ):
-    """**Upload a large file in chunks.**
+    """API handler to upload a large file in chunks.
 
-    **Args:**
-
+    Args:
         - request: Reference to the FastAPI request object.
         - filename: Incoming file's basename.
         - directory: Target directory for upload.
@@ -145,23 +145,6 @@ async def put_large_file(
         - delete_after_unzip: Boolean flag to delete the file after unzipping.
         - apikey: API Key to authenticate the request.
         - token: API secret to authenticate the request.
-
-    **Notes:**
-
-        - This endpoint is designed to handle large files that may not fit in memory.
-        - It streams the file in chunks directly to the specified directory.
-        - The chunk size is determined by the client's request stream.
-
-    **Warnings:**
-
-        - If recurring is set to False,
-            - The server will treat each PUT request as a completely new file, overwriting the previous one.
-            - The overwrite flag will be ignored.
-            - There is a risk of corrupting existing files.
-
-        - To overcome these shortcomings,
-            - The client should be aware of any existing files of the same in the server.
-            - The client should use a dynamic filename.
     """
     await auth.level_2(request, apikey, token)
     filepath = os.path.join(directory, filename)

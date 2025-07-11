@@ -60,6 +60,20 @@ Squire
 ------
 .. automodule:: pyninja.executors.squire
 
+API Routes - Large Scale
+========================
+
+Download
+--------
+.. automodule:: pyninja.routes.download
+
+====
+
+Upload
+------
+.. automodule:: pyninja.routes.upload
+
+
 PyNinja - Features
 ==================
 

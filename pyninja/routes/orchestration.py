@@ -3,7 +3,7 @@ from http import HTTPStatus
 from typing import Optional
 
 from fastapi import Depends, Header, Request
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from pyninja.executors import auth
 from pyninja.features import dockerized
@@ -11,7 +11,6 @@ from pyninja.modules import exceptions
 from pyninja.monitor import resources
 
 LOGGER = logging.getLogger("uvicorn.default")
-BASIC_AUTH = HTTPBasic()
 BEARER_AUTH = HTTPBearer()
 
 

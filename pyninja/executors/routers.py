@@ -5,14 +5,21 @@ from typing import List
 from fastapi import Depends
 from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute, APIWebSocketRoute
-from fastapi.security import HTTPBasic, HTTPBearer
+from fastapi.security import HTTPBearer
 
 from pyninja.modules import enums, exceptions, models
 from pyninja.monitor import routes as ui
-from pyninja.routes import fullaccess, ipaddr, metrics, namespace, orchestration, upload
+from pyninja.routes import (
+    download,
+    fullaccess,
+    ipaddr,
+    metrics,
+    namespace,
+    orchestration,
+    upload,
+)
 
 LOGGER = logging.getLogger("uvicorn.default")
-BASIC_AUTH = HTTPBasic()
 BEARER_AUTH = HTTPBearer()
 
 
@@ -221,7 +228,13 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
             methods=["PUT"],
             dependencies=dependencies,
         ),
-        # Large file upload is not included in the docs page
+        APIRoute(
+            path=enums.APIEndpoints.delete_content,
+            endpoint=fullaccess.delete_content,
+            methods=["DELETE"],
+            dependencies=dependencies,
+        ),
+        # Large file upload and download are not included in the docs page
         APIRoute(
             path=enums.APIEndpoints.put_large_file,
             endpoint=upload.put_large_file,
@@ -230,10 +243,11 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
             include_in_schema=False,
         ),
         APIRoute(
-            path=enums.APIEndpoints.delete_content,
-            endpoint=fullaccess.delete_content,
-            methods=["DELETE"],
+            path=enums.APIEndpoints.get_large_file,
+            endpoint=download.get_large_file,
+            methods=["GET"],
             dependencies=dependencies,
+            include_in_schema=False,
         ),
     ]
 

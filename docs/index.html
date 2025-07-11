@@ -433,7 +433,7 @@ Dictionary of files that can be downloaded or uploaded.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routes.fullaccess.get_file">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.fullaccess.</span></span><span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.payloads.GetFile" title="pyninja.modules.payloads.GetFile"><span class="pre">GetFile</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.fullaccess.get_file" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong>Download a particular YAML file from fileio or log file from logs directory.</strong></p>
+<dd><p><strong>Download a particular file.</strong></p>
 <p><strong>Args:</strong></p>
 <blockquote>
 <div><ul class="simple">
@@ -1226,6 +1226,93 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 
 </section>
 </section>
+<section id="api-routes-large-scale">
+<h1>API Routes - Large Scale<a class="headerlink" href="#api-routes-large-scale" title="Permalink to this heading">¶</a></h1>
+<section id="module-pyninja.routes.download">
+<span id="download"></span><h2>Download<a class="headerlink" href="#module-pyninja.routes.download" title="Permalink to this heading">¶</a></h2>
+<p>Module to handle large file downloads in chunks via FastAPI with optional server-side compression.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routes.download.iter_file_chunks">
+<span class="sig-prename descclassname"><span class="pre">pyninja.routes.download.</span></span><span class="sig-name descname"><span class="pre">iter_file_chunks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.routes.download.iter_file_chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator to read a file in chunks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> – FilePath to read.</p></li>
+<li><p><strong>chunk_size</strong> – Chunk size to read the file in bytes. Default is 8 KB.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bytes</em> – Yields chunks of the file as bytes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routes.download.get_large_file">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.download.</span></span><span class="sig-name descname"><span class="pre">get_large_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8192</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.download.get_large_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>API handler to download a large file or directory as a compressed archive.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>- request</strong> – Reference to the FastAPI request object.</p></li>
+<li><p><strong>- filepath</strong> – FilePath to the file to download.</p></li>
+<li><p><strong>- directory</strong> – DirectoryPath to compress and download.</p></li>
+<li><p><strong>- apikey</strong> – API Key to authenticate the request.</p></li>
+<li><p><strong>- token</strong> – API secret to authenticate the request.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the FileResponse object of the file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>FileResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<hr class="docutils" />
+<section id="module-pyninja.routes.upload">
+<span id="upload"></span><h2>Upload<a class="headerlink" href="#module-pyninja.routes.upload" title="Permalink to this heading">¶</a></h2>
+<p>Module to handle large file uploads in chunks via FastAPI with optional server-side unzip and checksum validation.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routes.upload.entry_fn">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.upload.</span></span><span class="sig-name descname"><span class="pre">entry_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unzip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.routes.upload.entry_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry function to handle the initial setup for large file upload.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routes.upload.exit_fn">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.upload.</span></span><span class="sig-name descname"><span class="pre">exit_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checksum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unzip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_after_unzip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.routes.upload.exit_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exit function to finalize the large file upload.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routes.upload.put_large_file">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.upload.</span></span><span class="sig-name descname"><span class="pre">put_large_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checksum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unzip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_after_unzip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.upload.put_large_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>API handler to upload a large file in chunks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>- request</strong> – Reference to the FastAPI request object.</p></li>
+<li><p><strong>- filename</strong> – Incoming file’s basename.</p></li>
+<li><p><strong>- directory</strong> – Target directory for upload.</p></li>
+<li><p><strong>- part_number</strong> – Incoming file part number.</p></li>
+<li><p><strong>- is_last</strong> – Boolean flag to indicate that the incoming chunk is final.</p></li>
+<li><p><strong>- checksum</strong> – Incoming file checksum.</p></li>
+<li><p><strong>- overwrite</strong> – Boolean flag to remove existing file.</p></li>
+<li><p><strong>- unzip</strong> – Boolean flag to unzip the file after upload.</p></li>
+<li><p><strong>- delete_after_unzip</strong> – Boolean flag to delete the file after unzipping.</p></li>
+<li><p><strong>- apikey</strong> – API Key to authenticate the request.</p></li>
+<li><p><strong>- token</strong> – API secret to authenticate the request.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
 <section id="pyninja-features">
 <h1>PyNinja - Features<a class="headerlink" href="#pyninja-features" title="Permalink to this heading">¶</a></h1>
 <section id="module-pyninja.features.dockerized">
@@ -1778,6 +1865,11 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.put_file">
 <span class="sig-name descname"><span class="pre">put_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/put-file'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.put_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.get_large_file">
+<span class="sig-name descname"><span class="pre">get_large_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/get-large-file'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.get_large_file" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -3143,6 +3235,11 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <li><a class="reference internal" href="#module-pyninja.executors.database">Database</a></li>
 <li><a class="reference internal" href="#module-pyninja.routes.fullaccess">API Routes</a></li>
 <li><a class="reference internal" href="#module-pyninja.executors.squire">Squire</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-routes-large-scale">API Routes - Large Scale</a><ul>
+<li><a class="reference internal" href="#module-pyninja.routes.download">Download</a></li>
+<li><a class="reference internal" href="#module-pyninja.routes.upload">Upload</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#pyninja-features">PyNinja - Features</a><ul>

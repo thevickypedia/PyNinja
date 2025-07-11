@@ -3,7 +3,7 @@ from http import HTTPStatus
 from typing import Optional
 
 from fastapi import Depends, Header, Request
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
 from pyninja.executors import auth
@@ -11,7 +11,6 @@ from pyninja.features import operations, process, service
 from pyninja.modules import exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
-BASIC_AUTH = HTTPBasic()
 BEARER_AUTH = HTTPBearer()
 
 

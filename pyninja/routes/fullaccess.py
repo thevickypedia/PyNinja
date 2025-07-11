@@ -7,19 +7,16 @@ import subprocess
 from http import HTTPStatus
 from typing import NoReturn, Optional
 
-from fastapi import APIRouter, Depends, Header, Request, UploadFile
+from fastapi import Depends, Header, Request, UploadFile
 from fastapi.responses import FileResponse
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic, HTTPBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import DirectoryPath, NewPath
 
 from pyninja.executors import auth, squire
 from pyninja.modules import exceptions, payloads, tree
 
 LOGGER = logging.getLogger("uvicorn.default")
-BASIC_AUTH = HTTPBasic()
 BEARER_AUTH = HTTPBearer()
-
-router = APIRouter()
 
 
 def create_directory(directory: DirectoryPath | NewPath) -> None | NoReturn:
@@ -208,7 +205,7 @@ async def get_file(
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
 ):
-    """**Download a particular YAML file from fileio or log file from logs directory.**
+    """**Download a particular file.**
 
     **Args:**
 
