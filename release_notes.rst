@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+v3.0.0 (07/12/2025)
+-------------------
+- Includes new API routes to upload and download large files in chunks.
+- Includes support for automatic unzip allowing directory uploads as zip files.
+- Dev requirements can now be installed along with the package.
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v2.0.1...v3.0.0
+
 v2.0.1 (07/04/2025)
 -------------------
 - Includes support for timed cache functionality in async mode
