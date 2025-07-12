@@ -40,6 +40,12 @@ class APIEndpoints(StrEnum):
     start_service: str = "/start-service"
     restart_service: str = "/restart-service"
 
+    # macOS specific endpoints
+    get_all_apps: str = "/get-all-apps"
+    start_app: str = "/start-app"
+    stop_app: str = "/stop-app"
+    restart_app: str = "/restart-app"
+
     get_process_status: str = "/get-process-status"
     get_process_usage: str = "/get-process-usage"
 

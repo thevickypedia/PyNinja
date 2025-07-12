@@ -6,7 +6,7 @@ import subprocess
 import time
 from collections.abc import Generator
 from http import HTTPStatus
-from typing import Dict, List
+from typing import Dict
 
 import psutil
 
@@ -306,14 +306,6 @@ def start_service(service_name: str) -> models.ServiceStatus:
         return unavailable(service_name)
 
 
-def get_gui_apps_macOS() -> List[str]:
-    """Get GUI applications running on macOS."""
-    instruction = "get name of every process whose background only is false"
-    command = f"{models.env.osascript} -e 'tell application \"System Events\" to {instruction}'"
-    output = subprocess.check_output(command, shell=True)
-    return output.decode().split(', ')
-
-
 def restart_service(service_name: str) -> models.ServiceStatus:
     """Restart a service by name.
 
@@ -328,12 +320,15 @@ def restart_service(service_name: str) -> models.ServiceStatus:
     # Update service_name to the one fetched from launchctl (for macOS)
     full_service_name = service_status.service_name
     try:
+        # todo: Implement a more robust way to handle service restarts across different OS
         if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
-            for app in get_gui_apps_macOS():
-                if service_name.lower() in app.lower():
-                    print(app)
             subprocess.check_output(
-                [models.env.service_lib, "kickstart", "-k", f"gui/{os.getuid()}/{full_service_name}"],
+                [
+                    models.env.service_lib,
+                    "kickstart",
+                    "-k",
+                    f"gui/{os.getuid()}/{full_service_name}",
+                ],
                 text=True,
             )
         elif models.OPERATING_SYSTEM == enums.OperatingSystem.linux:

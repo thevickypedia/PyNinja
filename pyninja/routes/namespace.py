@@ -7,7 +7,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
 from pyninja.executors import auth
-from pyninja.features import operations, process, service
+from pyninja.features import application, operations, process, service
 from pyninja.modules import exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -289,4 +289,128 @@ async def get_processor_name(
     raise exceptions.APIResponse(
         status_code=HTTPStatus.NOT_FOUND.real,
         detail="Unable to retrieve processor information!",
+    )
+
+
+async def get_all_apps(
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """**API function to get a list of all the applications.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_1(request, apikey)
+    if response := application.get_all_apps():
+        raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.INTERNAL_SERVER_ERROR.real,
+        detail="Failed to retrieve application list",
+    )
+
+
+async def start_application(
+    request: Request,
+    app_name: str,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    token: Optional[str] = Header(None),
+):
+    """**API function to start an application.**
+
+    **Args:**
+
+        request: Reference to the FastAPI request object.
+        app_name: Name of the application to start.
+        apikey: API Key to authenticate the request.
+        token: API secret to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_2(request, apikey, token)
+    if app := application.get_app_by_name(app_name):
+        application.start_app(app["path"])
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.OK.real, detail=f"{app_name!r} started successfully"
+        )
+    LOGGER.error("%s: 404 - Application not found", app_name)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.NOT_FOUND.real,
+        detail=f"Application {app_name!r} not found.",
+    )
+
+
+async def stop_application(
+    request: Request,
+    app_name: str,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    token: Optional[str] = Header(None),
+):
+    """**API function to stop an application.**
+
+    **Args:**
+
+        request: Reference to the FastAPI request object.
+        app_name: Name of the application to stop.
+        apikey: API Key to authenticate the request.
+        token: API secret to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_2(request, apikey, token)
+    if app := application.get_app_by_name(app_name):
+        application.stop_app(app["path"])
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.OK.real, detail=f"{app_name!r} stopped successfully"
+        )
+    LOGGER.error("%s: 404 - Application not found", app_name)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.NOT_FOUND.real,
+        detail=f"Application {app_name!r} not found.",
+    )
+
+
+async def restart_application(
+    request: Request,
+    app_name: str,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    token: Optional[str] = Header(None),
+):
+    """**API function to restart an application.**
+
+    **Args:**
+
+        request: Reference to the FastAPI request object.
+        app_name: Name of the application to restart.
+        apikey: API Key to authenticate the request.
+        token: API secret to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_2(request, apikey, token)
+    response = application.restart(app_name)
+    LOGGER.info(
+        "%s: %d - %s",
+        app_name,
+        response.status_code,
+        response.description,
+    )
+    raise exceptions.APIResponse(
+        status_code=response.status_code, detail=response.description
     )

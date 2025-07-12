@@ -128,6 +128,19 @@ class ServiceStatus(BaseModel):
     service_name: str
 
 
+class AppStatus(BaseModel):
+    """Object to load the application status with a status code and description.
+
+    >>> AppStatus
+
+    """
+
+    app_name: str
+    status_code: int
+    description: str
+    app_path: str | None = None
+
+
 class Architecture(BaseModel):
     """Object to store the architecture of the system.
 
@@ -266,10 +279,8 @@ class EnvConfig(BaseSettings):
 
     # macOS GUI app specific
     osascript: FilePath = shutil.which("osascript") or "/usr/bin/osascript"
-    comm: FilePath = shutil.which("comm") or "/usr/bin/comm"
-    sort: FilePath = shutil.which("sort") or "/usr/bin/sort"
-    sed: FilePath = shutil.which("sed") or "/usr/bin/sed"
-    ls: FilePath = shutil.which("ls") or "/bin/ls"
+    mdls: FilePath = shutil.which("mdls") or "/usr/bin/mdls"
+    open: FilePath = shutil.which("open") or "/usr/bin/open"
 
     # noinspection PyMethodParameters
     @field_validator("apikey", mode="after")
