@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import datetime
 from http import HTTPStatus
 from threading import Timer
@@ -13,6 +14,9 @@ from pyninja.modules import cache, exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
+
+# Minimum time (in seconds) before a new MFA token can be sent
+MFA_RESEND_INTERVAL = 120
 
 
 @cache.timed_cache(max_age=3_600)
@@ -35,10 +39,37 @@ def instantiate_mailer() -> gc.SendEmail:
     return mail_obj
 
 
-def clear_mfa() -> None:
-    """Clears the stored MFA token after the timeout period."""
+def reset_mfa_code() -> None:
+    """Resets the stored MFA token after the timeout period."""
     models.mfa.token = None
     LOGGER.info("Stored MFA token has been cleared")
+
+
+def clear_timer_list() -> None:
+    """Clears the list of active timers."""
+    for timer in models.mfa.timers:
+        if timer.is_alive():
+            LOGGER.info(f"Cancelling timer: {timer.name}")
+            timer.cancel()
+    models.mfa.timers.clear()
+    LOGGER.info("Cleared the list of active timers")
+
+
+def send_new_mfa() -> bool:
+    """Function to check if a new MFA token should be sent."""
+    if not models.mfa.token:
+        return True
+    for timer in models.mfa.timers:
+        # Check if the timer is still alive and if it was created within the last 2 minutes
+        if timer.is_alive() and int(timer.name) > (
+            int(time.time()) - MFA_RESEND_INTERVAL
+        ):
+            LOGGER.info(
+                f"Timer {timer.name!r} is still active, not sending new MFA token."
+            )
+            return False
+    LOGGER.info("No active timers found, sending new MFA token.")
+    return True
 
 
 async def get_mfa(
@@ -63,6 +94,13 @@ async def get_mfa(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
             detail="Gmail user, password, and recipient email must be set in the environment.",
         )
+    if not send_new_mfa():
+        LOGGER.info("A recent MFA token is still valid, not sending a new one.")
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.OK.real,
+            detail="A recent MFA token sent to your email is still valid. "
+            "Please check your email (including spam/junk folders) or request a new one after 5 minutes.",
+        )
     mail_obj = instantiate_mailer()
     token = models.keygen()
     mail_stat = mail_obj.send_email(
@@ -77,8 +115,14 @@ async def get_mfa(
         ),
     )
     if mail_stat.ok:
+        # Start a new timer and clear any existing timers (if alive)
+        timer = Timer(interval=models.env.mfa_timeout, function=reset_mfa_code)
+        timer.name = str(int(time.time()))
+        timer.start()
+        clear_timer_list()
+        models.mfa.timers.append(timer)
+        # Store the token in the models.mfa object
         models.mfa.token = token
-        Timer(interval=models.env.mfa_timeout, function=clear_mfa).start()
         LOGGER.debug(mail_stat.body)
         raise exceptions.APIResponse(
             status_code=HTTPStatus.OK.real,

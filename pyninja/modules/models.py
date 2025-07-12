@@ -9,6 +9,7 @@ import sqlite3
 import string
 import uuid
 from concurrent.futures import ThreadPoolExecutor
+from threading import Timer
 from typing import Any, Callable, Dict, List, Set, Tuple
 
 from fastapi.routing import APIRoute, APIWebSocketRoute
@@ -201,6 +202,12 @@ class MFAToken(BaseModel):
     """
 
     token: str | None = None
+    timers: List[Timer] = Field(default_factory=list)
+
+    class Config:
+        """Configuration for MFAToken object."""
+
+        arbitrary_types_allowed = True
 
 
 mfa = MFAToken()
