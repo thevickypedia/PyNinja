@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>PyNinja &#8212; PyNinja  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -107,8 +107,17 @@
 <li><p><strong>API_SECRET</strong> - Secret access key for running commands on server remotely.</p></li>
 <li><p><strong>DATABASE</strong> - FilePath to store the auth database that handles the authentication errors.</p></li>
 </ul>
-<p>⚠️ Enabling remote execution can be extremely risky and poses a major security threat.
-So use <strong>caution</strong> and set the <strong>API_SECRET</strong> to a strong value.</p>
+<p>⚠️ <strong>Warning: Enabling remote execution carries significant security risks.</strong>
+To enhance security, it’s strongly recommended to use multifactor authentication (MFA) via your Gmail account.
+If you don’t have a Gmail account and instead rely on an <strong>API_SECRET</strong>,
+please proceed with <strong>caution</strong> and ensure that the <strong>API_SECRET</strong> is set to a strong and secure value.</p>
+<p><strong>Multifactor Authentication (MFA)</strong></p>
+<ul class="simple">
+<li><p><strong>GMAIL_USER</strong> - Gmail username for MFA.</p></li>
+<li><p><strong>GMAIL_PASS</strong> - Gmail password for MFA.</p></li>
+<li><p><strong>RECIPIENT</strong> - Recipient email address for MFA.</p></li>
+<li><p><strong>MFA_TIMEOUT</strong> - Timeout duration for MFA in seconds.</p></li>
+</ul>
 <p><strong>Monitoring UI</strong></p>
 <ul class="simple">
 <li><p><strong>MONITOR_USERNAME</strong> - Username to authenticate the monitoring page.</p></li>
@@ -124,6 +133,12 @@ So use <strong>caution</strong> and set the <strong>API_SECRET</strong> to a str
 <li><p><strong>GPU_LIB</strong> - Library path to retrieve GPU names using <a class="reference external" href="https://github.com/thevickypedia/PyArchitecture">PyArchitecture</a>.</p></li>
 <li><p><strong>DISK_LIB</strong> - Library path to retrieve disk info using <a class="reference external" href="https://github.com/thevickypedia/PyArchitecture">PyArchitecture</a>.</p></li>
 <li><p><strong>PROCESSOR_LIB</strong> - Library path to retrieve processor name using <a class="reference external" href="https://github.com/thevickypedia/PyArchitecture">PyArchitecture</a>.</p></li>
+</ul>
+<p><strong>macOS Specific Binaries</strong></p>
+<ul class="simple">
+<li><p><strong>OSASCRIPT</strong> - Path to the <code class="docutils literal notranslate"><span class="pre">osascript</span></code> binary for macOS. Defaults to <code class="docutils literal notranslate"><span class="pre">/usr/bin/osascript</span></code></p></li>
+<li><p><strong>MDLS</strong> - Path to the <code class="docutils literal notranslate"><span class="pre">mdls</span></code> binary for macOS. Defaults to <code class="docutils literal notranslate"><span class="pre">/usr/bin/mdls</span></code></p></li>
+<li><p><strong>OPEN</strong> - Path to the <code class="docutils literal notranslate"><span class="pre">open</span></code> binary for macOS. Defaults to <code class="docutils literal notranslate"><span class="pre">/usr/bin/open</span></code></p></li>
 </ul>
 <blockquote>
 <div><p>Certain environment variables like <code class="docutils literal notranslate"><span class="pre">SERVICES</span></code> and <code class="docutils literal notranslate"><span class="pre">PROCESSS</span></code> are case-sensitive</p>

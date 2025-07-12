@@ -321,11 +321,13 @@ def handle_warnings() -> None:
             f"\n{base}",
             SecurityWarning,
         )
-    if all((models.env.remote_execution, models.env.api_secret, models.env.apikey)):
+    if not all((models.env.remote_execution, models.env.api_secret, models.env.apikey)):
+        return
+    if not all((models.env.gmail_user, models.env.gmail_pass, models.env.recipient)):
         warnings.warn(
             f"\n{base}"
             "\nThe 'remote_execution' flag is enabled, allowing shell command execution via the API."
-            "\nThis feature poses significant security risks and should be used with caution, along with rate limiting."
+            "\nThis feature poses significant security risks and is recommended to use MFA, along with rate limiting."
             "\nRepeated authentication failures will result in permanent lockout for the user."
             f"\n{base}",
             SecurityWarning,

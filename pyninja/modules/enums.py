@@ -73,6 +73,7 @@ class APIEndpoints(StrEnum):
     login: str = "/login"
     logout: str = "/logout"
     error: str = "/error"
+    get_mfa: str = "/get-mfa"
 
 
 class Cookies(StrEnum):

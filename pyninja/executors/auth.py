@@ -3,12 +3,13 @@ import secrets
 import time
 from datetime import datetime
 from http import HTTPStatus
+from typing import NoReturn
 
 from fastapi import Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from pyninja.executors import database
-from pyninja.modules import exceptions, models
+from pyninja.modules import enums, exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 EPOCH = lambda: int(time.time())  # noqa: E731
@@ -75,8 +76,48 @@ async def level_1(request: Request, apikey: HTTPAuthorizationCredentials) -> Non
     )
 
 
+def invalid_mfa() -> NoReturn:
+    """Raises an APIResponse for invalid or expired MFA code."""
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.UNAUTHORIZED.real,
+        detail=f"MFA code is invalid or expired, please run {enums.APIEndpoints.get_mfa.value!r} "
+        "to generate a new one.",
+    )
+
+
+async def verify_mfa(mfa_code: str) -> None:
+    """Verifies the multifactor authentication code.
+
+    Args:
+        mfa_code: Multifactor authentication code to verify.
+
+    Raises:
+        APIResponse:
+        - 401: If MFA code is invalid.
+    """
+    if not all((models.env.gmail_user, models.env.gmail_pass, models.env.recipient)):
+        LOGGER.warning("A secure endpoint was requested, but MFA is not configured.")
+        return
+    if not mfa_code:
+        LOGGER.error("No MFA code provided.")
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.UNAUTHORIZED.real, detail="MFA code is required."
+        )
+    if not models.mfa.token:
+        LOGGER.error("MFA is not configured on the server.")
+        if mfa_code:
+            invalid_mfa()
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.UNAUTHORIZED.real,
+            detail=f"MFA token is not stored, please run {enums.APIEndpoints.get_mfa.value!r} first.",
+        )
+    if not secrets.compare_digest(mfa_code, models.mfa.token):
+        LOGGER.error("Invalid MFA code provided.")
+        invalid_mfa()
+
+
 async def level_2(
-    request: Request, apikey: HTTPAuthorizationCredentials, token: str
+    request: Request, apikey: HTTPAuthorizationCredentials, token: str, mfa_code: str
 ) -> None:
     """Validates the auth request using HTTPBearer and additionally a secure token.
 
@@ -84,6 +125,7 @@ async def level_2(
         request: Takes the authorization header token as an argument.
         apikey: Basic APIKey required for all the routes.
         token: Additional token for critical requests.
+        mfa_code: Multifactor authentication code for additional security.
 
     Raises:
         APIResponse:
@@ -97,6 +139,7 @@ async def level_2(
             detail="Remote execution has been disabled on the server.",
         )
     if token and secrets.compare_digest(token, models.env.api_secret):
+        await verify_mfa(mfa_code)
         return
     await handle_auth_error(request)
     raise exceptions.APIResponse(

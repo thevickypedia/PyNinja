@@ -31,7 +31,15 @@ if OPERATING_SYSTEM not in (
 
 
 def keygen(min_length: int = 32) -> str:
-    """Work in progress."""
+    """Key generator to create a unique key with a minimum length.
+
+    Args:
+        min_length: Minimum length of the generated key. Default is 32.
+
+    Returns:
+        str:
+        Returns a unique key that contains at least one digit, one uppercase letter,
+    """
     # Ensure at least one of each required character
     required_chars = [
         random.choice(string.digits),
@@ -185,6 +193,19 @@ class WSSession(BaseModel):
 ws_session = WSSession()
 
 
+class MFAToken(BaseModel):
+    """Object to store the MFA token.
+
+    >>> MFAToken
+
+    """
+
+    token: str | None = None
+
+
+mfa = MFAToken()
+
+
 class RateLimit(BaseModel):
     """Object to store the rate limit settings.
 
@@ -260,7 +281,8 @@ class EnvConfig(BaseSettings):
     gmail_user: str | None = None
     gmail_pass: str | None = None
     recipient: str | None = None
-    mfa_timeout: int = 86_400  # 24 hours
+    # Timeout should at least be 5 minutes (300 seconds) and can be up to 24 hours (86_400 seconds)
+    mfa_timeout: PositiveInt = Field(default=3_600, ge=300, le=86_400)
 
     # Monitoring UI
     monitor_username: str | None = None
@@ -349,7 +371,7 @@ def load_swagger_ui(current_dir: str) -> str:
 
 def load_mfa_template(current_dir: str) -> str:
     """Get the custom HTML template for MFA template."""
-    with open(os.path.join(current_dir, "email_OTP.html")) as file:
+    with open(os.path.join(current_dir, "mfa_template.html")) as file:
         return file.read()
 
 

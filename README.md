@@ -68,8 +68,16 @@ pyninja start
 - **API_SECRET** - Secret access key for running commands on server remotely.
 - **DATABASE** - FilePath to store the auth database that handles the authentication errors.
 
-⚠️ Enabling remote execution can be extremely risky and poses a major security threat.
-So use **caution** and set the **API_SECRET** to a strong value.
+⚠️ **Warning: Enabling remote execution carries significant security risks.**
+To enhance security, it's strongly recommended to use multifactor authentication (MFA) via your Gmail account.
+If you don't have a Gmail account and instead rely on an **API_SECRET**,
+please proceed with **caution** and ensure that the **API_SECRET** is set to a strong and secure value.
+
+**Multifactor Authentication (MFA)**
+- **GMAIL_USER** - Gmail username for MFA.
+- **GMAIL_PASS** - Gmail password for MFA.
+- **RECIPIENT** - Recipient email address for MFA.
+- **MFA_TIMEOUT** - Timeout duration for MFA in seconds.
 
 **Monitoring UI**
 - **MONITOR_USERNAME** - Username to authenticate the monitoring page.
@@ -85,6 +93,11 @@ So use **caution** and set the **API_SECRET** to a strong value.
 - **GPU_LIB** - Library path to retrieve GPU names using [PyArchitecture].
 - **DISK_LIB** - Library path to retrieve disk info using [PyArchitecture].
 - **PROCESSOR_LIB** - Library path to retrieve processor name using [PyArchitecture].
+
+**macOS Specific Binaries**
+- **OSASCRIPT** - Path to the `osascript` binary for macOS. Defaults to `/usr/bin/osascript`
+- **MDLS** - Path to the `mdls` binary for macOS. Defaults to `/usr/bin/mdls`
+- **OPEN** - Path to the `open` binary for macOS. Defaults to `/usr/bin/open`
 
 > Certain environment variables like `SERVICES` and `PROCESSS` are case-sensitive
 

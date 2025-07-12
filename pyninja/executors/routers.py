@@ -7,6 +7,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from fastapi.security import HTTPBearer
 
+from pyninja.executors import multifactor
 from pyninja.modules import enums, exceptions
 from pyninja.monitor import routes as ui
 from pyninja.routes import (
@@ -64,6 +65,11 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
         Returns the routes as a list of APIRoute objects.
     """
     basic_routes = [
+        APIRoute(
+            path=enums.APIEndpoints.get_mfa,
+            endpoint=multifactor.get_mfa,
+            methods=["GET"],
+        ),
         APIRoute(
             path=enums.APIEndpoints.get_ip,
             endpoint=ipaddr.get_ip_address,

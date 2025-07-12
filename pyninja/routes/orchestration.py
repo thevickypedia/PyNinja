@@ -73,6 +73,7 @@ async def stop_docker_container(
     container_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
+    mfa_code: Optional[str] = Header(None),
 ):
     """**API function to stop a docker container.**
 
@@ -88,7 +89,7 @@ async def stop_docker_container(
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    await auth.level_2(request, apikey, token)
+    await auth.level_2(request, apikey, token, mfa_code)
     if response := dockerized.stop_container(container_name):
         LOGGER.info(response)
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
@@ -106,6 +107,7 @@ async def start_docker_container(
     container_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
+    mfa_code: Optional[str] = Header(None),
 ):
     """**API function to start a docker container.**
 
@@ -121,7 +123,7 @@ async def start_docker_container(
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    await auth.level_2(request, apikey, token)
+    await auth.level_2(request, apikey, token, mfa_code)
     if response := dockerized.start_container(container_name):
         LOGGER.info(response)
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)

@@ -28,7 +28,7 @@ packages = [
     "pyninja.monitor.templates"
 ]
 [tool.setuptools.package-data]
-"pyninja.modules" = ["*.js"]
+"pyninja.modules" = ["*.js", "*.html"]
 "pyninja.monitor.templates" = ["*.html"]
 
 [tool.setuptools.dynamic]

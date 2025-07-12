@@ -44,6 +44,7 @@ async def run_command(
     payload: payloads.RunCommand,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
+    mfa_code: Optional[str] = Header(None),
 ):
     """**API function to run a command on host machine.**
 
@@ -59,7 +60,7 @@ async def run_command(
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    await auth.level_2(request, apikey, token)
+    await auth.level_2(request, apikey, token, mfa_code)
     LOGGER.info(
         "Requested command: '%s' with timeout: %ds", payload.command, payload.timeout
     )
@@ -78,6 +79,7 @@ async def delete_content(
     payload: payloads.DeleteContent,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
+    mfa_code: Optional[str] = Header(None),
 ):
     """**List files in a directory or scan the directory tree.**
 
@@ -93,7 +95,7 @@ async def delete_content(
         Dict[str, List[str]]:
         Dictionary of files that can be downloaded or uploaded.
     """
-    await auth.level_2(request, apikey, token)
+    await auth.level_2(request, apikey, token, mfa_code)
     if not any((payload.filepath, payload.directory)):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.BAD_REQUEST.real,
@@ -156,6 +158,7 @@ async def list_files(
     payload: payloads.ListFiles,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
+    mfa_code: Optional[str] = Header(None),
 ):
     """**List files in a directory or scan the directory tree.**
 
@@ -171,7 +174,7 @@ async def list_files(
         Dict[str, List[str]]:
         Dictionary of files that can be downloaded or uploaded.
     """
-    await auth.level_2(request, apikey, token)
+    await auth.level_2(request, apikey, token, mfa_code)
     if payload.deep_scan:
         if not payload.include_directories:
             raise exceptions.APIResponse(
@@ -204,6 +207,7 @@ async def get_file(
     payload: payloads.GetFile,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
+    mfa_code: Optional[str] = Header(None),
 ):
     """**Download a particular file.**
 
@@ -219,7 +223,7 @@ async def get_file(
         FileResponse:
         Returns the FileResponse object of the file.
     """
-    await auth.level_2(request, apikey, token)
+    await auth.level_2(request, apikey, token, mfa_code)
     LOGGER.info("Requested file: '%s' for download.", payload.filepath)
     mimetype = mimetypes.guess_type(payload.filepath.name, strict=True)
     if mimetype:
@@ -241,6 +245,7 @@ async def put_file(
     overwrite: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     token: Optional[str] = Header(None),
+    mfa_code: Optional[str] = Header(None),
 ):
     """**Upload a file to th.**
 
@@ -254,7 +259,7 @@ async def put_file(
         - apikey: API Key to authenticate the request.
         - token: API secret to authenticate the request.
     """
-    await auth.level_2(request, apikey, token)
+    await auth.level_2(request, apikey, token, mfa_code)
     LOGGER.info(
         "Requested file: '%s' for upload at %s",
         file.filename,

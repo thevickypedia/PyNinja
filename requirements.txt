@@ -1,6 +1,7 @@
 click==8.1.*
 docker==7.1.*
 fastapi==0.112.*
+gmail-connector==1.0.*
 Jinja2==3.1.*
 psutil==6.0.*
 PyArchitecture==0.3.*
