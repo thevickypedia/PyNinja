@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>Welcome to PyNinja’s documentation! &#8212; PyNinja  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -2346,8 +2346,18 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </pre></div>
 </div>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.FileIO.current_dir">
+<span class="sig-name descname"><span class="pre">current_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.FileIO.current_dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.FileIO.swagger_ui">
 <span class="sig-name descname"><span class="pre">swagger_ui</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.FileIO.swagger_ui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.FileIO.mfa_template">
+<span class="sig-name descname"><span class="pre">mfa_template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.FileIO.mfa_template" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2403,6 +2413,26 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.database">
 <span class="sig-name descname"><span class="pre">database</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.database" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.gmail_user">
+<span class="sig-name descname"><span class="pre">gmail_user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.gmail_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.gmail_pass">
+<span class="sig-name descname"><span class="pre">gmail_pass</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.gmail_pass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.recipient">
+<span class="sig-name descname"><span class="pre">recipient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.recipient" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.mfa_timeout">
+<span class="sig-name descname"><span class="pre">mfa_timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.mfa_timeout" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -2541,6 +2571,12 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 
 <hr class="docutils" />
 <span class="target" id="module-pyninja.modules.models"></span><dl class="py function">
+<dt class="sig sig-object py" id="pyninja.modules.models.keygen">
+<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">keygen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.modules.models.keygen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Work in progress.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.modules.models.complexity_checker">
 <span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">complexity_checker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.modules.models.complexity_checker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Verifies the strength of a secret.</p>
@@ -2595,8 +2631,14 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.modules.models.load_swagger_ui">
-<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">load_swagger_ui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.modules.models.load_swagger_ui" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">load_swagger_ui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.modules.models.load_swagger_ui" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the custom JavaScript for Swagger UI.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.modules.models.load_mfa_template">
+<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">load_mfa_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.modules.models.load_mfa_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the custom HTML template for MFA template.</p>
 </dd></dl>
 
 <dl class="py class">

@@ -1,10 +1,13 @@
 import os
 import pathlib
 import platform
+import random
 import re
 import shutil
 import socket
 import sqlite3
+import string
+import uuid
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Callable, Dict, List, Set, Tuple
 
@@ -25,6 +28,34 @@ if OPERATING_SYSTEM not in (
     enums.OperatingSystem.windows,
 ):
     exceptions.raise_os_error(OPERATING_SYSTEM)
+
+
+def keygen(min_length: int = 32) -> str:
+    """Work in progress."""
+    # Ensure at least one of each required character
+    required_chars = [
+        random.choice(string.digits),
+        random.choice(string.ascii_uppercase),
+        random.choice(string.ascii_lowercase),
+    ]
+
+    # Start with a UUID to ensure uniqueness
+    unique_part = uuid.uuid4().hex  # 32 lowercase hex chars
+
+    # Add some randomness to exceed the min length if needed
+    remaining_length = max(min_length - len(unique_part) - len(required_chars), 0)
+    filler = "".join(
+        random.choices(string.ascii_letters + string.digits, k=remaining_length)
+    )
+    safe_chars = ["_", "#", "*"]
+
+    # Combine all parts and shuffle
+    token_chars = list(
+        unique_part + filler + "".join(required_chars) + random.choice(safe_chars)
+    )
+    random.shuffle(token_chars)
+
+    return "".join(token_chars)
 
 
 def complexity_checker(key: str, value: str, min_length: int) -> None:
@@ -212,6 +243,12 @@ class EnvConfig(BaseSettings):
     api_secret: str | None = None
     database: str = Field("auth.db", pattern=".*.db$")
 
+    # Multifactor authentication
+    gmail_user: str | None = None
+    gmail_pass: str | None = None
+    recipient: str | None = None
+    mfa_timeout: int = 86_400  # 24 hours
+
     # Monitoring UI
     monitor_username: str | None = None
     monitor_password: str | None = None
@@ -286,11 +323,16 @@ class EnvConfig(BaseSettings):
         hide_input_in_errors = True
 
 
-def load_swagger_ui() -> str:
+def load_swagger_ui(current_dir: str) -> str:
     """Get the custom JavaScript for Swagger UI."""
-    swagger_js = os.path.join(os.path.dirname(__file__), "swaggerUI.js")
-    with open(swagger_js) as file:
+    with open(os.path.join(current_dir, "swaggerUI.js")) as file:
         return "<script>\n" + file.read() + "\n</script>"
+
+
+def load_mfa_template(current_dir: str) -> str:
+    """Get the custom HTML template for MFA template."""
+    with open(os.path.join(current_dir, "email_OTP.html")) as file:
+        return file.read()
 
 
 class FileIO(BaseModel):
@@ -300,7 +342,9 @@ class FileIO(BaseModel):
 
     """
 
-    swagger_ui: str = Field(load_swagger_ui())
+    current_dir: str = os.path.dirname(__file__)
+    swagger_ui: str = Field(load_swagger_ui(current_dir))
+    mfa_template: str = Field(load_mfa_template(current_dir))
 
 
 fileio = FileIO()
