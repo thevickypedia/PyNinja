@@ -38,6 +38,7 @@ class APIEndpoints(StrEnum):
     get_service_usage: str = "/get-service-usage"
     stop_service: str = "/stop-service"
     start_service: str = "/start-service"
+    restart_service: str = "/restart-service"
 
     get_process_status: str = "/get-process-status"
     get_process_usage: str = "/get-process-usage"

@@ -193,6 +193,12 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
             dependencies=dependencies,
         ),
         APIRoute(
+            path=enums.APIEndpoints.restart_service,
+            endpoint=namespace.restart_service,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
             path=enums.APIEndpoints.stop_docker_container,
             endpoint=orchestration.stop_docker_container,
             methods=["POST"],

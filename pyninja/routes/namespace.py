@@ -231,6 +231,39 @@ async def start_service(
     )
 
 
+async def restart_service(
+    request: Request,
+    service_name: str,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    token: Optional[str] = Header(None),
+):
+    """**API function to restart a service.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - service_name: Name of the service to check status.
+        - apikey: API Key to authenticate the request.
+        - token: API secret to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code and detail as response.
+    """
+    await auth.level_2(request, apikey, token)
+    response = service.restart_service(service_name)
+    LOGGER.info(
+        "%s: %d - %s",
+        service_name,
+        response.status_code,
+        response.description,
+    )
+    raise exceptions.APIResponse(
+        status_code=response.status_code, detail=response.description
+    )
+
+
 async def get_processor_name(
     request: Request,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),

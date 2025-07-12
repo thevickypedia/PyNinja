@@ -47,7 +47,7 @@ def keygen(min_length: int = 32) -> str:
     filler = "".join(
         random.choices(string.ascii_letters + string.digits, k=remaining_length)
     )
-    safe_chars = ["_", "#", "*"]
+    safe_chars = ["-", "_", ".", "~"]
 
     # Combine all parts and shuffle
     token_chars = list(
@@ -263,6 +263,13 @@ class EnvConfig(BaseSettings):
     disk_lib: FilePath = retrieve_library_path(default_disk_lib)
     service_lib: FilePath = retrieve_library_path(default_service_lib)
     processor_lib: FilePath = retrieve_library_path(default_cpu_lib)
+
+    # macOS GUI app specific
+    osascript: FilePath = shutil.which("osascript") or "/usr/bin/osascript"
+    comm: FilePath = shutil.which("comm") or "/usr/bin/comm"
+    sort: FilePath = shutil.which("sort") or "/usr/bin/sort"
+    sed: FilePath = shutil.which("sed") or "/usr/bin/sed"
+    ls: FilePath = shutil.which("ls") or "/bin/ls"
 
     # noinspection PyMethodParameters
     @field_validator("apikey", mode="after")
