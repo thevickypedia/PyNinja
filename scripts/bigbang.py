@@ -5,8 +5,7 @@ import os
 import pathlib
 
 import aiohttp
-from fileio import get_current_working_directory
-from init import CHUNK_SIZE, NINJA_API_URL, SESSION, urljoin
+from init import CHUNK_SIZE, NINJA_API_URL, SESSION, size_converter, urljoin
 from tqdm import tqdm
 from zipper import archive
 
@@ -33,6 +32,10 @@ async def upload_large_file(
     filename = os.path.basename(file_path)
     file_size = os.path.getsize(file_path)
     total_chunks = (file_size + CHUNK_SIZE - 1) // CHUNK_SIZE
+    print(
+        f"Uploading {filename!r} of size: {size_converter(file_size)} to {directory!r}"
+    )
+    print(f"Total chunks: {total_chunks}")
 
     # Calculate checksum in advance (optional, but good for validation)
     with open(file_path, "rb") as f:
@@ -41,6 +44,7 @@ async def upload_large_file(
     headers = copy.deepcopy(SESSION.headers)
     headers["Content-Type"] = "application/octet-stream"
     overwrite = str(overwrite).lower()
+    is_zipfile = str(dir_path is not None or file_path.endswith(".zip")).lower()
 
     async with aiohttp.ClientSession() as session:
         with (
@@ -58,8 +62,8 @@ async def upload_large_file(
                     part_number=part_number,
                     is_last=str(is_last).lower(),
                     overwrite=overwrite,
-                    unzip="true",
-                    delete_after_unzip="true",
+                    unzip=is_zipfile,
+                    delete_after_unzip=is_zipfile,
                 )
                 if is_last:
                     params["checksum"] = checksum
@@ -118,7 +122,7 @@ if __name__ == "__main__":
             file_path=os.environ.get("UPLOAD_FILEPATH"),
             dir_path=os.environ.get("UPLOAD_DIRECTORY"),
             # Server side path (destination)
-            directory=os.path.join(get_current_working_directory(), "tmp"),
+            directory=os.environ["SERVER_DESTINATION"],
             overwrite=True,
         )
     )
