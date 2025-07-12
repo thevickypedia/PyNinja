@@ -5,8 +5,7 @@ import zipfile
 
 
 def archive(
-        path: pathlib.Path,
-        directory: pathlib.Path = pathlib.Path(__file__).parent
+    path: pathlib.Path, directory: pathlib.Path = pathlib.Path(__file__).parent
 ) -> pathlib.Path:
     """Archives a file or directory into a zip file.
 
@@ -19,7 +18,7 @@ def archive(
         The path to the created zip file.
     """
     zip_file = directory / f"{path.stem}.zip"
-    with zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
+    with zipfile.ZipFile(zip_file, "w", zipfile.ZIP_DEFLATED) as zipf:
         if path.is_dir():
             for root, _, files in os.walk(path):
                 for file in files:
@@ -32,8 +31,7 @@ def archive(
 
 
 def unarchive(
-        zip_file: pathlib.Path,
-        directory: pathlib.Path = pathlib.Path(__file__).parent
+    zip_file: pathlib.Path, directory: pathlib.Path = pathlib.Path(__file__).parent
 ) -> pathlib.Path:
     """Unarchives a zip file into a specified directory.
 
@@ -47,8 +45,10 @@ def unarchive(
     """
     if not zip_file.exists():
         raise FileNotFoundError(f"Zip file {zip_file} does not exist.")
-    if not zip_file.suffix in ['.zip', '.tar', '.tar.gz', '.tar.bz2']:
-        raise ValueError("Unsupported archive format. Only .zip, .tar, .tar.gz, and .tar.bz2 are supported.")
+    if zip_file.suffix not in [".zip", ".tar", ".tar.gz", ".tar.bz2"]:
+        raise ValueError(
+            "Unsupported archive format. Only .zip, .tar, .tar.gz, and .tar.bz2 are supported."
+        )
     # Create a destination directory for unzipped content
     directory.mkdir(parents=True, exist_ok=True)
     shutil.unpack_archive(zip_file, directory)
