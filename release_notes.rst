@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v4.1.1 (07/13/2025)
+-------------------
+- Bug fix on macOS application name filter to improve accuracy and avoid false positives
+- Returns full list of applications for ``start``, ``stop`` and ``restart`` operations when given name doesn't match
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.1.0...v4.1.1
+
 v4.1.0 (07/12/2025)
 -------------------
 - Includes new API handlers to get, start, stop, and restart macOS applications.
