@@ -1,0 +1,31 @@
+name: Update Release Notes
+on:
+  workflow_dispatch:
+  release:
+    types: [ published ]
+
+jobs:
+  update-release-notes:
+    runs-on: thevickypedia-lite
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Gitverse
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install gitverse
+        shell: bash
+      - name: Generate Release Notes
+        run: |
+          gitverse-release reverse -f release_notes.rst -t 'Release Notes'
+        shell: bash
+      - name: Commit and Push Changes
+        # https://github.com/orgs/community/discussions/26560
+        run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add release_notes.rst
+          git commit --author="github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>" -m "Update release notes"
+          git push origin main
+        shell: bash
+        env:
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
