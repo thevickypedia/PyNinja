@@ -43,7 +43,7 @@ async def get_large_file(
     directory: Optional[DirectoryPath] = None,
     chunk_size: int = 8192,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-    token: Optional[str] = Header(None),
+    api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
     """API handler to download a large file or directory as a compressed archive.
@@ -53,13 +53,14 @@ async def get_large_file(
         - filepath: FilePath to the file to download.
         - directory: DirectoryPath to compress and download.
         - apikey: API Key to authenticate the request.
-        - token: API secret to authenticate the request.
+        - api_secret: API secret to authenticate the request.
+        - mfa_code: Multifactor authentication code.
 
     Returns:
         FileResponse:
         Returns the FileResponse object of the file.
     """
-    await auth.level_2(request, apikey, token, mfa_code)
+    await auth.level_2(request, apikey, api_secret, mfa_code)
     if not any((filepath, directory)):
         LOGGER.error("No file or directory provided for download.")
         raise exceptions.HTTPException(

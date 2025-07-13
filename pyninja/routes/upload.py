@@ -129,7 +129,7 @@ async def put_large_file(
     unzip: bool = False,
     delete_after_unzip: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-    token: Optional[str] = Header(None),
+    api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
     """API handler to upload a large file in chunks.
@@ -145,9 +145,10 @@ async def put_large_file(
         - unzip: Boolean flag to unzip the file after upload.
         - delete_after_unzip: Boolean flag to delete the file after unzipping.
         - apikey: API Key to authenticate the request.
-        - token: API secret to authenticate the request.
+        - api_secret: API secret to authenticate the request.
+        - mfa_code: Multifactor authentication code.
     """
-    await auth.level_2(request, apikey, token, mfa_code)
+    await auth.level_2(request, apikey, api_secret, mfa_code)
     filepath = os.path.join(directory, filename)
     tmp_filepath = os.path.join(directory, f"{filename}.part")
     default = dict(

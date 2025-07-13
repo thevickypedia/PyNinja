@@ -169,7 +169,7 @@ async def stop_service(
     request: Request,
     service_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-    token: Optional[str] = Header(None),
+    api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
     """**API function to stop a service.**
@@ -179,14 +179,15 @@ async def stop_service(
         - request: Reference to the FastAPI request object.
         - service_name: Name of the service to check status.
         - apikey: API Key to authenticate the request.
-        - token: API secret to authenticate the request.
+        - api_secret: API secret to authenticate the request.
+        - mfa_code: Multifactor authentication code.
 
     **Raises:**
 
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    await auth.level_2(request, apikey, token, mfa_code)
+    await auth.level_2(request, apikey, api_secret, mfa_code)
     response = service.stop_service(service_name)
     LOGGER.info(
         "%s: %d - %s",
@@ -203,7 +204,7 @@ async def start_service(
     request: Request,
     service_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-    token: Optional[str] = Header(None),
+    api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
     """**API function to start a service.**
@@ -213,14 +214,15 @@ async def start_service(
         - request: Reference to the FastAPI request object.
         - service_name: Name of the service to check status.
         - apikey: API Key to authenticate the request.
-        - token: API secret to authenticate the request.
+        - api_secret: API secret to authenticate the request.
+        - mfa_code: Multifactor authentication code.
 
     **Raises:**
 
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    await auth.level_2(request, apikey, token, mfa_code)
+    await auth.level_2(request, apikey, api_secret, mfa_code)
     response = service.start_service(service_name)
     LOGGER.info(
         "%s: %d - %s",
@@ -237,7 +239,7 @@ async def restart_service(
     request: Request,
     service_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-    token: Optional[str] = Header(None),
+    api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
     """**API function to restart a service.**
@@ -247,14 +249,15 @@ async def restart_service(
         - request: Reference to the FastAPI request object.
         - service_name: Name of the service to check status.
         - apikey: API Key to authenticate the request.
-        - token: API secret to authenticate the request.
+        - api_secret: API secret to authenticate the request.
+        - mfa_code: Multifactor authentication code.
 
     **Raises:**
 
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    await auth.level_2(request, apikey, token, mfa_code)
+    await auth.level_2(request, apikey, api_secret, mfa_code)
     response = service.restart_service(service_name)
     LOGGER.info(
         "%s: %d - %s",
@@ -324,7 +327,7 @@ async def start_application(
     request: Request,
     app_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-    token: Optional[str] = Header(None),
+    api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
     """**API function to start an application.**
@@ -341,7 +344,7 @@ async def start_application(
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    await auth.level_2(request, apikey, token, mfa_code)
+    await auth.level_2(request, apikey, api_secret, mfa_code)
     if app := application.get_app_by_name(app_name):
         application.start_app(app["path"])
         raise exceptions.APIResponse(
@@ -358,7 +361,7 @@ async def stop_application(
     request: Request,
     app_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-    token: Optional[str] = Header(None),
+    api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
     """**API function to stop an application.**
@@ -375,7 +378,7 @@ async def stop_application(
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    await auth.level_2(request, apikey, token, mfa_code)
+    await auth.level_2(request, apikey, api_secret, mfa_code)
     if app := application.get_app_by_name(app_name):
         application.stop_app(app["path"])
         raise exceptions.APIResponse(
@@ -392,7 +395,7 @@ async def restart_application(
     request: Request,
     app_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-    token: Optional[str] = Header(None),
+    api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
     """**API function to restart an application.**
@@ -409,7 +412,7 @@ async def restart_application(
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    await auth.level_2(request, apikey, token, mfa_code)
+    await auth.level_2(request, apikey, api_secret, mfa_code)
     response = application.restart(app_name)
     LOGGER.info(
         "%s: %d - %s",

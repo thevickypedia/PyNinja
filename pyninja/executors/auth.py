@@ -117,14 +117,17 @@ async def verify_mfa(mfa_code: str) -> None:
 
 
 async def level_2(
-    request: Request, apikey: HTTPAuthorizationCredentials, token: str, mfa_code: str
+    request: Request,
+    apikey: HTTPAuthorizationCredentials,
+    api_secret: str,
+    mfa_code: str,
 ) -> None:
     """Validates the auth request using HTTPBearer and additionally a secure token.
 
     Args:
         request: Takes the authorization header token as an argument.
         apikey: Basic APIKey required for all the routes.
-        token: Additional token for critical requests.
+        api_secret: API secret for secured endpoints.
         mfa_code: Multifactor authentication code for additional security.
 
     Raises:
@@ -138,7 +141,7 @@ async def level_2(
             status_code=HTTPStatus.NOT_IMPLEMENTED.real,
             detail="Remote execution has been disabled on the server.",
         )
-    if token and secrets.compare_digest(token, models.env.api_secret):
+    if api_secret and secrets.compare_digest(api_secret, models.env.api_secret):
         await verify_mfa(mfa_code)
         return
     await handle_auth_error(request)

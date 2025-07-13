@@ -14,7 +14,7 @@ from typing import Any, Callable, Dict, List, Set, Tuple
 
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from pyarchitecture.config import default_cpu_lib, default_disk_lib, default_gpu_lib
-from pydantic import BaseModel, Field, FilePath, PositiveInt, field_validator
+from pydantic import BaseModel, EmailStr, Field, FilePath, PositiveInt, field_validator
 from pydantic_settings import BaseSettings
 
 from pyninja.modules import enums, exceptions
@@ -285,7 +285,7 @@ class EnvConfig(BaseSettings):
     database: str = Field("auth.db", pattern=".*.db$")
 
     # Multifactor authentication
-    gmail_user: str | None = None
+    gmail_user: EmailStr | None = None
     gmail_pass: str | None = None
     recipient: str | None = None
     # Timeout should at least be 5 minutes (300 seconds) and can be up to 24 hours (86_400 seconds)

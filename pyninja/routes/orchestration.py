@@ -72,7 +72,7 @@ async def stop_docker_container(
     request: Request,
     container_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-    token: Optional[str] = Header(None),
+    api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
     """**API function to stop a docker container.**
@@ -82,14 +82,15 @@ async def stop_docker_container(
         - request: Reference to the FastAPI request object.
         - container_name: Name of the container to stop.
         - apikey: API Key to authenticate the request.
-        - token: API secret to authenticate the request.
+        - api_secret: API secret to authenticate the request.
+        - mfa_code: Multifactor authentication code.
 
     **Raises:**
 
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    await auth.level_2(request, apikey, token, mfa_code)
+    await auth.level_2(request, apikey, api_secret, mfa_code)
     if response := dockerized.stop_container(container_name):
         LOGGER.info(response)
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
@@ -106,7 +107,7 @@ async def start_docker_container(
     request: Request,
     container_name: str,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-    token: Optional[str] = Header(None),
+    api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
     """**API function to start a docker container.**
@@ -116,14 +117,15 @@ async def start_docker_container(
         - request: Reference to the FastAPI request object.
         - container_name: Name of the container to start.
         - apikey: API Key to authenticate the request.
-        - token: API secret to authenticate the request.
+        - api_secret: API secret to authenticate the request.
+        - mfa_code: Multifactor authentication code.
 
     **Raises:**
 
         APIResponse:
         Raises the HTTPStatus object with a status code and detail as response.
     """
-    await auth.level_2(request, apikey, token, mfa_code)
+    await auth.level_2(request, apikey, api_secret, mfa_code)
     if response := dockerized.start_container(container_name):
         LOGGER.info(response)
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
