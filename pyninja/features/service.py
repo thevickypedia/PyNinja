@@ -44,7 +44,7 @@ def stopped(service_name: str) -> models.ServiceStatus:
         Returns a reference to the ServiceStatus object.
     """
     return models.ServiceStatus(
-        status_code=HTTPStatus.ACCEPTED.real,
+        status_code=HTTPStatus.OK.real,
         description=f"{service_name} has been stopped",
         service_name=service_name,
     )
@@ -136,7 +136,8 @@ def get_all_services() -> Generator[Dict[str, str]]:
                 yield service
             return
         except subprocess.CalledProcessError as error:
-            LOGGER.error("%s", error)
+            result = error.output.decode(encoding="UTF-8").strip()
+            LOGGER.error("[%s]: %s", error.returncode, result)
             return
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
@@ -163,7 +164,8 @@ def get_all_services() -> Generator[Dict[str, str]]:
                     yield response_dict
             return
         except subprocess.CalledProcessError as error:
-            LOGGER.error("%s", error)
+            result = error.output.decode(encoding="UTF-8").strip()
+            LOGGER.error("[%s]: %s", error.returncode, result)
             return
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.windows:
@@ -185,7 +187,8 @@ def get_all_services() -> Generator[Dict[str, str]]:
                     service.update(usage)
                 yield service
         except subprocess.CalledProcessError as error:
-            LOGGER.error("%s", error)
+            result = error.output.decode(encoding="UTF-8").strip()
+            LOGGER.error("[%s]: %s", error.returncode, result)
 
 
 def get_service_status(service_name: str) -> models.ServiceStatus:
@@ -215,9 +218,10 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
                     service_name=service_name,
                 )
         except subprocess.CalledProcessError as error:
+            result = error.output.decode(encoding="UTF-8").strip()
+            LOGGER.error("[%s]: %s", error.returncode, result)
             if error.returncode == 3:
                 return stopped(service_name)
-            LOGGER.error("%d - %s", 404, error)
             return unavailable(service_name)
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
@@ -234,7 +238,8 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
             else:
                 return stopped(service_name)
         except subprocess.CalledProcessError as error:
-            LOGGER.error("%d - %s", 404, error)
+            result = error.output.decode(encoding="UTF-8").strip()
+            LOGGER.error("[%s]: %s", error.returncode, result)
             return unavailable(service_name)
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.windows:
@@ -250,7 +255,8 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
             else:
                 return unknown(service_name)
         except subprocess.CalledProcessError as error:
-            LOGGER.error("%d - %s", 404, error)
+            result = error.output.decode(encoding="UTF-8").strip()
+            LOGGER.error("[%s]: %s", error.returncode, result)
             return unavailable(service_name)
 
 
@@ -276,7 +282,8 @@ def stop_service(service_name: str) -> models.ServiceStatus:
         )
         return stopped(service_name)
     except subprocess.CalledProcessError as error:
-        LOGGER.error("%d - %s", 404, error)
+        result = error.output.decode(encoding="UTF-8").strip()
+        LOGGER.error("[%s]: %s", error.returncode, result)
         return unavailable(service_name)
 
 
@@ -302,8 +309,52 @@ def start_service(service_name: str) -> models.ServiceStatus:
         )
         return stopped(service_name)
     except subprocess.CalledProcessError as error:
-        LOGGER.error("%d - %s", 404, error)
+        result = error.output.decode(encoding="UTF-8").strip()
+        LOGGER.error("[%s]: %s", error.returncode, result)
         return unavailable(service_name)
+
+
+def restarted(service_name: str) -> models.ServiceStatus:
+    """Constructs an ServiceStatus object with a status code 200."""
+    return models.ServiceStatus(
+        status_code=HTTPStatus.OK.real,
+        description=f"{service_name!r} has been restarted",
+        service_name=service_name,
+    )
+
+
+def kickstart_mac_service(full_service_name: str) -> models.ServiceStatus:
+    """Kickstart a macOS service by name.
+
+    Args:
+        full_service_name: Full name of the service, including the prefix.
+
+    References:
+        A service can be restarted using the `launchctl kickstart` command on macOS.
+
+        .. code-block:: shell
+
+            launchctl kickstart -k gui/$(id -u)/com.ollama.ollama
+
+    Returns:
+        ServiceStatus:
+        Returns an instance of the ServiceStatus object.
+    """
+    try:
+        subprocess.check_output(
+            [
+                models.env.service_lib,
+                "kickstart",
+                "-k",
+                f"gui/{os.getuid()}/{full_service_name}",
+            ],
+            text=True,
+        )
+        return restarted(full_service_name)
+    except subprocess.CalledProcessError as error:
+        result = error.output.decode(encoding="UTF-8").strip()
+        LOGGER.error("[%s]: %s", error.returncode, result)
+        return unavailable(full_service_name)
 
 
 def restart_service(service_name: str) -> models.ServiceStatus:
@@ -320,27 +371,22 @@ def restart_service(service_name: str) -> models.ServiceStatus:
     # Update service_name to the one fetched from launchctl (for macOS)
     full_service_name = service_status.service_name
     try:
-        # todo: Implement a more robust way to handle service restarts across different OS
         if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
-            subprocess.check_output(
-                [
-                    models.env.service_lib,
-                    "kickstart",
-                    "-k",
-                    f"gui/{os.getuid()}/{full_service_name}",
-                ],
-                text=True,
-            )
-        elif models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
+            stop_service(full_service_name)
+            time.sleep(1)
+            start_service(full_service_name)
+        else:
             subprocess.check_output(
                 [models.env.service_lib, "restart", full_service_name],
                 text=True,
             )
-        else:
-            stop_service(full_service_name)
-            time.sleep(1)
-            start_service(full_service_name)
-        return get_service_status(full_service_name)
+        return restarted(full_service_name)
     except subprocess.CalledProcessError as error:
-        LOGGER.error("%d - %s", 404, error)
+        result = error.output.decode(encoding="UTF-8").strip()
+        LOGGER.error("[%s]: %s", error.returncode, result)
+        if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
+            LOGGER.error(
+                "Attempting to kickstart macOS service '%s'", full_service_name
+            )
+            return kickstart_mac_service(full_service_name)
         return unavailable(full_service_name)

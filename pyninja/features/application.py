@@ -33,7 +33,9 @@ def get_all_apps() -> Generator[Dict[str, str]]:
                 )
                 if display_name := result.decode("utf-8").strip():
                     yield {display_name: app_path}
-            except subprocess.CalledProcessError:
+            except subprocess.CalledProcessError as error:
+                result = error.output.decode(encoding="UTF-8").strip()
+                LOGGER.warning("[%s]: %s", error.returncode, result)
                 # Ignore apps that fail mdls
                 yield {entry.rstrip(".app"): app_path}
 
@@ -179,5 +181,6 @@ def restart(app_name: str) -> models.AppStatus:
         start_app(app_path)
         return success(app_name, app_path)
     except subprocess.CalledProcessError as error:
-        LOGGER.error("%d - %s", error.returncode, error.stderr)
+        result = error.output.decode(encoding="UTF-8").strip()
+        LOGGER.error("[%s]: %s", error.returncode, result)
         return failed(app_name, app_path, str(error))

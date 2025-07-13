@@ -181,7 +181,8 @@ def get_service_pid_linux(service_name: str) -> Optional[int]:
             if line.startswith("MainPID="):
                 return int(line.split("=")[1].strip())
     except subprocess.CalledProcessError as error:
-        LOGGER.debug("%s - %s", error.returncode, error.stderr)
+        result = error.output.decode(encoding="UTF-8").strip()
+        LOGGER.error("[%s]: %s", error.returncode, result)
 
 
 def get_service_pid_macos(service_name: str) -> Optional[int]:
@@ -204,7 +205,8 @@ def get_service_pid_macos(service_name: str) -> Optional[int]:
                 except ValueError:
                     return 0
     except subprocess.CalledProcessError as error:
-        LOGGER.debug("%s - %s", error.returncode, error.stderr)
+        result = error.output.decode(encoding="UTF-8").strip()
+        LOGGER.error("[%s]: %s", error.returncode, result)
 
 
 def get_service_pid_windows(service_name: str) -> Optional[int]:
@@ -225,4 +227,5 @@ def get_service_pid_windows(service_name: str) -> Optional[int]:
             if "PID" in line:
                 return int(line.split(":")[1].strip())
     except subprocess.CalledProcessError as error:
-        LOGGER.debug("%s - %s", error.returncode, error.stderr)
+        result = error.output.decode(encoding="UTF-8").strip()
+        LOGGER.error("[%s]: %s", error.returncode, result)

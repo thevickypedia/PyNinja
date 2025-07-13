@@ -307,9 +307,16 @@ class EnvConfig(BaseSettings):
     processor_lib: FilePath = retrieve_library_path(default_cpu_lib)
 
     # macOS GUI app specific
-    osascript: FilePath = shutil.which("osascript") or "/usr/bin/osascript"
-    mdls: FilePath = shutil.which("mdls") or "/usr/bin/mdls"
-    open: FilePath = shutil.which("open") or "/usr/bin/open"
+    if OPERATING_SYSTEM == enums.OperatingSystem.darwin:
+        osascript: FilePath = shutil.which("osascript") or "/usr/bin/osascript"
+        mdls: FilePath = shutil.which("mdls") or "/usr/bin/mdls"
+        open: FilePath = shutil.which("open") or "/usr/bin/open"
+
+    # Windows PowerShell specific
+    if OPERATING_SYSTEM == enums.OperatingSystem.windows:
+        pwsh: FilePath = (
+            shutil.which("pwsh") or "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+        )
 
     # noinspection PyMethodParameters
     @field_validator("apikey", mode="after")

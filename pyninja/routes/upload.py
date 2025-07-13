@@ -176,6 +176,6 @@ async def put_large_file(
     else:
         LOGGER.info("File '%s' uploaded in %d chunks.", filename, n)
         return exceptions.APIResponse(
-            status_code=HTTPStatus.ACCEPTED.real,
+            status_code=HTTPStatus.OK.real,
             detail=f"File [{filename}:{part_number}] uploaded in {n} chunks.",
         )

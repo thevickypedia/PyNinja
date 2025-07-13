@@ -8,7 +8,7 @@ from fastapi.routing import APIRoute, APIWebSocketRoute
 from fastapi.security import HTTPBearer
 
 from pyninja.executors import multifactor
-from pyninja.modules import enums, exceptions
+from pyninja.modules import enums, exceptions, models
 from pyninja.monitor import routes as ui
 from pyninja.routes import (
     download,
@@ -167,16 +167,16 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
             dependencies=dependencies,
         ),
     ]
-    # todo: Remove commented code
-    # if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
-    #     basic_routes.append(
-    #         APIRoute(
-    #             path=enums.APIEndpoints.get_all_apps,
-    #             endpoint=namespace.get_all_apps,
-    #             methods=["GET"],
-    #             dependencies=dependencies,
-    #         )
-    #     )
+    # macOS treats applications different from services, so it needs special handling
+    if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
+        basic_routes.append(
+            APIRoute(
+                path=enums.APIEndpoints.get_all_apps,
+                endpoint=namespace.get_all_apps,
+                methods=["GET"],
+                dependencies=dependencies,
+            )
+        )
     return basic_routes
 
 
@@ -267,30 +267,30 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
             include_in_schema=False,
         ),
     ]
-    # todo: Remove commented code
-    # if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
-    #     advanced_routes.extend(
-    #         [
-    #             APIRoute(
-    #                 path=enums.APIEndpoints.start_app,
-    #                 endpoint=namespace.start_application,
-    #                 methods=["POST"],
-    #                 dependencies=dependencies,
-    #             ),
-    #             APIRoute(
-    #                 path=enums.APIEndpoints.stop_app,
-    #                 endpoint=namespace.stop_application,
-    #                 methods=["POST"],
-    #                 dependencies=dependencies,
-    #             ),
-    #             APIRoute(
-    #                 path=enums.APIEndpoints.restart_app,
-    #                 endpoint=namespace.restart_application,
-    #                 methods=["POST"],
-    #                 dependencies=dependencies,
-    #             ),
-    #         ]
-    #     )
+    # macOS treats applications different from services, so it needs special handling
+    if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
+        advanced_routes.extend(
+            [
+                APIRoute(
+                    path=enums.APIEndpoints.start_app,
+                    endpoint=namespace.start_application,
+                    methods=["POST"],
+                    dependencies=dependencies,
+                ),
+                APIRoute(
+                    path=enums.APIEndpoints.stop_app,
+                    endpoint=namespace.stop_application,
+                    methods=["POST"],
+                    dependencies=dependencies,
+                ),
+                APIRoute(
+                    path=enums.APIEndpoints.restart_app,
+                    endpoint=namespace.restart_application,
+                    methods=["POST"],
+                    dependencies=dependencies,
+                ),
+            ]
+        )
     return advanced_routes
 
 

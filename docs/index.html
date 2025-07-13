@@ -1897,6 +1897,36 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.service.restarted">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.service.</span></span><span class="sig-name descname"><span class="pre">restarted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.ServiceStatus" title="pyninja.modules.models.ServiceStatus"><span class="pre">ServiceStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.service.restarted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs an ServiceStatus object with a status code 200.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.service.kickstart_mac_service">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.service.</span></span><span class="sig-name descname"><span class="pre">kickstart_mac_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_service_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.ServiceStatus" title="pyninja.modules.models.ServiceStatus"><span class="pre">ServiceStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.service.kickstart_mac_service" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kickstart a macOS service by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>full_service_name</strong> – Full name of the service, including the prefix.</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>A service can be restarted using the <cite>launchctl kickstart</cite> command on macOS.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>launchctl<span class="w"> </span>kickstart<span class="w"> </span>-k<span class="w"> </span>gui/<span class="k">$(</span>id<span class="w"> </span>-u<span class="k">)</span>/com.ollama.ollama
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns an instance of the ServiceStatus object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyninja.modules.models.ServiceStatus" title="pyninja.modules.models.ServiceStatus">ServiceStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.features.service.restart_service">
 <span class="sig-prename descclassname"><span class="pre">pyninja.features.service.</span></span><span class="sig-name descname"><span class="pre">restart_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.ServiceStatus" title="pyninja.modules.models.ServiceStatus"><span class="pre">ServiceStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.service.restart_service" title="Permalink to this definition">¶</a></dt>
 <dd><p>Restart a service by name.</p>
