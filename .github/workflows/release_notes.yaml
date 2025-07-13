@@ -24,8 +24,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
           git add release_notes.rst
-          git commit --author="github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>" -m "Update release notes"
-          git push origin main
+          if ! git diff --cached --quiet; then
+            git commit --author="github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>" -m "Update release notes"
+            git push origin main
+          fi
         shell: bash
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
