@@ -20,6 +20,12 @@ jobs:
         run: |
           gitverse-release reverse -f release_notes.rst -t 'Release Notes'
         shell: bash
+      - name: Ensure on main branch
+        run: |
+          git fetch origin main
+          git checkout main
+          git pull origin main
+        shell: bash
       - name: Commit and Push Changes
         # https://github.com/orgs/community/discussions/26560
         run: |
