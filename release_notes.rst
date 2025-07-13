@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v4.0.0 (07/12/2025)
+-------------------
+- Security improvements including MFA using gmail-connector
+- Includes MFA resend interval to prevent spamming emails
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v3.0.0...v4.0.0
+
 v3.0.0 (07/12/2025)
 -------------------
 - Includes new API routes to upload and download large files in chunks.
