@@ -32,6 +32,10 @@ Database
 --------
 .. automodule:: pyninja.executors.database
 
+Multifactor Authentication
+--------------------------
+.. automodule:: pyninja.executors.multifactor
+
 API Routes
 ----------
 .. automodule:: pyninja.routes.fullaccess
@@ -77,6 +81,10 @@ Upload
 PyNinja - Features
 ==================
 
+Application
+-----------
+.. automodule:: pyninja.features.application
+
 Docker
 ------
 .. automodule:: pyninja.features.dockerized
@@ -92,6 +100,10 @@ Process
 Service
 -------
 .. automodule:: pyninja.features.service
+
+Zipper
+------
+.. automodule:: pyninja.features.zipper
 
 PyNinja - Modules
 =================
@@ -176,6 +188,10 @@ RateLimit
 Secure
 ---------
 .. automodule:: pyninja.modules.secure
+
+Tree - Directory Structure
+--------------------------
+.. automodule:: pyninja.modules.tree
 
 PyNinja - Monitor
 =================

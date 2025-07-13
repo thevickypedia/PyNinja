@@ -1,3 +1,10 @@
+# noinspection PyUnresolvedReferences
+"""Special module for managing GUI applications on macOS.
+
+>>> macOS - Applications
+
+"""
+
 import logging
 import os
 import subprocess

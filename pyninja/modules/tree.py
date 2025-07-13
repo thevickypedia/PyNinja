@@ -1,4 +1,4 @@
-from pathlib import Path
+import pathlib
 from typing import List
 
 
@@ -22,7 +22,9 @@ class Tree:
         self.tree_text = []
         self.skip_dot_files = skip_dot_files
 
-    def scan(self, path: Path, last: bool = True, header: str = "") -> List[str]:
+    def scan(
+        self, path: pathlib.Path, last: bool = True, header: str = ""
+    ) -> List[str]:
         """Returns contents for a folder as a root tree.
 
         Args:
@@ -31,7 +33,8 @@ class Tree:
             header: The prefix for the current level in the tree structure.
 
         Returns:
-            List[str]: A list of strings representing the directory structure.
+            List[str]:
+            A list of strings representing the directory structure.
         """
         elbow = "└──"
         pipe = "│  "

@@ -381,6 +381,59 @@
 </dd></dl>
 
 </section>
+<section id="module-pyninja.executors.multifactor">
+<span id="multifactor-authentication"></span><h2>Multifactor Authentication<a class="headerlink" href="#module-pyninja.executors.multifactor" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.executors.multifactor.instantiate_mailer">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.multifactor.</span></span><span class="sig-name descname"><span class="pre">instantiate_mailer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SendEmail</span></span></span><a class="headerlink" href="#pyninja.executors.multifactor.instantiate_mailer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cached function to instantiate the gmail-connector object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns an instance of the SendEmail class from the gmail-connector module.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>gc.SendEmail</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.executors.multifactor.reset_mfa_code">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.multifactor.</span></span><span class="sig-name descname"><span class="pre">reset_mfa_code</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.multifactor.reset_mfa_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the stored MFA token after the timeout period.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.executors.multifactor.clear_timer_list">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.multifactor.</span></span><span class="sig-name descname"><span class="pre">clear_timer_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.multifactor.clear_timer_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears the list of active timers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.executors.multifactor.send_new_mfa">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.multifactor.</span></span><span class="sig-name descname"><span class="pre">send_new_mfa</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.executors.multifactor.send_new_mfa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to check if a new MFA token should be sent.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.executors.multifactor.get_mfa">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.executors.multifactor.</span></span><span class="sig-name descname"><span class="pre">get_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.executors.multifactor.get_mfa" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Get multifactor authentication code.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>request: Reference to the FastAPI request object.</p></li>
+<li><p>apikey: API Key to authenticate the request.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object with a status code and the public/private IP as response.</p>
+</div></blockquote>
+</dd></dl>
+
+</section>
 <section id="module-pyninja.routes.fullaccess">
 <span id="api-routes"></span><h2>API Routes<a class="headerlink" href="#module-pyninja.routes.fullaccess" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
@@ -1449,6 +1502,155 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </section>
 <section id="pyninja-features">
 <h1>PyNinja - Features<a class="headerlink" href="#pyninja-features" title="Permalink to this heading">¶</a></h1>
+<section id="module-pyninja.features.application">
+<span id="application"></span><h2>Application<a class="headerlink" href="#module-pyninja.features.application" title="Permalink to this heading">¶</a></h2>
+<p>Special module for managing GUI applications on macOS.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">macOS</span> <span class="o">-</span> <span class="n">Applications</span>
+</pre></div>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.application.get_all_apps">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.application.</span></span><span class="sig-name descname"><span class="pre">get_all_apps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.application.get_all_apps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all GUI applications installed in the /Applications directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Dict[str, str]</em> – Yields a dictionary with the display name as the key and the application path as the value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.application.is_app_running">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.application.</span></span><span class="sig-name descname"><span class="pre">is_app_running</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.features.application.is_app_running" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a GUI application is currently running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>app_name</strong> – Name of the application to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns True if the application is running, otherwise False.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.application.unavailable">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.application.</span></span><span class="sig-name descname"><span class="pre">unavailable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.AppStatus" title="pyninja.modules.models.AppStatus"><span class="pre">AppStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.application.unavailable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an AppStatus indicating the application is unavailable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>app_name</strong> – Name of the application.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns an instance of the AppStatus object with status code 404.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyninja.modules.models.AppStatus" title="pyninja.modules.models.AppStatus">AppStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.application.failed">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.application.</span></span><span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.AppStatus" title="pyninja.modules.models.AppStatus"><span class="pre">AppStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.application.failed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an AppStatus indicating the application failed to restart.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_name</strong> – Name of the application.</p></li>
+<li><p><strong>app_path</strong> – Application path.</p></li>
+<li><p><strong>error</strong> – Error message describing the failure.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns an instance of the AppStatus object with status code 500.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyninja.modules.models.AppStatus" title="pyninja.modules.models.AppStatus">AppStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.application.success">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.application.</span></span><span class="sig-name descname"><span class="pre">success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.AppStatus" title="pyninja.modules.models.AppStatus"><span class="pre">AppStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.application.success" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an AppStatus indicating the application restarted successfully.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_name</strong> – Name of the application.</p></li>
+<li><p><strong>app_path</strong> – Application path.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns an instance of the AppStatus object with status code 200.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyninja.modules.models.AppStatus" title="pyninja.modules.models.AppStatus">AppStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.application.stop_app">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.application.</span></span><span class="sig-name descname"><span class="pre">stop_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.features.application.stop_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop a GUI service by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>app_path</strong> – Path to the application.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.application.start_app">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.application.</span></span><span class="sig-name descname"><span class="pre">start_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.features.application.start_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a GUI service by path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>app_path</strong> – Application path to start.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.application.get_app_by_name">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.application.</span></span><span class="sig-name descname"><span class="pre">get_app_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.application.get_app_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the application path by its name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>app_name</strong> – Name of the application.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a dictionary with the application name as the key and its path as the value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.application.restart">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.application.</span></span><span class="sig-name descname"><span class="pre">restart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.AppStatus" title="pyninja.modules.models.AppStatus"><span class="pre">AppStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.application.restart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restart a GUI service by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>app_name</strong> – Name of the application.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the path to the application if restarted successfully, otherwise None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-pyninja.features.dockerized">
 <span id="docker"></span><h2>Docker<a class="headerlink" href="#module-pyninja.features.dockerized" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
@@ -1939,6 +2141,49 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pyninja.modules.models.ServiceStatus" title="pyninja.modules.models.ServiceStatus">ServiceStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyninja.features.zipper">
+<span id="zipper"></span><h2>Zipper<a class="headerlink" href="#module-pyninja.features.zipper" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.zipper.archive">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.zipper.</span></span><span class="sig-name descname"><span class="pre">archive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#pyninja.features.zipper.archive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Archives a file or directory into a zip file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Path to the file or directory to be archived.</p></li>
+<li><p><strong>directory</strong> – Directory where the zip file will be created.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The path to the created zip file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pathlib.Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.zipper.unarchive">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.zipper.</span></span><span class="sig-name descname"><span class="pre">unarchive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zip_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.features.zipper.unarchive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unarchives a zip file into a specified directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zip_file</strong> – Zip file to be unarchived.</p></li>
+<li><p><strong>directory</strong> – Directory where the contents will be extracted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The path to the directory containing the unzipped content.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3109,6 +3354,42 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 </section>
+<section id="module-pyninja.modules.tree">
+<span id="tree-directory-structure"></span><h2>Tree - Directory Structure<a class="headerlink" href="#module-pyninja.modules.tree" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyninja.modules.tree.Tree">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.tree.</span></span><span class="sig-name descname"><span class="pre">Tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skip_dot_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.tree.Tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Root tree formatter for a particular directory location.</p>
+<p>This class allows the creation of a visual representation of the file
+system hierarchy of a specified directory. It can optionally skip files
+that start with a dot (hidden files).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Tree</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyninja.modules.tree.Tree.scan">
+<span class="sig-name descname"><span class="pre">scan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.modules.tree.Tree.scan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns contents for a folder as a root tree.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Directory path for which the root tree is to be extracted.</p></li>
+<li><p><strong>last</strong> – Indicates if the current item is the last in the directory.</p></li>
+<li><p><strong>header</strong> – The prefix for the current level in the tree structure.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of strings representing the directory structure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 </section>
 <section id="pyninja-monitor">
 <h1>PyNinja - Monitor<a class="headerlink" href="#pyninja-monitor" title="Permalink to this heading">¶</a></h1>
@@ -3593,6 +3874,7 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <li><a class="reference internal" href="#pyninja-executors">PyNinja - Executors</a><ul>
 <li><a class="reference internal" href="#module-pyninja.executors.auth">API Authenticator</a></li>
 <li><a class="reference internal" href="#module-pyninja.executors.database">Database</a></li>
+<li><a class="reference internal" href="#module-pyninja.executors.multifactor">Multifactor Authentication</a></li>
 <li><a class="reference internal" href="#module-pyninja.routes.fullaccess">API Routes</a></li>
 <li><a class="reference internal" href="#module-pyninja.executors.squire">Squire</a></li>
 </ul>
@@ -3603,10 +3885,12 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </ul>
 </li>
 <li><a class="reference internal" href="#pyninja-features">PyNinja - Features</a><ul>
+<li><a class="reference internal" href="#module-pyninja.features.application">Application</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.dockerized">Docker</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.operations">Operations</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.process">Process</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.service">Service</a></li>
+<li><a class="reference internal" href="#module-pyninja.features.zipper">Zipper</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#pyninja-modules">PyNinja - Modules</a><ul>
@@ -3617,6 +3901,7 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <li><a class="reference internal" href="#payloads">Payloads</a></li>
 <li><a class="reference internal" href="#module-pyninja.modules.rate_limit">RateLimit</a></li>
 <li><a class="reference internal" href="#module-pyninja.modules.secure">Secure</a></li>
+<li><a class="reference internal" href="#module-pyninja.modules.tree">Tree - Directory Structure</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#pyninja-monitor">PyNinja - Monitor</a><ul>

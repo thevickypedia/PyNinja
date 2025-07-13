@@ -46,6 +46,15 @@ repos:
 
   - repo: local
     hooks:
+      - id: runbook-coverage
+        name: runbook-coverage
+        entry: python scripts/runbook_coverage.py pyninja
+        language: python
+        pass_filenames: false
+        always_run: true
+
+  - repo: local
+    hooks:
       - id: docs
         name: runbook
         entry: /bin/bash pre_commit.sh
