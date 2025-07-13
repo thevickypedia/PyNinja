@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+v4.1.0 (07/12/2025)
+-------------------
+- Includes new API handlers to get, start, stop, and restart macOS applications.
+- Create a OS agnostic solution for existing service restart functionality.
+- Includes more logging information for failed subprocess executions.
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.0.0...v4.1.0
+
 v4.0.0 (07/12/2025)
 -------------------
 - Security improvements including MFA using gmail-connector
