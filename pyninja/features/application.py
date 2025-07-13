@@ -76,7 +76,7 @@ def unavailable(app_name: str) -> models.AppStatus:
     return models.AppStatus(
         app_name=app_name,
         status_code=HTTPStatus.NOT_FOUND.real,
-        description=f"{app_name} is not available",
+        description=f"{app_name} is not available\nAvailable applications: {list(get_all_apps())}",
     )
 
 
@@ -156,7 +156,7 @@ def get_app_by_name(app_name: str) -> Dict[str, str]:
     app_name_lower = app_name.lower()
     for iterator in get_all_apps():
         for name, path in iterator.items():
-            if app_name_lower in name.lower():
+            if app_name_lower == name.lower():
                 return {"name": name, "path": path}
     return {}
 

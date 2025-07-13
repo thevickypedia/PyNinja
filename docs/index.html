@@ -866,6 +866,12 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routes.namespace.unavailable">
+<span class="sig-prename descclassname"><span class="pre">pyninja.routes.namespace.</span></span><span class="sig-name descname"><span class="pre">unavailable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="headerlink" href="#pyninja.routes.namespace.unavailable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an APIResponse indicating the application is unavailable, along with a list of available applications.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routes.namespace.start_application">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.namespace.</span></span><span class="sig-name descname"><span class="pre">start_application</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mfa_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.namespace.start_application" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>API function to start an application.</strong></p>
@@ -874,7 +880,7 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <div><p>request: Reference to the FastAPI request object.
 app_name: Name of the application to start.
 apikey: API Key to authenticate the request.
-token: API secret to authenticate the request.</p>
+api_secret: API secret to authenticate the request.</p>
 </div></blockquote>
 <p><strong>Raises:</strong></p>
 <blockquote>
@@ -892,7 +898,7 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <div><p>request: Reference to the FastAPI request object.
 app_name: Name of the application to stop.
 apikey: API Key to authenticate the request.
-token: API secret to authenticate the request.</p>
+api_secret: API secret to authenticate the request.</p>
 </div></blockquote>
 <p><strong>Raises:</strong></p>
 <blockquote>
@@ -910,7 +916,7 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <div><p>request: Reference to the FastAPI request object.
 app_name: Name of the application to restart.
 apikey: API Key to authenticate the request.
-token: API secret to authenticate the request.</p>
+api_secret: API secret to authenticate the request.</p>
 </div></blockquote>
 <p><strong>Raises:</strong></p>
 <blockquote>

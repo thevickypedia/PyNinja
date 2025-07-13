@@ -1,6 +1,6 @@
 import logging
 from http import HTTPStatus
-from typing import Optional
+from typing import NoReturn, Optional
 
 from fastapi import Depends, Header, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -323,6 +323,15 @@ async def get_all_apps(
     )
 
 
+def unavailable(app_name: str) -> NoReturn:
+    """Return an APIResponse indicating the application is unavailable, along with a list of available applications."""
+    LOGGER.error("%s: 404 - Application not found", app_name)
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.NOT_FOUND.real,
+        detail=f"Application {app_name!r} not found. Available applications: {list(application.get_all_apps())}",
+    )
+
+
 async def start_application(
     request: Request,
     app_name: str,
@@ -337,7 +346,7 @@ async def start_application(
         request: Reference to the FastAPI request object.
         app_name: Name of the application to start.
         apikey: API Key to authenticate the request.
-        token: API secret to authenticate the request.
+        api_secret: API secret to authenticate the request.
 
     **Raises:**
 
@@ -350,11 +359,7 @@ async def start_application(
         raise exceptions.APIResponse(
             status_code=HTTPStatus.OK.real, detail=f"{app_name!r} started successfully"
         )
-    LOGGER.error("%s: 404 - Application not found", app_name)
-    raise exceptions.APIResponse(
-        status_code=HTTPStatus.NOT_FOUND.real,
-        detail=f"Application {app_name!r} not found.",
-    )
+    unavailable(app_name)
 
 
 async def stop_application(
@@ -371,7 +376,7 @@ async def stop_application(
         request: Reference to the FastAPI request object.
         app_name: Name of the application to stop.
         apikey: API Key to authenticate the request.
-        token: API secret to authenticate the request.
+        api_secret: API secret to authenticate the request.
 
     **Raises:**
 
@@ -384,11 +389,7 @@ async def stop_application(
         raise exceptions.APIResponse(
             status_code=HTTPStatus.OK.real, detail=f"{app_name!r} stopped successfully"
         )
-    LOGGER.error("%s: 404 - Application not found", app_name)
-    raise exceptions.APIResponse(
-        status_code=HTTPStatus.NOT_FOUND.real,
-        detail=f"Application {app_name!r} not found.",
-    )
+    unavailable(app_name)
 
 
 async def restart_application(
@@ -405,7 +406,7 @@ async def restart_application(
         request: Reference to the FastAPI request object.
         app_name: Name of the application to restart.
         apikey: API Key to authenticate the request.
-        token: API secret to authenticate the request.
+        api_secret: API secret to authenticate the request.
 
     **Raises:**
 

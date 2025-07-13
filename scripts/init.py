@@ -9,13 +9,14 @@ dotenv.load_dotenv(dotenv.find_dotenv())
 NINJA_API_KEY = os.environ["NINJA_APIKEY"]
 NINJA_API_URL = os.environ["NINJA_API_URL"]
 NINJA_API_TIMEOUT = os.environ["NINJA_API_TIMEOUT"]
-NINJA_API_TOKEN = os.environ["NINJA_API_TOKEN"]
+NINJA_API_SECRET = os.environ["NINJA_API_SECRET"]
+SERVER_PASSWORD = os.getenv("SERVER_PASSWORD")
 CHUNK_SIZE = 9 * 1024 * 1024 * 10  # 90MB
 
 SESSION = requests.Session()
 SESSION.headers = {
     "Authorization": f"Bearer {NINJA_API_KEY}",
-    "Token": NINJA_API_TOKEN,
+    "API-SECRET": NINJA_API_SECRET,
     "Accept": "application/json",
 }
 
