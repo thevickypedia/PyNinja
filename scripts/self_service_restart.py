@@ -98,7 +98,7 @@ def flush_screen() -> None:
         Writes new set of empty strings for the size of the terminal if ran using one.
     """
     if INTERACTIVE:
-        sys.stdout.write(f"\r{' ' * os.get_terminal_size().columns}")
+        sys.stdout.write(f"\r{' ' * TERM_SIZE}")
     else:
         sys.stdout.write("\r")
 
