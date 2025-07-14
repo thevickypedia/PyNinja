@@ -53,11 +53,11 @@ def get_missing(entrypoint: str) -> Generator[str]:
     for src, dir__, files__ in os.walk(root / entrypoint):
         if any(src.endswith(exclusion) for exclusion in EXCLUSIONS):
             continue
-        pyninja = os.path.basename(src)
         for file in files__:
             if file.endswith(".py") and file not in EXCLUSIONS:
-                module = (
-                    os.path.join(pyninja, file).replace(os.path.sep, ".").rstrip(".py")
+                filepath = os.path.join(src, file).split(entrypoint, 1)[1]
+                module = entrypoint + filepath.replace(".py", "").replace(
+                    os.path.sep, "."
                 )
                 if module not in rst_text:
                     yield module
