@@ -451,3 +451,26 @@ def total_mountpoints_usage(
     if as_bytes:
         return usage_dict
     return humanize_usage_metrics(**usage_dict)
+
+
+def log_subprocess_error(error: subprocess.CalledProcessError) -> None:
+    """Log subprocess error with return code, error reason, and command.
+
+    Args:
+        error: Subprocess error object.
+    """
+    output = error.output or ""
+    if isinstance(output, bytes):
+        output = output.decode("utf-8", errors="replace")
+    output = output.strip()
+
+    # fallback to stderr if output is empty
+    reason = output or getattr(error, "stderr", "") or ""
+    if isinstance(reason, bytes):
+        reason = reason.decode("utf-8", errors="replace")
+    reason = reason.strip()
+
+    cmd_str = " ".join(map(str, error.cmd)) if error.cmd else "<unknown command>"
+
+    LOGGER.error("Command failed: %s", cmd_str)
+    LOGGER.error("[%s]: %s", error.returncode, reason)

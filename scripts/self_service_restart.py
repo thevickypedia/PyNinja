@@ -164,4 +164,4 @@ def self_upgrade() -> None:
 
 
 if __name__ == "__main__":
-    self_upgrade()
+    self_restart()

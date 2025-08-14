@@ -16,6 +16,7 @@ from typing import Dict
 import psutil
 from pydantic import FilePath
 
+from pyninja.executors import squire
 from pyninja.modules import models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -41,8 +42,7 @@ def get_all_apps() -> Generator[Dict[str, str]]:
                 if display_name := result.decode("utf-8").strip():
                     yield {display_name: app_path}
             except subprocess.CalledProcessError as error:
-                result = error.output.decode(encoding="UTF-8").strip()
-                LOGGER.warning("[%s]: %s", error.returncode, result)
+                squire.log_subprocess_error(error)
                 # Ignore apps that fail mdls
                 yield {entry.rstrip(".app"): app_path}
 
@@ -188,6 +188,5 @@ def restart(app_name: str) -> models.AppStatus:
         start_app(app_path)
         return success(app_name, app_path)
     except subprocess.CalledProcessError as error:
-        result = error.output.decode(encoding="UTF-8").strip()
-        LOGGER.error("[%s]: %s", error.returncode, result)
+        squire.log_subprocess_error(error)
         return failed(app_name, app_path, str(error))

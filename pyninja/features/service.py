@@ -10,6 +10,7 @@ from typing import Dict
 
 import psutil
 
+from pyninja.executors import squire
 from pyninja.features import process
 from pyninja.modules import enums, models
 
@@ -136,8 +137,7 @@ def get_all_services() -> Generator[Dict[str, str]]:
                 yield service
             return
         except subprocess.CalledProcessError as error:
-            result = error.output.decode(encoding="UTF-8").strip()
-            LOGGER.error("[%s]: %s", error.returncode, result)
+            squire.log_subprocess_error(error)
             return
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
@@ -164,8 +164,7 @@ def get_all_services() -> Generator[Dict[str, str]]:
                     yield response_dict
             return
         except subprocess.CalledProcessError as error:
-            result = error.output.decode(encoding="UTF-8").strip()
-            LOGGER.error("[%s]: %s", error.returncode, result)
+            squire.log_subprocess_error(error)
             return
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.windows:
@@ -187,8 +186,7 @@ def get_all_services() -> Generator[Dict[str, str]]:
                     service.update(usage)
                 yield service
         except subprocess.CalledProcessError as error:
-            result = error.output.decode(encoding="UTF-8").strip()
-            LOGGER.error("[%s]: %s", error.returncode, result)
+            squire.log_subprocess_error(error)
 
 
 def get_service_status(service_name: str) -> models.ServiceStatus:
@@ -218,8 +216,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
                     service_name=service_name,
                 )
         except subprocess.CalledProcessError as error:
-            result = error.output.decode(encoding="UTF-8").strip()
-            LOGGER.error("[%s]: %s", error.returncode, result)
+            squire.log_subprocess_error(error)
             if error.returncode == 3:
                 return stopped(service_name)
             return unavailable(service_name)
@@ -238,8 +235,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
             else:
                 return stopped(service_name)
         except subprocess.CalledProcessError as error:
-            result = error.output.decode(encoding="UTF-8").strip()
-            LOGGER.error("[%s]: %s", error.returncode, result)
+            squire.log_subprocess_error(error)
             return unavailable(service_name)
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.windows:
@@ -255,8 +251,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
             else:
                 return unknown(service_name)
         except subprocess.CalledProcessError as error:
-            result = error.output.decode(encoding="UTF-8").strip()
-            LOGGER.error("[%s]: %s", error.returncode, result)
+            squire.log_subprocess_error(error)
             return unavailable(service_name)
 
 
@@ -282,8 +277,7 @@ def stop_service(service_name: str) -> models.ServiceStatus:
         )
         return stopped(service_name)
     except subprocess.CalledProcessError as error:
-        result = error.output.decode(encoding="UTF-8").strip()
-        LOGGER.error("[%s]: %s", error.returncode, result)
+        squire.log_subprocess_error(error)
         return unavailable(service_name)
 
 
@@ -309,8 +303,7 @@ def start_service(service_name: str) -> models.ServiceStatus:
         )
         return stopped(service_name)
     except subprocess.CalledProcessError as error:
-        result = error.output.decode(encoding="UTF-8").strip()
-        LOGGER.error("[%s]: %s", error.returncode, result)
+        squire.log_subprocess_error(error)
         return unavailable(service_name)
 
 
@@ -352,8 +345,7 @@ def kickstart_mac_service(full_service_name: str) -> models.ServiceStatus:
         )
         return restarted(full_service_name)
     except subprocess.CalledProcessError as error:
-        result = error.output.decode(encoding="UTF-8").strip()
-        LOGGER.error("[%s]: %s", error.returncode, result)
+        squire.log_subprocess_error(error)
         return unavailable(full_service_name)
 
 
@@ -382,8 +374,7 @@ def restart_service(service_name: str) -> models.ServiceStatus:
             )
         return restarted(full_service_name)
     except subprocess.CalledProcessError as error:
-        result = error.output.decode(encoding="UTF-8").strip()
-        LOGGER.error("[%s]: %s", error.returncode, result)
+        squire.log_subprocess_error(error)
         if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
             LOGGER.error(
                 "Attempting to kickstart macOS service '%s'", full_service_name
