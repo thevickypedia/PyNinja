@@ -85,6 +85,23 @@ def unavailable(service_name: str) -> models.ServiceStatus:
     )
 
 
+def forbidden(service_name: str) -> models.ServiceStatus:
+    """Constructs an ServiceStatus object with a status code 403.
+
+    Args:
+        service_name: Name of the service.
+
+    Returns:
+        ServiceStatus:
+        Returns a reference to the ServiceStatus object.
+    """
+    return models.ServiceStatus(
+        status_code=HTTPStatus.FORBIDDEN.real,
+        description=f"'host_password' not stored, {service_name!r} cannot be restarted",
+        service_name=service_name,
+    )
+
+
 def get_process_object(pid: str, service: str) -> psutil.Process | None:
     """Creates a process object using the service PID.
 
@@ -271,10 +288,18 @@ def stop_service(service_name: str) -> models.ServiceStatus:
     # Update service_name to the one fetched from launchctl (for macOS)
     service_name = service_status.service_name
     try:
-        subprocess.check_output(
-            [models.env.service_lib, "stop", service_name],
-            text=True,
-        )
+        if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
+            if not models.env.host_password:
+                return forbidden(service_name)
+            subprocess.check_output(
+                f"echo {models.env.host_password} | sudo -S {models.env.service_lib} stop {service_name}",
+                shell=True, text=True
+            )
+        else:
+            subprocess.check_output(
+                [models.env.service_lib, "stop", service_name],
+                text=True,
+            )
         return stopped(service_name)
     except subprocess.CalledProcessError as error:
         squire.log_subprocess_error(error)
@@ -297,10 +322,18 @@ def start_service(service_name: str) -> models.ServiceStatus:
     # Update service_name to the one fetched from launchctl (for macOS)
     service_name = service_status.service_name
     try:
-        subprocess.check_output(
-            [models.env.service_lib, "start", service_name],
-            text=True,
-        )
+        if models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
+            if not models.env.host_password:
+                return forbidden(service_name)
+            subprocess.check_output(
+                f"echo {models.env.host_password} | sudo -S {models.env.service_lib} start {service_name}",
+                shell=True, text=True
+            )
+        else:
+            subprocess.check_output(
+                [models.env.service_lib, "start", service_name],
+                text=True,
+            )
         return stopped(service_name)
     except subprocess.CalledProcessError as error:
         squire.log_subprocess_error(error)
@@ -367,6 +400,13 @@ def restart_service(service_name: str) -> models.ServiceStatus:
             stop_service(full_service_name)
             time.sleep(1)
             start_service(full_service_name)
+        elif models.OPERATING_SYSTEM == enums.OperatingSystem.linux:
+            if not models.env.host_password:
+                return forbidden(service_name)
+            subprocess.check_output(
+                f"echo {models.env.host_password} | sudo -S {models.env.service_lib} restart {full_service_name}",
+                shell=True, text=True
+            )
         else:
             subprocess.check_output(
                 [models.env.service_lib, "restart", full_service_name],

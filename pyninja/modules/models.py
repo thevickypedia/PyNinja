@@ -274,6 +274,7 @@ class EnvConfig(BaseSettings):
     )
     ninja_host: str = socket.gethostbyname("localhost") or "0.0.0.0"
     ninja_port: PositiveInt = 8000
+    host_password: str | None = None
 
     # Functional improvements
     rate_limit: RateLimit | List[RateLimit] = Field(default_factory=list)
