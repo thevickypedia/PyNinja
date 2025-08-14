@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v4.1.2 (08/14/2025)
+-------------------
+- Bug fix on error handling for subprocess command outputs
+- Full Changelog: https://github.com/thevickypedia/PyNinja/compare/v4.1.1...v4.1.2
+
 v4.1.1 (07/13/2025)
 -------------------
 - Bug fix on macOS application name filter to improve accuracy and avoid false positives

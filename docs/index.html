@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Welcome to PyNinja’s documentation! &#8212; PyNinja  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -2034,6 +2034,23 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.service.forbidden">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.service.</span></span><span class="sig-name descname"><span class="pre">forbidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.ServiceStatus" title="pyninja.modules.models.ServiceStatus"><span class="pre">ServiceStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.service.forbidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs an ServiceStatus object with a status code 403.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>service_name</strong> – Name of the service.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a reference to the ServiceStatus object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyninja.modules.models.ServiceStatus" title="pyninja.modules.models.ServiceStatus">ServiceStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.features.service.get_process_object">
 <span class="sig-prename descclassname"><span class="pre">pyninja.features.service.</span></span><span class="sig-name descname"><span class="pre">get_process_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">psutil.Process</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.features.service.get_process_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a process object using the service PID.</p>
@@ -2861,6 +2878,11 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.ninja_port">
 <span class="sig-name descname"><span class="pre">ninja_port</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.ninja_port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.host_password">
+<span class="sig-name descname"><span class="pre">host_password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.host_password" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

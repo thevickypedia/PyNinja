@@ -293,7 +293,8 @@ def stop_service(service_name: str) -> models.ServiceStatus:
                 return forbidden(service_name)
             subprocess.check_output(
                 f"echo {models.env.host_password} | sudo -S {models.env.service_lib} stop {service_name}",
-                shell=True, text=True
+                shell=True,
+                text=True,
             )
         else:
             subprocess.check_output(
@@ -327,7 +328,8 @@ def start_service(service_name: str) -> models.ServiceStatus:
                 return forbidden(service_name)
             subprocess.check_output(
                 f"echo {models.env.host_password} | sudo -S {models.env.service_lib} start {service_name}",
-                shell=True, text=True
+                shell=True,
+                text=True,
             )
         else:
             subprocess.check_output(
@@ -405,7 +407,8 @@ def restart_service(service_name: str) -> models.ServiceStatus:
                 return forbidden(service_name)
             subprocess.check_output(
                 f"echo {models.env.host_password} | sudo -S {models.env.service_lib} restart {full_service_name}",
-                shell=True, text=True
+                shell=True,
+                text=True,
             )
         else:
             subprocess.check_output(
