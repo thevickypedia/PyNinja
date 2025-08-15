@@ -10,7 +10,7 @@ import string
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from threading import Timer
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Any, Callable, Dict, List, Set, Tuple
 
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from pyarchitecture.config import default_cpu_lib, default_disk_lib, default_gpu_lib
@@ -125,28 +125,6 @@ class RoutingHandler(BaseModel):
         arbitrary_types_allowed = True
 
 
-class Certificate(BaseModel):
-    """Object to load certificate information.
-
-    >>> Certificate
-
-    """
-
-    certificate_name: str
-    serial_number: Optional[str]
-    key_type: str
-    domains: List[str]
-    valid_days: int
-    expiry_date: str
-    certificate_path: Optional[FilePath]
-    private_key_path: Optional[FilePath]
-
-    class Config:
-        """Configuration for Certificate object."""
-
-        arbitrary_types_allowed = True
-
-
 class CertificateStatus(BaseModel):
     """Object to load certificate status with a status code and description.
 
@@ -156,7 +134,7 @@ class CertificateStatus(BaseModel):
 
     status_code: int
     description: str
-    certificates: List[Certificate] | List[Dict[str, Any]] = Field(default_factory=list)
+    certificates: List[Dict[str, Any]] = Field(default_factory=list)
 
 
 class ServiceStatus(BaseModel):

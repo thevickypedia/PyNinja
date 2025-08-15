@@ -2,6 +2,7 @@ import logging
 import subprocess
 from collections.abc import Generator
 from http import HTTPStatus
+from typing import Any, Dict
 
 from pyninja.executors import squire
 from pyninja.modules import cache, enums, models
@@ -24,7 +25,7 @@ def forbidden() -> models.CertificateStatus:
 
 def parse_certificate_output(
     output: str, raw: bool, ws_stream: bool
-) -> Generator[models.Certificate] | None:
+) -> Generator[Dict[str, Any]]:
     """Parse the output from the certbot command to extract certificate details.
 
     Args:
@@ -33,10 +34,9 @@ def parse_certificate_output(
         ws_stream: If True, omits file paths and serial numbers for simplicity.
 
     Yields:
-        models.Certificate:
+        Dict[str, Any]:
         A generator yielding Certificate objects with parsed details.
     """
-    # TODO: Currently pydantic models are not used, either find a use-case or remove models.Certificate
     cert_key = lambda k: k if raw else k.lower().replace(" ", "_")  # noqa: E731
     lines = output.strip().split("\n")
     for line in lines:
@@ -64,7 +64,7 @@ def parse_certificate_output(
         elif line.startswith("Private Key Path:"):
             if not ws_stream:
                 cert_info[cert_key("Private Key Path")] = line.split(": ")[1].strip()
-            yield cert_info if raw else models.Certificate(**cert_info)
+            yield cert_info
 
 
 @cache.timed_cache(max_age=1_800)
