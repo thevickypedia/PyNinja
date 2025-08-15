@@ -1434,6 +1434,29 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 
 </section>
 </section>
+<section id="api-routes-certificates">
+<h1>API Routes - Certificates<a class="headerlink" href="#api-routes-certificates" title="Permalink to this heading">¶</a></h1>
+<section id="module-pyninja.routes.certificates">
+<span id="certificates"></span><h2>Certificates<a class="headerlink" href="#module-pyninja.routes.certificates" title="Permalink to this heading">¶</a></h2>
+<p>Module to handle certificates API endpoint.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routes.certificates.get_certificate">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.certificates.</span></span><span class="sig-name descname"><span class="pre">get_certificate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.certificates.get_certificate" title="Permalink to this definition">¶</a></dt>
+<dd><p>API handler to download a large file or directory as a compressed archive.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>- request</strong> – Reference to the FastAPI request object.</p></li>
+<li><p><strong>- name</strong> – Name of the certificate to retrieve.</p></li>
+<li><p><strong>- raw</strong> – If True, returns raw certificate data instead of parsed model.</p></li>
+<li><p><strong>- apikey</strong> – API Key to authenticate the request.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
 <section id="api-routes-large-scale">
 <h1>API Routes - Large Scale<a class="headerlink" href="#api-routes-large-scale" title="Permalink to this heading">¶</a></h1>
 <section id="module-pyninja.routes.download">
@@ -1674,9 +1697,9 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 </section>
-<section id="module-pyninja.features.certificates">
-<span id="certificates"></span><h2>Certificates<a class="headerlink" href="#module-pyninja.features.certificates" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
+<section id="id1">
+<h2>Certificates<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<span class="target" id="module-pyninja.features.certificates"></span><dl class="py function">
 <dt class="sig sig-object py" id="pyninja.features.certificates.forbidden">
 <span class="sig-prename descclassname"><span class="pre">pyninja.features.certificates.</span></span><span class="sig-name descname"><span class="pre">forbidden</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.CertificateStatus" title="pyninja.modules.models.CertificateStatus"><span class="pre">CertificateStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.certificates.forbidden" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a forbidden response when host password is not stored.</p>
@@ -4104,6 +4127,10 @@ that start with a dot (hidden files).</p>
 <li><a class="reference internal" href="#module-pyninja.executors.squire">Squire</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#api-routes-certificates">API Routes - Certificates</a><ul>
+<li><a class="reference internal" href="#module-pyninja.routes.certificates">Certificates</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#api-routes-large-scale">API Routes - Large Scale</a><ul>
 <li><a class="reference internal" href="#module-pyninja.routes.download">Download</a></li>
 <li><a class="reference internal" href="#module-pyninja.routes.upload">Upload</a></li>
@@ -4111,7 +4138,7 @@ that start with a dot (hidden files).</p>
 </li>
 <li><a class="reference internal" href="#pyninja-features">PyNinja - Features</a><ul>
 <li><a class="reference internal" href="#module-pyninja.features.application">Application</a></li>
-<li><a class="reference internal" href="#module-pyninja.features.certificates">Certificates</a></li>
+<li><a class="reference internal" href="#id1">Certificates</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.dockerized">Docker</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.operations">Operations</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.process">Process</a></li>

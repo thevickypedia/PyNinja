@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v4.2.0 (08/14/2025)
+-------------------
+- Add a new feature to monitor certificates through ``certbot``
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.1.3...v4.2.0
+
 v4.1.3 (08/14/2025)
 -------------------
 - Use ``host_password`` to ``start``, ``stop``, and ``restart`` services on Linux machines

@@ -11,6 +11,7 @@ from pyninja.executors import multifactor
 from pyninja.modules import enums, exceptions, models
 from pyninja.monitor import routes as ui
 from pyninja.routes import (
+    certificates,
     download,
     fullaccess,
     ipaddr,
@@ -163,6 +164,12 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
         APIRoute(
             path=enums.APIEndpoints.get_docker_stats,
             endpoint=orchestration.get_docker_stats,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path=enums.APIEndpoints.get_certificates,
+            endpoint=certificates.get_certificate,
             methods=["GET"],
             dependencies=dependencies,
         ),

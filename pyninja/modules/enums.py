@@ -62,6 +62,9 @@ class APIEndpoints(StrEnum):
     get_docker_volumes: str = "/get-docker-volumes"
     get_docker_containers: str = "/get-docker-containers"
 
+    get_certificates: str = "/get-certificates"
+    renew_certificate: str = "/renew-certificate"
+
     stop_docker_container: str = "/stop-docker-container"
     start_docker_container: str = "/start-docker-container"
 

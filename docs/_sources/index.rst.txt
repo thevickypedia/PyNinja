@@ -64,6 +64,13 @@ Squire
 ------
 .. automodule:: pyninja.executors.squire
 
+API Routes - Certificates
+=========================
+
+Certificates
+------------
+.. automodule:: pyninja.routes.certificates
+
 API Routes - Large Scale
 ========================
 
