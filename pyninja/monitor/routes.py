@@ -9,6 +9,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
 from pyninja import monitor, version
+from pyninja.features import certificates
 from pyninja.modules import enums, exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -192,6 +193,7 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     # Base task with a placeholder asyncio sleep to start the task loop
     task = asyncio.create_task(asyncio.sleep(0.1))
     connections = 0
+    certificates_info = certificates.get_all_certificates(raw=True, include_path=False)
     while True:
         # Validate session asynchronously (non-blocking)
         # This way of handling session validation is more efficient than using a blocking call
@@ -221,6 +223,7 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
             await websocket.close()
             break
         data = await monitor.resources.system_resources()
+        data["certificates"] = certificates_info.certificates
         try:
             await websocket.send_json(data)
             connections += 1

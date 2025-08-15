@@ -1417,11 +1417,17 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.squire.log_subprocess_error">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">log_subprocess_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CalledProcessError</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.squire.log_subprocess_error" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">log_subprocess_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CalledProcessError</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.executors.squire.log_subprocess_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Log subprocess error with return code, error reason, and command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>error</strong> – Subprocess error object.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the error reason as a string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1663,6 +1669,51 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pyninja.features.certificates">
+<span id="certificates"></span><h2>Certificates<a class="headerlink" href="#module-pyninja.features.certificates" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.certificates.forbidden">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.certificates.</span></span><span class="sig-name descname"><span class="pre">forbidden</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.CertificateStatus" title="pyninja.modules.models.CertificateStatus"><span class="pre">CertificateStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.certificates.forbidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a forbidden response when host password is not stored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A CertificateStatus object indicating that the host password is not stored.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyninja.modules.models.CertificateStatus" title="pyninja.modules.models.CertificateStatus">models.CertificateStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.certificates.parse_certificate_output">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.certificates.</span></span><span class="sig-name descname"><span class="pre">parse_certificate_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.modules.models.Certificate" title="pyninja.modules.models.Certificate"><span class="pre">Certificate</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.features.certificates.parse_certificate_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the output from the certbot command to extract certificate details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output</strong> – The output string from the certbot command.</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>models.Certificate</em> – A generator yielding Certificate objects with parsed details.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.features.certificates.get_all_certificates">
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.certificates.</span></span><span class="sig-name descname"><span class="pre">get_all_certificates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.CertificateStatus" title="pyninja.modules.models.CertificateStatus"><span class="pre">CertificateStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.certificates.get_all_certificates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch all SSL certificates using certbot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A CertificateStatus object containing the status code and a list of certificates.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyninja.modules.models.CertificateStatus" title="pyninja.modules.models.CertificateStatus">models.CertificateStatus</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2458,6 +2509,16 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.get_certificates">
+<span class="sig-name descname"><span class="pre">get_certificates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/get-certificates'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.get_certificates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.renew_certificate">
+<span class="sig-name descname"><span class="pre">renew_certificate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/renew-certificate'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.renew_certificate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.stop_docker_container">
 <span class="sig-name descname"><span class="pre">stop_docker_container</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/stop-docker-container'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.stop_docker_container" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2996,6 +3057,11 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.certbot_path">
+<span class="sig-name descname"><span class="pre">certbot_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.certbot_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.osascript">
 <span class="sig-name descname"><span class="pre">osascript</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.osascript" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -3120,6 +3186,112 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">Certificate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">certificate_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serial_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domains</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiry_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">certificate_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">private_key_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.Certificate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object to load certificate information.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Certificate</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate.certificate_name">
+<span class="sig-name descname"><span class="pre">certificate_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.Certificate.certificate_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate.serial_number">
+<span class="sig-name descname"><span class="pre">serial_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.Certificate.serial_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate.key_type">
+<span class="sig-name descname"><span class="pre">key_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.Certificate.key_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate.domains">
+<span class="sig-name descname"><span class="pre">domains</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.Certificate.domains" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate.valid_days">
+<span class="sig-name descname"><span class="pre">valid_days</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyninja.modules.models.Certificate.valid_days" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate.expiry_date">
+<span class="sig-name descname"><span class="pre">expiry_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.Certificate.expiry_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate.certificate_path">
+<span class="sig-name descname"><span class="pre">certificate_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.Certificate.certificate_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate.private_key_path">
+<span class="sig-name descname"><span class="pre">private_key_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#pyninja.modules.models.Certificate.private_key_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate.Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#pyninja.modules.models.Certificate.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration for Certificate object.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate.Config.arbitrary_types_allowed">
+<span class="sig-name descname"><span class="pre">arbitrary_types_allowed</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#pyninja.modules.models.Certificate.Config.arbitrary_types_allowed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pyninja.modules.models.Certificate._abc_impl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Certificate.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True}</span></em><a class="headerlink" href="#pyninja.modules.models.Certificate.model_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyninja.modules.models.CertificateStatus">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">CertificateStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">status_code:</span> <span class="pre">int,</span> <span class="pre">description:</span> <span class="pre">str,</span> <span class="pre">certificates:</span> <span class="pre">~typing.Union[~typing.List[~pyninja.modules.models.Certificate],</span> <span class="pre">~typing.List[~typing.Dict[str,</span> <span class="pre">~typing.Any]]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.CertificateStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object to load certificate status with a status code and description.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ServiceStatus</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.CertificateStatus.status_code">
+<span class="sig-name descname"><span class="pre">status_code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyninja.modules.models.CertificateStatus.status_code" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.CertificateStatus.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.CertificateStatus.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.CertificateStatus.certificates">
+<span class="sig-name descname"><span class="pre">certificates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.modules.models.Certificate" title="pyninja.modules.models.Certificate"><span class="pre">Certificate</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.CertificateStatus.certificates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.CertificateStatus._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pyninja.modules.models.CertificateStatus._abc_impl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.CertificateStatus.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#pyninja.modules.models.CertificateStatus.model_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="pyninja.modules.models.AppStatus">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">AppStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.AppStatus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object to load the application status with a status code and description.</p>
@@ -3227,6 +3399,20 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>FilePath</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.modules.models.get_certbot_path">
+<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">get_certbot_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.modules.models.get_certbot_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the certbot path if installed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns the <code class="docutils literal notranslate"><span class="pre">FilePath</span></code> referencing the certbot binary.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>FilePath</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3925,6 +4111,7 @@ that start with a dot (hidden files).</p>
 </li>
 <li><a class="reference internal" href="#pyninja-features">PyNinja - Features</a><ul>
 <li><a class="reference internal" href="#module-pyninja.features.application">Application</a></li>
+<li><a class="reference internal" href="#module-pyninja.features.certificates">Certificates</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.dockerized">Docker</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.operations">Operations</a></li>
 <li><a class="reference internal" href="#module-pyninja.features.process">Process</a></li>

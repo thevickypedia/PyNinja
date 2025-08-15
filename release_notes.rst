@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v4.1.3 (08/14/2025)
+-------------------
+- Use ``host_password`` to ``start``, ``stop``, and ``restart`` services on Linux machines
+- Full Changelog: https://github.com/thevickypedia/PyNinja/compare/v4.1.2...v4.1.3
+
 v4.1.2 (08/14/2025)
 -------------------
 - Bug fix on error handling for subprocess command outputs

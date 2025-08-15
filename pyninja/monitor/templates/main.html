@@ -41,6 +41,21 @@
             margin-bottom: 20px;
         }
 
+        .cert-stats {
+            height: 100%;
+            margin: 2%;
+            overflow-x: visible;
+            display: none; /* Hide the container initially */
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .cert-stats h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         .docker-stats {
             height: 100%;
             margin: 2%;
@@ -457,6 +472,17 @@
     <br>
     <i id="pyudisk_notes" style="font-size: small;"></i>
 </div>
+<div id="cert-stats" class="cert-stats">
+    <h3>Certificate Stats</h3>
+    <table id="certStatsTable">
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <br>
+    <i id="cert_notes" style="font-size: small;"></i>
+</div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
@@ -580,6 +606,17 @@
             } else {
                 // Hide the container if no data is available
                 document.getElementById("pyudisk-stats").style.display = "none";
+            }
+
+            const certStatsJSON = data.certificates;
+            // Check if certStatsJSON is valid
+            if (certStatsJSON && certStatsJSON.length > 0) {
+                console.log('Certificate Stats:', certStatsJSON.length, 'certificates found.');
+                handleTable(certStatsJSON, "certStatsTable", "cert-stats");
+                document.getElementById("cert_notes").innerHTML = "Certificates are fetched using certbot. The expiry date is shown in UTC.";
+            } else {
+                // Hide the container if no data is available
+                document.getElementById("cert-stats").style.display = "none";
             }
 
             // Update CPU usage

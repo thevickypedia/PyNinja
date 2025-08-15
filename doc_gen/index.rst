@@ -85,6 +85,10 @@ Application
 -----------
 .. automodule:: pyninja.features.application
 
+Certificates
+------------
+.. automodule:: pyninja.features.certificates
+
 Docker
 ------
 .. automodule:: pyninja.features.dockerized

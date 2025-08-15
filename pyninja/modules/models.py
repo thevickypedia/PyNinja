@@ -125,6 +125,40 @@ class RoutingHandler(BaseModel):
         arbitrary_types_allowed = True
 
 
+class Certificate(BaseModel):
+    """Object to load certificate information.
+
+    >>> Certificate
+
+    """
+
+    certificate_name: str
+    serial_number: str
+    key_type: str
+    domains: List[str]
+    valid_days: int
+    expiry_date: str
+    certificate_path: FilePath
+    private_key_path: FilePath
+
+    class Config:
+        """Configuration for Certificate object."""
+
+        arbitrary_types_allowed = True
+
+
+class CertificateStatus(BaseModel):
+    """Object to load certificate status with a status code and description.
+
+    >>> ServiceStatus
+
+    """
+
+    status_code: int
+    description: str
+    certificates: List[Certificate] | List[Dict[str, Any]] = Field(default_factory=list)
+
+
 class ServiceStatus(BaseModel):
     """Object to load service status with a status code and description.
 
@@ -255,6 +289,26 @@ def retrieve_library_path(func: Callable) -> FilePath:
         exceptions.raise_os_error(OPERATING_SYSTEM)
 
 
+def get_certbot_path() -> FilePath | None:
+    """Get the certbot path if installed.
+
+    Returns:
+        FilePath:
+        Returns the ``FilePath`` referencing the certbot binary.
+    """
+    if certbot_path := shutil.which("certbot"):
+        return FilePath(certbot_path)
+    common_paths = [
+        "/usr/bin/certbot",  # Linux apt
+        "/usr/local/bin/certbot",  # macOS brew
+        "/snap/bin/certbot",  # Linux snap
+    ]
+    for path in common_paths:
+        if os.path.isfile(path):
+            return FilePath(path)
+    return None
+
+
 class EnvConfig(BaseSettings):
     """Object to load environment variables.
 
@@ -306,6 +360,7 @@ class EnvConfig(BaseSettings):
     disk_lib: FilePath = retrieve_library_path(default_disk_lib)
     service_lib: FilePath = retrieve_library_path(default_service_lib)
     processor_lib: FilePath = retrieve_library_path(default_cpu_lib)
+    certbot_path: FilePath | None = get_certbot_path()
 
     # macOS GUI app specific
     if OPERATING_SYSTEM == enums.OperatingSystem.darwin:

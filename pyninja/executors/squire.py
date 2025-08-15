@@ -453,11 +453,15 @@ def total_mountpoints_usage(
     return humanize_usage_metrics(**usage_dict)
 
 
-def log_subprocess_error(error: subprocess.CalledProcessError) -> None:
+def log_subprocess_error(error: subprocess.CalledProcessError) -> str:
     """Log subprocess error with return code, error reason, and command.
 
     Args:
         error: Subprocess error object.
+
+    Returns:
+        str:
+        Returns the error reason as a string.
     """
     output = error.output or ""
     if isinstance(output, bytes):
@@ -470,7 +474,20 @@ def log_subprocess_error(error: subprocess.CalledProcessError) -> None:
         reason = reason.decode("utf-8", errors="replace")
     reason = reason.strip()
 
-    cmd_str = " ".join(map(str, error.cmd)) if error.cmd else "<unknown command>"
-
+    if error.cmd:
+        cmd_str = " ".join(map(str, error.cmd))
+        if models.env.apikey:
+            cmd_str = cmd_str.replace(models.env.apikey, "******")
+        if models.env.api_secret:
+            cmd_str = cmd_str.replace(models.env.api_secret, "******")
+        if models.env.host_password:
+            cmd_str = cmd_str.replace(models.env.host_password, "******")
+        if models.env.monitor_password:
+            cmd_str = cmd_str.replace(models.env.monitor_password, "******")
+        if models.env.gmail_pass:
+            cmd_str = cmd_str.replace(models.env.gmail_pass, "******")
+    else:
+        cmd_str = "<unknown command>"
     LOGGER.error("Command failed: %s", cmd_str)
     LOGGER.error("[%s]: %s", error.returncode, reason)
+    return reason
