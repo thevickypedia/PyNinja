@@ -1,4 +1,5 @@
 import os
+import pathlib
 import sys
 import time
 from typing import Any, Dict, List
@@ -7,7 +8,11 @@ from fileio import run_command
 from init import NINJA_API_URL, SERVER_PASSWORD
 from runbook_coverage import Colors, Format
 
-from pyninja.version import __version__
+# WARNING: Brute force parent path to avoid importing installed PyNinja package.
+project_root = pathlib.Path(__file__).parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+from pyninja.version import __version__  # noqa: E402
 
 NEW_VERSION = os.environ.get("UPDATE_VERSION", __version__)
 SERVER_PYTHON_PATH = os.environ.get("SERVER_PYTHON_PATH", "~/pyninja/venv/bin/python")
