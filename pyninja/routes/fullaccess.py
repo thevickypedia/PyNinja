@@ -8,7 +8,7 @@ from http import HTTPStatus
 from typing import NoReturn, Optional
 
 from fastapi import Depends, Header, Request, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import DirectoryPath, NewPath
 
@@ -65,14 +65,26 @@ async def run_command(
     LOGGER.info(
         "Requested command: '%s' with timeout: %ds", payload.command, payload.timeout
     )
-    try:
-        response = squire.process_command(payload.command, payload.timeout)
-    except subprocess.TimeoutExpired as warn:
-        LOGGER.warning(warn)
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.REQUEST_TIMEOUT, detail=warn.__str__()
+    if payload.stream:
+        LOGGER.info("Streaming command output for: '%s'", payload.command)
+        return StreamingResponse(
+            squire.stream_command(payload.command, payload.timeout),
+            media_type="text/plain",
         )
-    return response
+    else:
+        try:
+            return squire.process_command(payload.command, payload.timeout)
+        except subprocess.CalledProcessError as error:
+            squire.log_subprocess_error(error)
+            raise exceptions.APIResponse(
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR.real,
+                detail=f"Command execution failed: {error.__str__()}",
+            )
+        except subprocess.TimeoutExpired as warn:
+            LOGGER.warning(warn)
+            raise exceptions.APIResponse(
+                status_code=HTTPStatus.REQUEST_TIMEOUT, detail=warn.__str__()
+            )
 
 
 async def delete_content(

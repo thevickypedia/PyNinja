@@ -12,6 +12,7 @@ class RunCommand(BaseModel):
 
     command: str
     timeout: PositiveInt | PositiveFloat = 3
+    stream: bool = False
 
 
 class ListFiles(BaseModel):

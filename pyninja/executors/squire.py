@@ -9,6 +9,7 @@ import shutil
 import socket
 import subprocess
 import warnings
+from collections.abc import Generator
 from datetime import timedelta
 from typing import Dict, List
 
@@ -136,6 +137,40 @@ def size_converter(byte_size: int | float) -> str:
             f"{format_nos(round(byte_size / pow(1024, index), 2))} {size_name[index]}"
         )
     return "0 B"
+
+
+def stream_command(command: str, timeout: float) -> Generator[str]:
+    """Generator to stream command output line-by-line.
+
+    Args:
+        command: Command to be executed.
+        timeout: Timeout for the command execution.
+
+    Yields:
+        str:
+        Lines of output from the command execution.
+    """
+    process = subprocess.Popen(
+        command,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,  # Line-buffered
+    )
+
+    def generate() -> Generator[str]:
+        """Generator to yield lines from the command output."""
+        LOGGER.info("Initating command stream: %s", mask_sensitive_data(command))
+        try:
+            for line in iter(process.stdout.readline, ""):
+                if line:
+                    yield line
+        finally:
+            process.stdout.close()
+            process.wait(timeout=timeout)
+
+    return generate()
 
 
 def process_command(
@@ -453,6 +488,29 @@ def total_mountpoints_usage(
     return humanize_usage_metrics(**usage_dict)
 
 
+def mask_sensitive_data(text: str) -> str:
+    """Mask sensitive data in the given text.
+
+    Args:
+        text: Text to mask sensitive data from.
+
+    Returns:
+        str:
+        Returns the text with sensitive data masked.
+    """
+    if models.env.apikey:
+        text = text.replace(models.env.apikey, "******")
+    if models.env.api_secret:
+        text = text.replace(models.env.api_secret, "******")
+    if models.env.host_password:
+        text = text.replace(models.env.host_password, "******")
+    if models.env.monitor_password:
+        text = text.replace(models.env.monitor_password, "******")
+    if models.env.gmail_pass:
+        text = text.replace(models.env.gmail_pass, "******")
+    return text
+
+
 def log_subprocess_error(error: subprocess.CalledProcessError) -> str:
     """Log subprocess error with return code, error reason, and command.
 
@@ -476,16 +534,7 @@ def log_subprocess_error(error: subprocess.CalledProcessError) -> str:
 
     if error.cmd:
         cmd_str = " ".join(map(str, error.cmd))
-        if models.env.apikey:
-            cmd_str = cmd_str.replace(models.env.apikey, "******")
-        if models.env.api_secret:
-            cmd_str = cmd_str.replace(models.env.api_secret, "******")
-        if models.env.host_password:
-            cmd_str = cmd_str.replace(models.env.host_password, "******")
-        if models.env.monitor_password:
-            cmd_str = cmd_str.replace(models.env.monitor_password, "******")
-        if models.env.gmail_pass:
-            cmd_str = cmd_str.replace(models.env.gmail_pass, "******")
+        cmd_str = mask_sensitive_data(cmd_str)
     else:
         cmd_str = "<unknown command>"
     LOGGER.error("Command failed: %s", cmd_str)
