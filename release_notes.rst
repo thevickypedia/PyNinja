@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v4.2.1 (08/15/2025)
+-------------------
+- Includes a new API endpoint to retrieve certificates
+- Omit serial number and cert path in monitoring page
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.2.0...v4.2.1
+
 v4.2.0 (08/14/2025)
 -------------------
 - Add a new feature to monitor certificates through ``certbot``
