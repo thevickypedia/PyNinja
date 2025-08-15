@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - '**/*.py'
+      - '!scripts/**/*.py'
       - 'pyproject.toml'
   workflow_dispatch:
     inputs:

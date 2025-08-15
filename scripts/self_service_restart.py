@@ -1,21 +1,26 @@
 import os
-import pathlib
 import sys
 import time
 from typing import Any, Dict, List
 
+import requests
 from fileio import run_command
 from init import NINJA_API_URL, SERVER_PASSWORD
 from runbook_coverage import Colors, Format
 
-# WARNING: Brute force parent path to avoid importing installed PyNinja package.
-project_root = pathlib.Path(__file__).parent.parent
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-from pyninja.version import __version__  # noqa: E402
-
-NEW_VERSION = os.environ.get("UPDATE_VERSION", __version__)
+NEW_VERSION = os.environ["UPDATE_VERSION"]
 SERVER_PYTHON_PATH = os.environ.get("SERVER_PYTHON_PATH", "~/pyninja/venv/bin/python")
+
+
+def check_pypi_version() -> str:
+    """Checks if the new version exists on PyPI."""
+    response = requests.get("https://pypi.org/pypi/pyninja/json")
+    for release in response.json()["releases"].keys():
+        if release == NEW_VERSION:
+            green(f"Version {NEW_VERSION} found on PyPI.")
+            return release
+    red(f"Version {NEW_VERSION} not found on PyPI.", bold=True)
+    exit(1)
 
 
 def terminal_size() -> int:
@@ -62,6 +67,16 @@ def green(msg: str, bold: bool = False, light: bool = False) -> None:
     """Prints a message in green color."""
     print("\n" + "*" * TERM_SIZE)
     color = Colors.LIGHT_GREEN if light else Colors.GREEN
+    if bold:
+        print(f"{color}{Format.BOLD}{msg}{Format.END}")
+    else:
+        print(f"{color}{msg}{Format.END}")
+
+
+def yellow(msg: str, bold: bool = False, light: bool = False) -> None:
+    """Prints a message in green color."""
+    print("\n" + "*" * TERM_SIZE)
+    color = Colors.LIGHT_YELLOW if light else Colors.YELLOW
     if bold:
         print(f"{color}{Format.BOLD}{msg}{Format.END}")
     else:
@@ -118,52 +133,102 @@ def sleep(seconds: int) -> None:
     green("Woke up!")
 
 
+class Commands:
+    """Commands used for self upgrade."""
+
+    pip_upgrade = f"{SERVER_PYTHON_PATH} -m pip install --upgrade pip"
+    force_reinstall = f"{SERVER_PYTHON_PATH} -m pip install --no-cache --no-cache-dir --force-reinstall PyNinja=={NEW_VERSION}"  # noqa: E501
+    uninstall_and_reinstall = (
+        f"{SERVER_PYTHON_PATH} -m pip uninstall --no-cache --no-cache-dir PyNinja -y && "
+        f"{SERVER_PYTHON_PATH} -m pip install --no-cache --no-cache-dir --force-reinstall PyNinja=={NEW_VERSION}"
+    )
+    pip_freeze = f"{SERVER_PYTHON_PATH} -m pip freeze | grep PyNinja"
+    dist_check = (
+        f"{SERVER_PYTHON_PATH} -c 'import pyninja; print(pyninja.version.__version__)'"
+    )
+
+
 def self_upgrade() -> None:
     """Upgrades the PyNinja service to a new version."""
+    check_pypi_version()
     green(f"Upgrading PyNinja service for {NINJA_API_URL} to version {NEW_VERSION}")
-    print_output(
-        run_command(
-            f"{SERVER_PYTHON_PATH} -m pip install --upgrade pip",
-            timeout=30,
-        )
+
+    remote_server_version = run_command(
+        Commands.dist_check,
+        timeout=30,
     )
+    use_streaming = (
+        float(".".join(remote_server_version.get("stdout", [""])[0].split(".")[:2]))
+        >= 4.3
+    )
+    green(f"Before upgrade: {remote_server_version}")
+    if use_streaming:
+        green("Using streaming for command output.")
+    else:
+        yellow("Not using streaming for command output.")
+
+    if use_streaming:
+        for line in run_command(
+            Commands.pip_upgrade,
+            timeout=30,
+            stream=use_streaming,
+        ):
+            print(line)
+    else:
+        print_output(
+            run_command(
+                Commands.pip_upgrade,
+                timeout=30,
+                stream=use_streaming,
+            )
+        )
+
     sleep(5)
-    green("Before upgrade:")
-    print_output(
-        run_command(
-            f"{SERVER_PYTHON_PATH} -c 'import pyninja; print(pyninja.version.__version__)'",
-            timeout=30,
-        )
-    )
-    sleep(10)
     green(f"Force reinstalling {NEW_VERSION}")
-    print_output(
-        run_command(
-            f"{SERVER_PYTHON_PATH} -m pip install --no-cache --no-cache-dir --force-reinstall PyNinja=={NEW_VERSION}",
+    if use_streaming:
+        for line in run_command(
+            Commands.force_reinstall,
             timeout=300,
+            stream=use_streaming,
+        ):
+            print(line)
+    else:
+        print_output(
+            run_command(
+                Commands.force_reinstall,
+                timeout=300,
+                stream=use_streaming,
+            )
         )
-    )
-    sleep(30)
-    print_output(
-        run_command(
-            f"{SERVER_PYTHON_PATH} -m pip uninstall --no-cache --no-cache-dir PyNinja -y && "
-            f"{SERVER_PYTHON_PATH} -m pip install --no-cache --no-cache-dir --force-reinstall PyNinja=={NEW_VERSION}",
-            timeout=300,
-        )
-    )
     sleep(10)
+
+    if use_streaming:
+        for line in run_command(
+            Commands.uninstall_and_reinstall,
+            timeout=300,
+            stream=use_streaming,
+        ):
+            print(line)
+    else:
+        print_output(
+            run_command(
+                Commands.uninstall_and_reinstall,
+                timeout=300,
+                stream=use_streaming,
+            )
+        )
+    sleep(5)
     green("Pip freeze output:")
-    print_output(
-        run_command(f"{SERVER_PYTHON_PATH} -m pip freeze | grep PyNinja", timeout=30)
-    )
+    print_output(run_command(Commands.pip_freeze, timeout=30, stream=use_streaming))
     sleep(3)
     self_restart()
-    sleep(10)
+    sleep(5)
     green("After upgrade:")
     print_output(
         run_command(
-            f"{SERVER_PYTHON_PATH} -c 'import pyninja; print(pyninja.version.__version__)'",
+            Commands.dist_check,
             timeout=30,
+            stream=use_streaming,
         )
     )
 

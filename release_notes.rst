@@ -1,6 +1,16 @@
 Release Notes
 =============
 
+v4.3.0 (08/15/2025)
+-------------------
+- Includes a new feature to stream response from the server for ``run-command`` endpoint
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.2.2...v4.3.0
+
+v4.2.2 (08/15/2025)
+-------------------
+- Remove unused pydantic model for certificates
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.2.1...v4.2.2
+
 v4.2.1 (08/15/2025)
 -------------------
 - Includes a new API endpoint to retrieve certificates

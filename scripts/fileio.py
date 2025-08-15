@@ -1,26 +1,39 @@
 import mimetypes
 import os
 import pathlib
+from collections.abc import Generator
 from urllib.parse import quote
 
 from init import NINJA_API_TIMEOUT, NINJA_API_URL, SESSION, urljoin
 
 
-def run_command(command: str, timeout: int = NINJA_API_TIMEOUT) -> dict:
-    """Runs a command on the Ninja API.
+def run_command(command: str, timeout: int = NINJA_API_TIMEOUT, stream: bool = False):
+    """Dispatches the command based on stream flag."""
+    if stream:
+        return run_command_stream(command, timeout)
+    else:
+        return run_command_json(command, timeout)
 
-    Args:
-        command: The command to run.
-        timeout: Timeout for the command execution in seconds.
 
-    Returns:
-        dict: A dictionary containing the command output and error messages.
-    """
-    payload = {"command": command, "timeout": timeout}
+def run_command_json(command: str, timeout: int) -> dict:
+    """Runs a command via the Ninja API and returns the JSON response."""
+    payload = {"command": command, "timeout": timeout, "stream": False}
     url = urljoin(NINJA_API_URL, "/run-command")
     response = SESSION.post(url, json=payload)
     response.raise_for_status()
     return response.json()
+
+
+def run_command_stream(command: str, timeout: int) -> Generator[str]:
+    """Runs a command via the Ninja API and yields output lines as they are received."""
+    payload = {"command": command, "timeout": timeout, "stream": True}
+    url = urljoin(NINJA_API_URL, "/run-command")
+    response = SESSION.post(url, json=payload, stream=True)
+    response.raise_for_status()
+
+    for line in response.iter_lines(decode_unicode=True):
+        if line:
+            yield line
 
 
 def get_current_working_directory() -> str:
