@@ -17,10 +17,10 @@ BEARER_AUTH = HTTPBearer()
 
 async def get_certificate(
     request: Request,
-    name: Optional[str] = None,
+    name: Optional[str] = "all",
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
-    """API handler to download a large file or directory as a compressed archive.
+    """API handler to get certificates.
 
     Args:
         - request: Reference to the FastAPI request object.
@@ -29,12 +29,12 @@ async def get_certificate(
         - apikey: API Key to authenticate the request.
     """
     await auth.level_1(request, apikey)
-    cert_response = certificates.get_all_certificates(raw=True, include_path=True)
+    cert_response = await certificates.get_all_certificates(raw=True, ws_stream=False)
     if cert_response.status_code == HTTPStatus.OK:
-        if name:
+        if name and name != "all":
             for cert in cert_response.certificates:
                 if cert.certificate_name == name:
-                    return exceptions.APIResponse(
+                    raise exceptions.APIResponse(
                         status_code=HTTPStatus.OK,
                         detail=cert,
                     )

@@ -13,7 +13,7 @@ from typing import Any, Dict, List
 import psutil
 
 from pyninja.executors import squire
-from pyninja.features import operations
+from pyninja.features import certificates, operations
 from pyninja.modules import cache, enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -346,6 +346,9 @@ async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
     process_stats_task = asyncio.create_task(
         operations.process_monitor(models.env.processes)
     )
+    certs_stats_task = asyncio.create_task(
+        certificates.get_all_certificates(raw=True, ws_stream=True)
+    )
 
     # CPU percent check is a blocking call and cannot be awaited, so run it in a separate thread
     loop = asyncio.get_event_loop()
@@ -360,6 +363,7 @@ async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
     service_stats = await service_stats_task
     process_stats = await process_stats_task
     cpu_usage = await cpu_usage_task
+    certificates_info = await certs_stats_task
 
     if models.OPERATING_SYSTEM in (
         enums.OperatingSystem.linux,
@@ -385,4 +389,5 @@ async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
     system_metrics["service_stats"] = service_stats
     system_metrics["process_stats"] = process_stats
     system_metrics["disk_info"] = disk_stats
+    system_metrics["certificates"] = certificates_info.certificates
     return system_metrics

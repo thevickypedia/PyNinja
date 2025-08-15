@@ -23,60 +23,53 @@ def forbidden() -> models.CertificateStatus:
 
 
 def parse_certificate_output(
-    output: str, raw: bool, include_path: bool
-) -> Generator[models.Certificate]:
+    output: str, raw: bool, ws_stream: bool
+) -> Generator[models.Certificate] | None:
     """Parse the output from the certbot command to extract certificate details.
 
     Args:
         output: The output string from the certbot command.
+        raw: If True, returns raw certificate data instead of parsed model.
+        ws_stream: If True, omits file paths and serial numbers for simplicity.
 
     Yields:
         models.Certificate:
         A generator yielding Certificate objects with parsed details.
     """
+    # TODO: Currently pydantic models are not used, either find a use-case or remove models.Certificate
+    cert_key = lambda k: k if raw else k.lower().replace(" ", "_")  # noqa: E731
     lines = output.strip().split("\n")
     for line in lines:
         if line.startswith("Certificate Name:"):
-            cert_info = {
-                "Certificate Name" if raw else "certificate_name": line.split(": ")[
-                    1
-                ].strip()
-            }
+            cert_info = {cert_key("Certificate Name"): line.split(": ")[1].strip()}
         elif line.startswith("Serial Number:"):
-            cert_info["Serial Number" if raw else "serial_number"] = line.split(": ")[
-                1
-            ].strip()
+            if not ws_stream:
+                cert_info[cert_key("Serial Number")] = line.split(": ")[1].strip()
         elif line.startswith("Key Type:"):
-            cert_info["Key Type" if raw else "key_type"] = line.split(": ")[1].strip()
+            cert_info[cert_key("Key Type")] = line.split(": ")[1].strip()
         elif line.startswith("Domains:"):
-            cert_info["Domains" if raw else "domains"] = (
-                line.split(": ")[1].strip().split()
-            )
+            cert_info[cert_key("Domains")] = line.split(": ")[1].strip().split()
         elif line.startswith("Expiry Date:"):
             expiry_date = (
                 line.split(": ")[1].strip().split("VALID")[0].replace("(", "").strip()
             )
             validity = line.split("VALID:")[1].strip().replace(")", "")
-            cert_info["Expiry Date" if raw else "expiry_date"] = expiry_date
-            cert_info["Validity" if raw else "valid_days"] = (
+            cert_info[cert_key("Expiry Date")] = expiry_date
+            cert_info[cert_key("Validity")] = (
                 validity if raw else int(validity.split()[0])
             )
         elif line.startswith("Certificate Path:"):
-            if include_path:
-                cert_info["Certificate Path" if raw else "certificate_path"] = (
-                    line.split(": ")[1].strip()
-                )
+            if not ws_stream:
+                cert_info[cert_key("Certificate Path")] = line.split(": ")[1].strip()
         elif line.startswith("Private Key Path:"):
-            if include_path:
-                cert_info["Private Key Path" if raw else "private_key_path"] = (
-                    line.split(": ")[1].strip()
-                )
+            if not ws_stream:
+                cert_info[cert_key("Private Key Path")] = line.split(": ")[1].strip()
             yield cert_info if raw else models.Certificate(**cert_info)
 
 
-@cache.timed_cache(max_age=300)
-def get_all_certificates(
-    raw: bool = False, include_path: bool = True
+@cache.timed_cache(max_age=1_800)
+async def get_all_certificates(
+    raw: bool = False, ws_stream: bool = False
 ) -> models.CertificateStatus:
     """Fetch all SSL certificates using certbot.
 
@@ -102,14 +95,23 @@ def get_all_certificates(
             shell=True,
             text=True,
         )
-        if all_certificates := list(
-            parse_certificate_output(output, raw, include_path)
-        ):
-            print(len(all_certificates), "certificates found.")
+        if not output.strip() or "No certificates found" in output:
+            return models.CertificateStatus(
+                status_code=HTTPStatus.NO_CONTENT.real,
+                description="No certificates found.",
+            )
+        if all_certificates := list(parse_certificate_output(output, raw, ws_stream)):
+            LOGGER.info("Successfully parsed %d certificates.", len(all_certificates))
             return models.CertificateStatus(
                 status_code=HTTPStatus.OK.real,
-                description="Successfully fetched all certificates.",
+                description="Successfully parsed all certificates.",
                 certificates=all_certificates,
+            )
+        else:
+            return models.CertificateStatus(
+                status_code=HTTPStatus.PARTIAL_CONTENT.real,
+                description="Failed to parse some certificates.",
+                certificates=output.strip().split("\n"),
             )
     except subprocess.CalledProcessError as error:
         return models.CertificateStatus(

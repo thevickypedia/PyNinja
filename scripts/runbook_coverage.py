@@ -18,7 +18,7 @@ class Format:
 
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
-    ITALIC = "\x1B[3m"
+    ITALIC = "\x1b[3m"
     END = "\033[0m"
 
 

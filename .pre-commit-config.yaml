@@ -2,7 +2,7 @@ fail_fast: true
 exclude: ^(notebooks/|.github/|docs/)
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -24,13 +24,13 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/psf/black
-    rev: 24.8.0
+    rev: 25.1.0
     hooks:
         - id: black
           exclude: docs_gen/
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
+    rev: 7.3.0
     hooks:
       - id: flake8
         additional_dependencies:
@@ -39,7 +39,7 @@ repos:
         args: [ --max-line-length=120, --extend-ignore=SFS3 D107 SFS301 D100 D104 D401 SFS101 SFS201 D412 D400 ]
 
   - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
+    rev: 6.0.1
     hooks:
       - id: isort
         args: [ --profile, black ]

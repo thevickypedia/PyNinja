@@ -10,7 +10,7 @@ import string
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from threading import Timer
-from typing import Any, Callable, Dict, List, Set, Tuple
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from pyarchitecture.config import default_cpu_lib, default_disk_lib, default_gpu_lib
@@ -133,13 +133,13 @@ class Certificate(BaseModel):
     """
 
     certificate_name: str
-    serial_number: str
+    serial_number: Optional[str]
     key_type: str
     domains: List[str]
     valid_days: int
     expiry_date: str
-    certificate_path: FilePath
-    private_key_path: FilePath
+    certificate_path: Optional[FilePath]
+    private_key_path: Optional[FilePath]
 
     class Config:
         """Configuration for Certificate object."""
