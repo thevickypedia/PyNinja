@@ -3,6 +3,8 @@ import os
 
 import dotenv
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
@@ -19,6 +21,10 @@ SESSION.headers = {
     "API-SECRET": NINJA_API_SECRET,
     "Accept": "application/json",
 }
+retry = Retry(connect=5, backoff_factor=2)
+adapter = HTTPAdapter(max_retries=retry)
+SESSION.mount("http://", adapter)
+SESSION.mount("https://", adapter)
 
 format_nos = lambda input_: (  # noqa: E731
     int(input_) if isinstance(input_, float) and input_.is_integer() else input_

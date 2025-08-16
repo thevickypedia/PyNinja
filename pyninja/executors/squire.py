@@ -161,14 +161,23 @@ def stream_command(command: str, timeout: float) -> Generator[str]:
 
     def generate() -> Generator[str]:
         """Generator to yield lines from the command output."""
-        LOGGER.info("Initating command stream: %s", mask_sensitive_data(command))
+        LOGGER.info("Initiating command stream: %s", mask_sensitive_data(command))
+        output_yielded = False
         try:
             for line in iter(process.stdout.readline, ""):
-                if line:
-                    yield line
+                if line and (stripped := line.strip()):
+                    output_yielded = True
+                    yield stripped
         finally:
-            process.stdout.close()
-            process.wait(timeout=timeout)
+            try:
+                process.wait(timeout=timeout)
+                process.stdout.close()
+            except subprocess.TimeoutExpired:
+                process.kill()
+                LOGGER.error("Command timed out and was killed: %s", command)
+                yield "[Command timed out]\n"
+            if not output_yielded:
+                yield "[Command finished with no output]\n"
 
     return generate()
 

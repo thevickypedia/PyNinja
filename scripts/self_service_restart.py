@@ -9,7 +9,8 @@ from init import NINJA_API_URL, SERVER_PASSWORD
 from runbook_coverage import Colors, Format
 
 NEW_VERSION = os.environ["UPDATE_VERSION"]
-SERVER_PYTHON_PATH = os.environ.get("SERVER_PYTHON_PATH", "~/pyninja/venv/bin/python")
+PYTHON_PATH = os.environ.get("SERVER_PYTHON_PATH", "~/pyninja/venv/bin/python")
+USE_STREAMING = os.environ.get("USE_STREAMING", "true").lower() == "true"
 
 
 def check_pypi_version() -> str:
@@ -133,104 +134,60 @@ def sleep(seconds: int) -> None:
     green("Woke up!")
 
 
-class Commands:
-    """Commands used for self upgrade."""
-
-    pip_upgrade = f"{SERVER_PYTHON_PATH} -m pip install --upgrade pip"
-    force_reinstall = f"{SERVER_PYTHON_PATH} -m pip install --no-cache --no-cache-dir --force-reinstall PyNinja=={NEW_VERSION}"  # noqa: E501
-    uninstall_and_reinstall = (
-        f"{SERVER_PYTHON_PATH} -m pip uninstall --no-cache --no-cache-dir PyNinja -y && "
-        f"{SERVER_PYTHON_PATH} -m pip install --no-cache --no-cache-dir --force-reinstall PyNinja=={NEW_VERSION}"
-    )
-    pip_freeze = f"{SERVER_PYTHON_PATH} -m pip freeze | grep PyNinja"
-    dist_check = (
-        f"{SERVER_PYTHON_PATH} -c 'import pyninja; print(pyninja.version.__version__)'"
-    )
+def commands() -> Dict[str, str]:
+    """Returns a dictionary of commands to be executed."""
+    return [
+        dict(
+            command=f"{PYTHON_PATH} -m pip install --upgrade pip",
+            timeout=30,
+            post_delay=5,
+        ),
+        dict(
+            command=f"{PYTHON_PATH} -m pip install --no-cache --no-cache-dir --force-reinstall PyNinja=={NEW_VERSION}",
+            timeout=300,
+            post_delay=10,
+        ),
+        dict(
+            command=(
+                f"{PYTHON_PATH} -m pip uninstall --no-cache --no-cache-dir PyNinja -y && "
+                f"{PYTHON_PATH} -m pip install --no-cache --no-cache-dir --force-reinstall PyNinja=={NEW_VERSION}"
+            ),
+            timeout=300,
+            post_delay=5,
+        ),
+        dict(
+            command=f"{PYTHON_PATH} -m pip freeze | grep PyNinja",
+            timeout=30,
+            post_delay=3,
+        ),
+        dict(
+            command=f"{PYTHON_PATH} -c 'import pyninja; print(pyninja.version.__version__)'",
+            timeout=30,
+            post_delay=0,
+        ),
+    ]
 
 
 def self_upgrade() -> None:
     """Upgrades the PyNinja service to a new version."""
     check_pypi_version()
     green(f"Upgrading PyNinja service for {NINJA_API_URL} to version {NEW_VERSION}")
-
-    remote_server_version = run_command(
-        Commands.dist_check,
-        timeout=30,
-    )
-    use_streaming = (
-        float(".".join(remote_server_version.get("stdout", [""])[0].split(".")[:2]))
-        >= 4.3
-    )
-    green(f"Before upgrade: {remote_server_version}")
-    if use_streaming:
-        green("Using streaming for command output.")
-    else:
-        yellow("Not using streaming for command output.")
-
-    if use_streaming:
-        for line in run_command(
-            Commands.pip_upgrade,
-            timeout=30,
-            stream=use_streaming,
-        ):
-            print(line)
-    else:
-        print_output(
-            run_command(
-                Commands.pip_upgrade,
-                timeout=30,
-                stream=use_streaming,
-            )
+    upgrade_commands = commands()
+    for cmd in upgrade_commands:
+        green(f"Running command: {cmd['command']}")
+        output = run_command(
+            cmd["command"], timeout=cmd["timeout"], stream=USE_STREAMING
         )
-
-    sleep(5)
-    green(f"Force reinstalling {NEW_VERSION}")
-    if use_streaming:
-        for line in run_command(
-            Commands.force_reinstall,
-            timeout=300,
-            stream=use_streaming,
-        ):
-            print(line)
-    else:
-        print_output(
-            run_command(
-                Commands.force_reinstall,
-                timeout=300,
-                stream=use_streaming,
-            )
-        )
-    sleep(10)
-
-    if use_streaming:
-        for line in run_command(
-            Commands.uninstall_and_reinstall,
-            timeout=300,
-            stream=use_streaming,
-        ):
-            print(line)
-    else:
-        print_output(
-            run_command(
-                Commands.uninstall_and_reinstall,
-                timeout=300,
-                stream=use_streaming,
-            )
-        )
-    sleep(5)
-    green("Pip freeze output:")
-    print_output(run_command(Commands.pip_freeze, timeout=30, stream=use_streaming))
-    sleep(3)
+        if USE_STREAMING:
+            for line in output:
+                print(line)
+        else:
+            print_output(output)
+        sleep(cmd["post_delay"])
     self_restart()
-    sleep(5)
     green("After upgrade:")
-    print_output(
-        run_command(
-            Commands.dist_check,
-            timeout=30,
-            stream=use_streaming,
-        )
-    )
+    cmd = upgrade_commands[-1]
+    print_output(run_command(cmd["command"], timeout=cmd["timeout"], stream=False))
 
 
 if __name__ == "__main__":
