@@ -334,8 +334,6 @@ class EnvConfig(BaseSettings):
     monitor_session: PositiveInt = 3_600
     disk_report: bool = False
     max_connections: PositiveInt = 3
-    # TODO: Remove this feature
-    no_auth: bool = False
     processes: List[str] = Field(default_factory=list)
     services: List[str] = Field(default_factory=list)
     smart_lib: FilePath | None = None

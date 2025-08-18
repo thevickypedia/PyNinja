@@ -158,10 +158,6 @@ async def validate_session(host: str, cookie_string: str, log: bool = True) -> N
         SessionError:
         Raises a SessionError with summary.
     """
-    if models.env.no_auth:
-        if log:
-            LOGGER.info("No auth set! Bypassing auth filters!")
-        return
     try:
         decoded_payload = base64.b64decode(cookie_string)
         decoded_str = decoded_payload.decode("ascii")

@@ -359,15 +359,6 @@ def handle_warnings() -> None:
         term_size = 80
     base = "*" * term_size
 
-    if models.env.no_auth:
-        warnings.warn(
-            f"\n{base}"
-            "\nThe 'no_auth' flag is enabled, allowing access to the '/monitor' page without authentication."
-            "\nThis page may expose sensitive information, including personally identifiable information (PII)."
-            "\nThis setting should only be used in local development or with proxy authentication."
-            f"\n{base}",
-            SecurityWarning,
-        )
     if not all((models.env.remote_execution, models.env.api_secret, models.env.apikey)):
         return
     if not all((models.env.gmail_user, models.env.gmail_pass, models.env.recipient)):

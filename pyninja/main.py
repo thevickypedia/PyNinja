@@ -98,7 +98,6 @@ def start(**kwargs) -> None:
             - **monitor_session:** Session timeout for the monitoring page.
             - **disk_report:** Boolean flag to enable disk report generation.
             - **max_connections:** Maximum number of connections to handle.
-            - **no_auth:** Boolean flag to disable authentication for monitoring page.
             - **processes:** List of process names to include in the monitoring page.
             - **services:** List of service names to include in the monitoring page.
             - **service_lib:** Library path to retrieve service info.

@@ -85,7 +85,6 @@ please proceed with **caution** and ensure that the **API_SECRET** is set to a s
 - **MONITOR_SESSION** - Session timeout for the monitoring page.
 - **DISK_REPORT** - Boolean flag to enable disk report feature using [PyUdisk].
 - **MAX_CONNECTIONS** - Maximum number of monitoring sessions allowed in parallel.
-- **NO_AUTH** - Boolean flag to disable authentication for monitoring page.
 - **PROCESSES** - List of process names to include in the monitor page.
 - **SERVICES** - List of service names to include in the monitor page.
 - **SERVICE_LIB** - Library path to retrieve service info.

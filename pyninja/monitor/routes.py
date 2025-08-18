@@ -119,26 +119,19 @@ async def monitor_endpoint(
             "Maximum parallel connections limit reached. Dropping %s", first_key
         )
         models.ws_session.client_auth.pop(first_key, None)
-    if session_token or models.env.no_auth:
-        if not models.env.no_auth:
-            try:
-                await monitor.authenticator.validate_session(
-                    request.client.host, session_token
-                )
-            except exceptions.SessionError as error:
-                LOGGER.error("Session token mismatch: %s", error)
-                return await monitor.config.clear_session(
-                    request, await monitor.authenticator.session_error(request, error)
-                )
+    if session_token:
+        try:
+            await monitor.authenticator.validate_session(
+                request.client.host, session_token
+            )
+        except exceptions.SessionError as error:
+            LOGGER.error("Session token mismatch: %s", error)
+            return await monitor.config.clear_session(
+                request, await monitor.authenticator.session_error(request, error)
+            )
         # If disk_report was not enabled on the server, the Content-Type header or Cookie for render is not honored
         if not models.env.disk_report:
             render = enums.Cookies.monitor
-        if not render:
-            # no_auth mode supports render option via query params
-            # Example: http://0.0.0.0:8080/monitor?render=drive
-            if qparam := request.query_params.get("render"):
-                LOGGER.info("Render value received via query params - '%s'", qparam)
-                render = qparam
         if render == enums.Cookies.monitor:
             ctx = monitor.resources.landing_page()
             ctx["request"] = request
@@ -183,12 +176,9 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
         await websocket.send_text(error.__str__())
         await websocket.close()
         return
-    if models.env.no_auth:
-        session_timestamp = time.time()
-    else:
-        session_timestamp = models.ws_session.client_auth.get(
-            websocket.client.host
-        ).get("timestamp")
+    session_timestamp = models.ws_session.client_auth.get(websocket.client.host).get(
+        "timestamp"
+    )
     # Base task with a placeholder asyncio sleep to start the task loop
     task = asyncio.create_task(asyncio.sleep(0.1))
     connections = 0
