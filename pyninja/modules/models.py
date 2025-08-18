@@ -314,6 +314,9 @@ class EnvConfig(BaseSettings):
 
     # Remote exec and fileIO
     remote_execution: bool = False
+    # Run token expiry should at least be 5 minutes (300 seconds) and can be up to 1 hour (3_600 seconds)
+    # Default: 30m
+    run_token_expiry: int = Field(default=1_800, ge=300, le=3_600)
     api_secret: str | None = None
     database: str = Field("auth.db", pattern=".*.db$")
 
@@ -322,6 +325,7 @@ class EnvConfig(BaseSettings):
     gmail_pass: str | None = None
     recipient: str | None = None
     # Timeout should at least be 5 minutes (300 seconds) and can be up to 24 hours (86_400 seconds)
+    # Default: 1h
     mfa_timeout: PositiveInt = Field(default=3_600, ge=300, le=86_400)
 
     # Monitoring UI
@@ -330,6 +334,7 @@ class EnvConfig(BaseSettings):
     monitor_session: PositiveInt = 3_600
     disk_report: bool = False
     max_connections: PositiveInt = 3
+    # TODO: Remove this feature
     no_auth: bool = False
     processes: List[str] = Field(default_factory=list)
     services: List[str] = Field(default_factory=list)

@@ -38,6 +38,10 @@ Multifactor Authentication
 
 API Routes
 ----------
+.. automodule:: pyninja.routes.commands
+
+====
+
 .. automodule:: pyninja.routes.fullaccess
 
 ====

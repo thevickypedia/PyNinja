@@ -51,6 +51,7 @@ class APIEndpoints(StrEnum):
 
     monitor: str = "/monitor"
     ws_system: str = "/ws/system"
+    run_token: str = "/run-token"
     run_command: str = "/run-command"
 
     get_memory: str = "/get-memory"

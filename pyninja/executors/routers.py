@@ -12,6 +12,7 @@ from pyninja.modules import enums, exceptions, models
 from pyninja.monitor import routes as ui
 from pyninja.routes import (
     certificates,
+    commands,
     download,
     fullaccess,
     ipaddr,
@@ -199,6 +200,18 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
     """
     advanced_routes = [
         APIRoute(
+            path=enums.APIEndpoints.run_token,
+            endpoint=commands.get_run_token,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path=enums.APIEndpoints.run_command,
+            endpoint=commands.run_command,
+            methods=["POST"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
             path=enums.APIEndpoints.stop_service,
             endpoint=namespace.stop_service,
             methods=["POST"],
@@ -225,12 +238,6 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
         APIRoute(
             path=enums.APIEndpoints.start_docker_container,
             endpoint=orchestration.start_docker_container,
-            methods=["POST"],
-            dependencies=dependencies,
-        ),
-        APIRoute(
-            path=enums.APIEndpoints.run_command,
-            endpoint=fullaccess.run_command,
             methods=["POST"],
             dependencies=dependencies,
         ),

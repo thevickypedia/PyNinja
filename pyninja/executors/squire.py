@@ -282,14 +282,17 @@ def load_architecture(env: models.EnvConfig) -> models.Architecture:
     )
 
 
-def keygen() -> str:
+def keygen(nbytes: int = 64) -> str:
     """Generate session token from secrets module, so that users are forced to log in when the server restarts.
+
+    Args:
+        nbytes: Number of random bytes (nbytes) to generate.
 
     Returns:
         str:
-        Returns a URL safe 64-bit token.
+        Returns a URL safe token.
     """
-    return secrets.token_urlsafe(64)
+    return secrets.token_urlsafe(nbytes)
 
 
 def dynamic_numbers(string: str) -> int | float | None:

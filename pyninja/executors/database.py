@@ -1,5 +1,39 @@
 from pyninja.modules import models
 
+# TODO: Modify func names for better association
+
+
+def get_run_token() -> str:
+    """Gets run token stored in the database.
+
+    Returns:
+        str:
+        Returns the token stored in the database.
+    """
+    with models.database.connection:
+        cursor = models.database.connection.cursor()
+        token = cursor.execute("SELECT token FROM remote_execution").fetchone()
+    if token and token[0]:
+        return token[0]
+
+
+def update_run_token(token: str = None) -> str:
+    """Update run token in the database.
+
+    Args:
+        token: Token to be stored in the database.
+    """
+    with models.database.connection:
+        cursor = models.database.connection.cursor()
+        # Delete any and all existing tokens
+        cursor.execute("DELETE FROM remote_execution")
+        if token:
+            cursor.execute(
+                "INSERT INTO remote_execution (token) VALUES (?)",
+                (token,),
+            )
+        models.database.connection.commit()
+
 
 def get_record(host: str) -> int | None:
     """Gets blocked epoch time for a particular host.
