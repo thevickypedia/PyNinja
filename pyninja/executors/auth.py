@@ -3,7 +3,6 @@ import secrets
 import time
 from datetime import datetime
 from http import HTTPStatus
-from typing import NoReturn
 
 from fastapi import Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -76,15 +75,6 @@ async def level_1(request: Request, apikey: HTTPAuthorizationCredentials) -> Non
     )
 
 
-def invalid_mfa() -> NoReturn:
-    """Raises an APIResponse for invalid or expired MFA code."""
-    raise exceptions.APIResponse(
-        status_code=HTTPStatus.UNAUTHORIZED.real,
-        detail=f"MFA code is invalid or expired, please run {enums.APIEndpoints.get_mfa.value!r} "
-        "to generate a new one.",
-    )
-
-
 async def verify_mfa(mfa_code: str) -> None:
     """Verifies the multifactor authentication code.
 
@@ -105,16 +95,17 @@ async def verify_mfa(mfa_code: str) -> None:
         )
     if not models.mfa.token:
         LOGGER.error("MFA is not configured on the server.")
-        # TODO: Is there a point in checking if the user sent a token when the server is not configured?
-        if mfa_code:
-            invalid_mfa()
         raise exceptions.APIResponse(
             status_code=HTTPStatus.UNAUTHORIZED.real,
             detail=f"MFA token is not stored, please run {enums.APIEndpoints.get_mfa.value!r} first.",
         )
     if not secrets.compare_digest(mfa_code, models.mfa.token):
         LOGGER.error("Invalid MFA code provided.")
-        invalid_mfa()
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.UNAUTHORIZED.real,
+            detail=f"MFA code is invalid or expired, please run {enums.APIEndpoints.get_mfa.value!r} "
+            "to generate a new one.",
+        )
 
 
 async def verify_run_token(run_token: str) -> None:
