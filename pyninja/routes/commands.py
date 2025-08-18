@@ -1,7 +1,6 @@
 import logging
 import subprocess
 from http import HTTPStatus
-from threading import Timer
 from typing import Optional
 
 from fastapi import Depends, Header, Request
@@ -9,7 +8,7 @@ from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from pyninja.executors import auth, database, squire
-from pyninja.modules import exceptions, models, payloads
+from pyninja.modules import exceptions, payloads
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
@@ -40,12 +39,6 @@ async def get_run_token(
     await auth.level_2(request, apikey, api_secret, mfa_code)
     token = squire.keygen(256)
     database.update_run_token(token=token)
-    # TODO: Create a top-level queue or a timer manager to avoid repeatitions
-    timer = Timer(
-        interval=models.env.run_token_expiry, function=database.update_run_token
-    )
-    timer.daemon = True
-    timer.start()
     raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=token)
 
 

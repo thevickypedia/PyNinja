@@ -118,3 +118,15 @@ class APIRouteType(StrEnum):
     get: str = "get"
     post: str = "post"
     monitor: str = "monitor"
+
+
+class TableNames(StrEnum):
+    """Table names.
+
+    >>> TableNames
+
+    """
+
+    auth_errors: str = "auth_errors"
+    run_token: str = "run_token"
+    mfa_token: str = "mfa_token"

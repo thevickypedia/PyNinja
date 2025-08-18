@@ -1,6 +1,7 @@
 import logging
 import pathlib
 from contextlib import asynccontextmanager
+from multiprocessing import Process
 
 import uvicorn
 from fastapi import Depends, FastAPI
@@ -9,7 +10,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.routing import APIRoute
 
 from pyninja import startup, version
-from pyninja.executors import multifactor, routers, squire
+from pyninja.executors import database, multifactor, routers, squire
 from pyninja.modules import enums, exceptions, models, rate_limit
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -143,9 +144,23 @@ def start(**kwargs) -> None:
     # Conditional endpoints based on 'remote_execution' and 'api_secret' values
     if all((models.env.apikey, models.env.api_secret, models.env.remote_execution)):
         models.database = models.Database(models.env.database)
-        models.database.create_table("auth_errors", ["host", "block_until"])
+        models.database.create_table(
+            enums.TableNames.auth_errors, ["host", "block_until"]
+        )
+        models.database.create_table(enums.TableNames.run_token, ["token", "expiry"])
+        # NOT IMPLEMENTED: models.database.create_table(enums.TableNames.mfa_token, ["token", "expiry"])
         PyNinjaAPI.routes.extend(post_routes.routes)
         post_routes.enabled = True
+        process = Process(
+            target=database.monitor_table,
+            kwargs=dict(
+                tables=[enums.TableNames.run_token],
+                column="expiry",
+                db_file=models.env.database,
+            ),
+        )
+        process.start()
+        LOGGER.info(f"Started DB monitor process: {process.pid}")
 
     # Conditional endpoints based on 'monitor_username' and 'monitor_password' values
     if all((models.env.monitor_username, models.env.monitor_password)):
