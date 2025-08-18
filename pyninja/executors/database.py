@@ -1,3 +1,5 @@
+import logging
+import sqlite3
 import time
 from typing import List
 
@@ -90,6 +92,27 @@ def remove_record(host: str) -> None:
         models.database.connection.commit()
 
 
+def table_execution(cursor: sqlite3.Cursor, column: str, table: str) -> bool:
+    """Deletes the entry if an expired record is found.
+
+    Args:
+        cursor: Cursor object for the database.
+        column: Column to identify expiry.
+        table: Table name to check and execute.
+
+    Returns:
+        bool:
+        Returns a boolean flag to run a commit on the database.
+    """
+    expiration = cursor.execute(f"SELECT {column} FROM {table}").fetchone()
+    if expiration and expiration[0]:
+        timestamp = expiration[0]
+        if int(time.time()) > int(timestamp):
+            cursor.execute(f"DELETE FROM {table} WHERE {column}=(?)", (timestamp,))
+            return True
+    return False
+
+
 def monitor_table(tables: List[enums.TableNames], column: str, db_file: str) -> None:
     """Initiates a dedicated connection to the database.
 
@@ -98,21 +121,26 @@ def monitor_table(tables: List[enums.TableNames], column: str, db_file: str) -> 
         column: Column to check expiration date.
         db_file: Database filename to create a new connection.
     """
-    # TODO: Logger will not work here, so this func should be initiated from uvicorn startup func
-    # This should also allow graceful termination
+    # TODO: Validate if uvicorn config is updated for custom log_config
+    from uvicorn.config import LOGGING_CONFIG
+
+    logging.config.dictConfig(LOGGING_CONFIG)
+    logger = logging.getLogger("uvicorn.default")
+    logger.info("Initiated table monitor to delete expired tokens")
     database = models.Database(db_file)
-    while True:
-        with database.connection:
-            cursor = database.connection.cursor()
-            for table in tables:
-                expiration = cursor.execute(f"SELECT {column} FROM {table}").fetchone()
-                if expiration and expiration[0]:
-                    timestamp = expiration[0]
-                    if int(time.time()) > int(timestamp):
-                        print(f"Token on {table} has expired. Deleting.")
-                        cursor.execute(
-                            f"DELETE FROM {table} WHERE {column}=(?)", (timestamp,)
-                        )
+
+    def run_monitoring():
+        while True:
+            with database.connection:
+                cursor = database.connection.cursor()
+                for table in tables:
+                    if table_execution(cursor=cursor, column=column, table=table):
+                        logger.info(f"Token on {table} has expired. Deleting.")
                         database.connection.commit()
-                        print("DONE committing")
-        time.sleep(3)
+                        logger.info("DONE committing")
+            time.sleep(3)
+
+    try:
+        run_monitoring()
+    except KeyboardInterrupt:
+        logger.info("Monitoring stopped gracefully.")

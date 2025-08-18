@@ -66,7 +66,7 @@ async def level_1(request: Request, apikey: HTTPAuthorizationCredentials) -> Non
             request.headers.get("x-forwarded-host"),
         )
         if user_agent := request.headers.get("user-agent"):
-            LOGGER.info("User agent: %s", user_agent)
+            LOGGER.debug("User agent: %s", user_agent)
         return
     # Adds host address to the forbidden set
     await handle_auth_error(request)

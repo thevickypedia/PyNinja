@@ -1,7 +1,7 @@
 import logging
 import pathlib
 from contextlib import asynccontextmanager
-from multiprocessing import Process
+from multiprocessing import Process, TimeoutError
 
 import uvicorn
 from fastapi import Depends, FastAPI
@@ -22,7 +22,25 @@ async def lifespan(app: FastAPI):
     api_name = app.__dict__.get("title", app.__name__)
     api_version = app.__dict__.get("version", version.__version__)
     LOGGER.info("FastAPI server [%s:%s] initialized.", api_name, api_version)
+    process = Process(
+        target=database.monitor_table,
+        kwargs=dict(
+            tables=[enums.TableNames.run_token],
+            column="expiry",
+            db_file=models.env.database,
+        ),
+    )
+    process.start()
+    LOGGER.info(f"Started DB monitor process: {process.pid}")
     yield
+    LOGGER.info(f"Stopping DB monitor process: {process.pid}")
+    try:
+        process.join(timeout=3)
+    except TimeoutError as error:
+        LOGGER.error(error)
+    if process.is_alive():
+        process.terminate()
+        process.kill()
     multifactor.clear_timer_list()
     LOGGER.info("FastAPI server [%s:%s] shut down.", api_name, api_version)
 
@@ -151,16 +169,6 @@ def start(**kwargs) -> None:
         # NOT IMPLEMENTED: models.database.create_table(enums.TableNames.mfa_token, ["token", "expiry"])
         PyNinjaAPI.routes.extend(post_routes.routes)
         post_routes.enabled = True
-        process = Process(
-            target=database.monitor_table,
-            kwargs=dict(
-                tables=[enums.TableNames.run_token],
-                column="expiry",
-                db_file=models.env.database,
-            ),
-        )
-        process.start()
-        LOGGER.info(f"Started DB monitor process: {process.pid}")
 
     # Conditional endpoints based on 'monitor_username' and 'monitor_password' values
     if all((models.env.monitor_username, models.env.monitor_password)):
