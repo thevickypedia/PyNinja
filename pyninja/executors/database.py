@@ -8,8 +8,8 @@ from pyninja.modules import enums, models
 # TODO: Modify func names for better association
 
 
-def get_run_token() -> str:
-    """Gets run token stored in the database.
+def get_token(table: enums.TableName, include_expiry: bool = False) -> str:
+    """Gets run/mfa token stored in the database.
 
     Returns:
         str:
@@ -17,27 +17,29 @@ def get_run_token() -> str:
     """
     with models.database.connection:
         cursor = models.database.connection.cursor()
-        token = cursor.execute(
-            f"SELECT token FROM {enums.TableNames.run_token}"
-        ).fetchone()
-    if token and token[0]:
-        return token[0]
+        if include_expiry:
+            token = cursor.execute(f"SELECT token, expiry FROM {table}").fetchone()
+            if token:
+                return token
+        else:
+            token = cursor.execute(f"SELECT token FROM {table}").fetchone()
+            if token and token[0]:
+                return token[0]
 
 
-def update_run_token(token: str) -> str:
-    """Update run token in the database.
+def update_token(token: str, table: enums.TableName, expiry: int) -> str:
+    """Update run/mfa token in the database.
 
     Args:
         token: Token to be stored in the database.
     """
-    expiry = int(time.time()) + models.env.run_token_expiry
+    timestamp = int(time.time()) + expiry
     with models.database.connection:
         cursor = models.database.connection.cursor()
-        # Delete any and all existing tokens
-        cursor.execute(f"DELETE FROM {enums.TableNames.run_token}")
+        cursor.execute(f"DELETE FROM {table}")
         cursor.execute(
-            f"INSERT INTO {enums.TableNames.run_token} (token, expiry) VALUES (?,?)",
-            (token, expiry),
+            f"INSERT INTO {table} (token, expiry) VALUES (?,?)",
+            (token, timestamp),
         )
         models.database.connection.commit()
 
@@ -55,7 +57,7 @@ def get_record(host: str) -> int | None:
     with models.database.connection:
         cursor = models.database.connection.cursor()
         state = cursor.execute(
-            f"SELECT block_until FROM {enums.TableNames.auth_errors} WHERE host=(?)",
+            f"SELECT block_until FROM {enums.TableName.auth_errors} WHERE host=(?)",
             (host,),
         ).fetchone()
     if state and state[0]:
@@ -72,7 +74,7 @@ def put_record(host: str, block_until: int) -> None:
     with models.database.connection:
         cursor = models.database.connection.cursor()
         cursor.execute(
-            f"INSERT INTO {enums.TableNames.auth_errors} (host, block_until) VALUES (?,?)",
+            f"INSERT INTO {enums.TableName.auth_errors} (host, block_until) VALUES (?,?)",
             (host, block_until),
         )
         models.database.connection.commit()
@@ -87,7 +89,7 @@ def remove_record(host: str) -> None:
     with models.database.connection:
         cursor = models.database.connection.cursor()
         cursor.execute(
-            f"DELETE FROM {enums.TableNames.auth_errors} WHERE host=(?)", (host,)
+            f"DELETE FROM {enums.TableName.auth_errors} WHERE host=(?)", (host,)
         )
         models.database.connection.commit()
 
@@ -113,7 +115,7 @@ def table_execution(cursor: sqlite3.Cursor, column: str, table: str) -> bool:
     return False
 
 
-def monitor_table(tables: List[enums.TableNames], column: str, db_file: str) -> None:
+def monitor_table(tables: List[enums.TableName], column: str, db_file: str) -> None:
     """Initiates a dedicated connection to the database.
 
     Args:
@@ -129,7 +131,8 @@ def monitor_table(tables: List[enums.TableNames], column: str, db_file: str) -> 
     logger.info("Initiated table monitor to delete expired tokens")
     database = models.Database(db_file)
 
-    def run_monitoring():
+    def run_monitoring() -> None:
+        """Runs in an endless loop to look for expired tokens and remove them."""
         while True:
             with database.connection:
                 cursor = database.connection.cursor()

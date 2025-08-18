@@ -202,7 +202,7 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
         APIRoute(
             path=enums.APIEndpoints.run_token,
             endpoint=commands.get_run_token,
-            methods=["POST"],
+            methods=["GET"],
             dependencies=dependencies,
         ),
         APIRoute(

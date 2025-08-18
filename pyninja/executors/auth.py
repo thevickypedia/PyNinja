@@ -93,13 +93,14 @@ async def verify_mfa(mfa_code: str) -> None:
         raise exceptions.APIResponse(
             status_code=HTTPStatus.UNAUTHORIZED.real, detail="MFA code is required."
         )
-    if not models.mfa.token:
+    stored_mfa_token = database.get_token(table=enums.TableName.mfa_token)
+    if not stored_mfa_token:
         LOGGER.error("MFA is not configured on the server.")
         raise exceptions.APIResponse(
             status_code=HTTPStatus.UNAUTHORIZED.real,
             detail=f"MFA token is not stored, please run {enums.APIEndpoints.get_mfa.value!r} first.",
         )
-    if not secrets.compare_digest(mfa_code, models.mfa.token):
+    if not secrets.compare_digest(mfa_code, stored_mfa_token):
         LOGGER.error("Invalid MFA code provided.")
         raise exceptions.APIResponse(
             status_code=HTTPStatus.UNAUTHORIZED.real,
@@ -124,7 +125,7 @@ async def verify_run_token(run_token: str) -> None:
             status_code=HTTPStatus.UNAUTHORIZED.real,
             detail=HTTPStatus.UNAUTHORIZED.phrase,
         )
-    if stored_token := database.get_run_token():
+    if stored_token := database.get_token(table=enums.TableName.run_token):
         if secrets.compare_digest(run_token, stored_token):
             LOGGER.info("Run command authorized")
             return

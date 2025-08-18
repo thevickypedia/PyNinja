@@ -9,7 +9,6 @@ import sqlite3
 import string
 import uuid
 from concurrent.futures import ThreadPoolExecutor
-from threading import Timer
 from typing import Any, Callable, Dict, List, Set, Tuple
 
 from fastapi.routing import APIRoute, APIWebSocketRoute
@@ -206,25 +205,6 @@ class WSSession(BaseModel):
 ws_session = WSSession()
 
 
-class MFAToken(BaseModel):
-    """Object to store the MFA token.
-
-    >>> MFAToken
-
-    """
-
-    token: str | None = None
-    timers: List[Timer] = Field(default_factory=list)
-
-    class Config:
-        """Configuration for MFAToken object."""
-
-        arbitrary_types_allowed = True
-
-
-mfa = MFAToken()
-
-
 class RateLimit(BaseModel):
     """Object to store the rate limit settings.
 
@@ -324,9 +304,10 @@ class EnvConfig(BaseSettings):
     gmail_user: EmailStr | None = None
     gmail_pass: str | None = None
     recipient: str | None = None
-    # Timeout should at least be 5 minutes (300 seconds) and can be up to 24 hours (86_400 seconds)
+    # Timeout should at least be 15 minutes (900 seconds) and can be up to 24 hours (86_400 seconds)
     # Default: 1h
-    mfa_timeout: PositiveInt = Field(default=3_600, ge=300, le=86_400)
+    mfa_timeout: PositiveInt = Field(default=3_600, ge=900, le=86_400)
+    # TODO: Assert mfa_timeout > run_timeout (run_token_expiry: rename this as well)
 
     # Monitoring UI
     monitor_username: str | None = None

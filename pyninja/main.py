@@ -10,7 +10,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.routing import APIRoute
 
 from pyninja import startup, version
-from pyninja.executors import database, multifactor, routers, squire
+from pyninja.executors import database, routers, squire
 from pyninja.modules import enums, exceptions, models, rate_limit
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
     process = Process(
         target=database.monitor_table,
         kwargs=dict(
-            tables=[enums.TableNames.run_token],
+            tables=[enums.TableName.run_token, enums.TableName.mfa_token],
             column="expiry",
             db_file=models.env.database,
         ),
@@ -41,7 +41,6 @@ async def lifespan(app: FastAPI):
     if process.is_alive():
         process.terminate()
         process.kill()
-    multifactor.clear_timer_list()
     LOGGER.info("FastAPI server [%s:%s] shut down.", api_name, api_version)
 
 
@@ -163,10 +162,10 @@ def start(**kwargs) -> None:
     if all((models.env.apikey, models.env.api_secret, models.env.remote_execution)):
         models.database = models.Database(models.env.database)
         models.database.create_table(
-            enums.TableNames.auth_errors, ["host", "block_until"]
+            enums.TableName.auth_errors, ["host", "block_until"]
         )
-        models.database.create_table(enums.TableNames.run_token, ["token", "expiry"])
-        # NOT IMPLEMENTED: models.database.create_table(enums.TableNames.mfa_token, ["token", "expiry"])
+        models.database.create_table(enums.TableName.run_token, ["token", "expiry"])
+        models.database.create_table(enums.TableName.mfa_token, ["token", "expiry"])
         PyNinjaAPI.routes.extend(post_routes.routes)
         post_routes.enabled = True
 

@@ -120,7 +120,7 @@ class APIRouteType(StrEnum):
     monitor: str = "monitor"
 
 
-class TableNames(StrEnum):
+class TableName(StrEnum):
     """Table names.
 
     >>> TableNames
