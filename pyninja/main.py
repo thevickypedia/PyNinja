@@ -48,7 +48,6 @@ PyNinjaAPI = FastAPI(
     title="PyNinja",
     version=version.__version__,
     license_info={"name": "MIT License", "identifier": "MIT"},
-    lifespan=lifespan,
 )
 PyNinjaAPI.__name__ = "PyNinjaAPI"
 PyNinjaAPI.routes.append(
@@ -189,6 +188,8 @@ def start(**kwargs) -> None:
             )
 
     PyNinjaAPI.description = startup.get_desc(get_routes, post_routes, monitor_routes)
+    # Register lifespan context manager for startup and shutdown events
+    PyNinjaAPI.lifespan = lifespan
     module_name = pathlib.Path(__file__)
     kwargs = dict(
         host=models.env.ninja_host,
@@ -196,5 +197,9 @@ def start(**kwargs) -> None:
         app=f"{module_name.parent.stem}.{module_name.stem}:{PyNinjaAPI.__name__}",
     )
     if models.env.log_config:
-        kwargs["log_config"] = models.env.log_config
+        kwargs["log_config"] = (
+            models.env.log_config
+            if isinstance(models.env.log_config, dict)
+            else str(models.env.log_config)
+        )
     uvicorn.run(**kwargs)

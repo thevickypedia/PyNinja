@@ -212,6 +212,11 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
             dependencies=dependencies,
         ),
         APIRoute(
+            path=enums.APIEndpoints.run_ui,
+            endpoint=commands.run_ui,
+            methods=["GET"],
+        ),
+        APIRoute(
             path=enums.APIEndpoints.stop_service,
             endpoint=namespace.stop_service,
             methods=["POST"],

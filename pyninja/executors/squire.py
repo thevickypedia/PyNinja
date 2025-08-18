@@ -167,7 +167,7 @@ def stream_command(command: str, timeout: float) -> Generator[str]:
             for line in iter(process.stdout.readline, ""):
                 if line and (stripped := line.strip()):
                     output_yielded = True
-                    yield stripped
+                    yield f"{stripped}\n"
         finally:
             try:
                 process.wait(timeout=timeout)

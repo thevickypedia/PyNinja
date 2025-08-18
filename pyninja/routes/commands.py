@@ -1,4 +1,5 @@
 import logging
+import os
 import subprocess
 from http import HTTPStatus
 from typing import Optional
@@ -6,12 +7,14 @@ from typing import Optional
 from fastapi import Depends, Header, Request
 from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.templating import Jinja2Templates
 
 from pyninja.executors import auth, database, squire
 from pyninja.modules import enums, exceptions, models, payloads
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
+TEMPLATES = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__)))
 
 
 async def get_run_token(
@@ -41,7 +44,18 @@ async def get_run_token(
     database.update_token(
         token=token, table=enums.TableName.run_token, expiry=models.env.run_token_expiry
     )
-    raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=token)
+    return token
+
+
+async def run_ui(request: Request):
+    """Renders the HTML template for the run command UI."""
+    return TEMPLATES.TemplateResponse(
+        name="run_ui.html",
+        context={
+            "request": request,
+            "API_ENDPOINT": enums.APIEndpoints.run_command,
+        },
+    )
 
 
 async def run_command(

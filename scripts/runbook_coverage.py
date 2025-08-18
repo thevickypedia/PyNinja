@@ -66,7 +66,7 @@ def get_missing(entrypoint: str) -> Generator[str]:
 def main(entrypoint: str) -> None:
     """Main function to run the script."""
     if missing := list(get_missing(entrypoint)):
-        msg = "The following modules are missing from the rubook:"
+        msg = "The following modules are missing from the runbook:"
         print(f"{Colors.RED}{Format.BOLD}ERROR:{'':<2}{msg}{Colors.END}\n")
         for module in missing:
             print(f"\t• {Format.BOLD}{Format.ITALIC}{module}{Format.END}")

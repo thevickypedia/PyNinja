@@ -11,6 +11,7 @@ from runbook_coverage import Colors, Format
 NEW_VERSION = os.environ["UPDATE_VERSION"]
 PYTHON_PATH = os.environ.get("SERVER_PYTHON_PATH", "~/pyninja/venv/bin/python")
 USE_STREAMING = os.environ.get("USE_STREAMING", "true").lower() == "true"
+PROCESS_NAME = os.getenv("PROCESS_NAME")
 
 
 def check_pypi_version() -> str:
@@ -42,14 +43,15 @@ def self_restart() -> None:
     if output["stdout"] == ["Darwin"]:
         return print_output(
             run_command(
-                "launchctl kickstart -k gui/$(id -u)/pyninja-process", timeout=300
+                f"launchctl kickstart -k gui/$(id -u)/{PROCESS_NAME or 'pyninja-process'}",
+                timeout=300,
             )
         )
     elif output["stdout"] == ["Linux"]:
         assert SERVER_PASSWORD, "SERVER_PASSWORD is not set in the environment."
         return print_output(
             run_command(
-                f"echo {SERVER_PASSWORD} | sudo -S systemctl restart pyninja.service",
+                f"echo {SERVER_PASSWORD} | sudo -S systemctl restart {PROCESS_NAME or 'pyninja.service'}",
                 timeout=300,
             )
         )

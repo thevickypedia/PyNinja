@@ -53,6 +53,7 @@ class APIEndpoints(StrEnum):
     ws_system: str = "/ws/system"
     run_token: str = "/run-token"
     run_command: str = "/run-command"
+    run_ui: str = "/run-ui"
 
     get_memory: str = "/get-memory"
     get_all_disks: str = "/get-all-disks"
