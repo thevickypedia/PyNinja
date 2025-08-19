@@ -1,6 +1,30 @@
 Release Notes
 =============
 
+v4.5.0 (08/19/2025)
+-------------------
+- Host a simplistic UI to stream logs for ``/run-command`` endpoint
+- Update styling on ``run-command`` UI page
+- Allow resizing log-output section Hide credentials section when actively streaming
+- Align log-output to the center of the page rather than the container
+- Add an abort handler for ``run-ui``
+- Include options in run-ui to stop streaming and clear the console
+- Include a new button in ``run-ui`` to export logs
+- Add current timestamp to export file Show download option only when console is visible Reset credentials when logged out
+- Update meta tags in run-ui HTML
+- Bump update-release-notes action to v2
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.4.0...v4.5.0
+
+v4.4.0 (08/18/2025)
+-------------------
+- Add a new feature to protect ``/run-command`` endpoint with single use tokens
+- Remove client's mfa validation when not configured in the server
+- Remove no_auth functionality for monitoring page
+- Replace background timers with an active process to monitor DB state
+- Gracefully terminate child process for table monitor with lifespan events
+- Implement MFA token storage and validation via database (replacing: in-memory)
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.3.1...v4.4.0
+
 v4.3.1 (08/15/2025)
 -------------------
 - Make sure the server always responds some text when streamed through ``run-command``
