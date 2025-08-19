@@ -177,41 +177,53 @@
             commandSection.classList.remove("hidden");
         });
 
-        runButton.addEventListener("click", async () => {
-            const command = document.getElementById("command").value.trim();
-            const timeout = parseInt(document.getElementById("timeout").value.trim(), 10);
+        runButton.addEventListener('click', async () => {
+            const command = document.getElementById('command').value.trim();
+            const timeout = parseInt(document.getElementById('timeout').value.trim(), 10);
 
             if (!command || isNaN(timeout)) {
-                alert("Please enter both command and timeout.");
+                alert('Please enter both command and timeout.');
                 return;
             }
 
-            const apikey = localStorage.getItem("apikey");
-            const apisecret = localStorage.getItem("apisecret");
-            const mfa_token = localStorage.getItem("mfa_token");
-            const run_token = localStorage.getItem("run_token");
+            const apikey = localStorage.getItem('apikey');
+            const apisecret = localStorage.getItem('apisecret');
+            const mfa_token = localStorage.getItem('mfa_token');
+            const run_token = localStorage.getItem('run_token');
 
-            logOutput.textContent = "Streaming output...\n";
-            logOutput.style.display = "block";
-            credentialsSection.style.display = "none";
+            logOutput.textContent = 'Streaming output...\n';
+            logOutput.style.display = 'block';
+            credentialsSection.style.display = 'none';
+
+            // Use AbortController to allow timeout
+            const controller = new AbortController();
+            const signal = controller.signal;
+
+            // Set max timeout for streaming response (in milliseconds)
+            const hardTimeout = setTimeout(() => {
+                controller.abort();
+            }, 15000); // 15 seconds
 
             try {
                 const response = await fetch(`${window.location.origin}{{ API_ENDPOINT }}`, {
-                    method: "POST",
+                    method: 'POST',
                     headers: {
-                        accept: "application/json",
-                        "api-secret": apisecret,
-                        "mfa-code": mfa_token || "",
-                        "run-token": run_token,
-                        Authorization: `Bearer ${apikey}`,
-                        "Content-Type": "application/json",
+                        'accept': 'application/json',
+                        'api-secret': apisecret,
+                        'mfa-code': mfa_token || '',
+                        'run-token': run_token,
+                        'Authorization': `Bearer ${apikey}`,
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         command: command,
                         timeout: timeout,
-                        stream: true,
+                        stream: true
                     }),
+                    signal
                 });
+
+                clearTimeout(hardTimeout); // clear timeout on success
 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -229,10 +241,19 @@
                     logOutput.scrollTop = logOutput.scrollHeight;
                 }
             } catch (err) {
-                alert("Network or server error: " + err.message);
-                logOutput.style.display = "none";
-                credentialsSection.style.display = "block";
+                clearTimeout(hardTimeout); // cleanup
+
+                if (err.name === 'AbortError') {
+                    alert('Server did not respond in time. Aborting request.');
+                } else {
+                    alert('Network or server error: ' + err.message);
+                }
+
+                // Reset UI
+                logOutput.style.display = 'none';
+                credentialsSection.style.display = 'block';
             }
         });
+
     </script>
 </html>
