@@ -41,9 +41,7 @@ async def get_run_token(
     """
     await auth.level_2(request, apikey, api_secret, mfa_code)
     token = squire.keygen(256)
-    database.update_token(
-        token=token, table=enums.TableName.run_token, expiry=models.env.run_token_expiry
-    )
+    database.update_token(token=token, table=enums.TableName.run_token, expiry=models.env.run_token_expiry)
     return token
 
 
@@ -84,9 +82,7 @@ async def run_command(
     """
     await auth.level_2(request, apikey, api_secret, mfa_code)
     await auth.verify_run_token(run_token)
-    LOGGER.info(
-        "Requested command: '%s' with timeout: %ds", payload.command, payload.timeout
-    )
+    LOGGER.info("Requested command: '%s' with timeout: %ds", payload.command, payload.timeout)
     if payload.stream:
         LOGGER.info("Streaming command output for: '%s'", payload.command)
         return StreamingResponse(
@@ -104,6 +100,4 @@ async def run_command(
             )
         except subprocess.TimeoutExpired as warn:
             LOGGER.warning(warn)
-            raise exceptions.APIResponse(
-                status_code=HTTPStatus.REQUEST_TIMEOUT.real, detail=warn.__str__()
-            )
+            raise exceptions.APIResponse(status_code=HTTPStatus.REQUEST_TIMEOUT.real, detail=warn.__str__())

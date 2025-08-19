@@ -26,23 +26,17 @@ def instantiate_mailer() -> gc.SendEmail:
         gc.SendEmail:
         Returns an instance of the SendEmail class from the gmail-connector module.
     """
-    mail_obj = gc.SendEmail(
-        gmail_user=models.env.gmail_user, gmail_pass=models.env.gmail_pass
-    )
+    mail_obj = gc.SendEmail(gmail_user=models.env.gmail_user, gmail_pass=models.env.gmail_pass)
     auth_stat = mail_obj.authenticate
     if not auth_stat.ok:
         LOGGER.error(auth_stat.json())
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.SERVICE_UNAVAILABLE.real, detail=auth_stat.body
-        )
+        raise exceptions.APIResponse(status_code=HTTPStatus.SERVICE_UNAVAILABLE.real, detail=auth_stat.body)
     return mail_obj
 
 
 def send_new_mfa() -> bool:
     """Function to check if a new MFA token should be sent."""
-    existing_mfa = database.get_token(
-        table=enums.TableName.mfa_token, include_expiry=True
-    )
+    existing_mfa = database.get_token(table=enums.TableName.mfa_token, include_expiry=True)
     if not existing_mfa:
         return True
     _, expiry = existing_mfa
@@ -96,9 +90,7 @@ async def get_mfa(
         ),
     )
     if mail_stat.ok:
-        database.update_token(
-            token=token, table=enums.TableName.mfa_token, expiry=models.env.mfa_timeout
-        )
+        database.update_token(token=token, table=enums.TableName.mfa_token, expiry=models.env.mfa_timeout)
         LOGGER.debug(mail_stat.body)
         raise exceptions.APIResponse(
             status_code=HTTPStatus.OK.real,
@@ -106,6 +98,4 @@ async def get_mfa(
         )
     else:
         LOGGER.error(mail_stat.json())
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.SERVICE_UNAVAILABLE.real, detail=mail_stat.body
-        )
+        raise exceptions.APIResponse(status_code=HTTPStatus.SERVICE_UNAVAILABLE.real, detail=mail_stat.body)

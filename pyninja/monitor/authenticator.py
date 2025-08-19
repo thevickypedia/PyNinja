@@ -49,9 +49,7 @@ async def raise_error(host: str) -> NoReturn:
     )
 
 
-async def extract_credentials(
-    authorization: HTTPAuthorizationCredentials, host: str
-) -> List[str]:
+async def extract_credentials(authorization: HTTPAuthorizationCredentials, host: str) -> List[str]:
     """Extract the credentials from ``Authorization`` headers and decode it before returning as a list of strings.
 
     Args:
@@ -66,9 +64,7 @@ async def extract_credentials(
     return auth.split(",")
 
 
-async def verify_login(
-    authorization: HTTPAuthorizationCredentials, host: str
-) -> Dict[str, Union[str, int]]:
+async def verify_login(authorization: HTTPAuthorizationCredentials, host: str) -> Dict[str, Union[str, int]]:
     """Verifies authentication and generates session token for each user.
 
     Returns:
@@ -87,9 +83,7 @@ async def verify_login(
     if secrets.compare_digest(signature, expected_signature):
         models.ws_session.invalid[host] = 0
         key = squire.keygen()
-        models.ws_session.client_auth[host] = dict(
-            username=username, token=key, timestamp=int(timestamp)
-        )
+        models.ws_session.client_auth[host] = dict(username=username, token=key, timestamp=int(timestamp))
         return models.ws_session.client_auth[host]
     await raise_error(host)
 
@@ -107,9 +101,7 @@ async def generate_cookie(auth_payload: dict) -> Dict[str, str | bool | int]:
     expiration = await config.get_expiry(
         lease_start=auth_payload["timestamp"], lease_duration=models.env.monitor_session
     )
-    LOGGER.info(
-        "Session for '%s' will be valid until %s", auth_payload["username"], expiration
-    )
+    LOGGER.info("Session for '%s' will be valid until %s", auth_payload["username"], expiration)
     encoded_payload = str(auth_payload).encode("ascii")
     client_token = base64.b64encode(encoded_payload).decode("ascii")
     return dict(
@@ -122,9 +114,7 @@ async def generate_cookie(auth_payload: dict) -> Dict[str, str | bool | int]:
     )
 
 
-async def session_error(
-    request: Request, error: exceptions.SessionError
-) -> HTMLResponse:
+async def session_error(request: Request, error: exceptions.SessionError) -> HTMLResponse:
     """Renders the session error page.
 
     Args:
@@ -166,9 +156,7 @@ async def validate_session(host: str, cookie_string: str, log: bool = True) -> N
             models.ws_session.client_auth.get(host) == original_dict
         ), f"{original_dict} != {models.ws_session.client_auth.get(host)}"
         if log:
-            poached = datetime.fromtimestamp(
-                original_dict.get("timestamp") + models.env.monitor_session
-            )
+            poached = datetime.fromtimestamp(original_dict.get("timestamp") + models.env.monitor_session)
             LOGGER.info(
                 "Session token validated for %s until %s",
                 host,

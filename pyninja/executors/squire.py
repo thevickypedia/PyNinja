@@ -133,9 +133,7 @@ def size_converter(byte_size: int | float) -> str:
     if byte_size:
         size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
         index = int(math.floor(math.log(byte_size, 1024)))
-        return (
-            f"{format_nos(round(byte_size / pow(1024, index), 2))} {size_name[index]}"
-        )
+        return f"{format_nos(round(byte_size / pow(1024, index), 2))} {size_name[index]}"
     return "0 B"
 
 
@@ -182,9 +180,7 @@ def stream_command(command: str, timeout: float) -> Generator[str]:
     return generate()
 
 
-def process_command(
-    command: str, timeout: PositiveInt | PositiveFloat
-) -> Dict[str, List[str]]:
+def process_command(command: str, timeout: PositiveInt | PositiveFloat) -> Dict[str, List[str]]:
     """Process the requested command.
 
     Args:
@@ -321,9 +317,7 @@ def assert_pyudisk() -> None:
         enums.OperatingSystem.darwin,
     ):
         if models.env.disk_report:
-            raise ValueError(
-                "\n\tdisk_report feature can be enabled only on Linux and macOS machines!"
-            )
+            raise ValueError("\n\tdisk_report feature can be enabled only on Linux and macOS machines!")
         return
     try:
         from pyudisk.config import EnvConfig as PyUdiskConfig
@@ -382,9 +376,7 @@ def comma_separator(list_: list) -> str:
         str:
         Comma separated list of elements.
     """
-    return ", and ".join(
-        [", ".join(list_[:-1]), list_[-1]] if len(list_) > 2 else list_
-    )
+    return ", and ".join([", ".join(list_[:-1]), list_[-1]] if len(list_) > 2 else list_)
 
 
 def convert_seconds(seconds: int, n_elem: int = 2) -> str:
@@ -463,9 +455,7 @@ def humanize_usage_metrics(**kwargs) -> Dict[str, str]:
     }
 
 
-def total_mountpoints_usage(
-    mountpoints: List[str], as_bytes: bool = False
-) -> Dict[str, int | str]:
+def total_mountpoints_usage(mountpoints: List[str], as_bytes: bool = False) -> Dict[str, int | str]:
     """Sums up the bytes used on all the mountpoint locations.
 
     Args:

@@ -38,9 +38,7 @@ async def get_process_status(
     if response := process.get_process_status(process_name, cpu_interval):
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
     LOGGER.error("%s: 404 - No such process", process_name)
-    raise exceptions.APIResponse(
-        status_code=404, detail=f"Process {process_name} not found."
-    )
+    raise exceptions.APIResponse(status_code=404, detail=f"Process {process_name} not found.")
 
 
 async def get_service_usage(
@@ -160,9 +158,7 @@ async def get_service_status(
         response.status_code,
         response.description,
     )
-    raise exceptions.APIResponse(
-        status_code=response.status_code, detail=response.description
-    )
+    raise exceptions.APIResponse(status_code=response.status_code, detail=response.description)
 
 
 async def stop_service(
@@ -195,9 +191,7 @@ async def stop_service(
         response.status_code,
         response.description,
     )
-    raise exceptions.APIResponse(
-        status_code=response.status_code, detail=response.description
-    )
+    raise exceptions.APIResponse(status_code=response.status_code, detail=response.description)
 
 
 async def start_service(
@@ -230,9 +224,7 @@ async def start_service(
         response.status_code,
         response.description,
     )
-    raise exceptions.APIResponse(
-        status_code=response.status_code, detail=response.description
-    )
+    raise exceptions.APIResponse(status_code=response.status_code, detail=response.description)
 
 
 async def restart_service(
@@ -265,9 +257,7 @@ async def restart_service(
         response.status_code,
         response.description,
     )
-    raise exceptions.APIResponse(
-        status_code=response.status_code, detail=response.description
-    )
+    raise exceptions.APIResponse(status_code=response.status_code, detail=response.description)
 
 
 async def get_processor_name(
@@ -289,9 +279,7 @@ async def get_processor_name(
     """
     await auth.level_1(request, apikey)
     if models.architecture.cpu:
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.OK.real, detail=models.architecture.cpu
-        )
+        raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=models.architecture.cpu)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.NOT_FOUND.real,
         detail="Unable to retrieve processor information!",
@@ -356,9 +344,7 @@ async def start_application(
     await auth.level_2(request, apikey, api_secret, mfa_code)
     if app := application.get_app_by_name(app_name):
         application.start_app(app["path"])
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.OK.real, detail=f"{app_name!r} started successfully"
-        )
+        raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=f"{app_name!r} started successfully")
     unavailable(app_name)
 
 
@@ -386,9 +372,7 @@ async def stop_application(
     await auth.level_2(request, apikey, api_secret, mfa_code)
     if app := application.get_app_by_name(app_name):
         application.stop_app(app["path"])
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.OK.real, detail=f"{app_name!r} stopped successfully"
-        )
+        raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=f"{app_name!r} stopped successfully")
     unavailable(app_name)
 
 
@@ -421,6 +405,4 @@ async def restart_application(
         response.status_code,
         response.description,
     )
-    raise exceptions.APIResponse(
-        status_code=response.status_code, detail=response.description
-    )
+    raise exceptions.APIResponse(status_code=response.status_code, detail=response.description)

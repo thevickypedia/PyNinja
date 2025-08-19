@@ -56,9 +56,7 @@ def get_missing(entrypoint: str) -> Generator[str]:
         for file in files__:
             if file.endswith(".py") and file not in EXCLUSIONS:
                 filepath = os.path.join(src, file).split(entrypoint, 1)[1]
-                module = entrypoint + filepath.replace(".py", "").replace(
-                    os.path.sep, "."
-                )
+                module = entrypoint + filepath.replace(".py", "").replace(os.path.sep, ".")
                 if module not in rst_text:
                     yield module
 

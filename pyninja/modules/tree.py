@@ -22,9 +22,7 @@ class Tree:
         self.tree_text = []
         self.skip_dot_files = skip_dot_files
 
-    def scan(
-        self, path: pathlib.Path, last: bool = True, header: str = ""
-    ) -> List[str]:
+    def scan(self, path: pathlib.Path, last: bool = True, header: str = "") -> List[str]:
         """Returns contents for a folder as a root tree.
 
         Args:

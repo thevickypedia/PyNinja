@@ -46,9 +46,7 @@ def get_current_working_directory() -> str:
     return stdout[0] if isinstance(stdout, list) else stdout
 
 
-def upload_file(
-    filepath: str, destination: str = None, overwrite: bool = False
-) -> None:
+def upload_file(filepath: str, destination: str = None, overwrite: bool = False) -> None:
     """Uploads a file to the Ninja API.
 
     Args:
@@ -72,9 +70,7 @@ def upload_file(
         print(response.json())
 
 
-def delete_content(
-    filepath: str = None, directory: str = None, recursive: bool = False
-) -> None:
+def delete_content(filepath: str = None, directory: str = None, recursive: bool = False) -> None:
     """Deletes a file or directory from the Ninja API.
 
     Args:
@@ -84,16 +80,12 @@ def delete_content(
     """
     assert any((filepath, directory)), "Either filepath or directory must be provided"
     if directory and recursive:
-        flag = input(
-            "Both directory path and recursive are set to True. Do you want to continue? [y/N]\n"
-        )
+        flag = input("Both directory path and recursive are set to True. Do you want to continue? [y/N]\n")
         if flag != "y":
             return
         print(f"Deleting directory: {directory!r} and all it's subdirectories.")
     url = urljoin(NINJA_API_URL, "/delete-content")
-    response = SESSION.delete(
-        url, json={"filepath": filepath, "directory": directory, "recursive": recursive}
-    )
+    response = SESSION.delete(url, json={"filepath": filepath, "directory": directory, "recursive": recursive})
     response.raise_for_status()
     print(response.json())
 

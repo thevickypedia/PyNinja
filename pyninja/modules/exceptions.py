@@ -66,6 +66,5 @@ def raise_os_error(operating_system: str) -> NoReturn:
         ValidationError: Overridden exception from ``pydantic.ValidationError`` for unsupported OS.
     """
     raise UnSupportedOS(
-        f"{operating_system!r} is unsupported.\n\t"
-        "Host machine should either be macOS, Windows or any Linux distros"
+        f"{operating_system!r} is unsupported.\n\t" "Host machine should either be macOS, Windows or any Linux distros"
     )

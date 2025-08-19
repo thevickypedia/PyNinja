@@ -28,9 +28,7 @@ def default(name: str):
     }
 
 
-def get_process_info(
-    proc: psutil.Process, process_name: str = None
-) -> Dict[str, str | int]:
+def get_process_info(proc: psutil.Process, process_name: str = None) -> Dict[str, str | int]:
     """Get process information.
 
     Args:
@@ -56,9 +54,7 @@ def get_process_info(
             "CPU": f"{proc.cpu_percent(models.MINIMUM_CPU_UPDATE_INTERVAL):.2f}%",
             # Resident Set Size
             "Memory": squire.size_converter(proc.memory_info().rss),
-            "Uptime": squire.format_timedelta(
-                timedelta(seconds=int(time.time() - proc.create_time()))
-            ),
+            "Uptime": squire.format_timedelta(timedelta(seconds=int(time.time() - proc.create_time()))),
             "Threads": proc.num_threads(),
             "Open Files": len(proc.open_files()),
             "Read I/O": read_io,
@@ -87,18 +83,9 @@ async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
     """
     loop = asyncio.get_event_loop()
     tasks = []
-    for proc in psutil.process_iter(
-        ["pid", "name", "cpu_percent", "memory_info", "create_time"]
-    ):
-        if any(
-            name.lower() == proc.name().lower() or name == str(proc.pid)
-            for name in processes
-        ):
-            tasks.append(
-                loop.run_in_executor(
-                    models.EXECUTOR, get_process_info, proc, proc.name()
-                )
-            )
+    for proc in psutil.process_iter(["pid", "name", "cpu_percent", "memory_info", "create_time"]):
+        if any(name.lower() == proc.name().lower() or name == str(proc.pid) for name in processes):
+            tasks.append(loop.run_in_executor(models.EXECUTOR, get_process_info, proc, proc.name()))
     completed_tasks = []
     for task in asyncio.as_completed(tasks):
         try:
@@ -141,9 +128,7 @@ async def service_monitor(services: List[str]) -> List[Dict[str, str]]:
             LOGGER.debug(error)
             usages.append(default(service_name))
             continue
-        tasks.append(
-            loop.run_in_executor(models.EXECUTOR, get_process_info, proc, service_name)
-        )
+        tasks.append(loop.run_in_executor(models.EXECUTOR, get_process_info, proc, service_name))
     for task in asyncio.as_completed(tasks):
         usages.append(await task)
     return usages
@@ -218,9 +203,7 @@ def get_service_pid_windows(service_name: str) -> Optional[int]:
         Returns the PID of the service.
     """
     try:
-        output = subprocess.check_output(
-            [models.env.service_lib, "query", service_name], text=True
-        )
+        output = subprocess.check_output([models.env.service_lib, "query", service_name], text=True)
         for line in output.splitlines():
             if "PID" in line:
                 return int(line.split(":")[1].strip())

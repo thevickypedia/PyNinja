@@ -93,9 +93,7 @@ def remove_record(host: str) -> None:
     """
     with models.database.connection:
         cursor = models.database.connection.cursor()
-        cursor.execute(
-            f"DELETE FROM {enums.TableName.auth_errors} WHERE host=(?)", (host,)
-        )
+        cursor.execute(f"DELETE FROM {enums.TableName.auth_errors} WHERE host=(?)", (host,))
         models.database.connection.commit()
 
 
@@ -149,9 +147,7 @@ def get_log_config(log_config: FilePath | Dict[str, Any]) -> Dict[str, Any]:
     return LOGGING_CONFIG
 
 
-def monitor_table(
-    tables: List[enums.TableName], column: str, env: models.EnvConfig
-) -> None:
+def monitor_table(tables: List[enums.TableName], column: str, env: models.EnvConfig) -> None:
     """Initiates a dedicated connection to the database.
 
     Args:
@@ -180,16 +176,12 @@ def monitor_table(
             with database.connection:
                 if time.time() - start > log_interval:
                     start = time.time()
-                    logger.info(
-                        "Heartbeat - Table monitor is scanning %s", ", ".join(tables)
-                    )
+                    logger.info("Heartbeat - Table monitor is scanning %s", ", ".join(tables))
                 cursor = database.connection.cursor()
                 set_breaker = False
                 for table in tables:
                     try:
-                        if delete_expired_tokens(
-                            cursor=cursor, column=column, table=table
-                        ):
+                        if delete_expired_tokens(cursor=cursor, column=column, table=table):
                             logger.info(f"Token on {table} has expired.")
                             database.connection.commit()
                     except sqlite3.OperationalError as error:
@@ -213,9 +205,7 @@ def monitor_table(
                 else:
                     # Reset breaker if no errors occurred
                     if breaker > 0:
-                        logger.debug(
-                            "Resetting breaker count to 0, previously: %d", breaker
-                        )
+                        logger.debug("Resetting breaker count to 0, previously: %d", breaker)
                     breaker = 0
                 # If breaker is hit 5 times within 5 minutes, then it means 50% of the requests failed
                 if breaker > 5:

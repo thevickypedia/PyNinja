@@ -76,9 +76,7 @@ async def docs() -> HTMLResponse:
         openapi_url=PyNinjaAPI.__dict__.get("openapi_url", "/openapi.json"),
         swagger_ui_parameters=models.env.swagger_ui_parameters,
     )
-    new_content = html_content.body.decode().replace(
-        "</body>", models.fileio.swagger_ui + "</body>"
-    )
+    new_content = html_content.body.decode().replace("</body>", models.fileio.swagger_ui + "</body>")
     return HTMLResponse(new_content)
 
 
@@ -131,18 +129,11 @@ def start(**kwargs) -> None:
     squire.handle_warnings()
     startup.docs_handler(api=PyNinjaAPI, func=docs)
     dependencies = [
-        Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init)
-        for each_rate_limit in models.env.rate_limit
+        Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init) for each_rate_limit in models.env.rate_limit
     ]
-    get_routes = models.RoutingHandler(
-        type=enums.APIRouteType.get, routes=routers.get_api(dependencies)
-    )
-    post_routes = models.RoutingHandler(
-        type=enums.APIRouteType.post, routes=routers.post_api(dependencies)
-    )
-    monitor_routes = models.RoutingHandler(
-        type=enums.APIRouteType.monitor, routes=routers.monitoring_ui(dependencies)
-    )
+    get_routes = models.RoutingHandler(type=enums.APIRouteType.get, routes=routers.get_api(dependencies))
+    post_routes = models.RoutingHandler(type=enums.APIRouteType.post, routes=routers.post_api(dependencies))
+    monitor_routes = models.RoutingHandler(type=enums.APIRouteType.monitor, routes=routers.monitoring_ui(dependencies))
 
     # Conditional endpoints based on 'apikey' value
     if models.env.apikey:
@@ -161,9 +152,7 @@ def start(**kwargs) -> None:
     # Conditional endpoints based on 'remote_execution' and 'api_secret' values
     if all((models.env.apikey, models.env.api_secret, models.env.remote_execution)):
         models.database = models.Database(models.env.database)
-        models.database.create_table(
-            enums.TableName.auth_errors, ["host", "block_until"]
-        )
+        models.database.create_table(enums.TableName.auth_errors, ["host", "block_until"])
         models.database.create_table(enums.TableName.run_token, ["token", "expiry"])
         models.database.create_table(enums.TableName.mfa_token, ["token", "expiry"])
         PyNinjaAPI.routes.extend(post_routes.routes)
@@ -197,8 +186,6 @@ def start(**kwargs) -> None:
     )
     if models.env.log_config:
         uvicorn_args["log_config"] = (
-            models.env.log_config
-            if isinstance(models.env.log_config, dict)
-            else str(models.env.log_config)
+            models.env.log_config if isinstance(models.env.log_config, dict) else str(models.env.log_config)
         )
     uvicorn.run(**uvicorn_args)

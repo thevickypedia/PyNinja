@@ -77,9 +77,7 @@ async def login_endpoint(
         JSONResponse:
         Returns a JSONResponse object with a ``session_token`` and ``redirect_url`` set.
     """
-    auth_payload = await monitor.authenticator.verify_login(
-        authorization, request.client.host
-    )
+    auth_payload = await monitor.authenticator.verify_login(authorization, request.client.host)
     # AJAX calls follow redirect and return the response instead of replacing the URL
     # Solution is to revert to Form, but that won't allow header auth and additional customization done by JavaScript
     response = JSONResponse(
@@ -97,9 +95,7 @@ async def login_endpoint(
     return response
 
 
-async def monitor_endpoint(
-    request: Request, session_token: str = Cookie(None), render: str = Cookie(None)
-):
+async def monitor_endpoint(request: Request, session_token: str = Cookie(None), render: str = Cookie(None)):
     """Renders the UI for monitoring page.
 
     Args:
@@ -115,15 +111,11 @@ async def monitor_endpoint(
     if len(models.ws_session.client_auth) > models.env.max_connections:
         first_key = next(iter(models.ws_session.client_auth))
         # Remove the key-value pair associated with the first authenticated user
-        LOGGER.info(
-            "Maximum parallel connections limit reached. Dropping %s", first_key
-        )
+        LOGGER.info("Maximum parallel connections limit reached. Dropping %s", first_key)
         models.ws_session.client_auth.pop(first_key, None)
     if session_token:
         try:
-            await monitor.authenticator.validate_session(
-                request.client.host, session_token
-            )
+            await monitor.authenticator.validate_session(request.client.host, session_token)
         except exceptions.SessionError as error:
             LOGGER.error("Session token mismatch: %s", error)
             return await monitor.config.clear_session(
@@ -137,9 +129,7 @@ async def monitor_endpoint(
             ctx["request"] = request
             ctx["version"] = version.__version__
             LOGGER.info("Rendering initial context for monitoring page!")
-            return monitor.config.templates.TemplateResponse(
-                name=enums.Templates.main.value, context=ctx
-            )
+            return monitor.config.templates.TemplateResponse(name=enums.Templates.main.value, context=ctx)
         elif render == enums.Cookies.drive:
             LOGGER.info("Rendering disk report!")
             try:
@@ -168,17 +158,13 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
     await websocket.accept()
     # Validate session before starting the websocket connection
     try:
-        await monitor.authenticator.validate_session(
-            websocket.client.host, session_token
-        )
+        await monitor.authenticator.validate_session(websocket.client.host, session_token)
     except exceptions.SessionError as error:
         LOGGER.warning(error)
         await websocket.send_text(error.__str__())
         await websocket.close()
         return
-    session_timestamp = models.ws_session.client_auth.get(websocket.client.host).get(
-        "timestamp"
-    )
+    session_timestamp = models.ws_session.client_auth.get(websocket.client.host).get("timestamp")
     # Base task with a placeholder asyncio sleep to start the task loop
     task = asyncio.create_task(asyncio.sleep(0.1))
     connections = 0
@@ -190,9 +176,7 @@ async def websocket_endpoint(websocket: WebSocket, session_token: str = Cookie(N
             if task.done():
                 await task
                 task = asyncio.create_task(
-                    monitor.authenticator.validate_session(
-                        websocket.client.host, session_token, False
-                    )
+                    monitor.authenticator.validate_session(websocket.client.host, session_token, False)
                 )
         except exceptions.SessionError as error:
             LOGGER.warning(error)

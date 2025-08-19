@@ -4,11 +4,7 @@ import hashlib
 import string
 from typing import Any
 
-UNICODE_PREFIX = (
-    base64.b64decode(b"XA==").decode(encoding="ascii")
-    + string.ascii_letters[20]
-    + string.digits[:1] * 2
-)
+UNICODE_PREFIX = base64.b64decode(b"XA==").decode(encoding="ascii") + string.ascii_letters[20] + string.digits[:1] * 2
 
 
 async def calculate_hash(value: Any) -> str:
@@ -35,7 +31,5 @@ async def hex_decode(value: Any) -> str:
 async def hex_encode(value: str):
     """Convert string value to hex."""
     return UNICODE_PREFIX + UNICODE_PREFIX.join(
-        binascii.hexlify(data=value.encode(encoding="utf-8"), sep="-")
-        .decode(encoding="utf-8")
-        .split(sep="-")
+        binascii.hexlify(data=value.encode(encoding="utf-8"), sep="-").decode(encoding="utf-8").split(sep="-")
     )

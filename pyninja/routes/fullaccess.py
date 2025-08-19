@@ -154,17 +154,12 @@ async def list_files(
     elif payload.include_directories:
         return [f for f in os.listdir(payload.directory) if not f.startswith(".")]
     elif payload.show_hidden_files:
-        return [
-            f
-            for f in os.listdir(payload.directory)
-            if os.path.isfile(os.path.join(payload.directory, f))
-        ]
+        return [f for f in os.listdir(payload.directory) if os.path.isfile(os.path.join(payload.directory, f))]
     else:
         return [
             f
             for f in os.listdir(payload.directory)
-            if not f.startswith(".")
-            and not os.path.isdir(os.path.join(payload.directory, f))
+            if not f.startswith(".") and not os.path.isdir(os.path.join(payload.directory, f))
         ]
 
 

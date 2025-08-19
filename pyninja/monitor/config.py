@@ -8,9 +8,7 @@ from fastapi.templating import Jinja2Templates
 
 LOGGER = logging.getLogger("uvicorn.default")
 
-templates = Jinja2Templates(
-    directory=os.path.join(os.path.dirname(__file__), "templates")
-)
+templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
 
 
 async def clear_session(request: Request, response: HTMLResponse) -> HTMLResponse:

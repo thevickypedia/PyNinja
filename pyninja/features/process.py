@@ -11,9 +11,7 @@ from pyninja.modules import models
 LOGGER = logging.getLogger("uvicorn.default")
 
 
-def get_process_status(
-    process_name: str, cpu_interval: PositiveInt
-) -> List[Dict[str, int | float | str | bool]]:
+def get_process_status(process_name: str, cpu_interval: PositiveInt) -> List[Dict[str, int | float | str | bool]]:
     """Get process information by name.
 
     Args:
@@ -29,9 +27,7 @@ def get_process_status(
     with models.EXECUTOR:
         for proc in psutil.process_iter(["pid", "name"]):
             if proc.name().lower() == process_name.lower():
-                future = models.EXECUTOR.submit(
-                    get_performance, process=proc, cpu_interval=cpu_interval
-                )
+                future = models.EXECUTOR.submit(get_performance, process=proc, cpu_interval=cpu_interval)
                 futures[future] = proc.name()
     for future in as_completed(futures):
         if future.exception():
@@ -45,9 +41,7 @@ def get_process_status(
     return result
 
 
-def get_performance(
-    process: psutil.Process, cpu_interval: PositiveInt
-) -> Dict[str, int | float | str | bool]:
+def get_performance(process: psutil.Process, cpu_interval: PositiveInt) -> Dict[str, int | float | str | bool]:
     """Checks process performance by monitoring CPU utilization, number of threads and open files.
 
     Args:
@@ -59,15 +53,8 @@ def get_performance(
         Returns the process metrics as key-value pairs.
     """
     try:
-        cpu = (
-            process.cpu_percent(interval=cpu_interval)
-            if cpu_interval
-            else process.cpu_times()._asdict()
-        )
-        memory = {
-            k: squire.size_converter(v)
-            for k, v in process.memory_info()._asdict().items()
-        }
+        cpu = process.cpu_percent(interval=cpu_interval) if cpu_interval else process.cpu_times()._asdict()
+        memory = {k: squire.size_converter(v) for k, v in process.memory_info()._asdict().items()}
         threads = process.num_threads()
         try:
             open_files = len(process.open_files())

@@ -116,10 +116,7 @@ async def get_disk_utilization(
     await auth.level_1(request, apikey)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.OK.real,
-        detail={
-            k: squire.size_converter(v)
-            for k, v in shutil.disk_usage(path)._asdict().items()
-        },
+        detail={k: squire.size_converter(v) for k, v in shutil.disk_usage(path)._asdict().items()},
     )
 
 

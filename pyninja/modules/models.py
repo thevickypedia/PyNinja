@@ -54,15 +54,11 @@ def keygen(min_length: int = 32) -> str:
 
     # Add some randomness to exceed the min length if needed
     remaining_length = max(min_length - len(unique_part) - len(required_chars), 0)
-    filler = "".join(
-        random.choices(string.ascii_letters + string.digits, k=remaining_length)
-    )
+    filler = "".join(random.choices(string.ascii_letters + string.digits, k=remaining_length))
     safe_chars = ["-", "_", ".", "~"]
 
     # Combine all parts and shuffle
-    token_chars = list(
-        unique_part + filler + "".join(required_chars) + random.choice(safe_chars)
-    )
+    token_chars = list(unique_part + filler + "".join(required_chars) + random.choice(safe_chars))
     random.shuffle(token_chars)
 
     return "".join(token_chars)
@@ -86,22 +82,16 @@ def complexity_checker(key: str, value: str, min_length: int) -> None:
     assert value.strip(), f"{key!r} CANNOT be an empty space!!"
 
     # calculates the length
-    assert (
-        len(value) >= min_length
-    ), f"Minimum {key!r} length is {min_length}, received {len(value)}"
+    assert len(value) >= min_length, f"Minimum {key!r} length is {min_length}, received {len(value)}"
 
     # searches for digits
     assert re.search(r"\d", value), f"{key!r} must include an integer"
 
     # searches for uppercase
-    assert re.search(
-        r"[A-Z]", value
-    ), f"{key!r} must include at least one uppercase letter"
+    assert re.search(r"[A-Z]", value), f"{key!r} must include at least one uppercase letter"
 
     # searches for lowercase
-    assert re.search(
-        r"[a-z]", value
-    ), f"{key!r} must include at least one lowercase letter"
+    assert re.search(r"[a-z]", value), f"{key!r} must include at least one lowercase letter"
 
     # searches for symbols
     assert re.search(
@@ -333,9 +323,7 @@ class EnvConfig(BaseSettings):
 
     # Windows PowerShell specific
     if OPERATING_SYSTEM == enums.OperatingSystem.windows:
-        pwsh: FilePath = (
-            shutil.which("pwsh") or "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
-        )
+        pwsh: FilePath = shutil.which("pwsh") or "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
 
     # noinspection PyMethodParameters
     @field_validator("apikey", mode="after")
@@ -437,9 +425,7 @@ class Database:
             datastore: Name of the database file.
             timeout: Timeout for the connection to database.
         """
-        self.connection = sqlite3.connect(
-            database=datastore, check_same_thread=False, timeout=timeout
-        )
+        self.connection = sqlite3.connect(database=datastore, check_same_thread=False, timeout=timeout)
 
     def create_table(self, table_name: str, columns: List[str] | Tuple[str]) -> None:
         """Creates the table with the required columns.
@@ -451,9 +437,7 @@ class Database:
         with self.connection:
             cursor = self.connection.cursor()
             # Use f-string or %s as table names cannot be parametrized
-            cursor.execute(
-                f"CREATE TABLE IF NOT EXISTS {table_name} ({', '.join(columns)})"
-            )
+            cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} ({', '.join(columns)})")
 
 
 # Loaded in main:start()

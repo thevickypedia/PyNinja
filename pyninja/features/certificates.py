@@ -23,9 +23,7 @@ def forbidden() -> models.CertificateStatus:
     )
 
 
-def parse_certificate_output(
-    output: str, raw: bool, ws_stream: bool
-) -> Generator[Dict[str, Any]]:
+def parse_certificate_output(output: str, raw: bool, ws_stream: bool) -> Generator[Dict[str, Any]]:
     """Parse the output from the certbot command to extract certificate details.
 
     Args:
@@ -50,14 +48,10 @@ def parse_certificate_output(
         elif line.startswith("Domains:"):
             cert_info[cert_key("Domains")] = line.split(": ")[1].strip().split()
         elif line.startswith("Expiry Date:"):
-            expiry_date = (
-                line.split(": ")[1].strip().split("VALID")[0].replace("(", "").strip()
-            )
+            expiry_date = line.split(": ")[1].strip().split("VALID")[0].replace("(", "").strip()
             validity = line.split("VALID:")[1].strip().replace(")", "")
             cert_info[cert_key("Expiry Date")] = expiry_date
-            cert_info[cert_key("Validity")] = (
-                validity if raw else int(validity.split()[0])
-            )
+            cert_info[cert_key("Validity")] = validity if raw else int(validity.split()[0])
         elif line.startswith("Certificate Path:"):
             if not ws_stream:
                 cert_info[cert_key("Certificate Path")] = line.split(": ")[1].strip()
@@ -68,9 +62,7 @@ def parse_certificate_output(
 
 
 @cache.timed_cache(max_age=1_800)
-async def get_all_certificates(
-    raw: bool = False, ws_stream: bool = False
-) -> models.CertificateStatus:
+async def get_all_certificates(raw: bool = False, ws_stream: bool = False) -> models.CertificateStatus:
     """Fetch all SSL certificates using certbot.
 
     Returns:

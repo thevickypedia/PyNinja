@@ -4,9 +4,7 @@ import shutil
 import zipfile
 
 
-def archive(
-    path: pathlib.Path, directory: pathlib.Path = pathlib.Path(__file__).parent
-) -> pathlib.Path:
+def archive(path: pathlib.Path, directory: pathlib.Path = pathlib.Path(__file__).parent) -> pathlib.Path:
     """Archives a file or directory into a zip file.
 
     Args:
@@ -30,9 +28,7 @@ def archive(
     return zip_file
 
 
-def unarchive(
-    zip_file: pathlib.Path, directory: pathlib.Path = pathlib.Path(__file__).parent
-) -> pathlib.Path:
+def unarchive(zip_file: pathlib.Path, directory: pathlib.Path = pathlib.Path(__file__).parent) -> pathlib.Path:
     """Unarchives a zip file into a specified directory.
 
     Args:
@@ -46,9 +42,7 @@ def unarchive(
     if not zip_file.exists():
         raise FileNotFoundError(f"Zip file {zip_file} does not exist.")
     if zip_file.suffix not in [".zip", ".tar", ".tar.gz", ".tar.bz2"]:
-        raise ValueError(
-            "Unsupported archive format. Only .zip, .tar, .tar.gz, and .tar.bz2 are supported."
-        )
+        raise ValueError("Unsupported archive format. Only .zip, .tar, .tar.gz, and .tar.bz2 are supported.")
     # Create a destination directory for unzipped content
     directory.mkdir(parents=True, exist_ok=True)
     shutil.unpack_archive(zip_file, directory)

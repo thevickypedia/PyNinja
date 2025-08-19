@@ -32,9 +32,7 @@ def landing_page() -> Dict[str, Any]:
         "Architecture": uname.machine,
         "Node": uname.node,
         "CPU Cores": psutil.cpu_count(logical=True),
-        "Uptime": squire.format_timedelta(
-            timedelta(seconds=time.time() - psutil.boot_time())
-        ),
+        "Uptime": squire.format_timedelta(timedelta(seconds=time.time() - psutil.boot_time())),
     }
     if models.architecture.cpu:
         LOGGER.debug("Processor: %s", models.architecture.cpu)
@@ -50,10 +48,7 @@ def landing_page() -> Dict[str, Any]:
         "Private IP address": squire.private_ip_address(),
         "Public IP address": squire.public_ip_address(),
     }
-    sys_info_disks = [
-        {k.replace("_", " ").title(): v for k, v in disk.items()}
-        for disk in models.architecture.disks
-    ]
+    sys_info_disks = [{k.replace("_", " ").title(): v for k, v in disk.items()} for disk in models.architecture.disks]
     return dict(
         logout=enums.APIEndpoints.logout,
         sys_info_basic=sys_info_basic,
@@ -78,9 +73,7 @@ async def get_disk_info() -> List[Dict[str, str | int]]:
         }
         if not disk.get("mountpoints"):
             continue
-        disk_usage.update(
-            squire.total_mountpoints_usage(disk["mountpoints"], as_bytes=True)
-        )
+        disk_usage.update(squire.total_mountpoints_usage(disk["mountpoints"], as_bytes=True))
         usage_metrics.append(disk_usage)
     return usage_metrics
 
@@ -142,12 +135,8 @@ def map_docker_stats(json_data: Dict[str, str]) -> Dict[str, str]:
         "CPU": json_data.get("CPUPerc"),
     }
     if cpu_percent := re.findall(r"\d+\.\d+|\d+", json_data.get("CPUPerc")):
-        cpu_limit = int(
-            container_cpu_limit(json_data.get("ID")) or psutil.cpu_count(logical=True)
-        )
-        docker_dump["CPU Usage"] = (
-            f"{floater(round((float(cpu_percent[0]) / 100) * cpu_limit, 2))} / {cpu_limit}"
-        )
+        cpu_limit = int(container_cpu_limit(json_data.get("ID")) or psutil.cpu_count(logical=True))
+        docker_dump["CPU Usage"] = f"{floater(round((float(cpu_percent[0]) / 100) * cpu_limit, 2))} / {cpu_limit}"
     else:
         docker_dump["CPU Usage"] = "N/A"
     docker_dump["Memory"] = json_data.get("MemPerc")
@@ -203,10 +192,7 @@ async def get_docker_stats() -> List[Dict[str, str]]:
     if stderr:
         LOGGER.debug(stderr.decode().strip())
         return []
-    docker_stats = [
-        map_docker_stats(json.loads(line))
-        for line in stdout.decode().strip().splitlines()
-    ]
+    docker_stats = [map_docker_stats(json.loads(line)) for line in stdout.decode().strip().splitlines()]
     return sorted(docker_stats, key=lambda x: x["Container Name"])
 
 
@@ -246,18 +232,14 @@ def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
             if info:
                 rendered["model"] = info.Model
             if disk.Partition:
-                rendered["mountpoint"] = [
-                    partition.MountPoints for partition in disk.Partition
-                ]
+                rendered["mountpoint"] = [partition.MountPoints for partition in disk.Partition]
             if attributes:
                 rendered["temperature"] = (
                     f"{util.kelvin_to_fahrenheit(attributes.SmartTemperature)} °F"
                     + " / "
                     + f"{util.kelvin_to_celsius(attributes.SmartTemperature)} °C"
                 )
-                rendered["uptime"] = squire.convert_seconds(
-                    attributes.SmartPowerOnSeconds
-                )
+                rendered["uptime"] = squire.convert_seconds(attributes.SmartPowerOnSeconds)
                 rendered["bad_sectors"] = attributes.SmartNumBadSectors
                 rendered["test_status"] = attributes.SmartSelftestStatus
                 rendered["updated"] = disk.Attributes.SmartUpdated
@@ -271,9 +253,7 @@ def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
                     + f"{disk.temperature.current} °C"
                 )
             if disk.power_on_time and disk.power_on_time.hours:
-                rendered["uptime"] = squire.convert_seconds(
-                    disk.power_on_time.hours * 3_600
-                )
+                rendered["uptime"] = squire.convert_seconds(disk.power_on_time.hours * 3_600)
             if disk.smart_status and disk.smart_status.passed:
                 rendered["test_status"] = "PASSED"
             rendered["updated"] = disk.local_time.time_t
@@ -340,21 +320,13 @@ async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
     system_metrics_task = asyncio.create_task(get_system_metrics())
     docker_stats_task = asyncio.create_task(get_docker_stats())
     disk_stats_task = asyncio.create_task(get_disk_info())
-    service_stats_task = asyncio.create_task(
-        operations.service_monitor(models.env.services)
-    )
-    process_stats_task = asyncio.create_task(
-        operations.process_monitor(models.env.processes)
-    )
-    certs_stats_task = asyncio.create_task(
-        certificates.get_all_certificates(raw=True, ws_stream=True)
-    )
+    service_stats_task = asyncio.create_task(operations.service_monitor(models.env.services))
+    process_stats_task = asyncio.create_task(operations.process_monitor(models.env.processes))
+    certs_stats_task = asyncio.create_task(certificates.get_all_certificates(raw=True, ws_stream=True))
 
     # CPU percent check is a blocking call and cannot be awaited, so run it in a separate thread
     loop = asyncio.get_event_loop()
-    cpu_usage_task = loop.run_in_executor(
-        models.EXECUTOR, get_cpu_percent, *(models.MINIMUM_CPU_UPDATE_INTERVAL,)
-    )
+    cpu_usage_task = loop.run_in_executor(models.EXECUTOR, get_cpu_percent, *(models.MINIMUM_CPU_UPDATE_INTERVAL,))
 
     # Await all the tasks to complete
     system_metrics = await system_metrics_task
@@ -373,9 +345,7 @@ async def system_resources() -> Dict[str, dict | List[Dict[str, str | int]]]:
             metrics = pyudisk_metrics()
             updated = round(time.time() - metrics["updated"])
             metrics["pyudisk_updated"] = (
-                f"{squire.convert_seconds(updated, 1)} ago"
-                if updated >= 100
-                else f"{updated} seconds ago"
+                f"{squire.convert_seconds(updated, 1)} ago" if updated >= 100 else f"{updated} seconds ago"
             )
             system_metrics.update(metrics)
         except ModuleNotFoundError:

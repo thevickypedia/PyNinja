@@ -39,9 +39,7 @@ async def entry_fn(
         # gztar (.tar.gz, .tgz)
         # bztar (.tar.bz2, .tbz)
         # xztar (.tar.xz, .txz)
-        if not filename.endswith(
-            (".zip", ".tar", ".tar.gz", ".tgz", ".tar.bz2", ".tbz", ".tar.xz", ".txz")
-        ):
+        if not filename.endswith((".zip", ".tar", ".tar.gz", ".tgz", ".tar.bz2", ".tbz", ".tar.xz", ".txz")):
             raise exceptions.APIResponse(
                 status_code=HTTPStatus.BAD_REQUEST.real,
                 detail="Unzip is only supported for zip and tar files.",

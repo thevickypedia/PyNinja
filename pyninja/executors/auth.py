@@ -70,9 +70,7 @@ async def level_1(request: Request, apikey: HTTPAuthorizationCredentials) -> Non
         return
     # Adds host address to the forbidden set
     await handle_auth_error(request)
-    raise exceptions.APIResponse(
-        status_code=HTTPStatus.UNAUTHORIZED.real, detail=HTTPStatus.UNAUTHORIZED.phrase
-    )
+    raise exceptions.APIResponse(status_code=HTTPStatus.UNAUTHORIZED.real, detail=HTTPStatus.UNAUTHORIZED.phrase)
 
 
 async def verify_mfa(mfa_code: str) -> None:
@@ -90,9 +88,7 @@ async def verify_mfa(mfa_code: str) -> None:
         return
     if not mfa_code:
         LOGGER.error("No MFA code provided.")
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.UNAUTHORIZED.real, detail="MFA code is required."
-        )
+        raise exceptions.APIResponse(status_code=HTTPStatus.UNAUTHORIZED.real, detail="MFA code is required.")
     stored_mfa_token = database.get_token(table=enums.TableName.mfa_token)
     if not stored_mfa_token:
         LOGGER.error("MFA is not configured on the server.")
@@ -220,9 +216,7 @@ async def handle_auth_error(request: Request) -> None:
         elif models.session.auth_counter[request.client.host] > 3:
             # Allows up to 3 failed login attempts
             models.session.forbid.add(request.client.host)
-            minutes = await incrementer(
-                models.session.auth_counter[request.client.host]
-            )
+            minutes = await incrementer(models.session.auth_counter[request.client.host])
             until = EPOCH() + minutes * 60
             LOGGER.warning(
                 "%s is blocked (for %d minutes) until %s",

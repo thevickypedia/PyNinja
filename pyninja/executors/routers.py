@@ -353,7 +353,5 @@ def monitoring_ui(dependencies: List[Depends]) -> List[APIRoute | APIWebSocketRo
             dependencies=dependencies,
             include_in_schema=False,
         ),
-        APIWebSocketRoute(
-            path=enums.APIEndpoints.ws_system, endpoint=ui.websocket_endpoint
-        ),
+        APIWebSocketRoute(path=enums.APIEndpoints.ws_system, endpoint=ui.websocket_endpoint),
     ]

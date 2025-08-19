@@ -177,9 +177,7 @@ def self_upgrade() -> None:
     upgrade_commands = commands()
     for cmd in upgrade_commands:
         green(f"Running command: {cmd['command']}")
-        output = run_command(
-            cmd["command"], timeout=cmd["timeout"], stream=USE_STREAMING
-        )
+        output = run_command(cmd["command"], timeout=cmd["timeout"], stream=USE_STREAMING)
         if USE_STREAMING:
             for line in output:
                 print(line)

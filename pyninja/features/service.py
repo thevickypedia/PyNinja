@@ -159,9 +159,7 @@ def get_all_services() -> Generator[Dict[str, str]]:
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
         try:
-            output = subprocess.check_output(
-                [models.env.service_lib, "list"], text=True
-            )
+            output = subprocess.check_output([models.env.service_lib, "list"], text=True)
             for line in output.splitlines()[1:]:
                 pid, status, label = line.split("\t", 2)
                 if status == "0":
@@ -240,9 +238,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus:
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
         try:
-            output = subprocess.check_output(
-                [models.env.service_lib, "list"], text=True
-            )
+            output = subprocess.check_output([models.env.service_lib, "list"], text=True)
             for line in output.splitlines()[1:]:
                 if service_name in line:
                     try:
@@ -419,8 +415,6 @@ def restart_service(service_name: str) -> models.ServiceStatus:
     except subprocess.CalledProcessError as error:
         squire.log_subprocess_error(error)
         if models.OPERATING_SYSTEM == enums.OperatingSystem.darwin:
-            LOGGER.error(
-                "Attempting to kickstart macOS service '%s'", full_service_name
-            )
+            LOGGER.error("Attempting to kickstart macOS service '%s'", full_service_name)
             return kickstart_mac_service(full_service_name)
         return unavailable(full_service_name)
