@@ -32,10 +32,6 @@ Database
 --------
 .. automodule:: pyninja.executors.database
 
-Multifactor Authentication
---------------------------
-.. automodule:: pyninja.executors.multifactor
-
 API Routes
 ----------
 .. automodule:: pyninja.routes.commands
@@ -67,6 +63,13 @@ API Routes
 Squire
 ------
 .. automodule:: pyninja.executors.squire
+
+Multifactor Authentication
+==========================
+
+Gmail
+-----
+.. automodule:: pyninja.multifactor.gmail
 
 API Routes - Certificates
 =========================

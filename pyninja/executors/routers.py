@@ -7,9 +7,9 @@ from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from fastapi.security import HTTPBearer
 
-from pyninja.multifactor import gmail
 from pyninja.modules import enums, exceptions, models
 from pyninja.monitor import routes as ui
+from pyninja.multifactor import gmail
 from pyninja.routes import (
     certificates,
     commands,

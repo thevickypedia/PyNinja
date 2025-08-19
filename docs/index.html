@@ -350,25 +350,29 @@
 <span id="database"></span><h2>Database<a class="headerlink" href="#module-pyninja.executors.database" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.database.get_token">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">get_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.enums.TableName" title="pyninja.modules.enums.TableName"><span class="pre">TableName</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_expiry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.executors.database.get_token" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">get_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.enums.TableName" title="pyninja.modules.enums.TableName"><span class="pre">TableName</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_expiry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.get_token" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets run/mfa token stored in the database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Returns the token stored in the database.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
+<dd class="field-even"><p>Any</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.database.update_token">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">update_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.enums.TableName" title="pyninja.modules.enums.TableName"><span class="pre">TableName</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.executors.database.update_token" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">update_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.enums.TableName" title="pyninja.modules.enums.TableName"><span class="pre">TableName</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.update_token" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update run/mfa token in the database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>token</strong> – Token to be stored in the database.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>token</strong> – Token to be stored in the database.</p></li>
+<li><p><strong>table</strong> – Table name to update the token.</p></li>
+<li><p><strong>expiry</strong> – Expiry time in seconds from the current epoch time.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -416,8 +420,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.database.table_execution">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">table_execution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cursor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cursor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.executors.database.table_execution" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyninja.executors.database.delete_expired_tokens">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">delete_expired_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cursor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Cursor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.executors.database.delete_expired_tokens" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes the entry if an expired record is found.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -437,59 +441,35 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.executors.database.get_log_config">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">get_log_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.executors.database.get_log_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the log configuration for the child process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>log_config</strong> – Log configuration dictionary or file path.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the log configuration dictionary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.database.monitor_table">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">monitor_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.modules.enums.TableName" title="pyninja.modules.enums.TableName"><span class="pre">TableName</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.monitor_table" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">monitor_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.modules.enums.TableName" title="pyninja.modules.enums.TableName"><span class="pre">TableName</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.EnvConfig" title="pyninja.modules.models.EnvConfig"><span class="pre">EnvConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.monitor_table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initiates a dedicated connection to the database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tables</strong> – Table names to monitor.</p></li>
 <li><p><strong>column</strong> – Column to check expiration date.</p></li>
-<li><p><strong>db_file</strong> – Database filename to create a new connection.</p></li>
+<li><p><strong>env</strong> – Environment configuration object.</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-</section>
-<section id="module-pyninja.executors.multifactor">
-<span id="multifactor-authentication"></span><h2>Multifactor Authentication<a class="headerlink" href="#module-pyninja.executors.multifactor" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.multifactor.instantiate_mailer">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.multifactor.</span></span><span class="sig-name descname"><span class="pre">instantiate_mailer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SendEmail</span></span></span><a class="headerlink" href="#pyninja.executors.multifactor.instantiate_mailer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cached function to instantiate the gmail-connector object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Returns an instance of the SendEmail class from the gmail-connector module.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>gc.SendEmail</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.multifactor.send_new_mfa">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.multifactor.</span></span><span class="sig-name descname"><span class="pre">send_new_mfa</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.executors.multifactor.send_new_mfa" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to check if a new MFA token should be sent.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.multifactor.get_mfa">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.executors.multifactor.</span></span><span class="sig-name descname"><span class="pre">get_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.executors.multifactor.get_mfa" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong>Get multifactor authentication code.</strong></p>
-<p><strong>Args:</strong></p>
-<blockquote>
-<div><ul class="simple">
-<li><p>request: Reference to the FastAPI request object.</p></li>
-<li><p>apikey: API Key to authenticate the request.</p></li>
-</ul>
-</div></blockquote>
-<p><strong>Raises:</strong></p>
-<blockquote>
-<div><p>APIResponse:
-Raises the HTTPStatus object with a status code and the public/private IP as response.</p>
-</div></blockquote>
 </dd></dl>
 
 </section>
@@ -515,6 +495,12 @@ Raises the HTTPStatus object with a status code and the public/private IP as res
 Raises the HTTPStatus object with a status code and detail as response.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routes.commands.run_ui">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.commands.</span></span><span class="sig-name descname"><span class="pre">run_ui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.commands.run_ui" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the HTML template for the run command UI.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1550,6 +1536,50 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="multifactor-authentication">
+<h1>Multifactor Authentication<a class="headerlink" href="#multifactor-authentication" title="Permalink to this heading">¶</a></h1>
+<section id="module-pyninja.multifactor.gmail">
+<span id="gmail"></span><h2>Gmail<a class="headerlink" href="#module-pyninja.multifactor.gmail" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.multifactor.gmail.instantiate_mailer">
+<span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.gmail.</span></span><span class="sig-name descname"><span class="pre">instantiate_mailer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SendEmail</span></span></span><a class="headerlink" href="#pyninja.multifactor.gmail.instantiate_mailer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cached function to instantiate the gmail-connector object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns an instance of the SendEmail class from the gmail-connector module.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>gc.SendEmail</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.multifactor.gmail.send_new_mfa">
+<span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.gmail.</span></span><span class="sig-name descname"><span class="pre">send_new_mfa</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.multifactor.gmail.send_new_mfa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to check if a new MFA token should be sent.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.multifactor.gmail.get_mfa">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.gmail.</span></span><span class="sig-name descname"><span class="pre">get_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.multifactor.gmail.get_mfa" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Get multifactor authentication code.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>request: Reference to the FastAPI request object.</p></li>
+<li><p>apikey: API Key to authenticate the request.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object with a status code and the public/private IP as response.</p>
+</div></blockquote>
 </dd></dl>
 
 </section>
@@ -2623,6 +2653,11 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.run_command">
 <span class="sig-name descname"><span class="pre">run_command</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/run-command'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.run_command" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.run_ui">
+<span class="sig-name descname"><span class="pre">run_ui</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/run-ui'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.run_ui" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -4168,9 +4203,12 @@ that start with a dot (hidden files).</p>
 <li><a class="reference internal" href="#pyninja-executors">PyNinja - Executors</a><ul>
 <li><a class="reference internal" href="#module-pyninja.executors.auth">API Authenticator</a></li>
 <li><a class="reference internal" href="#module-pyninja.executors.database">Database</a></li>
-<li><a class="reference internal" href="#module-pyninja.executors.multifactor">Multifactor Authentication</a></li>
 <li><a class="reference internal" href="#module-pyninja.routes.commands">API Routes</a></li>
 <li><a class="reference internal" href="#module-pyninja.executors.squire">Squire</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#multifactor-authentication">Multifactor Authentication</a><ul>
+<li><a class="reference internal" href="#module-pyninja.multifactor.gmail">Gmail</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#api-routes-certificates">API Routes - Certificates</a><ul>
