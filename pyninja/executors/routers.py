@@ -7,7 +7,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from fastapi.security import HTTPBearer
 
-from pyninja.executors import multifactor
+from pyninja.multifactor import gmail
 from pyninja.modules import enums, exceptions, models
 from pyninja.monitor import routes as ui
 from pyninja.routes import (
@@ -69,7 +69,7 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
     basic_routes = [
         APIRoute(
             path=enums.APIEndpoints.get_mfa,
-            endpoint=multifactor.get_mfa,
+            endpoint=gmail.get_mfa,
             methods=["GET"],
         ),
         APIRoute(
