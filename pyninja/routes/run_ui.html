@@ -80,20 +80,22 @@
         }
 
         #log-output {
-          margin-top: 30px;
-          height: 300px;
-          overflow-y: auto;
-          background: #1e1e1e;
-          color: #00ff8c;
-          padding: 15px;
-          font-family: monospace;
-          white-space: pre-wrap;
-          border-radius: 6px;
-          border: 1px solid #444;
+            margin-top: 30px;
+            min-height: 300px;
+            width: 80%;
+            overflow: auto;
+            background: #1e1e1e;
+            color: #00ff8c;
+            padding: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            border-radius: 6px;
+            border: 1px solid #444;
+            resize: both;
+            box-sizing: border-box;
 
-          width: 100vw;
-          margin-left: calc(-50vw + 50%);
-          box-sizing: border-box;
+            /* Hidden initially */
+            display: none;
         }
 
         .hidden {
@@ -102,27 +104,29 @@
     </style>
 </head>
 <body>
-<h2>API Credentials</h2>
-<div class="input-group">
-    <input id="apikey" type="text" required placeholder=" "/>
-    <label for="apikey">API Key (required)</label>
-</div>
+<div id="credentials-section">
+    <h2>API Credentials</h2>
+    <div class="input-group">
+        <input id="apikey" type="text" required placeholder=" "/>
+        <label for="apikey">API Key (required)</label>
+    </div>
 
-<div class="input-group">
-    <input id="apisecret" type="password" required placeholder=" "/>
-    <label for="apisecret">API Secret (required)</label>
-</div>
+    <div class="input-group">
+        <input id="apisecret" type="password" required placeholder=" "/>
+        <label for="apisecret">API Secret (required)</label>
+    </div>
 
-<div class="input-group">
-    <input id="mfa_token" type="text" placeholder=" "/>
-    <label for="mfa_token">MFA Token (optional)</label>
-</div>
+    <div class="input-group">
+        <input id="mfa_token" type="text" placeholder=" "/>
+        <label for="mfa_token">MFA Token (optional)</label>
+    </div>
 
-<div class="input-group">
-    <input id="run_token" type="text" required placeholder=" "/>
-    <label for="run_token">Run Token (required)</label>
+    <div class="input-group">
+        <input id="run_token" type="text" required placeholder=" "/>
+        <label for="run_token">Run Token (required)</label>
+    </div>
+    <button id="save-creds">Save and Continue</button>
 </div>
-<button id="save-creds">Save and Continue</button>
 
 <div id="command-section" class="hidden">
     <h2>Run Command</h2>
@@ -136,12 +140,13 @@
         <label for="timeout">Timeout (seconds)</label>
     </div>
     <button id="run-command">Run</button>
+    <div id="log-output"></div>
 </div>
-<div id="log-output"></div>
 <script>
     const saveButton = document.getElementById('save-creds');
     const runButton = document.getElementById('run-command');
     const commandSection = document.getElementById('command-section');
+    const credentialsSection = document.getElementById('credentials-section');
     const logOutput = document.getElementById('log-output');
 
     saveButton.addEventListener('click', () => {
@@ -178,6 +183,8 @@
         const run_token = localStorage.getItem('run_token');
 
         logOutput.textContent = 'Streaming output...\n';
+        logOutput.style.display = 'block';
+        credentialsSection.style.display = 'none';
 
         try {
             const response = await fetch(`${window.location.origin}{{ API_ENDPOINT }}`, {
@@ -199,8 +206,7 @@
 
             if (!response.ok) {
                 const errorText = await response.text();
-                alert(`Error: ${response.status} - ${errorText}`);
-                return;
+                throw new Error(`Error: ${response.status} - ${errorText}`);
             }
 
             const reader = response.body.getReader();
@@ -216,6 +222,8 @@
 
         } catch (err) {
             alert('Network or server error: ' + err.message);
+            logOutput.style.display = 'none';
+            credentialsSection.style.display = 'block';
         }
     });
 </script>
