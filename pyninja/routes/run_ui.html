@@ -139,7 +139,7 @@
             }
 
             .hidden {
-                display: none;
+                display: none !important;
             }
         </style>
     </head>
@@ -185,9 +185,7 @@
             </div>
         </div>
         <div id="log-output"></div>
-        <div id="streaming-status" class="hidden" style="margin-top: 10px; text-align: center;">
-            <span style="color: green;">●</span> <span>Streaming...</span>
-        </div>
+        <div id="streaming-status" class="hidden" style="margin-top: 10px; text-align: center;"><span style="color: green;">●</span> <span>Streaming...</span></div>
         <button id="export-log" class="hidden" style="background: #4caf50;">Download Log</button>
         <div style="text-align: center; margin-top: 10px;">
             <button id="stop-streaming" class="hidden">Stop Streaming</button>
@@ -195,55 +193,67 @@
         </div>
     </body>
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const apikey = localStorage.getItem('apikey');
-            const apisecret = localStorage.getItem('apisecret');
-            const mfa_token = localStorage.getItem('mfa_token');
-            const run_token = localStorage.getItem('run_token');
-
-            if (apikey && apisecret && run_token) {
-                document.getElementById('apikey').value = apikey;
-                document.getElementById('apisecret').value = apisecret;
-                document.getElementById('mfa_token').value = mfa_token || '';
-                document.getElementById('run_token').value = run_token;
-
-                // Auto-show command section if all credentials exist
-                commandSection.classList.remove('hidden');
-            }
-        });
-
+        const clearCredsButton = document.getElementById("clear-creds");
         const saveButton = document.getElementById("save-creds");
         const runButton = document.getElementById("run-command");
         const commandSection = document.getElementById("command-section");
         const credentialsSection = document.getElementById("credentials-section");
         const logOutput = document.getElementById("log-output");
-        let currentAbortController = null;
-        let wasManuallyStopped = false;
         const stopButton = document.getElementById("stop-streaming");
         const clearButton = document.getElementById("clear-console");
-        const clearCredsButton = document.getElementById('clear-creds');
-        const exportButton = document.getElementById('export-log');
+        const exportButton = document.getElementById("export-log");
 
-        exportButton.addEventListener('click', () => {
-            const blob = new Blob([logOutput.textContent], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
+        let currentAbortController = null;
+        let wasManuallyStopped = false;
 
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'command-log.txt';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+        function toggleClearCredsButton() {
+            const hasCreds = localStorage.getItem("apikey") && localStorage.getItem("apisecret") && localStorage.getItem("run_token");
+            clearCredsButton.style.display = hasCreds ? "block" : "none";
+        }
+
+        function showLogOutput(show) {
+            logOutput.style.display = show ? "block" : "none";
+            exportButton.classList.toggle("hidden", !show);
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const apikey = localStorage.getItem("apikey");
+            const apisecret = localStorage.getItem("apisecret");
+            const mfa_token = localStorage.getItem("mfa_token");
+            const run_token = localStorage.getItem("run_token");
+
+            if (apikey && apisecret && run_token) {
+                document.getElementById("apikey").value = apikey;
+                document.getElementById("apisecret").value = apisecret;
+                document.getElementById("mfa_token").value = mfa_token || "";
+                document.getElementById("run_token").value = run_token;
+
+                // Auto-show command section if all credentials exist
+                commandSection.classList.remove("hidden");
+            }
+            // Hide download log button initially because console is not visible yet
+            exportButton.classList.add("hidden");
+            toggleClearCredsButton();
         });
 
-        clearCredsButton.addEventListener('click', () => {
-            localStorage.removeItem('apikey');
-            localStorage.removeItem('apisecret');
-            localStorage.removeItem('mfa_token');
-            localStorage.removeItem('run_token');
-            alert('Credentials cleared.');
-            location.reload(); // reload to reset UI
+        clearCredsButton.addEventListener("click", () => {
+            localStorage.removeItem("apikey");
+            localStorage.removeItem("apisecret");
+            localStorage.removeItem("mfa_token");
+            localStorage.removeItem("run_token");
+
+            document.getElementById("apikey").value = "";
+            document.getElementById("apisecret").value = "";
+            document.getElementById("mfa_token").value = "";
+            document.getElementById("run_token").value = "";
+
+            // Show the credentials section again
+            document.getElementById("credentials-section").style.display = "block";
+
+            // Hide command section and related buttons
+            document.getElementById("command-section").classList.add("hidden");
+            showLogOutput(false);
+            clearCredsButton.style.display = "none";
         });
 
         saveButton.addEventListener("click", () => {
@@ -263,6 +273,7 @@
             localStorage.setItem("run_token", run_token);
 
             commandSection.classList.remove("hidden");
+            toggleClearCredsButton();
         });
 
         runButton.addEventListener("click", async () => {
@@ -280,11 +291,10 @@
             const run_token = localStorage.getItem("run_token");
 
             logOutput.textContent = "Streaming output...\n";
-            logOutput.style.display = "block";
+            showLogOutput(true);
             credentialsSection.style.display = "none";
             stopButton.classList.remove("hidden");
             clearButton.classList.add("hidden");
-            exportButton.classList.add("hidden");
             document.getElementById("streaming-status").classList.remove("hidden");
 
             currentAbortController = new AbortController();
@@ -334,7 +344,6 @@
                 // Streaming complete
                 stopButton.classList.add("hidden");
                 clearButton.classList.remove("hidden");
-                exportButton.classList.remove("hidden");
                 document.getElementById("streaming-status").classList.add("hidden");
             } catch (err) {
                 clearTimeout(hardTimeout);
@@ -345,15 +354,13 @@
                 if (wasManuallyStopped) {
                     wasManuallyStopped = false;
                     clearButton.classList.remove("hidden");
-                    exportButton.classList.remove("hidden");
                     return;
                 }
 
                 alert("Network or server error: " + err.message);
-                logOutput.style.display = "none";
+                showLogOutput(false);
                 credentialsSection.style.display = "block";
                 clearButton.classList.add("hidden");
-                exportButton.classList.remove("hidden");
             }
         });
 
@@ -371,6 +378,26 @@
         clearButton.addEventListener("click", () => {
             logOutput.textContent = "";
             clearButton.classList.add("hidden");
+            showLogOutput(false);
+        });
+
+        exportButton.addEventListener("click", () => {
+            const now = new Date();
+            // Format: MMDDYYYY_HHmmUTC (e.g. 08192025_1754UTC)
+            const pad = (num) => String(num).padStart(2, "0");
+            const timestamp = pad(now.getMonth() + 1) + pad(now.getDate()) + now.getFullYear() + "_" + pad(now.getHours()) + pad(now.getMinutes()) + "UTC";
+
+            const filename = `command-log_${timestamp}.txt`;
+            const blob = new Blob([logOutput.textContent], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
         });
     </script>
 </html>
