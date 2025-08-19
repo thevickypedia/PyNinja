@@ -104,6 +104,18 @@
                 margin-right: auto;
             }
 
+            #export-log {
+                width: 30%;
+                max-width: 200px;
+                padding: 10px;
+                margin: 5px auto;
+                font-size: 14px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                display: block;
+            }
+
             #stop-streaming,
             #clear-console {
                 width: 30%;
@@ -156,6 +168,7 @@
                 </div>
                 <button id="save-creds">Save and Continue</button>
             </div>
+            <button id="clear-creds" style="background: #bbb; margin-top: 10px;">Clear Credentials (Logout)</button>
 
             <div id="command-section" class="hidden">
                 <h2>Run Command</h2>
@@ -172,12 +185,33 @@
             </div>
         </div>
         <div id="log-output"></div>
+        <div id="streaming-status" class="hidden" style="margin-top: 10px; text-align: center;">
+            <span style="color: green;">●</span> <span>Streaming...</span>
+        </div>
+        <button id="export-log" class="hidden" style="background: #4caf50;">Download Log</button>
         <div style="text-align: center; margin-top: 10px;">
             <button id="stop-streaming" class="hidden">Stop Streaming</button>
             <button id="clear-console" class="hidden">Clear Console</button>
         </div>
     </body>
     <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const apikey = localStorage.getItem('apikey');
+            const apisecret = localStorage.getItem('apisecret');
+            const mfa_token = localStorage.getItem('mfa_token');
+            const run_token = localStorage.getItem('run_token');
+
+            if (apikey && apisecret && run_token) {
+                document.getElementById('apikey').value = apikey;
+                document.getElementById('apisecret').value = apisecret;
+                document.getElementById('mfa_token').value = mfa_token || '';
+                document.getElementById('run_token').value = run_token;
+
+                // Auto-show command section if all credentials exist
+                commandSection.classList.remove('hidden');
+            }
+        });
+
         const saveButton = document.getElementById("save-creds");
         const runButton = document.getElementById("run-command");
         const commandSection = document.getElementById("command-section");
@@ -187,6 +221,30 @@
         let wasManuallyStopped = false;
         const stopButton = document.getElementById("stop-streaming");
         const clearButton = document.getElementById("clear-console");
+        const clearCredsButton = document.getElementById('clear-creds');
+        const exportButton = document.getElementById('export-log');
+
+        exportButton.addEventListener('click', () => {
+            const blob = new Blob([logOutput.textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'command-log.txt';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        });
+
+        clearCredsButton.addEventListener('click', () => {
+            localStorage.removeItem('apikey');
+            localStorage.removeItem('apisecret');
+            localStorage.removeItem('mfa_token');
+            localStorage.removeItem('run_token');
+            alert('Credentials cleared.');
+            location.reload(); // reload to reset UI
+        });
 
         saveButton.addEventListener("click", () => {
             const apikey = document.getElementById("apikey").value.trim();
@@ -226,14 +284,14 @@
             credentialsSection.style.display = "none";
             stopButton.classList.remove("hidden");
             clearButton.classList.add("hidden");
+            exportButton.classList.add("hidden");
+            document.getElementById("streaming-status").classList.remove("hidden");
 
-            // Use AbortController to allow timeout
             currentAbortController = new AbortController();
             const signal = currentAbortController.signal;
 
-            // Set max timeout for streaming response (in milliseconds)
             const hardTimeout = setTimeout(() => {
-                controller.abort();
+                currentAbortController?.abort();
             }, 15000); // 15 seconds
 
             try {
@@ -255,7 +313,7 @@
                     signal,
                 });
 
-                clearTimeout(hardTimeout); // clear timeout on success
+                clearTimeout(hardTimeout);
 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -272,15 +330,22 @@
                     logOutput.textContent += chunk;
                     logOutput.scrollTop = logOutput.scrollHeight;
                 }
+
+                // Streaming complete
+                stopButton.classList.add("hidden");
+                clearButton.classList.remove("hidden");
+                exportButton.classList.remove("hidden");
+                document.getElementById("streaming-status").classList.add("hidden");
             } catch (err) {
                 clearTimeout(hardTimeout);
                 stopButton.classList.add("hidden");
                 currentAbortController = null;
+                document.getElementById("streaming-status").classList.add("hidden");
 
                 if (wasManuallyStopped) {
                     wasManuallyStopped = false;
-                    // Do not clear logs or alert; allow clear button to show
                     clearButton.classList.remove("hidden");
+                    exportButton.classList.remove("hidden");
                     return;
                 }
 
@@ -288,6 +353,7 @@
                 logOutput.style.display = "none";
                 credentialsSection.style.display = "block";
                 clearButton.classList.add("hidden");
+                exportButton.classList.remove("hidden");
             }
         });
 
