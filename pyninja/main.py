@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
         kwargs=dict(
             tables=[enums.TableName.run_token, enums.TableName.mfa_token],
             column="expiry",
-            db_file=models.env.database,
+            env=models.env,
         ),
     )
     process.start()
@@ -48,6 +48,7 @@ PyNinjaAPI = FastAPI(
     title="PyNinja",
     version=version.__version__,
     license_info={"name": "MIT License", "identifier": "MIT"},
+    lifespan=lifespan,
 )
 PyNinjaAPI.__name__ = "PyNinjaAPI"
 PyNinjaAPI.routes.append(
@@ -188,18 +189,16 @@ def start(**kwargs) -> None:
             )
 
     PyNinjaAPI.description = startup.get_desc(get_routes, post_routes, monitor_routes)
-    # Register lifespan context manager for startup and shutdown events
-    PyNinjaAPI.lifespan = lifespan
     module_name = pathlib.Path(__file__)
-    kwargs = dict(
+    uvicorn_args = dict(
         host=models.env.ninja_host,
         port=models.env.ninja_port,
         app=f"{module_name.parent.stem}.{module_name.stem}:{PyNinjaAPI.__name__}",
     )
     if models.env.log_config:
-        kwargs["log_config"] = (
+        uvicorn_args["log_config"] = (
             models.env.log_config
             if isinstance(models.env.log_config, dict)
             else str(models.env.log_config)
         )
-    uvicorn.run(**kwargs)
+    uvicorn.run(**uvicorn_args)

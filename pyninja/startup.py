@@ -65,13 +65,17 @@ def get_desc(
         str:
         Returns the description as a string.
     """
-    basic_fl, remote_fl, monitor_fl = ("Disabled",) * 3
+    basic_fl, remote_fl, monitor_fl, run_ui = ("Disabled",) * 4
     if get_routes.enabled:
         basic_fl = "All basic GET calls have been enabled"
     if post_routes.enabled:
-        n = enums.APIEndpoints.run_command.name
-        v = enums.APIEndpoints.run_command.value
-        remote_fl = f"Enabled at <a href='#/default/{n}_{n}_post'>{v}</a>"
+        rc_name = enums.APIEndpoints.run_command.name
+        rc_value = enums.APIEndpoints.run_command.value
+        remote_fl = (
+            f"Enabled at <a href='#/default/{rc_name}_{rc_name}_post'>{rc_value}</a>"
+        )
+        ru_value = enums.APIEndpoints.run_ui.value
+        run_ui = f"Enabled at <a href='{ru_value}'>{ru_value}</a>"
     monitor_ui = enums.APIEndpoints.monitor.value
     if monitor_routes.enabled:
         monitor_fl = f"Enabled at <a href='{monitor_ui}'>{monitor_ui}</a>"
@@ -88,6 +92,7 @@ def get_desc(
     description += "\n\n#### Additional Features**"
     for route in post_routes.routes:
         description += generate_hyperlink(route)
+    # TODO: Not sure if including this by default is helping (revisit the entire logic)
     description += f"\n- <a href='{monitor_ui}'>{monitor_ui}</a><br>"
     description += (
         "\n> **Additional features are available based on server configuration."
@@ -95,6 +100,7 @@ def get_desc(
     description += "\n\n#### Current State"
     description += f"\n- **Basic Execution:** {basic_fl}"
     description += f"\n- **Remote Execution:** {remote_fl}"
+    description += f"\n- **Remote Execution UI:** {run_ui}"
     description += f"\n- **Monitoring Page:** {monitor_fl}"
     description += "\n\n#### Links"
     description += "\n- <a href='https://pypi.org/project/PyNinja/'>PyPi</a><br>"

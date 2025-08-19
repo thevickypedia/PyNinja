@@ -15,8 +15,6 @@ LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
 
 # Minimum time (in seconds) before a new MFA token can be sent
-# TODO: Validate MFA functionality with multiple workers
-#   Multiprocessing might create a conflict - move functionality to DB 1:1 mapping
 MFA_RESEND_INTERVAL = 120
 
 
