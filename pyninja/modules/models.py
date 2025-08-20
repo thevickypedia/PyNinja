@@ -13,7 +13,15 @@ from typing import Any, Callable, Dict, List, Set, Tuple
 
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from pyarchitecture.config import default_cpu_lib, default_disk_lib, default_gpu_lib
-from pydantic import BaseModel, EmailStr, Field, FilePath, PositiveInt, field_validator
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    Field,
+    FilePath,
+    HttpUrl,
+    PositiveInt,
+    field_validator,
+)
 from pydantic_settings import BaseSettings
 
 from pyninja.modules import enums, exceptions
@@ -296,6 +304,10 @@ class EnvConfig(BaseSettings):
     gmail_user: EmailStr | None = None
     gmail_pass: str | None = None
     recipient: str | None = None
+    ntfy_url: HttpUrl | None = None
+    ntfy_username: str | None = None
+    ntfy_password: str | None = None
+    ntfy_topic: str | None = None
     # Timeout should at least be 15 minutes (900 seconds) and can be up to 24 hours (86_400 seconds)
     # Default: 1h
     mfa_timeout: PositiveInt = Field(default=3_600, ge=900, le=86_400)

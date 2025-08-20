@@ -1542,6 +1542,27 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </section>
 <section id="multifactor-authentication">
 <h1>Multifactor Authentication<a class="headerlink" href="#multifactor-authentication" title="Permalink to this heading">¶</a></h1>
+<section id="module-pyninja.multifactor.mfa">
+<span id="initializer"></span><h2>Initializer<a class="headerlink" href="#module-pyninja.multifactor.mfa" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.multifactor.mfa.get_mfa">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.mfa.</span></span><span class="sig-name descname"><span class="pre">get_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mfa_option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.enums.MFAOptions" title="pyninja.modules.enums.MFAOptions"><span class="pre">MFAOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.multifactor.mfa.get_mfa" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Get multifactor authentication code.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>request: Reference to the FastAPI request object.</p></li>
+<li><p>apikey: API Key to authenticate the request.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object with a status code.</p>
+</div></blockquote>
+</dd></dl>
+
+</section>
 <section id="module-pyninja.multifactor.gmail">
 <span id="gmail"></span><h2>Gmail<a class="headerlink" href="#module-pyninja.multifactor.gmail" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
@@ -1578,8 +1599,38 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <p><strong>Raises:</strong></p>
 <blockquote>
 <div><p>APIResponse:
+Raises the HTTPStatus object with a status code.</p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="module-pyninja.multifactor.ntfy">
+<span id="ntfy"></span><h2>Ntfy<a class="headerlink" href="#module-pyninja.multifactor.ntfy" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.multifactor.ntfy.get_mfa">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.ntfy.</span></span><span class="sig-name descname"><span class="pre">get_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.multifactor.ntfy.get_mfa" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Get multifactor authentication code via Ntfy.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>request: Reference to the FastAPI request object.</p></li>
+<li><p>apikey: API Key to authenticate the request.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
 Raises the HTTPStatus object with a status code and the public/private IP as response.</p>
 </div></blockquote>
+</dd></dl>
+
+</section>
+<section id="module-pyninja.multifactor.telegram">
+<span id="telegram"></span><h2>Telegram<a class="headerlink" href="#module-pyninja.multifactor.telegram" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.multifactor.telegram.get_mfa">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.telegram.</span></span><span class="sig-name descname"><span class="pre">get_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.multifactor.telegram.get_mfa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Placeholder MFA auth mechanism for Telegram.</p>
 </dd></dl>
 
 </section>
@@ -2873,6 +2924,30 @@ Raises the HTTPStatus object with a status code and the public/private IP as res
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="pyninja.modules.enums.MFAOptions">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.modules.enums.</span></span><span class="sig-name descname"><span class="pre">MFAOptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.enums.MFAOptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Authentication mechanism for multi-factor tokens.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MFAOptions</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.MFAOptions.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'email'</span></em><a class="headerlink" href="#pyninja.modules.enums.MFAOptions.email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.MFAOptions.ntfy">
+<span class="sig-name descname"><span class="pre">ntfy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ntfy'</span></em><a class="headerlink" href="#pyninja.modules.enums.MFAOptions.ntfy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.MFAOptions.telegram">
+<span class="sig-name descname"><span class="pre">telegram</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'telegram'</span></em><a class="headerlink" href="#pyninja.modules.enums.MFAOptions.telegram" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-pyninja.modules.exceptions">
 <span id="exceptions"></span><h2>Exceptions<a class="headerlink" href="#module-pyninja.modules.exceptions" title="Permalink to this heading">¶</a></h2>
@@ -3200,6 +3275,26 @@ Raises the HTTPStatus object with a status code and the public/private IP as res
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.recipient">
 <span class="sig-name descname"><span class="pre">recipient</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.recipient" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.ntfy_url">
+<span class="sig-name descname"><span class="pre">ntfy_url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pydantic.networks.HttpUrl</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.ntfy_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.ntfy_username">
+<span class="sig-name descname"><span class="pre">ntfy_username</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.ntfy_username" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.ntfy_password">
+<span class="sig-name descname"><span class="pre">ntfy_password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.ntfy_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.ntfy_topic">
+<span class="sig-name descname"><span class="pre">ntfy_topic</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.ntfy_topic" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -4208,7 +4303,10 @@ that start with a dot (hidden files).</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#multifactor-authentication">Multifactor Authentication</a><ul>
+<li><a class="reference internal" href="#module-pyninja.multifactor.mfa">Initializer</a></li>
 <li><a class="reference internal" href="#module-pyninja.multifactor.gmail">Gmail</a></li>
+<li><a class="reference internal" href="#module-pyninja.multifactor.ntfy">Ntfy</a></li>
+<li><a class="reference internal" href="#module-pyninja.multifactor.telegram">Telegram</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#api-routes-certificates">API Routes - Certificates</a><ul>

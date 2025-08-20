@@ -61,7 +61,7 @@ async def get_mfa(
     **Raises:**
 
         APIResponse:
-        Raises the HTTPStatus object with a status code and the public/private IP as response.
+        Raises the HTTPStatus object with a status code.
     """
     await auth.level_1(request, apikey)
     if not all((models.env.gmail_user, models.env.gmail_pass, models.env.recipient)):

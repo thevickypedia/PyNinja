@@ -233,6 +233,8 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#pyninja.modules.enums.MFAOptions.email">email (pyninja.modules.enums.MFAOptions attribute)</a>
+</li>
       <li><a href="index.html#pyninja.modules.models.RoutingHandler.enabled">enabled (pyninja.modules.models.RoutingHandler attribute)</a>
 </li>
       <li><a href="index.html#pyninja.routes.upload.entry_fn">entry_fn() (in module pyninja.routes.upload)</a>
@@ -383,12 +385,12 @@
 </li>
       <li><a href="index.html#pyninja.monitor.config.get_expiry">get_expiry() (in module pyninja.monitor.config)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.get_file">get_file (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
       <li><a href="index.html#pyninja.routes.fullaccess.get_file">get_file() (in module pyninja.routes.fullaccess)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.get_ip">get_ip (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
       <li><a href="index.html#pyninja.routes.ipaddr.get_ip_address">get_ip_address() (in module pyninja.routes.ipaddr)</a>
@@ -406,7 +408,15 @@
       <li><a href="index.html#pyninja.modules.enums.APIEndpoints.get_mfa">get_mfa (pyninja.modules.enums.APIEndpoints attribute)</a>
 </li>
       <li><a href="index.html#pyninja.multifactor.gmail.get_mfa">get_mfa() (in module pyninja.multifactor.gmail)</a>
+
+      <ul>
+        <li><a href="index.html#pyninja.multifactor.mfa.get_mfa">(in module pyninja.multifactor.mfa)</a>
 </li>
+        <li><a href="index.html#pyninja.multifactor.ntfy.get_mfa">(in module pyninja.multifactor.ntfy)</a>
+</li>
+        <li><a href="index.html#pyninja.multifactor.telegram.get_mfa">(in module pyninja.multifactor.telegram)</a>
+</li>
+      </ul></li>
       <li><a href="index.html#pyninja.monitor.resources.get_os_agnostic_metrics">get_os_agnostic_metrics() (in module pyninja.monitor.resources)</a>
 </li>
       <li><a href="index.html#pyninja.features.process.get_performance">get_performance() (in module pyninja.features.process)</a>
@@ -613,6 +623,8 @@
 </li>
       <li><a href="index.html#pyninja.modules.enums.TableName.mfa_token">mfa_token (pyninja.modules.enums.TableName attribute)</a>
 </li>
+      <li><a href="index.html#pyninja.modules.enums.MFAOptions">MFAOptions (class in pyninja.modules.enums)</a>
+</li>
       <li><a href="index.html#pyninja.modules.models.AppStatus.model_config">model_config (pyninja.modules.models.AppStatus attribute)</a>
 
       <ul>
@@ -673,6 +685,12 @@
 </li>
         <li><a href="index.html#module-pyninja.multifactor.gmail">pyninja.multifactor.gmail</a>
 </li>
+        <li><a href="index.html#module-pyninja.multifactor.mfa">pyninja.multifactor.mfa</a>
+</li>
+        <li><a href="index.html#module-pyninja.multifactor.ntfy">pyninja.multifactor.ntfy</a>
+</li>
+        <li><a href="index.html#module-pyninja.multifactor.telegram">pyninja.multifactor.telegram</a>
+</li>
         <li><a href="index.html#module-pyninja.routes.certificates">pyninja.routes.certificates</a>
 </li>
         <li><a href="index.html#module-pyninja.routes.commands">pyninja.routes.commands</a>
@@ -726,9 +744,19 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.models.EnvConfig.ninja_host">ninja_host (pyninja.modules.models.EnvConfig attribute)</a>
 </li>
+      <li><a href="index.html#pyninja.modules.models.EnvConfig.ninja_port">ninja_port (pyninja.modules.models.EnvConfig attribute)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.enums.MFAOptions.ntfy">ntfy (pyninja.modules.enums.MFAOptions attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#pyninja.modules.models.EnvConfig.ninja_port">ninja_port (pyninja.modules.models.EnvConfig attribute)</a>
+      <li><a href="index.html#pyninja.modules.models.EnvConfig.ntfy_password">ntfy_password (pyninja.modules.models.EnvConfig attribute)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.models.EnvConfig.ntfy_topic">ntfy_topic (pyninja.modules.models.EnvConfig attribute)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.models.EnvConfig.ntfy_url">ntfy_url (pyninja.modules.models.EnvConfig attribute)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.models.EnvConfig.ntfy_username">ntfy_username (pyninja.modules.models.EnvConfig attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -880,8 +908,6 @@
         <li><a href="index.html#module-pyninja.modules.enums">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyninja.modules.exceptions
 
@@ -889,6 +915,8 @@
         <li><a href="index.html#module-pyninja.modules.exceptions">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyninja.modules.models
 
@@ -957,6 +985,27 @@
 
       <ul>
         <li><a href="index.html#module-pyninja.multifactor.gmail">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyninja.multifactor.mfa
+
+      <ul>
+        <li><a href="index.html#module-pyninja.multifactor.mfa">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyninja.multifactor.ntfy
+
+      <ul>
+        <li><a href="index.html#module-pyninja.multifactor.ntfy">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyninja.multifactor.telegram
+
+      <ul>
+        <li><a href="index.html#module-pyninja.multifactor.telegram">module</a>
 </li>
       </ul></li>
       <li>
@@ -1224,6 +1273,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#pyninja.modules.enums.TableName">TableName (class in pyninja.modules.enums)</a>
+</li>
+      <li><a href="index.html#pyninja.modules.enums.MFAOptions.telegram">telegram (pyninja.modules.enums.MFAOptions attribute)</a>
 </li>
       <li><a href="index.html#pyninja.modules.enums.Templates">Templates (class in pyninja.modules.enums)</a>
 </li>

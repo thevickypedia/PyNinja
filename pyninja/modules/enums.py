@@ -131,3 +131,15 @@ class TableName(StrEnum):
     auth_errors: str = "auth_errors"
     run_token: str = "run_token"
     mfa_token: str = "mfa_token"
+
+
+class MFAOptions(StrEnum):
+    """Authentication mechanism for multi-factor tokens.
+
+    >>> MFAOptions
+
+    """
+
+    email: str = "email"
+    ntfy: str = "ntfy"
+    telegram: str = "telegram"

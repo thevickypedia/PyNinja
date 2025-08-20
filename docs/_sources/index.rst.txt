@@ -67,9 +67,21 @@ Squire
 Multifactor Authentication
 ==========================
 
+Initializer
+-----------
+.. automodule:: pyninja.multifactor.mfa
+
 Gmail
 -----
 .. automodule:: pyninja.multifactor.gmail
+
+Ntfy
+----
+.. automodule:: pyninja.multifactor.ntfy
+
+Telegram
+--------
+.. automodule:: pyninja.multifactor.telegram
 
 API Routes - Certificates
 =========================

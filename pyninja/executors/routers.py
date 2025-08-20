@@ -9,7 +9,7 @@ from fastapi.security import HTTPBearer
 
 from pyninja.modules import enums, exceptions, models
 from pyninja.monitor import routes as ui
-from pyninja.multifactor import gmail
+from pyninja.multifactor import mfa
 from pyninja.routes import (
     certificates,
     commands,
@@ -69,7 +69,7 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
     basic_routes = [
         APIRoute(
             path=enums.APIEndpoints.get_mfa,
-            endpoint=gmail.get_mfa,
+            endpoint=mfa.get_mfa,
             methods=["GET"],
         ),
         APIRoute(
