@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+v4.7.1 (08/20/2025)
+-------------------
+- Drop existing ``mfa_token`` table before creating a new one
+- Keep MFA error messages generic
+- Simplify breaker logic
+- Fix telegram exposing bot token
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/4.7.0...v4.7.1
+
 4.7.0 (08/19/2025)
 ------------------
 - Onboard Telegram API integration as another option to get MFA
