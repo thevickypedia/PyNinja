@@ -42,7 +42,7 @@ def get_running_containers() -> Generator[Dict[str, str]]:
         containers = docker.from_env().api.containers()
     except DockerException as error:
         LOGGER.error(error)
-        return []
+        containers = []
     for container in containers:
         if container.get("State") == "running":
             yield container

@@ -33,24 +33,22 @@ async def get_mfa(
         Raises the HTTPStatus object with a status code to indicate MFA delivery.
     """
     await auth.level_1(request, apikey)
-    if not all((models.env.ntfy_username, models.env.ntfy_password, models.env.ntfy_url, models.env.ntfy_topic)):
+    if not all((models.env.ntfy_url, models.env.ntfy_topic)):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
             detail="Ntfy URL, username, password, and topic must be set in the environment.",
         )
-    headers = {
-        "X-Title": f"Multifactor Authenticator - {datetime.now().strftime('%c')}",
+    session = requests.Session()
+    session.headers = {
+        "X-Title": f"PyNinja MFA - {datetime.now().strftime('%c')}",
         "Content-Type": "application/x-www-form-urlencoded",
     }
+    if models.env.ntfy_username and models.env.ntfy_password:
+        session.auth = (models.env.ntfy_username, models.env.ntfy_password)
     endpoint = f"{models.env.ntfy_url}{models.env.ntfy_topic}"
     token = squire.generate_mfa_token(length=8)
     try:
-        response = requests.post(
-            url=endpoint,
-            auth=(models.env.ntfy_username, models.env.ntfy_password),
-            headers=headers,
-            data=token,
-        )
+        response = session.post(url=endpoint, data=token)
         response.raise_for_status()
         LOGGER.debug(response.json())
         database.update_token(token=token, table=enums.TableName.mfa_token, expiry=models.env.mfa_timeout)

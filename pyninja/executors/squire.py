@@ -9,7 +9,6 @@ import shutil
 import socket
 import string
 import subprocess
-import warnings
 from collections.abc import Generator
 from datetime import timedelta
 from typing import Dict, List
@@ -17,7 +16,6 @@ from typing import Dict, List
 import pyarchitecture
 import requests
 import yaml
-from pydantic import PositiveFloat, PositiveInt
 
 from pyninja.modules import enums, models
 
@@ -28,7 +26,7 @@ IP_REGEX = re.compile(
 )
 
 
-def public_ip_address() -> str:
+def public_ip_address() -> str | None:
     """Gets public IP address of the host using different endpoints.
 
     Returns:
@@ -181,7 +179,7 @@ def stream_command(command: str, timeout: float) -> Generator[str]:
     return generate()
 
 
-def process_command(command: str, timeout: PositiveInt | PositiveFloat) -> Dict[str, List[str]]:
+def process_command(command: str, timeout: int | float) -> Dict[str, List[str]]:
     """Process the requested command.
 
     Args:
@@ -362,6 +360,7 @@ def assert_pyudisk() -> None:
                 "\n\tPyUdisk has not been installed. Use pip install 'PyNinja[extra]' to view disk report metrics."
             )
         return
+    # noinspection PyArgumentList
     models.env.smart_lib = models.env.smart_lib or PyUdiskConfig().smart_lib
 
 
@@ -376,28 +375,38 @@ def assert_tokens() -> None:
     )
 
 
+def any_mfa_enabled() -> bool:
+    """Check if any MFA method is enabled.
+
+    Returns:
+        bool:
+        Returns True if any MFA method is enabled, else False.
+    """
+    return (
+        any((models.env.gmail_user, models.env.gmail_pass))  # recipient is optional (defaults to gmail_user)
+        or any((models.env.ntfy_url, models.env.ntfy_topic))  # ntfy_username and ntfy_password are optional
+        or any((models.env.telegram_token, models.env.telegram_chat_id))
+        or False
+    )
+
+
 def handle_warnings() -> None:
     """Raises security warnings."""
-
-    class SecurityWarning(Warning):
-        """Custom security warning."""
-
     try:
         term_size = os.get_terminal_size().columns
     except OSError:
-        term_size = 80
+        term_size = 120
     base = "*" * term_size
 
     if not all((models.env.remote_execution, models.env.api_secret, models.env.apikey)):
         return
-    if not all((models.env.gmail_user, models.env.gmail_pass, models.env.recipient)):
-        warnings.warn(
+    if not any_mfa_enabled():
+        # TODO: Perhaps just disable remote execution with a warning?
+        raise UserWarning(
             f"\n{base}"
             "\nThe 'remote_execution' flag is enabled, allowing shell command execution via the API."
-            "\nThis feature poses significant security risks and is recommended to use MFA, along with rate limiting."
-            "\nRepeated authentication failures will result in permanent lockout for the user."
+            "\nThis feature poses significant security risks and CANNOT be used without MFA."
             f"\n{base}",
-            SecurityWarning,
         )
 
 
@@ -568,3 +577,23 @@ def log_subprocess_error(error: subprocess.CalledProcessError) -> str:
     LOGGER.error("Command failed: %s", cmd_str)
     LOGGER.error("[%s]: %s", error.returncode, reason)
     return reason
+
+
+class AddProcessName(logging.Filter):
+    """Wrapper that overrides ``logging.Filter`` to add ``processName`` to the existing log format.
+
+    >>> AddProcessName
+
+    Args:
+        process_name: Takes name of the process to be added as argument.
+    """
+
+    def __init__(self, process_name: str):
+        """Instantiates super class."""
+        self.process_name = process_name
+        super().__init__()
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Overrides the built-in filter record."""
+        record.processName = self.process_name
+        return True

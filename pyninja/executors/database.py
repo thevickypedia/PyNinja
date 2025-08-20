@@ -126,9 +126,9 @@ def delete_expired_tokens(
     """Deletes the entry if an expired record is found.
 
     Args:
-        cursor: Cursor object for the database.
+        database: Database object.
         tables: Dictionary of tables to check for expired tokens with their expiry column name.
-        logger: Logger object to log messages.
+        logger: Custom logger instance for logging messages.
     """
     with database.connection:
         cursor = database.connection.cursor()
@@ -149,9 +149,6 @@ def delete_expired_tokens(
 
 def get_log_config() -> Dict[str, Any]:
     """Returns the log configuration for the child process.
-
-    Args:
-        log_config: Log configuration dictionary or file path.
 
     Returns:
         Dict[str, Any]:
@@ -188,6 +185,7 @@ def monitor_table(tables: Dict[enums.TableName, str], env: models.EnvConfig) -> 
     uvicorn_log_config = get_log_config()
     logging.config.dictConfig(uvicorn_log_config)
     logger = logging.getLogger("uvicorn.default")
+    logger.addFilter(filter=squire.AddProcessName(process_name="DBMonitor"))
     logger.info("Initiated table monitor to delete expired tokens")
     database = models.Database(models.env.database)
     logger.info("Database description: %s", database.describe_database())

@@ -83,9 +83,6 @@ async def verify_mfa(mfa_code: str) -> None:
         APIResponse:
         - 401: If MFA code is invalid.
     """
-    if not all((models.env.gmail_user, models.env.gmail_pass, models.env.recipient)):
-        LOGGER.warning("A secure endpoint was requested, but MFA is not configured.")
-        return
     if not mfa_code:
         LOGGER.error("No MFA code provided.")
         raise exceptions.APIResponse(status_code=HTTPStatus.UNAUTHORIZED.real, detail="MFA code is required.")

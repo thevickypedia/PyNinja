@@ -96,7 +96,7 @@ class CertificateStatus(BaseModel):
 
     status_code: int
     description: str
-    certificates: List[Dict[str, Any]] = Field(default_factory=list)
+    certificates: List[Dict[str, Any]] | List[str] = Field(default_factory=list)
 
 
 class ServiceStatus(BaseModel):
@@ -385,6 +385,7 @@ class FileIO(BaseModel):
     mfa_template: str = Field(load_mfa_template(current_dir))
 
 
+# noinspection PyArgumentList
 fileio = FileIO()
 
 

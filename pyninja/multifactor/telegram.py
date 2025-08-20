@@ -20,7 +20,6 @@ def send_message(
     """Sends a message to the user via Telegram.
 
     Args:
-        chat_id: Chat ID.
         message: Message to be sent to the user.
         parse_mode: Parse mode. Defaults to ``markdown``
 
@@ -28,8 +27,7 @@ def send_message(
         Response:
         Response class.
     """
-    base_url = f"https://api.telegram.org/bot{models.env.telegram_token}"
-    url = base_url + "/sendMessage"
+    url = f"https://api.telegram.org/bot{models.env.telegram_token}/sendMessage"
     result = requests.post(
         url=url,
         data={"chat_id": models.env.telegram_chat_id, "text": message, "parse_mode": parse_mode},
@@ -61,7 +59,7 @@ async def get_mfa(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
             detail="Ntfy URL, username, password, and topic must be set in the environment.",
         )
-    title = f"Multifactor Authenticator - {datetime.now().strftime('%c')}"
+    title = f"PyNinja MFA - {datetime.now().strftime('%c')}"
     token = squire.generate_mfa_token()
     try:
         response = send_message(message=f"*{title}*\n\n```\n{token}\n```")

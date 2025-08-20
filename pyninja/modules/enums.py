@@ -123,7 +123,7 @@ class APIRouteType(StrEnum):
 class TableName(StrEnum):
     """Table names.
 
-    >>> TableNames
+    >>> TableName
 
     """
 
@@ -132,7 +132,7 @@ class TableName(StrEnum):
 
 
 class MFAOptions(StrEnum):
-    """Authentication mechanism for multi-factor tokens.
+    """Authentication mechanism for multifactor tokens.
 
     >>> MFAOptions
 

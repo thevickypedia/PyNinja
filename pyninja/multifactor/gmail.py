@@ -69,10 +69,10 @@ async def get_mfa(
         Raises the HTTPStatus object with a status code to indicate MFA delivery.
     """
     await auth.level_1(request, apikey)
-    if not all((models.env.gmail_user, models.env.gmail_pass, models.env.recipient)):
+    if not all((models.env.gmail_user, models.env.gmail_pass)):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
-            detail="Gmail user, password, and recipient email must be set in the environment.",
+            detail="gmail_user and gmail_pass must be set in the environment.",
         )
     if not send_new_mfa():
         LOGGER.info("A recent MFA token is still valid, not sending a new one.")
@@ -84,13 +84,13 @@ async def get_mfa(
     mail_obj = instantiate_mailer()
     token = squire.generate_mfa_token()
     mail_stat = mail_obj.send_email(
-        recipient=models.env.recipient,
+        recipient=models.env.recipient or models.env.gmail_user,
         sender="PyNinja API",
         subject=f"Multifactor Authenticator - {datetime.now().strftime('%c')}",
         html_body=jinja2.Template(models.fileio.mfa_template).render(
             TIMEOUT=squire.convert_seconds(models.env.mfa_timeout),
             ENDPOINT=request.client.host,
-            EMAIL=models.env.recipient,
+            EMAIL=models.env.recipient or models.env.gmail_user,
             TOKEN=token,
         ),
     )

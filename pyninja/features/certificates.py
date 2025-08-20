@@ -38,8 +38,9 @@ def parse_certificate_output(output: str, raw: bool, ws_stream: bool) -> Generat
     cert_key = lambda k: k if raw else k.lower().replace(" ", "_")  # noqa: E731
     lines = output.strip().split("\n")
     for line in lines:
+        cert_info = {}
         if line.startswith("Certificate Name:"):
-            cert_info = {cert_key("Certificate Name"): line.split(": ")[1].strip()}
+            cert_info[cert_key("Certificate Name")] = line.split(": ")[1].strip()
         elif line.startswith("Serial Number:"):
             if not ws_stream:
                 cert_info[cert_key("Serial Number")] = line.split(": ")[1].strip()

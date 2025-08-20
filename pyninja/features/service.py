@@ -204,7 +204,7 @@ def get_all_services() -> Generator[Dict[str, str]]:
             squire.log_subprocess_error(error)
 
 
-def get_service_status(service_name: str) -> models.ServiceStatus:
+def get_service_status(service_name: str) -> models.ServiceStatus | None:
     """Get service status by name.
 
     Args:

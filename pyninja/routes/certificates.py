@@ -33,7 +33,7 @@ async def get_certificate(
     if cert_response.status_code == HTTPStatus.OK:
         if name and name != "all":
             for cert in cert_response.certificates:
-                if cert.certificate_name == name:
+                if cert["Certificate Name"] == name:
                     raise exceptions.APIResponse(
                         status_code=HTTPStatus.OK,
                         detail=cert,

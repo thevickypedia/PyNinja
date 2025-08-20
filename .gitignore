@@ -15,6 +15,7 @@ temp.py
 
 logging.ini
 *.log
+*.env
 *.db
 
 !samples/*

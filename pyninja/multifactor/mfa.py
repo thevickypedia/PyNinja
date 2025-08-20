@@ -38,6 +38,8 @@ async def get_mfa(
         case enums.MFAOptions.telegram:
             func = telegram.get_mfa
         case _:
+            # Handle edge case when passed via curl
+            # noinspection PyUnreachableCode
             raise exceptions.APIResponse(
                 status_code=HTTPStatus.BAD_REQUEST.real, detail=f"MFA options should be one of: [{enums.MFAOptions}]"
             )

@@ -64,7 +64,7 @@ async def extract_credentials(authorization: HTTPAuthorizationCredentials, host:
     return auth.split(",")
 
 
-async def verify_login(authorization: HTTPAuthorizationCredentials, host: str) -> Dict[str, Union[str, int]]:
+async def verify_login(authorization: HTTPAuthorizationCredentials, host: str) -> Dict[str, Union[str, int]] | NoReturn:
     """Verifies authentication and generates session token for each user.
 
     Returns:

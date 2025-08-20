@@ -14,6 +14,7 @@ from pyninja.executors import database, routers, squire
 from pyninja.modules import enums, exceptions, models, rate_limit
 
 LOGGER = logging.getLogger("uvicorn.default")
+LOGGER.addFilter(filter=squire.AddProcessName(process_name="PyNinjaAPI"))
 
 
 @asynccontextmanager
