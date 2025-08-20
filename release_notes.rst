@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+4.7.0 (08/19/2025)
+------------------
+- Onboard Telegram API integration as another option to get MFA
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.6.0...4.7.0
+
 v4.6.0 (08/19/2025)
 -------------------
 - Includes a breaker logic to handler SQLite errors in table monitoring
