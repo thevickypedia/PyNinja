@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+v4.6.0 (08/19/2025)
+-------------------
+- Includes a breaker logic to handler SQLite errors in table monitoring
+- Update linter to retain line length consistency between black and flake8
+- Onboard a new MFA option via ntfy notifications
+- Remove run token usage Set Ntfy token length to 8 characters
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.5.0...v4.6.0
+
 v4.5.0 (08/19/2025)
 -------------------
 - Host a simplistic UI to stream logs for ``/run-command`` endpoint
