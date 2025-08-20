@@ -200,12 +200,6 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
     """
     advanced_routes = [
         APIRoute(
-            path=enums.APIEndpoints.run_token,
-            endpoint=commands.get_run_token,
-            methods=["GET"],
-            dependencies=dependencies,
-        ),
-        APIRoute(
             path=enums.APIEndpoints.run_command,
             endpoint=commands.run_command,
             methods=["POST"],

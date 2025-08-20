@@ -51,7 +51,6 @@ class APIEndpoints(StrEnum):
 
     monitor: str = "/monitor"
     ws_system: str = "/ws/system"
-    run_token: str = "/run-token"
     run_command: str = "/run-command"
     run_ui: str = "/run-ui"
 
@@ -129,7 +128,6 @@ class TableName(StrEnum):
     """
 
     auth_errors: str = "auth_errors"
-    run_token: str = "run_token"
     mfa_token: str = "mfa_token"
 
 

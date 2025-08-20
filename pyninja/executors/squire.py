@@ -7,6 +7,7 @@ import re
 import secrets
 import shutil
 import socket
+import string
 import subprocess
 import warnings
 from collections.abc import Generator
@@ -276,6 +277,40 @@ def load_architecture(env: models.EnvConfig) -> models.Architecture:
         cpu=pyarchitecture.cpu.get_cpu_info(env.processor_lib),
         disks=pyarchitecture.disks.get_all_disks(env.disk_lib),
     )
+
+
+def generate_mfa_token(length: int = 32) -> str:
+    """Key generator to create a unique key with an exact length.
+
+    Args:
+        length: Exact length of the generated key. Default is 32.
+
+    Returns:
+        str:
+        Returns a unique key that contains at least one digit, one uppercase letter,
+        one lowercase letter, and one safe character.
+    """
+    if length < 4:
+        raise ValueError("Length must be at least 4 to include required character types.")
+
+    # Ensure at least one of each required character
+    required_chars = [
+        secrets.choice(string.digits),
+        secrets.choice(string.ascii_uppercase),
+        secrets.choice(string.ascii_lowercase),
+        secrets.choice(["-", "_", ".", "~"]),
+    ]
+
+    # Fill the rest with secure random choices from allowed character set
+    remaining_length = length - len(required_chars)
+    all_chars = string.ascii_letters + string.digits + "-_.~"
+    filler = [secrets.choice(all_chars) for _ in range(remaining_length)]
+
+    # Combine all parts and shuffle securely
+    token_chars = required_chars + filler
+    secrets.SystemRandom().shuffle(token_chars)
+
+    return "".join(token_chars)
 
 
 def keygen(nbytes: int = 64) -> str:

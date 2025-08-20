@@ -9,40 +9,12 @@ from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.templating import Jinja2Templates
 
-from pyninja.executors import auth, database, squire
-from pyninja.modules import enums, exceptions, models, payloads
+from pyninja.executors import auth, squire
+from pyninja.modules import enums, exceptions, payloads
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
 TEMPLATES = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__)))
-
-
-async def get_run_token(
-    request: Request,
-    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
-    api_secret: Optional[str] = Header(None),
-    mfa_code: Optional[str] = Header(None),
-) -> str:
-    """**Get the run token for remote execution.**
-
-    **Args:**
-
-        - request: Reference to the FastAPI request object.
-        - apikey: API Key to authenticate the request.
-        - api_secret: API secret to authenticate the request.
-        - mfa_code: Multifactor authentication code.
-
-    **Returns:**
-        str: Returns the run token for remote execution.
-
-    **Raises:**
-        APIResponse:
-        Raises the HTTPStatus object with a status code and detail as response.
-    """
-    await auth.level_2(request, apikey, api_secret, mfa_code)
-    token = squire.keygen(256)
-    database.update_token(token=token, table=enums.TableName.run_token, expiry=models.env.run_token_expiry)
-    return token
 
 
 async def run_ui(request: Request):
@@ -62,7 +34,6 @@ async def run_command(
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
     api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
-    run_token: Optional[str] = Header(None),
 ):
     """**API function to run a command on host machine.**
 
@@ -73,7 +44,6 @@ async def run_command(
         - apikey: API Key to authenticate the request.
         - api_secret: API secret to authenticate the request.
         - mfa_code: Multifactor authentication code.
-        - run_token: Single use run-token generated for each session.
 
     **Raises:**
 
@@ -81,7 +51,6 @@ async def run_command(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_2(request, apikey, api_secret, mfa_code)
-    await auth.verify_run_token(run_token)
     LOGGER.info("Requested command: '%s' with timeout: %ds", payload.command, payload.timeout)
     if payload.stream:
         LOGGER.info("Streaming command output for: '%s'", payload.command)

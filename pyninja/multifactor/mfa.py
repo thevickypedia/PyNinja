@@ -1,16 +1,12 @@
 import logging
-import time
-from datetime import datetime
 from http import HTTPStatus
-from enum import StrEnum
 
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from pyninja.executors import auth, database, squire
-from pyninja.modules import cache, enums, exceptions, models
+from pyninja.executors import auth
+from pyninja.modules import enums, exceptions
 from pyninja.multifactor import gmail, ntfy, telegram
-
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
@@ -43,7 +39,6 @@ async def get_mfa(
             func = telegram.get_mfa
         case _:
             raise exceptions.APIResponse(
-                status_code=HTTPStatus.BAD_REQUEST.real,
-                detail=f"MFA options should be one of: [{enums.MFAOptions}]"
+                status_code=HTTPStatus.BAD_REQUEST.real, detail=f"MFA options should be one of: [{enums.MFAOptions}]"
             )
     return await func(request=request, apikey=apikey)

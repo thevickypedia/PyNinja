@@ -1,21 +1,20 @@
 import logging
-import time
 from datetime import datetime
 from http import HTTPStatus
 
-import jinja2
 import requests
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from pyninja.executors import auth, database, squire
-from pyninja.modules import cache, enums, exceptions, models
+from pyninja.modules import enums, exceptions, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
 
 # Minimum time (in seconds) before a new MFA token can be sent
 MFA_RESEND_INTERVAL = 120
+
 
 async def get_mfa(
     request: Request,
@@ -45,7 +44,7 @@ async def get_mfa(
     }
     endpoint = f"{models.env.ntfy_url}{models.env.ntfy_topic}"
     # TODO: Ntfy notifications are not be copy-able from mobile phones - so use randomly generated short alpha numeric
-    token = models.keygen()
+    token = squire.generate_mfa_token(length=8)
     try:
         response = requests.post(
             url=endpoint,

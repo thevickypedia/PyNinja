@@ -77,7 +77,7 @@ async def get_mfa(
             "Please check your email (including spam/junk folders) or request a new one after 5 minutes.",
         )
     mail_obj = instantiate_mailer()
-    token = models.keygen()
+    token = squire.generate_mfa_token()
     mail_stat = mail_obj.send_email(
         recipient=models.env.recipient,
         sender="PyNinja API",

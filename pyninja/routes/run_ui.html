@@ -168,13 +168,9 @@
 
                 <div class="input-group">
                     <input id="mfa_token" type="text" placeholder=" " />
-                    <label for="mfa_token">MFA Token (optional)</label>
+                    <label for="mfa_token">MFA Token (required)</label>
                 </div>
 
-                <div class="input-group">
-                    <input id="run_token" type="text" required placeholder=" " />
-                    <label for="run_token">Run Token (required)</label>
-                </div>
                 <button id="save-creds">Save and Continue</button>
             </div>
             <button id="clear-creds" style="background: #bbb; margin-top: 10px;">Clear Credentials (Logout)</button>
@@ -216,7 +212,7 @@
         let wasManuallyStopped = false;
 
         function toggleClearCredsButton() {
-            const hasCreds = localStorage.getItem("apikey") && localStorage.getItem("apisecret") && localStorage.getItem("run_token");
+            const hasCreds = localStorage.getItem("apikey") && localStorage.getItem("apisecret") && localStorage.getItem("mfa_token");
             clearCredsButton.style.display = hasCreds ? "block" : "none";
         }
 
@@ -229,13 +225,11 @@
             const apikey = localStorage.getItem("apikey");
             const apisecret = localStorage.getItem("apisecret");
             const mfa_token = localStorage.getItem("mfa_token");
-            const run_token = localStorage.getItem("run_token");
 
-            if (apikey && apisecret && run_token) {
+            if (apikey && apisecret && mfa_token) {
                 document.getElementById("apikey").value = apikey;
                 document.getElementById("apisecret").value = apisecret;
                 document.getElementById("mfa_token").value = mfa_token || "";
-                document.getElementById("run_token").value = run_token;
 
                 // Auto-show command section if all credentials exist
                 commandSection.classList.remove("hidden");
@@ -249,12 +243,10 @@
             localStorage.removeItem("apikey");
             localStorage.removeItem("apisecret");
             localStorage.removeItem("mfa_token");
-            localStorage.removeItem("run_token");
 
             document.getElementById("apikey").value = "";
             document.getElementById("apisecret").value = "";
             document.getElementById("mfa_token").value = "";
-            document.getElementById("run_token").value = "";
 
             // Show the credentials section again
             document.getElementById("credentials-section").style.display = "block";
@@ -269,17 +261,15 @@
             const apikey = document.getElementById("apikey").value.trim();
             const apisecret = document.getElementById("apisecret").value.trim();
             const mfa_token = document.getElementById("mfa_token").value.trim();
-            const run_token = document.getElementById("run_token").value.trim();
 
-            if (!apikey || !apisecret || !run_token) {
-                alert("API Key, API Secret, and Run Token are required.");
+            if (!apikey || !apisecret || !mfa_token) {
+                alert("API Key, API Secret, and MFA Token are required.");
                 return;
             }
 
             localStorage.setItem("apikey", apikey);
             localStorage.setItem("apisecret", apisecret);
             localStorage.setItem("mfa_token", mfa_token);
-            localStorage.setItem("run_token", run_token);
 
             commandSection.classList.remove("hidden");
             toggleClearCredsButton();
@@ -297,7 +287,6 @@
             const apikey = localStorage.getItem("apikey");
             const apisecret = localStorage.getItem("apisecret");
             const mfa_token = localStorage.getItem("mfa_token");
-            const run_token = localStorage.getItem("run_token");
 
             logOutput.textContent = "Streaming output...\n";
             showLogOutput(true);
@@ -319,8 +308,7 @@
                     headers: {
                         accept: "application/json",
                         "api-secret": apisecret,
-                        "mfa-code": mfa_token || "",
-                        "run-token": run_token,
+                        "mfa-code": mfa_token,
                         Authorization: `Bearer ${apikey}`,
                         "Content-Type": "application/json",
                     },

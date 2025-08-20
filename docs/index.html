@@ -278,23 +278,6 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.auth.verify_run_token">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.executors.auth.</span></span><span class="sig-name descname"><span class="pre">verify_run_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.auth.verify_run_token" title="Permalink to this definition">¶</a></dt>
-<dd><p>Verifies the run token for run-command endpoint.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>run_token</strong> – Run token generated for the <code class="docutils literal notranslate"><span class="pre">/run-command</span></code> endpoint.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#pyninja.modules.exceptions.APIResponse" title="pyninja.modules.exceptions.APIResponse"><strong>APIResponse</strong></a> – </p></li>
-<li><p><strong>- 401</strong> – If run token is invalid.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.auth.level_2">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.executors.auth.</span></span><span class="sig-name descname"><span class="pre">level_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mfa_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.auth.level_2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validates the auth request using HTTPBearer and additionally a secure token.</p>
@@ -476,28 +459,6 @@
 <section id="module-pyninja.routes.commands">
 <span id="api-routes"></span><h2>API Routes<a class="headerlink" href="#module-pyninja.routes.commands" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.routes.commands.get_run_token">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.commands.</span></span><span class="sig-name descname"><span class="pre">get_run_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mfa_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.routes.commands.get_run_token" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong>Get the run token for remote execution.</strong></p>
-<p><strong>Args:</strong></p>
-<blockquote>
-<div><ul class="simple">
-<li><p>request: Reference to the FastAPI request object.</p></li>
-<li><p>apikey: API Key to authenticate the request.</p></li>
-<li><p>api_secret: API secret to authenticate the request.</p></li>
-<li><p>mfa_code: Multifactor authentication code.</p></li>
-</ul>
-</div></blockquote>
-<dl class="simple">
-<dt><strong>Returns:</strong></dt><dd><p>str: Returns the run token for remote execution.</p>
-</dd>
-<dt><strong>Raises:</strong></dt><dd><p>APIResponse:
-Raises the HTTPStatus object with a status code and detail as response.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routes.commands.run_ui">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.commands.</span></span><span class="sig-name descname"><span class="pre">run_ui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.commands.run_ui" title="Permalink to this definition">¶</a></dt>
 <dd><p>Renders the HTML template for the run command UI.</p>
@@ -505,7 +466,7 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routes.commands.run_command">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.commands.</span></span><span class="sig-name descname"><span class="pre">run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.payloads.RunCommand" title="pyninja.modules.payloads.RunCommand"><span class="pre">RunCommand</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mfa_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.commands.run_command" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.commands.</span></span><span class="sig-name descname"><span class="pre">run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.payloads.RunCommand" title="pyninja.modules.payloads.RunCommand"><span class="pre">RunCommand</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mfa_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Header(None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.commands.run_command" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>API function to run a command on host machine.</strong></p>
 <p><strong>Args:</strong></p>
 <blockquote>
@@ -515,7 +476,6 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <li><p>apikey: API Key to authenticate the request.</p></li>
 <li><p>api_secret: API secret to authenticate the request.</p></li>
 <li><p>mfa_code: Multifactor authentication code.</p></li>
-<li><p>run_token: Single use run-token generated for each session.</p></li>
 </ul>
 </div></blockquote>
 <p><strong>Raises:</strong></p>
@@ -1385,6 +1345,24 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pyninja.modules.models.Architecture" title="pyninja.modules.models.Architecture">Architecture</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.executors.squire.generate_mfa_token">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">generate_mfa_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.executors.squire.generate_mfa_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Key generator to create a unique key with an exact length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>length</strong> – Exact length of the generated key. Default is 32.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a unique key that contains at least one digit, one uppercase letter,
+one lowercase letter, and one safe character.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2697,11 +2675,6 @@ Raises the HTTPStatus object with a status code and the public/private IP as res
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.run_token">
-<span class="sig-name descname"><span class="pre">run_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/run-token'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.run_token" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.run_command">
 <span class="sig-name descname"><span class="pre">run_command</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/run-command'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.run_command" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2910,11 +2883,6 @@ Raises the HTTPStatus object with a status code and the public/private IP as res
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.enums.TableName.auth_errors">
 <span class="sig-name descname"><span class="pre">auth_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auth_errors'</span></em><a class="headerlink" href="#pyninja.modules.enums.TableName.auth_errors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.enums.TableName.run_token">
-<span class="sig-name descname"><span class="pre">run_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'run_token'</span></em><a class="headerlink" href="#pyninja.modules.enums.TableName.run_token" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -3248,11 +3216,6 @@ Raises the HTTPStatus object with a status code and the public/private IP as res
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.run_token_expiry">
-<span class="sig-name descname"><span class="pre">run_token_expiry</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.run_token_expiry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.api_secret">
 <span class="sig-name descname"><span class="pre">api_secret</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.api_secret" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -3453,23 +3416,6 @@ Raises the HTTPStatus object with a status code and the public/private IP as res
 
 <hr class="docutils" />
 <span class="target" id="module-pyninja.modules.models"></span><dl class="py function">
-<dt class="sig sig-object py" id="pyninja.modules.models.keygen">
-<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">keygen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.modules.models.keygen" title="Permalink to this definition">¶</a></dt>
-<dd><p>Key generator to create a unique key with a minimum length.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>min_length</strong> – Minimum length of the generated key. Default is 32.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Returns a unique key that contains at least one digit, one uppercase letter,</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.modules.models.complexity_checker">
 <span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">complexity_checker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.modules.models.complexity_checker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Verifies the strength of a secret.</p>

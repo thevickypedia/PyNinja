@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
     process = Process(
         target=database.monitor_table,
         kwargs=dict(
-            tables=[enums.TableName.run_token, enums.TableName.mfa_token],
+            tables=[enums.TableName.mfa_token],
             column="expiry",
             env=models.env,
         ),
@@ -153,7 +153,6 @@ def start(**kwargs) -> None:
     if all((models.env.apikey, models.env.api_secret, models.env.remote_execution)):
         models.database = models.Database(models.env.database)
         models.database.create_table(enums.TableName.auth_errors, ["host", "block_until"])
-        models.database.create_table(enums.TableName.run_token, ["token", "expiry"])
         models.database.create_table(enums.TableName.mfa_token, ["token", "expiry"])
         PyNinjaAPI.routes.extend(post_routes.routes)
         post_routes.enabled = True

@@ -105,39 +105,6 @@ async def verify_mfa(mfa_code: str) -> None:
         )
 
 
-async def verify_run_token(run_token: str) -> None:
-    """Verifies the run token for run-command endpoint.
-
-    Args:
-        run_token: Run token generated for the ``/run-command`` endpoint.
-
-    Raises:
-        APIResponse:
-        - 401: If run token is invalid.
-    """
-    if not run_token:
-        LOGGER.warning("No run token received")
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.UNAUTHORIZED.real,
-            detail=HTTPStatus.UNAUTHORIZED.phrase,
-        )
-    if stored_token := database.get_token(table=enums.TableName.run_token):
-        if secrets.compare_digest(run_token, stored_token):
-            LOGGER.info("Run command authorized")
-            return
-        LOGGER.error("Run token mismatch")
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.UNAUTHORIZED.real,
-            detail=HTTPStatus.UNAUTHORIZED.phrase,
-        )
-    else:
-        LOGGER.warning("No run token stored")
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.UNAUTHORIZED.real,
-            detail=HTTPStatus.UNAUTHORIZED.phrase,
-        )
-
-
 async def level_2(
     request: Request,
     apikey: HTTPAuthorizationCredentials,

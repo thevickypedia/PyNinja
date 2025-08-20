@@ -1,13 +1,10 @@
 import os
 import pathlib
 import platform
-import random
 import re
 import shutil
 import socket
 import sqlite3
-import string
-import uuid
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Callable, Dict, List, Set, Tuple
 
@@ -26,8 +23,6 @@ from pydantic_settings import BaseSettings
 
 from pyninja.modules import enums, exceptions
 
-# TODO: Remove run_token, and run_token_expiry all together with redundancies in MFA (Ntfy, Telegram integration)
-
 MINIMUM_CPU_UPDATE_INTERVAL = 1
 # Use a ThreadPoolExecutor to run blocking functions in separate threads
 EXECUTOR = ThreadPoolExecutor(max_workers=os.cpu_count())
@@ -38,38 +33,6 @@ if OPERATING_SYSTEM not in (
     enums.OperatingSystem.windows,
 ):
     exceptions.raise_os_error(OPERATING_SYSTEM)
-
-
-def keygen(min_length: int = 32) -> str:
-    """Key generator to create a unique key with a minimum length.
-
-    Args:
-        min_length: Minimum length of the generated key. Default is 32.
-
-    Returns:
-        str:
-        Returns a unique key that contains at least one digit, one uppercase letter,
-    """
-    # Ensure at least one of each required character
-    required_chars = [
-        random.choice(string.digits),
-        random.choice(string.ascii_uppercase),
-        random.choice(string.ascii_lowercase),
-    ]
-
-    # Start with a UUID to ensure uniqueness
-    unique_part = uuid.uuid4().hex  # 32 lowercase hex chars
-
-    # Add some randomness to exceed the min length if needed
-    remaining_length = max(min_length - len(unique_part) - len(required_chars), 0)
-    filler = "".join(random.choices(string.ascii_letters + string.digits, k=remaining_length))
-    safe_chars = ["-", "_", ".", "~"]
-
-    # Combine all parts and shuffle
-    token_chars = list(unique_part + filler + "".join(required_chars) + random.choice(safe_chars))
-    random.shuffle(token_chars)
-
-    return "".join(token_chars)
 
 
 def complexity_checker(key: str, value: str, min_length: int) -> None:
@@ -294,9 +257,6 @@ class EnvConfig(BaseSettings):
 
     # Remote exec and fileIO
     remote_execution: bool = False
-    # Run token expiry should at least be 5 minutes (300 seconds) and can be up to 1 hour (3_600 seconds)
-    # Default: 30m
-    run_token_expiry: int = Field(default=1_800, ge=300, le=3_600)
     api_secret: str | None = None
     database: str = Field("auth.db", pattern=".*.db$")
 
