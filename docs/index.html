@@ -1561,6 +1561,14 @@ Raises the HTTPStatus object with a status code.</p>
 <dt class="sig sig-object py" id="pyninja.multifactor.gmail.send_new_mfa">
 <span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.gmail.</span></span><span class="sig-name descname"><span class="pre">send_new_mfa</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.multifactor.gmail.send_new_mfa" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to check if a new MFA token should be sent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns True if a new MFA token should be sent, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1577,7 +1585,7 @@ Raises the HTTPStatus object with a status code.</p>
 <p><strong>Raises:</strong></p>
 <blockquote>
 <div><p>APIResponse:
-Raises the HTTPStatus object with a status code.</p>
+Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -1598,7 +1606,7 @@ Raises the HTTPStatus object with a status code.</p>
 <p><strong>Raises:</strong></p>
 <blockquote>
 <div><p>APIResponse:
-Raises the HTTPStatus object with a status code and the public/private IP as response.</p>
+Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -1606,9 +1614,42 @@ Raises the HTTPStatus object with a status code and the public/private IP as res
 <section id="module-pyninja.multifactor.telegram">
 <span id="telegram"></span><h2>Telegram<a class="headerlink" href="#module-pyninja.multifactor.telegram" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.multifactor.telegram.send_message">
+<span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.telegram.</span></span><span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'markdown'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="headerlink" href="#pyninja.multifactor.telegram.send_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a message to the user via Telegram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chat_id</strong> – Chat ID.</p></li>
+<li><p><strong>message</strong> – Message to be sent to the user.</p></li>
+<li><p><strong>parse_mode</strong> – Parse mode. Defaults to <code class="docutils literal notranslate"><span class="pre">markdown</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response class.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.multifactor.telegram.get_mfa">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.telegram.</span></span><span class="sig-name descname"><span class="pre">get_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.multifactor.telegram.get_mfa" title="Permalink to this definition">¶</a></dt>
-<dd><p>Placeholder MFA auth mechanism for Telegram.</p>
+<dd><p><strong>Get multifactor authentication code via Telegram.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>request: Reference to the FastAPI request object.</p></li>
+<li><p>apikey: API Key to authenticate the request.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
+</div></blockquote>
 </dd></dl>
 
 </section>
@@ -3258,6 +3299,16 @@ Raises the HTTPStatus object with a status code and the public/private IP as res
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.ntfy_topic">
 <span class="sig-name descname"><span class="pre">ntfy_topic</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.ntfy_topic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.telegram_token">
+<span class="sig-name descname"><span class="pre">telegram_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.telegram_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.telegram_chat_id">
+<span class="sig-name descname"><span class="pre">telegram_chat_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.telegram_chat_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

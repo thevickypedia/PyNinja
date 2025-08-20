@@ -30,10 +30,10 @@ async def get_mfa(
     **Raises:**
 
         APIResponse:
-        Raises the HTTPStatus object with a status code and the public/private IP as response.
+        Raises the HTTPStatus object with a status code to indicate MFA delivery.
     """
     await auth.level_1(request, apikey)
-    if not all([models.env.ntfy_username, models.env.ntfy_password, models.env.ntfy_url, models.env.ntfy_topic]):
+    if not all((models.env.ntfy_username, models.env.ntfy_password, models.env.ntfy_url, models.env.ntfy_topic)):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
             detail="Ntfy URL, username, password, and topic must be set in the environment.",

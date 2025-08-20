@@ -35,7 +35,12 @@ def instantiate_mailer() -> gc.SendEmail:
 
 
 def send_new_mfa() -> bool:
-    """Function to check if a new MFA token should be sent."""
+    """Function to check if a new MFA token should be sent.
+
+    Returns:
+        bool:
+        Returns True if a new MFA token should be sent, False otherwise.
+    """
     existing_mfa = database.get_token(table=enums.TableName.mfa_token, include_expiry=True)
     if not existing_mfa:
         return True
@@ -61,7 +66,7 @@ async def get_mfa(
     **Raises:**
 
         APIResponse:
-        Raises the HTTPStatus object with a status code.
+        Raises the HTTPStatus object with a status code to indicate MFA delivery.
     """
     await auth.level_1(request, apikey)
     if not all((models.env.gmail_user, models.env.gmail_pass, models.env.recipient)):

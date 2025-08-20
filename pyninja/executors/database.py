@@ -215,4 +215,15 @@ def monitor_table(tables: List[enums.TableName], column: str, env: models.EnvCon
     try:
         run_monitoring()
     except KeyboardInterrupt:
-        logger.info("Monitoring stopped gracefully.")
+        # TODO: This has to happen in lifespan event
+        try:
+            with database.connection:
+                cursor = database.connection.cursor()
+                for table in tables:
+                    cursor.execute(f"DELETE FROM {table}")
+                database.connection.commit()
+        except sqlite3.OperationalError as error:
+            logger.error("Error while deleting records from tables: %s", error)
+        finally:
+            database.connection.close()
+            logger.info("Database connection closed for table monitor.")

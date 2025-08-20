@@ -261,13 +261,18 @@ class EnvConfig(BaseSettings):
     database: str = Field("auth.db", pattern=".*.db$")
 
     # Multifactor authentication
+    # Gmail
     gmail_user: EmailStr | None = None
     gmail_pass: str | None = None
     recipient: str | None = None
+    # Ntfy
     ntfy_url: HttpUrl | None = None
     ntfy_username: str | None = None
     ntfy_password: str | None = None
     ntfy_topic: str | None = None
+    # Telegram
+    telegram_token: str | None = None
+    telegram_chat_id: str | None = None
     # Timeout should at least be 15 minutes (900 seconds) and can be up to 24 hours (86_400 seconds)
     # Default: 1h
     mfa_timeout: PositiveInt = Field(default=3_600, ge=900, le=86_400)

@@ -33,16 +33,16 @@ handlers:
 loggers:
   uvicorn:
     propagate: True
-    level: INFO
+    level: DEBUG
     handlers:
       - default
   uvicorn.error:
     propagate: True
-    level: INFO
+    level: DEBUG
     handlers:
       - error
   uvicorn.access:
     propagate: True
-    level: INFO
+    level: DEBUG
     handlers:
       - access
