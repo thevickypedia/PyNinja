@@ -8,6 +8,7 @@ import sqlite3
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Callable, Dict, List, Set, Tuple
 
+from cryptography.fernet import Fernet
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from pyarchitecture.config import default_cpu_lib, default_disk_lib, default_gpu_lib
 from pydantic import (
@@ -23,6 +24,7 @@ from pydantic_settings import BaseSettings
 
 from pyninja.modules import enums, exceptions
 
+CIPHER_SUITE = Fernet(Fernet.generate_key())
 MINIMUM_CPU_UPDATE_INTERVAL = 1
 # Use a ThreadPoolExecutor to run blocking functions in separate threads
 EXECUTOR = ThreadPoolExecutor(max_workers=os.cpu_count())

@@ -23,13 +23,19 @@ def get_token(table: enums.TableName, include_expiry: bool = False) -> Any | Non
     with models.database.connection:
         cursor = models.database.connection.cursor()
         if include_expiry:
-            token = cursor.execute(f"SELECT token, expiry FROM {table}").fetchone()
-            if token:
-                return token
+            table_entry = cursor.execute(f"SELECT token, expiry FROM {table}").fetchone()
+            if table_entry:
+                token, expiry = table_entry
+                decrypted_token = models.CIPHER_SUITE.decrypt(token).decode("utf-8")
+                return (
+                    decrypted_token,
+                    expiry,
+                )
         else:
             token = cursor.execute(f"SELECT token FROM {table}").fetchone()
             if token and token[0]:
-                return token[0]
+                decrypted_token = models.CIPHER_SUITE.decrypt(token[0]).decode("utf-8")
+                return decrypted_token
 
 
 def update_token(token: str, table: enums.TableName, expiry: int) -> None:
@@ -40,14 +46,14 @@ def update_token(token: str, table: enums.TableName, expiry: int) -> None:
         table: Table name to update the token.
         expiry: Expiry time in seconds from the current epoch time.
     """
-    # TODO: encode token before storing it
+    encrypted_token = models.CIPHER_SUITE.encrypt(token.encode("utf-8")).decode("utf-8")
     timestamp = int(time.time()) + expiry
     with models.database.connection:
         cursor = models.database.connection.cursor()
         cursor.execute(f"DELETE FROM {table}")
         cursor.execute(
             f"INSERT INTO {table} (token, expiry) VALUES (?,?)",
-            (token, timestamp),
+            (encrypted_token, timestamp),
         )
         models.database.connection.commit()
 
@@ -141,10 +147,6 @@ def delete_expired_tokens(
                     logger.info("Token on '%s' has expired.", table)
                     cursor.execute(f"DELETE FROM {table} WHERE {column}=(?)", (timestamp,))
                     database.connection.commit()
-                else:
-                    logger.debug("Token on '%s' is still valid.", table)
-            else:
-                logger.debug("No token found in '%s' table.", table)
 
 
 def get_log_config() -> Dict[str, Any]:
