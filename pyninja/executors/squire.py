@@ -9,6 +9,7 @@ import shutil
 import socket
 import string
 import subprocess
+import warnings
 from collections.abc import Generator
 from datetime import timedelta
 from typing import Dict, List
@@ -401,13 +402,14 @@ def handle_warnings() -> None:
     if not all((models.env.remote_execution, models.env.api_secret, models.env.apikey)):
         return
     if not any_mfa_enabled():
-        # TODO: Perhaps just disable remote execution with a warning?
-        raise UserWarning(
+        warnings.warn(
             f"\n{base}"
             "\nThe 'remote_execution' flag is enabled, allowing shell command execution via the API."
             "\nThis feature poses significant security risks and CANNOT be used without MFA."
             f"\n{base}",
+            UserWarning,
         )
+        models.env.remote_execution = False
 
 
 def comma_separator(list_: list) -> str:

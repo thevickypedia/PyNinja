@@ -1,10 +1,10 @@
-click==8.2.*
+click==8.1.*  # Remove hard-coded version in PyUdisk
 cryptography==45.0.*
 docker==7.1.*
 fastapi==0.116.*
 gmail-connector==1.0.*
 Jinja2==3.1.*
-psutil==7.0.*
+psutil==6.0.*  # Remove hard-coded version in PyUdisk
 PyArchitecture==0.3.*
 pydantic==2.*
 pydantic-settings==2.*

@@ -23,7 +23,6 @@ async def lifespan(app: FastAPI):
     api_name = app.__dict__.get("title", app.__name__)
     api_version = app.__dict__.get("version", version.__version__)
     LOGGER.info("FastAPI server [%s:%s] initialized.", api_name, api_version)
-    # TODO: Add a process name, and include it in logging filter
     process = Process(
         target=database.monitor_table,
         kwargs=dict(
