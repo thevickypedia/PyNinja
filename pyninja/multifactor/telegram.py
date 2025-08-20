@@ -35,6 +35,7 @@ def send_message(
         data={"chat_id": models.env.telegram_chat_id, "text": message, "parse_mode": parse_mode},
         timeout=(5, 60),
     )
+    result.raise_for_status()
     return result
 
 
@@ -63,7 +64,7 @@ async def get_mfa(
     title = f"Multifactor Authenticator - {datetime.now().strftime('%c')}"
     token = squire.generate_mfa_token()
     try:
-        response = send_message(message=f"*{title}*\n\n{token}")
+        response = send_message(message=f"*{title}*\n\n```\n{token}\n```")
         LOGGER.debug(response.json())
         database.update_token(token=token, table=enums.TableName.mfa_token, expiry=models.env.mfa_timeout)
         raise exceptions.APIResponse(
@@ -71,5 +72,7 @@ async def get_mfa(
             detail="Authentication success. OTP has been sent to the requested chat ID.",
         )
     except (requests.RequestException, TimeoutError, ConnectionError) as error:
+        # Mask the token in the error message
+        error = str(error).replace(models.env.telegram_token, "**********")
         LOGGER.error(error)
         raise exceptions.APIResponse(status_code=HTTPStatus.SERVICE_UNAVAILABLE.real, detail=str(error))

@@ -43,7 +43,6 @@ async def get_mfa(
         "Content-Type": "application/x-www-form-urlencoded",
     }
     endpoint = f"{models.env.ntfy_url}{models.env.ntfy_topic}"
-    # TODO: Ntfy notifications are not be copy-able from mobile phones - so use randomly generated short alpha numeric
     token = squire.generate_mfa_token(length=8)
     try:
         response = requests.post(

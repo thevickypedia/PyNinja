@@ -22,11 +22,11 @@ async def lifespan(app: FastAPI):
     api_name = app.__dict__.get("title", app.__name__)
     api_version = app.__dict__.get("version", version.__version__)
     LOGGER.info("FastAPI server [%s:%s] initialized.", api_name, api_version)
+    # TODO: Add a process name, and include it in logging filter
     process = Process(
         target=database.monitor_table,
         kwargs=dict(
-            tables=[enums.TableName.mfa_token],
-            column="expiry",
+            tables={enums.TableName.mfa_token: "expiry"},
             env=models.env,
         ),
     )
@@ -153,7 +153,7 @@ def start(**kwargs) -> None:
     if all((models.env.apikey, models.env.api_secret, models.env.remote_execution)):
         models.database = models.Database(models.env.database)
         models.database.create_table(enums.TableName.auth_errors, ["host", "block_until"])
-        models.database.create_table(enums.TableName.mfa_token, ["token", "expiry"])
+        models.database.create_table(enums.TableName.mfa_token, ["token", "expiry"], drop_existing=True)
         PyNinjaAPI.routes.extend(post_routes.routes)
         post_routes.enabled = True
 

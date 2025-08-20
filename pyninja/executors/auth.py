@@ -90,11 +90,13 @@ async def verify_mfa(mfa_code: str) -> None:
         LOGGER.error("No MFA code provided.")
         raise exceptions.APIResponse(status_code=HTTPStatus.UNAUTHORIZED.real, detail="MFA code is required.")
     stored_mfa_token = database.get_token(table=enums.TableName.mfa_token)
+    # Keep error message generic to avoid leaking server state
     if not stored_mfa_token:
-        LOGGER.error("MFA is not configured on the server.")
+        LOGGER.warning("MFA is not generated.")
         raise exceptions.APIResponse(
             status_code=HTTPStatus.UNAUTHORIZED.real,
-            detail=f"MFA token is not stored, please run {enums.APIEndpoints.get_mfa.value!r} first.",
+            detail=f"MFA code is invalid or expired, please run {enums.APIEndpoints.get_mfa.value!r} "
+            "to generate a new one.",
         )
     if not secrets.compare_digest(mfa_code, stored_mfa_token):
         LOGGER.error("Invalid MFA code provided.")

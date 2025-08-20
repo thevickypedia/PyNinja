@@ -404,17 +404,47 @@ class Database:
         """
         self.connection = sqlite3.connect(database=datastore, check_same_thread=False, timeout=timeout)
 
-    def create_table(self, table_name: str, columns: List[str] | Tuple[str]) -> None:
+    def create_table(self, table_name: str, columns: List[str] | Tuple[str], drop_existing: bool = False) -> None:
         """Creates the table with the required columns.
 
         Args:
             table_name: Name of the table that has to be created.
             columns: List of columns that has to be created.
+            drop_existing: If True, drops the existing table before creating a new one.
         """
         with self.connection:
             cursor = self.connection.cursor()
             # Use f-string or %s as table names cannot be parametrized
+            if drop_existing:
+                cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
             cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} ({', '.join(columns)})")
+
+    def describe_database(self) -> Dict[str, Any]:
+        """Returns a summary of each table in the database, including column names and record counts.
+
+        Returns:
+            Dict[str, Any]:
+            A dictionary where keys are table names and values are dicts with column names and record counts.
+        """
+        cursor = self.connection.cursor()
+        summary = {}
+
+        # Get all user-defined tables (exclude SQLite internal tables)
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
+        tables = cursor.fetchall()
+
+        for (table_name,) in tables:
+            # Get column names
+            cursor.execute(f"PRAGMA table_info({table_name})")
+            columns = [col[1] for col in cursor.fetchall()]  # col[1] is the column name
+
+            # Get row count
+            cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+            row_count = cursor.fetchone()[0]
+
+            summary[table_name] = {"columns": columns, "records": row_count}
+
+        return summary
 
 
 # Loaded in main:start()
