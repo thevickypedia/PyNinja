@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 from http import HTTPStatus
 
+import pyotp
 from fastapi import Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
@@ -73,7 +74,24 @@ async def level_1(request: Request, apikey: HTTPAuthorizationCredentials) -> Non
     raise exceptions.APIResponse(status_code=HTTPStatus.UNAUTHORIZED.real, detail=HTTPStatus.UNAUTHORIZED.phrase)
 
 
-async def verify_mfa(mfa_code: str) -> None:
+def validate_otp(code: str) -> None:
+    """Validate MFA generated through authenticator.
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object indicating OTP.
+    """
+    totp = pyotp.TOTP(models.env.authenticator_token)
+    return totp.verify(code)
+
+
+def verify_mfa(mfa_code: str) -> None:
     """Verifies the multifactor authentication code.
 
     Args:
@@ -85,23 +103,16 @@ async def verify_mfa(mfa_code: str) -> None:
     """
     if not mfa_code:
         LOGGER.error("No MFA code provided.")
-        raise exceptions.APIResponse(status_code=HTTPStatus.UNAUTHORIZED.real, detail="MFA code is required.")
+        return False
+    if models.env.authenticator_token and validate_otp(code=mfa_code):
+        LOGGER.info("MFA code validated successfully using authenticator app.")
+        return True
     stored_mfa_token = database.get_token(table=enums.TableName.mfa_token)
-    # Keep error message generic to avoid leaking server state
-    if not stored_mfa_token:
-        LOGGER.warning("MFA is not generated.")
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.UNAUTHORIZED.real,
-            detail=f"MFA code is invalid or expired, please run {enums.APIEndpoints.get_mfa.value!r} "
-            "to generate a new one.",
-        )
-    if not secrets.compare_digest(mfa_code, stored_mfa_token):
-        LOGGER.error("Invalid MFA code provided.")
-        raise exceptions.APIResponse(
-            status_code=HTTPStatus.UNAUTHORIZED.real,
-            detail=f"MFA code is invalid or expired, please run {enums.APIEndpoints.get_mfa.value!r} "
-            "to generate a new one.",
-        )
+    if stored_mfa_token and secrets.compare_digest(mfa_code, stored_mfa_token):
+        LOGGER.info("MFA code validated successfully using stored token.")
+        return True
+    LOGGER.error("Invalid MFA code provided.")
+    return False
 
 
 async def level_2(
@@ -130,8 +141,10 @@ async def level_2(
             detail="Remote execution has been disabled on the server.",
         )
     if api_secret and secrets.compare_digest(api_secret, models.env.api_secret):
-        await verify_mfa(mfa_code)
-        return
+        if verify_mfa(mfa_code):
+            LOGGER.info("MFA verification successful for %s", request.client.host)
+            return
+    # Handle authentication errors
     await handle_auth_error(request)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.UNAUTHORIZED.real,

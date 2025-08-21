@@ -384,7 +384,8 @@ def any_mfa_enabled() -> bool:
         Returns True if any MFA method is enabled, else False.
     """
     return (
-        any((models.env.gmail_user, models.env.gmail_pass))  # recipient is optional (defaults to gmail_user)
+        models.env.authenticator_token
+        or any((models.env.gmail_user, models.env.gmail_pass))  # recipient is optional (defaults to gmail_user)
         or any((models.env.ntfy_url, models.env.ntfy_topic))  # ntfy_username and ntfy_password are optional
         or any((models.env.telegram_token, models.env.telegram_chat_id))
         or False

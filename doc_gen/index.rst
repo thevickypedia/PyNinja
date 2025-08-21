@@ -67,6 +67,10 @@ Squire
 Multifactor Authentication
 ==========================
 
+Authenticator
+-------------
+.. automodule:: pyninja.multifactor.otp
+
 Initializer
 -----------
 .. automodule:: pyninja.multifactor.mfa

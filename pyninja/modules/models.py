@@ -263,6 +263,10 @@ class EnvConfig(BaseSettings):
     database: str = Field("database.db", pattern=".*.db$")
 
     # Multifactor authentication
+    # Authenticator app
+    authenticator_app: str = "PyNinja"
+    authenticator_user: str | EmailStr = "thevickypedia"
+    authenticator_token: str | None = None
     # Gmail
     gmail_user: EmailStr | None = None
     gmail_pass: str | None = None

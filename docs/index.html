@@ -261,8 +261,26 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyninja.executors.auth.validate_otp">
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.auth.</span></span><span class="sig-name descname"><span class="pre">validate_otp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.auth.validate_otp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate MFA generated through authenticator.</p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>request: Reference to the FastAPI request object.</p></li>
+<li><p>apikey: API Key to authenticate the request.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object indicating OTP.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.auth.verify_mfa">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.executors.auth.</span></span><span class="sig-name descname"><span class="pre">verify_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mfa_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.auth.verify_mfa" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.auth.</span></span><span class="sig-name descname"><span class="pre">verify_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mfa_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.auth.verify_mfa" title="Permalink to this definition">¶</a></dt>
 <dd><p>Verifies the multifactor authentication code.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1554,6 +1572,48 @@ one lowercase letter, and one safe character.</p>
 </section>
 <section id="multifactor-authentication">
 <h1>Multifactor Authentication<a class="headerlink" href="#multifactor-authentication" title="Permalink to this heading">¶</a></h1>
+<section id="module-pyninja.multifactor.otp">
+<span id="authenticator"></span><h2>Authenticator<a class="headerlink" href="#module-pyninja.multifactor.otp" title="Permalink to this heading">¶</a></h2>
+<p>This module provides functionality for generating a QR code for TOTP (Time-based One-Time Password) setup.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To generate a QR code, run one of the following:</p>
+<p><strong>Option 1: Python snippet</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pyninja</span>
+<span class="n">pyninja</span><span class="o">.</span><span class="n">otp</span><span class="o">.</span><span class="n">generate_qr</span><span class="p">(</span><span class="n">show_qr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Option 2: CLI command</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyninja<span class="w"> </span>--generate-otp
+</pre></div>
+</div>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.multifactor.otp.display_secret">
+<span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.otp.</span></span><span class="sig-name descname"><span class="pre">display_secret</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qr_filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.multifactor.otp.display_secret" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays the TOTP secret key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>secret</strong> – The TOTP secret key to display.</p></li>
+<li><p><strong>qr_filename</strong> – The filename where the QR code is saved.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.multifactor.otp.generate_qr">
+<span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.otp.</span></span><span class="sig-name descname"><span class="pre">generate_qr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_qr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.multifactor.otp.generate_qr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a QR code for TOTP setup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>- show_qr</strong> – If True, displays the QR code using the default image viewer.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-pyninja.multifactor.mfa">
 <span id="initializer"></span><h2>Initializer<a class="headerlink" href="#module-pyninja.multifactor.mfa" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
@@ -3300,6 +3360,21 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.authenticator_app">
+<span class="sig-name descname"><span class="pre">authenticator_app</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.authenticator_app" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.authenticator_user">
+<span class="sig-name descname"><span class="pre">authenticator_user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pydantic.networks.EmailStr</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.authenticator_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.authenticator_token">
+<span class="sig-name descname"><span class="pre">authenticator_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.authenticator_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.gmail_user">
 <span class="sig-name descname"><span class="pre">gmail_user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pydantic.networks.EmailStr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.gmail_user" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -3862,9 +3937,9 @@ that start with a dot (hidden files).</p>
 </section>
 <section id="pyninja-monitor">
 <h1>PyNinja - Monitor<a class="headerlink" href="#pyninja-monitor" title="Permalink to this heading">¶</a></h1>
-<section id="module-pyninja.monitor.authenticator">
-<span id="authenticator"></span><h2>Authenticator<a class="headerlink" href="#module-pyninja.monitor.authenticator" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
+<section id="id2">
+<h2>Authenticator<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+<span class="target" id="module-pyninja.monitor.authenticator"></span><dl class="py function">
 <dt class="sig sig-object py" id="pyninja.monitor.authenticator.failed_auth_counter">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.monitor.authenticator.</span></span><span class="sig-name descname"><span class="pre">failed_auth_counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.monitor.authenticator.failed_auth_counter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Keeps track of failed login attempts from each host, and redirects if failed for 3 or more times.</p>
@@ -4348,6 +4423,7 @@ that start with a dot (hidden files).</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#multifactor-authentication">Multifactor Authentication</a><ul>
+<li><a class="reference internal" href="#module-pyninja.multifactor.otp">Authenticator</a></li>
 <li><a class="reference internal" href="#module-pyninja.multifactor.mfa">Initializer</a></li>
 <li><a class="reference internal" href="#module-pyninja.multifactor.gmail">Gmail</a></li>
 <li><a class="reference internal" href="#module-pyninja.multifactor.ntfy">Ntfy</a></li>
@@ -4385,7 +4461,7 @@ that start with a dot (hidden files).</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#pyninja-monitor">PyNinja - Monitor</a><ul>
-<li><a class="reference internal" href="#module-pyninja.monitor.authenticator">Authenticator</a></li>
+<li><a class="reference internal" href="#id2">Authenticator</a></li>
 <li><a class="reference internal" href="#module-pyninja.monitor.config">Configuration</a></li>
 <li><a class="reference internal" href="#module-pyninja.monitor.drive">Drive</a></li>
 <li><a class="reference internal" href="#module-pyninja.monitor.resources">Resources</a></li>

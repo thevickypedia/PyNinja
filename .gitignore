@@ -17,6 +17,7 @@ logging.ini
 *.log
 *.env
 *.db
+*.png
 
 !samples/*
 discard/

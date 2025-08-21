@@ -8,8 +8,10 @@ psutil==6.0.*  # Remove hard-coded version in PyUdisk
 PyArchitecture==0.3.*
 pydantic==2.*
 pydantic-settings==2.*
+pyotp==2.9.*
 python-multipart>=0.0.19
 PyUdisk==2.0.*
 PyYaml==6.0.*
+qrcode[pil]==8.*
 requests==2.*
 uvicorn[standard]==0.35.*
