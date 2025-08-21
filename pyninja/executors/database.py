@@ -126,27 +126,24 @@ def get_token_info(timestamp: int) -> Dict[str, Any]:
     }
 
 
-def delete_expired_tokens(
-    database: models.Database, tables: Dict[enums.TableName, str], logger: logging.Logger
-) -> None:
+def delete_expired_tokens(logger: logging.Logger) -> None:
     """Deletes the entry if an expired record is found.
 
     Args:
-        database: Database object.
-        tables: Dictionary of tables to check for expired tokens with their expiry column name.
         logger: Custom logger instance for logging messages.
     """
-    with database.connection:
-        cursor = database.connection.cursor()
-        for table, column in tables.items():
-            expiration = cursor.execute(f"SELECT {column} FROM {table}").fetchone()
-            if expiration and expiration[0]:
-                timestamp = expiration[0]
+    table = enums.TableName.mfa_token
+    column = "expiry"
+    with models.database.connection:
+        cursor = models.database.connection.cursor()
+        expiration = cursor.execute(f"SELECT {column} FROM {table}").fetchone()
+        if expiration and expiration[0]:
+            timestamp = expiration[0]
+            if int(time.time()) > int(timestamp):
                 logger.debug(get_token_info(timestamp))
-                if int(time.time()) > int(timestamp):
-                    logger.info("Token on '%s' has expired.", table)
-                    cursor.execute(f"DELETE FROM {table} WHERE {column}=(?)", (timestamp,))
-                    database.connection.commit()
+                logger.info("Token on '%s' has expired.", table)
+                cursor.execute(f"DELETE FROM {table} WHERE {column}=(?)", (timestamp,))
+                models.database.connection.commit()
 
 
 def get_log_config() -> Dict[str, Any]:
@@ -175,11 +172,10 @@ def get_log_config() -> Dict[str, Any]:
     return LOGGING_CONFIG
 
 
-def monitor_table(tables: Dict[enums.TableName, str], env: models.EnvConfig) -> None:
-    """Initiates a dedicated connection to the database.
+def monitor_table(env: models.EnvConfig) -> None:
+    """Initiates a dedicated connection to the database and scans for expired tokens.
 
     Args:
-        tables: Dictionary of tables to monitor with their expiry column name.
         env: Environment configuration object.
     """
     # Initialize models.env
@@ -189,14 +185,16 @@ def monitor_table(tables: Dict[enums.TableName, str], env: models.EnvConfig) -> 
     logger = logging.getLogger("uvicorn.default")
     logger.addFilter(filter=squire.AddProcessName(process_name="DBMonitor"))
     logger.info("Initiated table monitor to delete expired tokens")
-    database = models.Database(models.env.database)
-    logger.info("Database description: %s", database.describe_database())
+    models.database = models.Database(models.env.database)
+    for key, value in models.database.describe_database().items():
+        logger.info("%s: %s", key, value)
 
     start = time.time()
     # Log a heart beat check every 5 minutes
     log_interval = 5 * 60
     heart_beat = 30
     breaker = 0
+    breaker_threshold = 5
 
     def run_monitoring() -> None:
         """Runs in an endless loop to look for expired tokens and remove them."""
@@ -205,17 +203,21 @@ def monitor_table(tables: Dict[enums.TableName, str], env: models.EnvConfig) -> 
         while True:
             if time.time() - start > log_interval:
                 start = time.time()
-                logger.info("Heartbeat - Table monitor is scanning %s", ", ".join(tables))
+                logger.info("Heartbeat - Table monitor is scanning %s", enums.TableName.mfa_token)
             try:
-                delete_expired_tokens(database, tables, logger)
+                delete_expired_tokens(logger)
                 breaker = 0
             except sqlite3.OperationalError as error:
                 breaker += 1
                 logger.error(error)
             # Display warning if failed to delete expired tokens more than 5 times in a row
-            if breaker > 5:
-                # TODO: Drop and re-create the table if it continues to fail
-                warnings.warn("Too many errors while scanning tables.", UserWarning)
+            if breaker > breaker_threshold:
+                warnings.warn("Too many errors while scanning tables. Re-creating...", UserWarning)
+                logger.warning(
+                    "Too many errors while scanning tables. Re-creating '%s' table.",
+                    enums.TableName.mfa_token,
+                )
+                models.database.create_table(enums.TableName.mfa_token, ["token", "expiry"], drop_existing=True)
             time.sleep(heart_beat)
 
     try:

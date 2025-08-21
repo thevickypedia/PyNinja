@@ -25,10 +25,7 @@ async def lifespan(app: FastAPI):
     LOGGER.info("FastAPI server [%s:%s] initialized.", api_name, api_version)
     process = Process(
         target=database.monitor_table,
-        kwargs=dict(
-            tables={enums.TableName.mfa_token: "expiry"},
-            env=models.env,
-        ),
+        kwargs=dict(env=models.env),
     )
     process.start()
     LOGGER.info(f"Started DB monitor process: {process.pid}")

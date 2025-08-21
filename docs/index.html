@@ -421,15 +421,11 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.database.delete_expired_tokens">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">delete_expired_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.Database" title="pyninja.modules.models.Database"><span class="pre">Database</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.modules.enums.TableName" title="pyninja.modules.enums.TableName"><span class="pre">TableName</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Logger</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.delete_expired_tokens" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">delete_expired_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Logger</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.delete_expired_tokens" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes the entry if an expired record is found.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>database</strong> – Database object.</p></li>
-<li><p><strong>tables</strong> – Dictionary of tables to check for expired tokens with their expiry column name.</p></li>
-<li><p><strong>logger</strong> – Custom logger instance for logging messages.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>logger</strong> – Custom logger instance for logging messages.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -450,14 +446,11 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.database.monitor_table">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">monitor_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyninja.modules.enums.TableName" title="pyninja.modules.enums.TableName"><span class="pre">TableName</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.EnvConfig" title="pyninja.modules.models.EnvConfig"><span class="pre">EnvConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.monitor_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initiates a dedicated connection to the database.</p>
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">monitor_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.EnvConfig" title="pyninja.modules.models.EnvConfig"><span class="pre">EnvConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.monitor_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initiates a dedicated connection to the database and scans for expired tokens.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tables</strong> – Dictionary of tables to monitor with their expiry column name.</p></li>
-<li><p><strong>env</strong> – Environment configuration object.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>env</strong> – Environment configuration object.</p>
 </dd>
 </dl>
 </dd></dl>

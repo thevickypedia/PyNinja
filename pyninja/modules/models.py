@@ -260,7 +260,7 @@ class EnvConfig(BaseSettings):
     # Remote exec and fileIO
     remote_execution: bool = False
     api_secret: str | None = None
-    database: str = Field("auth.db", pattern=".*.db$")
+    database: str = Field("database.db", pattern=".*.db$")
 
     # Multifactor authentication
     # Gmail
