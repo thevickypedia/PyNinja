@@ -267,18 +267,20 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
         ),
         # Large file upload and download are not included in the docs page
         APIRoute(
-            path=enums.APIEndpoints.put_large_file,
-            endpoint=upload.put_large_file,
-            methods=["PUT"],
-            dependencies=dependencies,
-            include_in_schema=False,
-        ),
-        APIRoute(
             path=enums.APIEndpoints.get_large_file,
             endpoint=download.get_large_file,
             methods=["GET"],
             dependencies=dependencies,
             include_in_schema=False,
+            summary="API endpoint to download large files/directories in chunks via streaming response.",
+        ),
+        APIRoute(
+            path=enums.APIEndpoints.put_large_file,
+            endpoint=upload.put_large_file,
+            methods=["PUT"],
+            dependencies=dependencies,
+            include_in_schema=False,
+            summary="API endpoint to upload large files/directories in chunks via streaming requests.",
         ),
     ]
     # macOS treats applications different from services, so it needs special handling

@@ -65,16 +65,17 @@ def get_desc(
         str:
         Returns the description as a string.
     """
-    basic_fl, remote_fl, monitor_fl, run_ui = ("Disabled",) * 4
+    basic_fl, remote_fl, monitor_fl, run_fl = ("Disabled",) * 4
+    monitor_ui = enums.APIEndpoints.monitor.value
+    run_ui = enums.APIEndpoints.run_ui.value
     if get_routes.enabled:
         basic_fl = "All basic GET calls have been enabled"
     if post_routes.enabled:
         rc_name = enums.APIEndpoints.run_command.name
         rc_value = enums.APIEndpoints.run_command.value
+        # Internal link to the run command UI in the /docs page
         remote_fl = f"Enabled at <a href='#/default/{rc_name}_{rc_name}_post'>{rc_value}</a>"
-        ru_value = enums.APIEndpoints.run_ui.value
-        run_ui = f"Enabled at <a href='{ru_value}'>{ru_value}</a>"
-    monitor_ui = enums.APIEndpoints.monitor.value
+        run_fl = f"Enabled at <a href='{run_ui}'>{run_ui}</a>"
     if monitor_routes.enabled:
         monitor_fl = f"Enabled at <a href='{monitor_ui}'>{monitor_ui}</a>"
     description = "**Lightweight OS-agnostic service monitoring API**"
@@ -88,20 +89,27 @@ def get_desc(
     for route in get_routes.routes:
         description += generate_hyperlink(route)
     description += "\n\n#### Additional Features**"
+    hidden_features = "\n\n#### Hidden Features**"
+    bigbang = "https://github.com/thevickypedia/PyNinja/blob/main/scripts/bigbang.py"
     for route in post_routes.routes:
-        description += generate_hyperlink(route)
-    # TODO: Not sure if including this by default is helping (revisit the entire logic)
-    description += f"\n- <a href='{monitor_ui}'>{monitor_ui}</a><br>"
+        if route.include_in_schema:
+            description += generate_hyperlink(route)
+        elif route.name != enums.APIEndpoints.run_ui.name:
+            hidden_features += f"\n <a href='{bigbang}'>{route.path}</a> - {route.summary}<br>"
+    # Additional links for monitoring and run UI under "Additional Features" section (but could be 404 if disabled)
+    # description += f"\n- <a href='{monitor_ui}'>{monitor_ui}</a><br>"
+    # description += f"\n- <a href='{run_ui}'>{run_ui}</a><br>"
     description += "\n> **Additional features are available based on server configuration."
     description += "\n\n#### Current State"
     description += f"\n- **Basic Execution:** {basic_fl}"
     description += f"\n- **Remote Execution:** {remote_fl}"
-    description += f"\n- **Remote Execution UI:** {run_ui}"
+    description += f"\n- **Remote Execution UI:** {run_fl}"
     description += f"\n- **Monitoring Page:** {monitor_fl}"
     description += "\n\n#### Links"
     description += "\n- <a href='https://pypi.org/project/PyNinja/'>PyPi</a><br>"
     description += "\n- <a href='https://github.com/thevickypedia/PyNinja'>GitHub</a><br>"
     description += "\n- <a href='https://thevickypedia.github.io/PyNinja/'>Runbook</a><br>"
+    description += hidden_features + "<br><br>"
     return description
 
 

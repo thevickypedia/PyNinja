@@ -19,7 +19,6 @@ def get_token(table: enums.TableName, include_expiry: bool = False) -> Any | Non
         Any:
         Returns the token stored in the database.
     """
-    # TODO: Decode token before returning it
     with models.database.connection:
         cursor = models.database.connection.cursor()
         if include_expiry:
