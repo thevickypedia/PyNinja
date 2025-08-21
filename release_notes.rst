@@ -1,6 +1,15 @@
 Release Notes
 =============
 
+v4.7.2 (08/20/2025)
+-------------------
+- Add a process name filter for logger
+- Minor stability improvements
+- Encrypt MFA codes stored in the DB with fernet
+- Disable ``remote_execution`` when no MFA options are available Update requirements
+- Recreate ``mfa_token`` table if monitoring errors exceed threshold
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.7.1...v4.7.2
+
 v4.7.1 (08/20/2025)
 -------------------
 - Drop existing ``mfa_token`` table before creating a new one
