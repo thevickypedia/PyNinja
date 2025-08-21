@@ -144,7 +144,7 @@ async def level_2(
         if verify_mfa(mfa_code):
             LOGGER.info("MFA verification successful for %s", request.client.host)
             return
-    # Handle authentication errors
+    # Adds host address to the forbidden set
     await handle_auth_error(request)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.UNAUTHORIZED.real,

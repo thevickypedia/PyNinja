@@ -5,16 +5,14 @@ import sys
 import click
 
 from .main import start, version
-from .multifactor import otp  # noqa: F401
+from .multifactor import otp
 
 
-# TODO: Include CLI option to generate QR code for TOTP setup
-#       (similar to `pyninja --setup-mfa` or `pyninja --generate-otp`)
 @click.command()
 @click.argument("start", required=False)
-@click.argument("run", required=False)
 @click.option("--version", "-V", is_flag=True, help="Prints the version.")
 @click.option("--help", "-H", is_flag=True, help="Prints the help section.")
+@click.option("--mfa", is_flag=True, help="Generates a QR code for TOTP setup.")
 @click.option(
     "--env",
     "-E",
@@ -27,17 +25,19 @@ def commandline(*args, **kwargs) -> None:
     **Flags**
         - ``--version | -V``: Prints the version.
         - ``--help | -H``: Prints the help section.
+        - ``--mfa``: Generates a QR code for TOTP setup.
         - ``--env | -E``: Environment configuration filepath.
 
     **Commands**
-        ``start | run``: Initiates the backup process.
+        ``start``: Initiates PyNinja API server.
     """
     assert sys.argv[0].lower().endswith("pyninja"), "Invalid commandline trigger!!"
     options = {
         "--version | -V": "Prints the version.",
         "--help | -H": "Prints the help section.",
         "--env | -E": "Environment configuration filepath.",
-        "start | run": "Initiates the backup process.",
+        "--mfa": "Generates a QR code for TOTP setup.",
+        "start": "Initiates PyNinja API server.",
     }
     # weird way to increase spacing to keep all values monotonic
     _longest_key = len(max(options.keys()))
@@ -51,13 +51,13 @@ def commandline(*args, **kwargs) -> None:
     if kwargs.get("help"):
         click.echo(f"\nUsage: pyninja [arbitrary-command]\nOptions (and corresponding behavior):{choices}")
         sys.exit(0)
-    trigger = kwargs.get("start") or kwargs.get("run")
-    if trigger and trigger.lower() in ("start", "run"):
+    if kwargs.get("mfa"):
+        otp.generate_qr(show_qr=True)
+        sys.exit(0)
+    if kwargs.get("start") == "start":
         # Click doesn't support assigning defaults like traditional dictionaries, so kwargs.get("max", 100) won't work
         start(env_file=kwargs.get("env"))
         sys.exit(0)
-    elif trigger:
-        click.secho(f"\n{trigger!r} - Invalid command", fg="red")
     else:
         click.secho("\nNo command provided", fg="red")
     click.echo(f"Usage: pyninja [arbitrary-command]\nOptions (and corresponding behavior):{choices}")
