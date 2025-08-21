@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+v4.8.0 (08/21/2025)
+-------------------
+- Onboard a new MFA mechanism using pyotp
+- Integrate MFA with CLI usage
+- Fix broken imports due to missing HTML pages in packaged wheels
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.7.2...v4.8.0
+
 v4.7.2 (08/20/2025)
 -------------------
 - Add a process name filter for logger
