@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v4.8.1 (08/21/2025)
+-------------------
+- Fix API description and hyperlinks in docs page
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.8.0...v4.8.1
+
 v4.8.0 (08/21/2025)
 -------------------
 - Onboard a new MFA mechanism using pyotp
