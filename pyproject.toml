@@ -26,13 +26,12 @@ packages = [
     "pyninja.multifactor",
     "pyninja.features",
     "pyninja.executors",
-    "pyninja.monitor.templates"
+    "pyninja.modules.templates.api",
+    "pyninja.modules.templates.monitor",
 ]
-# TODO: Restructure all html templates into one source of truth
 [tool.setuptools.package-data]
-"pyninja.routes" = ["*.html"]
-"pyninja.modules" = ["*.js", "*.html"]
-"pyninja.monitor.templates" = ["*.html"]
+"pyninja.modules.templates.monitor" = ["*.html"]
+"pyninja.modules.templates.api" = ["*.js", "*.html"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pyninja.version.__version__" }
