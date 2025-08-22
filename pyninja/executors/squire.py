@@ -384,8 +384,7 @@ def any_mfa_enabled() -> bool:
         Returns True if any MFA method is enabled, else False.
     """
     return (
-        models.env.authenticator_token
-        or any((models.env.gmail_user, models.env.gmail_pass))  # recipient is optional (defaults to gmail_user)
+        any((models.env.gmail_user, models.env.gmail_pass))  # recipient is optional (defaults to gmail_user)
         or any((models.env.ntfy_url, models.env.ntfy_topic))  # ntfy_username and ntfy_password are optional
         or any((models.env.telegram_token, models.env.telegram_chat_id))
         or False
@@ -402,7 +401,7 @@ def handle_warnings() -> None:
 
     if not all((models.env.remote_execution, models.env.api_secret, models.env.apikey)):
         return
-    if not any_mfa_enabled():
+    if not any((models.env.authenticator_token, any_mfa_enabled())):
         warnings.warn(
             f"\n{base}"
             "\nThe 'remote_execution' flag is enabled, allowing shell command execution via the API."

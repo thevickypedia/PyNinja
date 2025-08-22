@@ -189,8 +189,8 @@ def monitor_table(env: models.EnvConfig) -> None:
         logger.info("%s: %s", key, value)
 
     start = time.time()
-    # Log a heart beat check every 5 minutes
-    log_interval = 5 * 60
+    # Log a heart beat check every 30 minutes
+    log_interval = 1_800
     heart_beat = 30
     breaker = 0
     breaker_threshold = 5

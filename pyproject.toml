@@ -14,7 +14,7 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
     "Topic :: System :: Monitoring",
 ]
-keywords = ["service-monitor", "PyNinja"]
+keywords = ["system-monitor", "PyNinja"]
 requires-python = ">=3.11"
 
 [tool.setuptools]

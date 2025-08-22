@@ -7,6 +7,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from fastapi.security import HTTPBearer
 
+from pyninja.executors import squire
 from pyninja.modules import enums, exceptions, models
 from pyninja.monitor import routes as ui
 from pyninja.multifactor import mfa
@@ -67,11 +68,6 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
         Returns the routes as a list of APIRoute objects.
     """
     basic_routes = [
-        APIRoute(
-            path=enums.APIEndpoints.get_mfa,
-            endpoint=mfa.get_mfa,
-            methods=["GET"],
-        ),
         APIRoute(
             path=enums.APIEndpoints.get_ip,
             endpoint=ipaddr.get_ip_address,
@@ -185,6 +181,16 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
                 dependencies=dependencies,
             )
         )
+    if squire.any_mfa_enabled():
+        basic_routes.insert(
+            0,
+            APIRoute(
+                path=enums.APIEndpoints.get_mfa,
+                endpoint=mfa.get_mfa,
+                methods=["GET"],
+                dependencies=dependencies,
+            ),
+        )
     return basic_routes
 
 
@@ -209,6 +215,7 @@ def post_api(dependencies: List[Depends]) -> List[APIRoute]:
             path=enums.APIEndpoints.run_ui,
             endpoint=commands.run_ui,
             methods=["GET"],
+            dependencies=dependencies,
             include_in_schema=False,
         ),
         APIRoute(
