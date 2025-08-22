@@ -57,7 +57,7 @@ async def get_mfa(
     if not all((models.env.telegram_chat_id, models.env.telegram_token)):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
-            detail="Ntfy URL, username, password, and topic must be set in the environment.",
+            detail="'telegram_token' and 'telegram_chat_id' must be set in the environment.",
         )
     title = f"PyNinja MFA - {datetime.now().strftime('%c')}"
     token = squire.generate_mfa_token()

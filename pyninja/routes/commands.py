@@ -1,5 +1,4 @@
 import logging
-import os
 import subprocess
 from http import HTTPStatus
 from typing import Optional
@@ -7,20 +6,18 @@ from typing import Optional
 from fastapi import Depends, Header, Request
 from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from fastapi.templating import Jinja2Templates
 
 from pyninja.executors import auth, squire
-from pyninja.modules import enums, exceptions, payloads
+from pyninja.modules import enums, exceptions, models, payloads
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
-TEMPLATES = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__)))
 
 
 async def run_ui(request: Request):
     """Renders the HTML template for the run command UI."""
-    return TEMPLATES.TemplateResponse(
-        name="run_ui.html",
+    return models.API_TEMPLATES.TemplateResponse(
+        name=enums.Templates.run_ui.value,
         context={
             "request": request,
             "API_ENDPOINT": enums.APIEndpoints.run_command,

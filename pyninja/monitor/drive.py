@@ -3,7 +3,7 @@ import logging
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse
 
-from pyninja import monitor, version
+from pyninja import version
 from pyninja.modules import enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -25,7 +25,7 @@ async def report(request: Request) -> HTMLResponse:
         template = enums.Templates.disk_report_darwin
     else:
         raise
-    return monitor.config.templates.TemplateResponse(
+    return models.MONITOR_TEMPLATES.TemplateResponse(
         name=template.value,
         context=dict(
             logout=enums.APIEndpoints.logout,

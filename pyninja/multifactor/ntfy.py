@@ -36,7 +36,7 @@ async def get_mfa(
     if not all((models.env.ntfy_url, models.env.ntfy_topic)):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
-            detail="Ntfy URL, username, password, and topic must be set in the environment.",
+            detail="'ntfy_url', and 'ntfy_topic' must be set in the environment.",
         )
     session = requests.Session()
     session.headers = {

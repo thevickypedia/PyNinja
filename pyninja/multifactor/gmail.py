@@ -72,7 +72,7 @@ async def get_mfa(
     if not all((models.env.gmail_user, models.env.gmail_pass)):
         raise exceptions.APIResponse(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
-            detail="gmail_user and gmail_pass must be set in the environment.",
+            detail="'gmail_user' and 'gmail_pass' must be set in the environment.",
         )
     if not send_new_mfa():
         LOGGER.info("A recent MFA token is still valid, not sending a new one.")

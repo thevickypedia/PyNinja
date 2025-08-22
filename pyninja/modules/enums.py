@@ -99,6 +99,7 @@ class Templates(StrEnum):
 
     """
 
+    # Monitoring templates
     main: str = "main.html"
     index: str = "index.html"
     logout: str = "logout.html"
@@ -106,6 +107,11 @@ class Templates(StrEnum):
     unauthorized: str = "unauthorized.html"
     disk_report_linux: str = "disk_report_linux.html"
     disk_report_darwin: str = "disk_report_darwin.html"
+
+    # API templates
+    run_ui: str = "run_ui.html"
+    swagger_ui: str = "swaggerUI.js"
+    mfa_template: str = "mfa_template.html"
 
 
 class APIRouteType(StrEnum):

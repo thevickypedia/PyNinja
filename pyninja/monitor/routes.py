@@ -27,7 +27,7 @@ async def error_endpoint(request: Request) -> HTMLResponse:
     """
     return await monitor.config.clear_session(
         request,
-        monitor.config.templates.TemplateResponse(
+        models.MONITOR_TEMPLATES.TemplateResponse(
             name=enums.Templates.unauthorized.value,
             context={
                 "request": request,
@@ -55,7 +55,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
         response = await monitor.authenticator.session_error(request, error)
     else:
         models.ws_session.client_auth.pop(request.client.host, None)
-        response = monitor.config.templates.TemplateResponse(
+        response = models.MONITOR_TEMPLATES.TemplateResponse(
             name=enums.Templates.logout.value,
             context={
                 "request": request,
@@ -129,7 +129,7 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None), 
             ctx["request"] = request
             ctx["version"] = version.__version__
             LOGGER.info("Rendering initial context for monitoring page!")
-            return monitor.config.templates.TemplateResponse(name=enums.Templates.main.value, context=ctx)
+            return models.MONITOR_TEMPLATES.TemplateResponse(name=enums.Templates.main.value, context=ctx)
         elif render == enums.Cookies.drive:
             LOGGER.info("Rendering disk report!")
             try:
@@ -137,7 +137,7 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None), 
             except Exception as error:
                 LOGGER.error(error)
                 return await monitor.drive.invalidate("Failed to generate disk report")
-    return monitor.config.templates.TemplateResponse(
+    return models.MONITOR_TEMPLATES.TemplateResponse(
         name=enums.Templates.index.value,
         context={
             "request": request,

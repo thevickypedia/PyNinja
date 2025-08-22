@@ -354,7 +354,7 @@
                     return;
                 }
 
-                alert("Network or server error: " + err.message);
+                alert(err.message);
                 showLogOutput(false);
                 credentialsSection.style.display = "block";
                 clearButton.classList.add("hidden");

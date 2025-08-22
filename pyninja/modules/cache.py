@@ -89,7 +89,7 @@ def timed_cache(max_age: int, maxsize: int = 128, typed: bool = False):
 
             return _async_wrapped
         else:
-            # Handle sync functions with original approach
+
             @functools.lru_cache(maxsize=maxsize, typed=typed)
             def _sync_cached(*args: tuple, __timed_hash: int, **kwargs: dict[str, Any]) -> Any:
                 """Sync cached function that uses a timed hash to invalidate cache.

@@ -2981,6 +2981,21 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 <span class="sig-name descname"><span class="pre">disk_report_darwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'disk_report_darwin.html'</span></em><a class="headerlink" href="#pyninja.modules.enums.Templates.disk_report_darwin" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.Templates.run_ui">
+<span class="sig-name descname"><span class="pre">run_ui</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'run_ui.html'</span></em><a class="headerlink" href="#pyninja.modules.enums.Templates.run_ui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.Templates.swagger_ui">
+<span class="sig-name descname"><span class="pre">swagger_ui</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'swaggerUI.js'</span></em><a class="headerlink" href="#pyninja.modules.enums.Templates.swagger_ui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.Templates.mfa_template">
+<span class="sig-name descname"><span class="pre">mfa_template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mfa_template.html'</span></em><a class="headerlink" href="#pyninja.modules.enums.Templates.mfa_template" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -3284,11 +3299,6 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">FileIO</span>
 </pre></div>
 </div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.FileIO.current_dir">
-<span class="sig-name descname"><span class="pre">current_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.FileIO.current_dir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.FileIO.swagger_ui">
 <span class="sig-name descname"><span class="pre">swagger_ui</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyninja.modules.models.FileIO.swagger_ui" title="Permalink to this definition">¶</a></dt>
@@ -3718,13 +3728,13 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.modules.models.load_swagger_ui">
-<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">load_swagger_ui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.modules.models.load_swagger_ui" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">load_swagger_ui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.modules.models.load_swagger_ui" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the custom JavaScript for Swagger UI.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.modules.models.load_mfa_template">
-<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">load_mfa_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.modules.models.load_mfa_template" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">load_mfa_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.modules.models.load_mfa_template" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the custom HTML template for MFA template.</p>
 </dd></dl>
 
