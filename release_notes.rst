@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+v4.8.2 (08/22/2025)
+-------------------
+- Unify all template files into one source of truth
+- Update project metadata with unified templates' path
+- Include /get-mfa route only when MFA env vars are available
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.8.1...v4.8.2
+
 v4.8.1 (08/21/2025)
 -------------------
 - Fix API description and hyperlinks in docs page
