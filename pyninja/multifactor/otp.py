@@ -15,7 +15,7 @@
 
     .. code-block:: bash
 
-        pyninja --generate-otp
+        pyninja --mfa
 """
 
 import os

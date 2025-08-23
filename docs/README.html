@@ -108,15 +108,46 @@
 <li><p><strong>DATABASE</strong> - FilePath to store the auth database that handles the authentication errors.</p></li>
 </ul>
 <p>⚠️ <strong>Warning: Enabling remote execution carries significant security risks.</strong>
-To enhance security, it’s strongly recommended to use multifactor authentication (MFA) via your Gmail account.
-If you don’t have a Gmail account and instead rely on an <strong>API_SECRET</strong>,
-please proceed with <strong>caution</strong> and ensure that the <strong>API_SECRET</strong> is set to a strong and secure value.</p>
+To enhance security, it is mandatory to use multifactor authentication (MFA) token.</p>
 <p><strong>Multifactor Authentication (MFA)</strong></p>
+<ul>
+<li><p><strong>MFA_TIMEOUT</strong> - Timeout duration for MFA in seconds.</p></li>
+<li><p><strong>Email</strong></p>
 <ul class="simple">
 <li><p><strong>GMAIL_USER</strong> - Gmail username for MFA.</p></li>
 <li><p><strong>GMAIL_PASS</strong> - Gmail password for MFA.</p></li>
-<li><p><strong>RECIPIENT</strong> - Recipient email address for MFA.</p></li>
-<li><p><strong>MFA_TIMEOUT</strong> - Timeout duration for MFA in seconds.</p></li>
+<li><p><strong>RECIPIENT</strong> - Recipient email address for MFA. Defaults to <strong>GMAIL_USER</strong></p></li>
+</ul>
+</li>
+<li><p><strong>Ntfy</strong></p>
+<ul class="simple">
+<li><p><strong>NTFY_URL</strong> - Ntfy server URL.</p></li>
+<li><p><strong>NTFY_TOPIC</strong> - Subscribed ntfy topic.</p></li>
+</ul>
+<blockquote>
+<div><p>Include <strong>NTFY_USERNAME</strong> and <strong>NTFY_PASSWORD</strong> if the topic is protected.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Telegram</strong></p>
+<ul class="simple">
+<li><p><strong>TELEGRAM_TOKEN</strong> - Telegram bot token.</p></li>
+<li><p><strong>TELEGRAM_CHAT_ID</strong> - Telegram chat ID to send MFA.</p></li>
+</ul>
+</li>
+<li><p><strong>Authenticator</strong></p>
+<ul class="simple">
+<li><p>Generate QR code for any authenticator application.</p></li>
+</ul>
+<p><strong>Code</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pyninja</span>
+<span class="n">pyninja</span><span class="o">.</span><span class="n">otp</span><span class="o">.</span><span class="n">generate_qr</span><span class="p">(</span><span class="n">show_qr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>CLI</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyninja<span class="w"> </span>--mfa
+</pre></div>
+</div>
+</li>
 </ul>
 <p><strong>Monitoring UI</strong></p>
 <ul class="simple">
@@ -140,7 +171,7 @@ please proceed with <strong>caution</strong> and ensure that the <strong>API_SEC
 <li><p><strong>OPEN</strong> - Path to the <code class="docutils literal notranslate"><span class="pre">open</span></code> binary for macOS. Defaults to <code class="docutils literal notranslate"><span class="pre">/usr/bin/open</span></code></p></li>
 </ul>
 <blockquote>
-<div><p>Certain environment variables like <code class="docutils literal notranslate"><span class="pre">SERVICES</span></code> and <code class="docutils literal notranslate"><span class="pre">PROCESSS</span></code> are case-sensitive</p>
+<div><p>📓 Certain environment variables like <code class="docutils literal notranslate"><span class="pre">SERVICES</span></code> and <code class="docutils literal notranslate"><span class="pre">PROCESSS</span></code> are case-sensitive</p>
 </div></blockquote>
 <blockquote>
 <div><p>Refer <a class="reference external" href="https://github.com/thevickypedia/PyNinja/tree/main/samples">samples</a> directory for examples.</p>

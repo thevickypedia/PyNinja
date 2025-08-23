@@ -69,15 +69,35 @@ pyninja start
 - **DATABASE** - FilePath to store the auth database that handles the authentication errors.
 
 ⚠️ **Warning: Enabling remote execution carries significant security risks.**
-To enhance security, it's strongly recommended to use multifactor authentication (MFA) via your Gmail account.
-If you don't have a Gmail account and instead rely on an **API_SECRET**,
-please proceed with **caution** and ensure that the **API_SECRET** is set to a strong and secure value.
+To enhance security, it is mandatory to use multifactor authentication (MFA) token.
 
 **Multifactor Authentication (MFA)**
-- **GMAIL_USER** - Gmail username for MFA.
-- **GMAIL_PASS** - Gmail password for MFA.
-- **RECIPIENT** - Recipient email address for MFA.
 - **MFA_TIMEOUT** - Timeout duration for MFA in seconds.
+
+- **Email**
+    - **GMAIL_USER** - Gmail username for MFA.
+    - **GMAIL_PASS** - Gmail password for MFA.
+    - **RECIPIENT** - Recipient email address for MFA. Defaults to **GMAIL_USER**
+- **Ntfy**
+    - **NTFY_URL** - Ntfy server URL.
+    - **NTFY_TOPIC** - Subscribed ntfy topic.
+    > Include **NTFY_USERNAME** and **NTFY_PASSWORD** if the topic is protected.
+- **Telegram**
+    - **TELEGRAM_TOKEN** - Telegram bot token.
+    - **TELEGRAM_CHAT_ID** - Telegram chat ID to send MFA.
+- **Authenticator**
+    - Generate QR code for any authenticator application.
+
+    **Code**
+    ```python
+    import pyninja
+    pyninja.otp.generate_qr(show_qr=True)
+    ```
+
+    **CLI**
+    ```shell
+    pyninja --mfa
+    ```
 
 **Monitoring UI**
 - **MONITOR_USERNAME** - Username to authenticate the monitoring page.
@@ -98,7 +118,7 @@ please proceed with **caution** and ensure that the **API_SECRET** is set to a s
 - **MDLS** - Path to the `mdls` binary for macOS. Defaults to `/usr/bin/mdls`
 - **OPEN** - Path to the `open` binary for macOS. Defaults to `/usr/bin/open`
 
-> Certain environment variables like `SERVICES` and `PROCESSS` are case-sensitive
+> 📓 Certain environment variables like `SERVICES` and `PROCESSS` are case-sensitive
 
 > Refer [samples] directory for examples.
 
