@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v4.8.3 (08/24/2025)
+-------------------
+- Update documentation
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.8.2...v4.8.3
+
 v4.8.2 (08/22/2025)
 -------------------
 - Unify all template files into one source of truth
