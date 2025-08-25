@@ -73,6 +73,7 @@ To enhance security, it is mandatory to use multifactor authentication (MFA) tok
 
 **Multifactor Authentication (MFA)**
 - **MFA_TIMEOUT** - Timeout duration for MFA in seconds.
+- **MFA_RESEND_DELAY** - Resend duration for MFA in seconds. _Cool off period before a new MFA can be requested._
 
 - **Email**
     - **GMAIL_USER** - Gmail username for MFA.
