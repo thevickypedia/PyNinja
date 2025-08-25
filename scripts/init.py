@@ -12,6 +12,7 @@ NINJA_API_KEY = os.environ["NINJA_APIKEY"]
 NINJA_API_URL = os.environ["NINJA_API_URL"]
 NINJA_API_TIMEOUT = os.environ["NINJA_API_TIMEOUT"]
 NINJA_API_SECRET = os.environ["NINJA_API_SECRET"]
+NINJA_API_MFA = os.environ["NINJA_API_MFA"]
 SERVER_PASSWORD = os.getenv("SERVER_PASSWORD")
 CHUNK_SIZE = 9 * 1024 * 1024 * 10  # 90MB
 
@@ -19,6 +20,7 @@ SESSION = requests.Session()
 SESSION.headers = {
     "Authorization": f"Bearer {NINJA_API_KEY}",
     "API-SECRET": NINJA_API_SECRET,
+    "MFA-CODE": NINJA_API_MFA,
     "Accept": "application/json",
 }
 retry = Retry(connect=5, backoff_factor=2)
