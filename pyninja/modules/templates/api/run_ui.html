@@ -1,441 +1,477 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>PyNinja - Command Runner</title>
-        <meta property="og:type" content="CommandRunner">
-        <meta name="keywords" content="Python, Monitor, fastapi, JavaScript, HTML, CSS">
-        <meta name="author" content="Vignesh Rao">
-        <!-- Favicon.ico and Apple Touch Icon -->
-        <link property="og:image" rel="icon" href="https://thevickypedia.github.io/open-source/images/logo/pyninja.ico">
-        <link property="og:image" rel="apple-touch-icon"
-            href="https://thevickypedia.github.io/open-source/images/logo/pyninja.png">
-        <meta content="width=device-width, initial-scale=1" name="viewport">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <style>
-            body {
-                font-family: "Segoe UI", sans-serif;
-                padding: 40px;
-                background: #f7f9fc;
-                color: #333;
-            }
-
-            h2 {
-                margin-top: 40px;
-                color: #222;
-            }
-
-            .input-group {
-                position: relative;
-                margin-top: 25px;
-            }
-
-            .input-group input,
-            .input-group textarea {
-                width: 100%;
-                padding: 12px 12px 12px 12px;
-                border: 1px solid #ccc;
-                resize: both;
-                border-radius: 6px;
-                background: white;
-                font-size: 16px;
-                outline: none;
-                transition: all 0.2s ease;
-            }
-
-            .input-group label {
-                position: absolute;
-                top: 12px;
-                left: 12px;
-                font-size: 16px;
-                color: #777;
-                pointer-events: none;
-                transition: 0.2s ease all;
-                background: white;
-                padding: 0 4px;
-            }
-
-            .input-group input:focus + label,
-            .input-group input:not(:placeholder-shown) + label,
-            .input-group textarea:focus + label,
-            .input-group textarea:not(:placeholder-shown) + label {
-                top: -10px;
-                left: 10px;
-                font-size: 12px;
-                color: #555;
-            }
-
-            button {
-                margin-top: 25px;
-                padding: 12px;
-                width: 100%;
-                background: #2a73ff;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                font-size: 16px;
-                cursor: pointer;
-                transition: background 0.2s ease;
-            }
-
-            button:hover {
-                background: #1d5ee8;
-            }
-
-            .main-container {
-                max-width: 600px;
-                margin: auto;
-            }
-
-            #log-output {
-                margin-top: 30px;
-                height: 300px;
-                width: 80%;
-                resize: both;
-                overflow: auto;
-                background: #1e1e1e;
-                color: #00ff8c;
-                padding: 15px;
-                font-family: monospace;
-                white-space: pre-wrap;
-                border-radius: 6px;
-                border: 1px solid #444;
-                resize: both;
-                box-sizing: border-box;
-
-                display: none;
-
-                /* Align with centered content */
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            #export-log {
-                width: 30%;
-                max-width: 200px;
-                padding: 10px;
-                margin: 5px auto;
-                font-size: 14px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                display: block;
-            }
-
-            #stop-streaming,
-            #clear-console {
-                width: 30%;
-                max-width: 200px;
-                padding: 10px;
-                margin: 5px;
-                font-size: 14px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-
-            #stop-streaming {
-                background: #ff4c4c;
-                color: white;
-            }
-
-            #clear-console {
-                background: #888;
-                color: white;
-            }
-
-            .hidden {
-                display: none !important;
-            }
-
-            .spinner {
-                display: inline-block;
-                width: 16px;
-                height: 16px;
-                border: 2px solid white;
-                border-top: 2px solid transparent;
-                border-radius: 50%;
-                margin-right: 8px;
-                animation: spin 0.7s linear infinite;
-                vertical-align: middle;
-            }
-
-            @keyframes spin {
-                to {
-                    transform: rotate(360deg);
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="main-container">
-            <div id="credentials-section">
-                <h2>API Credentials</h2>
-                <div class="input-group">
-                    <input id="apikey" type="text" required placeholder=" " />
-                    <label for="apikey">API Key (required)</label>
-                </div>
-
-                <div class="input-group">
-                    <input id="apisecret" type="password" required placeholder=" " />
-                    <label for="apisecret">API Secret (required)</label>
-                </div>
-
-                <div class="input-group">
-                    <input id="mfa_token" type="text" placeholder=" " />
-                    <label for="mfa_token">MFA Token (required)</label>
-                </div>
-
-                <button id="save-creds">Save and Continue</button>
-            </div>
-            <button id="clear-creds" style="background: #bbb; margin-top: 10px;">Clear Credentials (Logout)</button>
-
-            <div id="command-section" class="hidden">
-                <h2>Run Command</h2>
-                <div class="input-group">
-                    <textarea id="command" placeholder=" "></textarea>
-                    <label for="command">Enter command</label>
-                </div>
-
-                <div class="input-group">
-                    <input id="timeout" type="number" placeholder=" " />
-                    <label for="timeout">Timeout (seconds)</label>
-                </div>
-
-                <div class="input-group">
-                    <input id="stream-timeout" type="number" placeholder=" " />
-                    <label for="stream-timeout">Stream Timeout (seconds)</label>
-                </div>
-
-                <button id="run-command">
-                    <span id="run-spinner" class="hidden spinner"></span>
-                    <span id="run-text">Run</span>
-                </button>
-            </div>
-        </div>
-        <div id="log-output"></div>
-        <div id="streaming-status" class="hidden" style="margin-top: 10px; text-align: center;"><span style="color: green;">●</span> <span>Streaming...</span></div>
-        <button id="export-log" class="hidden" style="background: #4caf50;">Download Log</button>
-        <div style="text-align: center; margin-top: 10px;">
-            <button id="stop-streaming" class="hidden">Stop Streaming</button>
-            <button id="clear-console" class="hidden">Clear Console</button>
-        </div>
-    </body>
-    <script>
-        const clearCredsButton = document.getElementById("clear-creds");
-        const saveButton = document.getElementById("save-creds");
-        const runButton = document.getElementById("run-command");
-        const commandSection = document.getElementById("command-section");
-        const credentialsSection = document.getElementById("credentials-section");
-        const logOutput = document.getElementById("log-output");
-        const stopButton = document.getElementById("stop-streaming");
-        const clearButton = document.getElementById("clear-console");
-        const exportButton = document.getElementById("export-log");
-
-        let currentAbortController = null;
-        let wasManuallyStopped = false;
-
-        function toggleClearCredsButton() {
-            const hasCreds = localStorage.getItem("apikey") && localStorage.getItem("apisecret") && localStorage.getItem("mfa_token");
-            clearCredsButton.style.display = hasCreds ? "block" : "none";
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>PyNinja - Command Runner</title>
+    <meta property="og:type" content="CommandRunner">
+    <meta name="keywords" content="Python, Monitor, fastapi, JavaScript, HTML, CSS">
+    <meta name="author" content="Vignesh Rao">
+    <!-- Favicon.ico and Apple Touch Icon -->
+    <link property="og:image" rel="icon" href="https://thevickypedia.github.io/open-source/images/logo/pyninja.ico">
+    <link property="og:image" rel="apple-touch-icon"
+          href="https://thevickypedia.github.io/open-source/images/logo/pyninja.png">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <style id="main-css">
+        body {
+            font-family: "Segoe UI", sans-serif;
+            overflow-x: hidden;
         }
 
-        function showLogOutput(show) {
-            logOutput.style.display = show ? "block" : "none";
-            exportButton.classList.toggle("hidden", !show);
+        h2 {
+            margin-top: 40px;
+            color: #222;
         }
 
-        window.addEventListener("DOMContentLoaded", () => {
-            const apikey = localStorage.getItem("apikey");
-            const apisecret = localStorage.getItem("apisecret");
-            const mfa_token = localStorage.getItem("mfa_token");
+        .input-group {
+            position: relative;
+            margin-top: 25px;
+        }
 
-            if (apikey && apisecret && mfa_token) {
-                document.getElementById("apikey").value = apikey;
-                document.getElementById("apisecret").value = apisecret;
-                document.getElementById("mfa_token").value = mfa_token || "";
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px 12px 12px 12px;
+            border: 1px solid #ccc;
+            resize: both;
+            border-radius: 6px;
+            background: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
 
-                // Auto-show command section if all credentials exist
-                commandSection.classList.remove("hidden");
+        .input-group label {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-size: 16px;
+            color: #777;
+            pointer-events: none;
+            transition: 0.2s ease all;
+            background: white;
+            padding: 0 4px;
+        }
+
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label,
+        .input-group textarea:focus + label,
+        .input-group textarea:not(:placeholder-shown) + label {
+            top: -10px;
+            left: 10px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .custom-button {
+            margin-top: 25px;
+            padding: 12px;
+            width: 100%;
+            background: #2a73ff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .custom-button:hover {
+            background: #1d5ee8;
+        }
+
+        .main-container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        #log-output {
+            margin-top: 30px;
+            height: 300px;
+            width: 80%;
+            resize: both;
+            overflow: auto;
+            background: #1e1e1e;
+            color: #00ff8c;
+            padding: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            border-radius: 6px;
+            border: 1px solid #444;
+            resize: both;
+            box-sizing: border-box;
+
+            display: none;
+
+            /* Align with centered content */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #export-log {
+            width: 30%;
+            max-width: 200px;
+            padding: 10px;
+            margin: 5px auto;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+        }
+
+        #stop-streaming,
+        #clear-console {
+            width: 30%;
+            max-width: 200px;
+            padding: 10px;
+            margin: 5px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #stop-streaming {
+            background: #ff4c4c;
+            color: white;
+        }
+
+        #clear-console {
+            background: #888;
+            color: white;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
-            // Hide download log button initially because console is not visible yet
-            exportButton.classList.add("hidden");
-            toggleClearCredsButton();
-        });
+        }
 
-        clearCredsButton.addEventListener("click", () => {
-            localStorage.removeItem("apikey");
-            localStorage.removeItem("apisecret");
-            localStorage.removeItem("mfa_token");
+        .docs {
+            position: absolute;
+            top: 7%;
+            right: 230px;
+            border: none;
+            padding: 10px 14px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: transparent;
+        }
 
-            document.getElementById("apikey").value = "";
-            document.getElementById("apisecret").value = "";
-            document.getElementById("mfa_token").value = "";
+        .redoc {
+            position: absolute;
+            top: 7%;
+            right: 130px;
+            border: none;
+            padding: 10px 14px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: transparent;
+        }
 
-            // Show the credentials section again
-            document.getElementById("credentials-section").style.display = "block";
+    </style>
+</head>
+<body translate="no">
+    <button class="docs" onclick="goDocs()"><i class="fa fa-book"></i> Docs</button>
+    <button class="redoc" onclick="goReDoc()"><i class="fa fa-file"></i> ReDoc</button>
+    <div class="main-container">
+        <div id="credentials-section">
+            <h2>API Credentials</h2>
+            <div class="input-group">
+                <input id="apikey" type="text" required placeholder=" " />
+                <label for="apikey">API Key (required)</label>
+            </div>
 
-            // Hide command section and related buttons
-            document.getElementById("command-section").classList.add("hidden");
-            showLogOutput(false);
-            clearCredsButton.style.display = "none";
-        });
+            <div class="input-group">
+                <input id="apisecret" type="password" required placeholder=" " />
+                <label for="apisecret">API Secret (required)</label>
+            </div>
 
-        saveButton.addEventListener("click", () => {
-            const apikey = document.getElementById("apikey").value.trim();
-            const apisecret = document.getElementById("apisecret").value.trim();
-            const mfa_token = document.getElementById("mfa_token").value.trim();
+            <div class="input-group">
+                <input id="mfa_token" type="text" placeholder=" " />
+                <label for="mfa_token">MFA Token (required)</label>
+            </div>
 
-            if (!apikey || !apisecret || !mfa_token) {
-                alert("API Key, API Secret, and MFA Token are required.");
-                return;
-            }
+            <button class="custom-button" id="save-creds">Save and Continue</button>
+        </div>
+        <button class="custom-button" id="clear-creds" style="background: #bbb; margin-top: 10px;">Clear Credentials (Logout)</button>
 
-            localStorage.setItem("apikey", apikey);
-            localStorage.setItem("apisecret", apisecret);
-            localStorage.setItem("mfa_token", mfa_token);
+        <div id="command-section" class="hidden">
+            <h2>Run Command</h2>
+            <div class="input-group">
+                <textarea id="command" placeholder=" "></textarea>
+                <label for="command">Enter command</label>
+            </div>
 
+            <div class="input-group">
+                <input id="timeout" type="number" placeholder=" " />
+                <label for="timeout">Timeout (seconds)</label>
+            </div>
+
+            <div class="input-group">
+                <input id="stream-timeout" type="number" placeholder=" " />
+                <label for="stream-timeout">Stream Timeout (seconds)</label>
+            </div>
+
+            <button class="custom-button" id="run-command">
+                <span id="run-spinner" class="hidden spinner"></span>
+                <span id="run-text">Run</span>
+            </button>
+        </div>
+    </div>
+    <div id="log-output"></div>
+    <div id="streaming-status" class="hidden" style="margin-top: 10px; text-align: center;"><span style="color: green;">●</span> <span>Streaming...</span></div>
+    <button class="custom-button; hidden" id="export-log" style="background: #4caf50;">Download Log</button>
+    <div style="text-align: center; margin-top: 10px;">
+        <button class="custom-button; hidden" id="stop-streaming">Stop Streaming</button>
+        <button class="custom-button; hidden" id="clear-console">Clear Console</button>
+    </div>
+<script>
+    const clearCredsButton = document.getElementById("clear-creds");
+    const saveButton = document.getElementById("save-creds");
+    const runButton = document.getElementById("run-command");
+    const commandSection = document.getElementById("command-section");
+    const credentialsSection = document.getElementById("credentials-section");
+    const logOutput = document.getElementById("log-output");
+    const stopButton = document.getElementById("stop-streaming");
+    const clearButton = document.getElementById("clear-console");
+    const exportButton = document.getElementById("export-log");
+
+    let currentAbortController = null;
+    let wasManuallyStopped = false;
+
+    function toggleClearCredsButton() {
+        const hasCreds = localStorage.getItem("apikey") && localStorage.getItem("apisecret") && localStorage.getItem("mfa_token");
+        clearCredsButton.style.display = hasCreds ? "block" : "none";
+    }
+
+    function showLogOutput(show) {
+        logOutput.style.display = show ? "block" : "none";
+        exportButton.classList.toggle("hidden", !show);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+        const apikey = localStorage.getItem("apikey");
+        const apisecret = localStorage.getItem("apisecret");
+        const mfa_token = localStorage.getItem("mfa_token");
+
+        if (apikey && apisecret && mfa_token) {
+            document.getElementById("apikey").value = apikey;
+            document.getElementById("apisecret").value = apisecret;
+            document.getElementById("mfa_token").value = mfa_token || "";
+
+            // Auto-show command section if all credentials exist
             commandSection.classList.remove("hidden");
-            toggleClearCredsButton();
-        });
+        }
+        // Hide download log button initially because console is not visible yet
+        exportButton.classList.add("hidden");
+        toggleClearCredsButton();
+    });
 
-        runButton.addEventListener("click", async () => {
-            runButton.disabled = true;
-            document.getElementById("run-spinner").classList.remove("hidden");
-            document.getElementById("run-text").textContent = "Running...";
+    clearCredsButton.addEventListener("click", () => {
+        localStorage.removeItem("apikey");
+        localStorage.removeItem("apisecret");
+        localStorage.removeItem("mfa_token");
 
-            const command = document.getElementById("command").value.trim();
-            const timeout = parseInt(document.getElementById("timeout").value.trim(), 10);
-            const streamTimeout = parseInt(document.getElementById("stream-timeout").value.trim(), 10);
+        document.getElementById("apikey").value = "";
+        document.getElementById("apisecret").value = "";
+        document.getElementById("mfa_token").value = "";
 
-            if (!command || isNaN(timeout) || isNaN(streamTimeout) || timeout <= 0 || streamTimeout <= 0) {
-                alert("Please enter command, timeout and stream timeout.");
-                runButton.disabled = false;
-                document.getElementById("run-spinner").classList.add("hidden");
-                document.getElementById("run-text").textContent = "Run";
-                return;
-            }
+        // Show the credentials section again
+        document.getElementById("credentials-section").style.display = "block";
 
-            const apikey = localStorage.getItem("apikey");
-            const apisecret = localStorage.getItem("apisecret");
-            const mfa_token = localStorage.getItem("mfa_token");
+        // Hide command section and related buttons
+        document.getElementById("command-section").classList.add("hidden");
+        showLogOutput(false);
+        clearCredsButton.style.display = "none";
+    });
 
-            showLogOutput(true);
-            credentialsSection.style.display = "none";
-            stopButton.classList.remove("hidden");
-            clearButton.classList.add("hidden");
-            document.getElementById("streaming-status").classList.remove("hidden");
+    saveButton.addEventListener("click", () => {
+        const apikey = document.getElementById("apikey").value.trim();
+        const apisecret = document.getElementById("apisecret").value.trim();
+        const mfa_token = document.getElementById("mfa_token").value.trim();
 
-            currentAbortController = new AbortController();
-            const signal = currentAbortController.signal;
+        if (!apikey || !apisecret || !mfa_token) {
+            alert("API Key, API Secret, and MFA Token are required.");
+            return;
+        }
 
-            const hardTimeout = setTimeout(() => {
-                if (currentAbortController) {
-                    currentAbortController.abort();
-                }
-            }, 15000); // 15 seconds
+        localStorage.setItem("apikey", apikey);
+        localStorage.setItem("apisecret", apisecret);
+        localStorage.setItem("mfa_token", mfa_token);
 
-            try {
-                const response = await fetch(`${window.location.origin}{{ API_ENDPOINT }}`, {
-                    method: "POST",
-                    headers: {
-                        accept: "application/json",
-                        "api-secret": apisecret,
-                        "mfa-code": mfa_token,
-                        Authorization: `Bearer ${apikey}`,
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        command: command,
-                        timeout: timeout,
-                        stream_timeout: streamTimeout,
-                        stream: true,
-                    }),
-                    signal,
-                });
+        commandSection.classList.remove("hidden");
+        toggleClearCredsButton();
+    });
 
-                clearTimeout(hardTimeout);
+    runButton.addEventListener("click", async () => {
+        // First clear any previous outputs, and disable the run button
+        logOutput.textContent = "";
+        runButton.disabled = true;
+        document.getElementById("run-spinner").classList.remove("hidden");
+        document.getElementById("run-text").textContent = "Running...";
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Error: ${response.status} - ${errorText}`);
-                }
+        const command = document.getElementById("command").value.trim();
+        const timeout = parseInt(document.getElementById("timeout").value.trim(), 10);
+        const streamTimeout = parseInt(document.getElementById("stream-timeout").value.trim(), 10);
 
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
+        if (!command || isNaN(timeout) || isNaN(streamTimeout) || timeout <= 0 || streamTimeout <= 0) {
+            alert("Please enter command, timeout and stream timeout.");
+            runButton.disabled = false;
+            document.getElementById("run-spinner").classList.add("hidden");
+            document.getElementById("run-text").textContent = "Run";
+            return;
+        }
 
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    const chunk = decoder.decode(value, { stream: true });
-                    logOutput.textContent += chunk;
-                    logOutput.scrollTop = logOutput.scrollHeight;
-                }
+        const apikey = localStorage.getItem("apikey");
+        const apisecret = localStorage.getItem("apisecret");
+        const mfa_token = localStorage.getItem("mfa_token");
 
-                stopButton.classList.add("hidden");
-                clearButton.classList.remove("hidden");
-                document.getElementById("streaming-status").classList.add("hidden");
-                currentAbortController = null; // clear after normal finish
+        showLogOutput(true);
+        credentialsSection.style.display = "none";
+        stopButton.classList.remove("hidden");
+        clearButton.classList.add("hidden");
+        document.getElementById("streaming-status").classList.remove("hidden");
 
-            } catch (err) {
-                clearTimeout(hardTimeout);
+        currentAbortController = new AbortController();
+        const signal = currentAbortController.signal;
 
-                stopButton.classList.add("hidden");
-                document.getElementById("streaming-status").classList.add("hidden");
-
-                if (wasManuallyStopped && err.name === 'AbortError') {
-                    wasManuallyStopped = false;
-                    clearButton.classList.remove("hidden");
-                } else {
-                    alert(err.message);
-                    showLogOutput(false);
-                    credentialsSection.style.display = "block";
-                    clearButton.classList.add("hidden");
-                }
-
-                currentAbortController = null; // clear after abort/error
-
-            } finally {
-                runButton.disabled = false;
-                document.getElementById("run-spinner").classList.add("hidden");
-                document.getElementById("run-text").textContent = "Run";
-            }
-        });
-
-        stopButton.addEventListener("click", () => {
+        const hardTimeout = setTimeout(() => {
             if (currentAbortController) {
-                wasManuallyStopped = true;
                 currentAbortController.abort();
-                currentAbortController = null;
+            }
+        }, 15000); // 15 seconds
+
+        try {
+            const response = await fetch(`${window.location.origin}{{ API_ENDPOINT }}`, {
+                method: "POST",
+                headers: {
+                    accept: "application/json",
+                    "api-secret": apisecret,
+                    "mfa-code": mfa_token,
+                    Authorization: `Bearer ${apikey}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    command: command,
+                    timeout: timeout,
+                    stream_timeout: streamTimeout,
+                    stream: true,
+                }),
+                signal,
+            });
+
+            clearTimeout(hardTimeout);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error: ${response.status} - ${errorText}`);
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value, { stream: true });
+                logOutput.textContent += chunk;
+                logOutput.scrollTop = logOutput.scrollHeight;
             }
 
             stopButton.classList.add("hidden");
             clearButton.classList.remove("hidden");
-        });
+            document.getElementById("streaming-status").classList.add("hidden");
+            currentAbortController = null; // clear after normal finish
 
-        clearButton.addEventListener("click", () => {
-            logOutput.textContent = "";
-            clearButton.classList.add("hidden");
-            showLogOutput(false);
-        });
+        } catch (err) {
+            clearTimeout(hardTimeout);
 
-        exportButton.addEventListener("click", () => {
-            const now = new Date();
-            // Format: MMDDYYYY_HHmmUTC (e.g. 08192025_1754UTC)
-            const pad = (num) => String(num).padStart(2, "0");
-            const timestamp = pad(now.getMonth() + 1) + pad(now.getDate()) + now.getFullYear() + "_" + pad(now.getHours()) + pad(now.getMinutes()) + "UTC";
+            stopButton.classList.add("hidden");
+            document.getElementById("streaming-status").classList.add("hidden");
 
-            const filename = `command-log_${timestamp}.txt`;
-            const blob = new Blob([logOutput.textContent], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
+            if (wasManuallyStopped && err.name === 'AbortError') {
+                wasManuallyStopped = false;
+                clearButton.classList.remove("hidden");
+            } else {
+                alert(err.message);
+                showLogOutput(false);
+                credentialsSection.style.display = "block";
+                clearButton.classList.add("hidden");
+            }
 
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        });
-    </script>
+            currentAbortController = null; // clear after abort/error
+
+        } finally {
+            runButton.disabled = false;
+            document.getElementById("run-spinner").classList.add("hidden");
+            document.getElementById("run-text").textContent = "Run";
+        }
+    });
+
+    stopButton.addEventListener("click", () => {
+        if (currentAbortController) {
+            wasManuallyStopped = true;
+            currentAbortController.abort();
+            currentAbortController = null;
+        }
+
+        stopButton.classList.add("hidden");
+        clearButton.classList.remove("hidden");
+    });
+
+    clearButton.addEventListener("click", () => {
+        logOutput.textContent = "";
+        clearButton.classList.add("hidden");
+        showLogOutput(false);
+    });
+
+    exportButton.addEventListener("click", () => {
+        const now = new Date();
+        // Format: MMDDYYYY_HHmmUTC (e.g. 08192025_1754UTC)
+        const pad = (num) => String(num).padStart(2, "0");
+        const timestamp = pad(now.getMonth() + 1) + pad(now.getDate()) + now.getFullYear() + "_" + pad(now.getHours()) + pad(now.getMinutes()) + "UTC";
+
+        const filename = `command-log_${timestamp}.txt`;
+        const blob = new Blob([logOutput.textContent], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    });
+
+    function goDocs() {
+        window.location.href = window.location.origin + "/docs";
+    }
+
+    function goReDoc() {
+        window.location.href = window.location.origin + "/redoc";
+    }
+
+</script>
+</body>
 </html>
