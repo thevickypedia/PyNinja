@@ -260,7 +260,7 @@
     let wasManuallyStopped = false;
 
     function toggleClearCredsButton() {
-        const hasCreds = localStorage.getItem("apikey") && localStorage.getItem("apisecret") && localStorage.getItem("mfa_token");
+        const hasCreds = sessionStorage.getItem("apikey") && sessionStorage.getItem("apisecret") && sessionStorage.getItem("mfa_token");
         clearCredsButton.style.display = hasCreds ? "block" : "none";
     }
 
@@ -270,9 +270,9 @@
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-        const apikey = localStorage.getItem("apikey");
-        const apisecret = localStorage.getItem("apisecret");
-        const mfa_token = localStorage.getItem("mfa_token");
+        const apikey = sessionStorage.getItem("apikey");
+        const apisecret = sessionStorage.getItem("apisecret");
+        const mfa_token = sessionStorage.getItem("mfa_token");
 
         if (apikey && apisecret && mfa_token) {
             document.getElementById("apikey").value = apikey;
@@ -288,9 +288,9 @@
     });
 
     clearCredsButton.addEventListener("click", () => {
-        localStorage.removeItem("apikey");
-        localStorage.removeItem("apisecret");
-        localStorage.removeItem("mfa_token");
+        sessionStorage.removeItem("apikey");
+        sessionStorage.removeItem("apisecret");
+        sessionStorage.removeItem("mfa_token");
 
         document.getElementById("apikey").value = "";
         document.getElementById("apisecret").value = "";
@@ -315,9 +315,9 @@
             return;
         }
 
-        localStorage.setItem("apikey", apikey);
-        localStorage.setItem("apisecret", apisecret);
-        localStorage.setItem("mfa_token", mfa_token);
+        sessionStorage.setItem("apikey", apikey);
+        sessionStorage.setItem("apisecret", apisecret);
+        sessionStorage.setItem("mfa_token", mfa_token);
 
         commandSection.classList.remove("hidden");
         toggleClearCredsButton();
@@ -342,9 +342,9 @@
             return;
         }
 
-        const apikey = localStorage.getItem("apikey");
-        const apisecret = localStorage.getItem("apisecret");
-        const mfa_token = localStorage.getItem("mfa_token");
+        const apikey = sessionStorage.getItem("apikey");
+        const apisecret = sessionStorage.getItem("apisecret");
+        const mfa_token = sessionStorage.getItem("mfa_token");
 
         showLogOutput(true);
         credentialsSection.style.display = "none";
