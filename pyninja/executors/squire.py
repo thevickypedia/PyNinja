@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import math
@@ -9,14 +10,16 @@ import shutil
 import socket
 import string
 import subprocess
+import time
 import warnings
-from collections.abc import Generator
+from collections.abc import AsyncGenerator
 from datetime import timedelta
 from typing import Dict, List
 
 import pyarchitecture
 import requests
 import yaml
+from fastapi import Request
 
 from pyninja.modules import enums, models
 
@@ -137,8 +140,10 @@ def size_converter(byte_size: int | float) -> str:
     return "0 B"
 
 
-def stream_command(command: str, timeout: float) -> Generator[str]:
-    """Generator to stream command output line-by-line.
+async def stream_command(
+    request: Request, command: str, timeout: int | float, stream_limit: int | float
+) -> AsyncGenerator[str, None]:
+    """Async generator to stream command output line-by-line and handle disconnects.
 
     Args:
         command: Command to be executed.
@@ -148,36 +153,56 @@ def stream_command(command: str, timeout: float) -> Generator[str]:
         str:
         Lines of output from the command execution.
     """
-    process = subprocess.Popen(
-        command,
-        shell=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        bufsize=1,  # Line-buffered
-    )
+    LOGGER.info("Initiating command stream: %s", command)
+    try:
+        process = await asyncio.create_subprocess_shell(
+            command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT
+        )
+    except Exception as e:
+        LOGGER.error("Failed to start subprocess: %s", e)
+        yield f"[Failed to start command: {e}]\n"
+        return
 
-    def generate() -> Generator[str]:
-        """Generator to yield lines from the command output."""
-        LOGGER.info("Initiating command stream: %s", mask_sensitive_data(command))
-        output_yielded = False
-        try:
-            for line in iter(process.stdout.readline, ""):
-                if line and (stripped := line.strip()):
-                    output_yielded = True
-                    yield f"{stripped}\n"
-        finally:
-            try:
-                process.wait(timeout=timeout)
-                process.stdout.close()
-            except subprocess.TimeoutExpired:
+    output_yielded = False
+    try:
+        start = time.time()
+        while True:
+            if await asyncio.shield(request.is_disconnected()):
+                LOGGER.warning("Client disconnected. Killing command: %s", command)
                 process.kill()
-                LOGGER.error("Command timed out and was killed: %s", command)
-                yield "[Command timed out]\n"
-            if not output_yielded:
-                yield "[Command finished with no output]\n"
+                await process.wait()
+                break
 
-    return generate()
+            line = await process.stdout.readline()
+            if not line:
+                break  # EOF
+
+            stripped = line.decode().strip()
+            if stripped:
+                output_yielded = True
+                yield f"{stripped}\n"
+
+            if (time.time() - start) > stream_limit:
+                LOGGER.warning("Stream limit reached. Killing command: %s", command)
+                process.terminate()
+                yield "[Stream limit reached]\n"
+                break
+        await asyncio.wait_for(process.wait(), timeout=timeout)
+
+    except asyncio.TimeoutError:
+        process.kill()
+        LOGGER.error("Command timed out and was killed: %s", command)
+        yield "[Command timed out]\n"
+
+    except Exception as e:
+        process.kill()
+        LOGGER.error("Unexpected error during command streaming: %s", e)
+        yield f"[Error: {e}]\n"
+
+    finally:
+        LOGGER.info("Command execution completed with ouput yielded: %s", output_yielded)
+        if not output_yielded:
+            yield "[Command finished with no output]\n"
 
 
 def process_command(command: str, timeout: int | float) -> Dict[str, List[str]]:

@@ -86,7 +86,9 @@ To enhance security, it is mandatory to use multifactor authentication (MFA) tok
     - **TELEGRAM_TOKEN** - Telegram bot token.
     - **TELEGRAM_CHAT_ID** - Telegram chat ID to send MFA.
 - **Authenticator**
-    - Generate QR code for any authenticator application.
+    - **AUTHENTICATOR_TOKEN** - MFA Authenticator token.
+
+    To generate a QR code for any authenticator application:
 
     **Code**
     ```python
@@ -98,6 +100,8 @@ To enhance security, it is mandatory to use multifactor authentication (MFA) tok
     ```shell
     pyninja --mfa
     ```
+
+    > 📓 Generating an authenticator token using PyNinja is the simplest ways to set up MFA authentication. However, the trade-off is that the token is short-lived. Each MFA passcode is only valid for 30 seconds.
 
 **Monitoring UI**
 - **MONITOR_USERNAME** - Username to authenticate the monitoring page.

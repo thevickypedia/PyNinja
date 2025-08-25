@@ -11,7 +11,7 @@ PyNinja.egg-info/
 
 doc_gen/_*
 
-temp.py
+temp*.py
 
 logging.ini
 *.log

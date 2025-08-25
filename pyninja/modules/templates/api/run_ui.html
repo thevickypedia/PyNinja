@@ -32,7 +32,6 @@
 
             .input-group input,
             .input-group textarea {
-                min-height: 60px;
                 width: 100%;
                 padding: 12px 12px 12px 12px;
                 border: 1px solid #ccc;
@@ -202,6 +201,12 @@
                     <input id="timeout" type="number" placeholder=" " />
                     <label for="timeout">Timeout (seconds)</label>
                 </div>
+
+                <div class="input-group">
+                    <input id="stream-timeout" type="number" placeholder=" " />
+                    <label for="stream-timeout">Stream Timeout (seconds)</label>
+                </div>
+
                 <button id="run-command">
                     <span id="run-spinner" class="hidden spinner"></span>
                     <span id="run-text">Run</span>
@@ -301,9 +306,10 @@
 
             const command = document.getElementById("command").value.trim();
             const timeout = parseInt(document.getElementById("timeout").value.trim(), 10);
+            const streamTimeout = parseInt(document.getElementById("stream-timeout").value.trim(), 10);
 
-            if (!command || isNaN(timeout)) {
-                alert("Please enter both command and timeout.");
+            if (!command || isNaN(timeout) || isNaN(streamTimeout) || timeout <= 0 || streamTimeout <= 0) {
+                alert("Please enter command, timeout and stream timeout.");
                 runButton.disabled = false;
                 document.getElementById("run-spinner").classList.add("hidden");
                 document.getElementById("run-text").textContent = "Run";
@@ -324,7 +330,9 @@
             const signal = currentAbortController.signal;
 
             const hardTimeout = setTimeout(() => {
-                currentAbortController?.abort();
+                if (currentAbortController) {
+                    currentAbortController.abort();
+                }
             }, 15000); // 15 seconds
 
             try {
@@ -340,6 +348,7 @@
                     body: JSON.stringify({
                         command: command,
                         timeout: timeout,
+                        stream_timeout: streamTimeout,
                         stream: true,
                     }),
                     signal,
@@ -366,13 +375,15 @@
                 stopButton.classList.add("hidden");
                 clearButton.classList.remove("hidden");
                 document.getElementById("streaming-status").classList.add("hidden");
+                currentAbortController = null; // clear after normal finish
+
             } catch (err) {
                 clearTimeout(hardTimeout);
+
                 stopButton.classList.add("hidden");
-                currentAbortController = null;
                 document.getElementById("streaming-status").classList.add("hidden");
 
-                if (wasManuallyStopped) {
+                if (wasManuallyStopped && err.name === 'AbortError') {
                     wasManuallyStopped = false;
                     clearButton.classList.remove("hidden");
                 } else {
@@ -381,6 +392,9 @@
                     credentialsSection.style.display = "block";
                     clearButton.classList.add("hidden");
                 }
+
+                currentAbortController = null; // clear after abort/error
+
             } finally {
                 runButton.disabled = false;
                 document.getElementById("run-spinner").classList.add("hidden");
