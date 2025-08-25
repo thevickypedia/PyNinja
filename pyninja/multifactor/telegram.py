@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 from http import HTTPStatus
 
 import requests
@@ -39,6 +38,7 @@ def send_message(
 
 async def get_mfa(
     request: Request,
+    get_node: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**Get multifactor authentication code via Telegram.**
@@ -46,6 +46,7 @@ async def get_mfa(
     **Args:**
 
         - request: Reference to the FastAPI request object.
+        - get_node: Boolean flag to include node name in the title.
         - apikey: API Key to authenticate the request.
 
     **Raises:**
@@ -59,7 +60,7 @@ async def get_mfa(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
             detail="'telegram_token' and 'telegram_chat_id' must be set in the environment.",
         )
-    title = f"PyNinja MFA - {datetime.now().strftime('%c')}"
+    title = squire.get_mfa_title(include_node=get_node)
     token = squire.generate_mfa_token()
     try:
         response = send_message(message=f"*{title}*\n\n```\n{token}\n```")

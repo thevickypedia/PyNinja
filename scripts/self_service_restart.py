@@ -184,8 +184,9 @@ def self_upgrade() -> None:
         else:
             print_output(output)
         sleep(cmd["post_delay"])
+    green("Restarting the PyNinja service...")
     self_restart()
-    green("After upgrade:")
+    green("After restart:")
     cmd = upgrade_commands[-1]
     print_output(run_command(cmd["command"], timeout=cmd["timeout"], stream=False))
 

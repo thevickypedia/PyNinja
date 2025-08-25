@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 from http import HTTPStatus
 
 import requests
@@ -18,6 +17,7 @@ MFA_RESEND_INTERVAL = 120
 
 async def get_mfa(
     request: Request,
+    get_node: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**Get multifactor authentication code via Ntfy.**
@@ -25,6 +25,7 @@ async def get_mfa(
     **Args:**
 
         - request: Reference to the FastAPI request object.
+        - get_node: Boolean flag to include node name in the title.
         - apikey: API Key to authenticate the request.
 
     **Raises:**
@@ -40,7 +41,7 @@ async def get_mfa(
         )
     session = requests.Session()
     session.headers = {
-        "X-Title": f"PyNinja MFA - {datetime.now().strftime('%c')}",
+        "X-Title": squire.get_mfa_title(include_node=get_node),
         "Content-Type": "application/x-www-form-urlencoded",
     }
     if models.env.ntfy_username and models.env.ntfy_password:

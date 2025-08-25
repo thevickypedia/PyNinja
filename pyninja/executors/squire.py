@@ -4,6 +4,7 @@ import logging
 import math
 import os
 import pathlib
+import platform
 import re
 import secrets
 import shutil
@@ -13,7 +14,7 @@ import subprocess
 import time
 import warnings
 from collections.abc import AsyncGenerator
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Dict, List
 
 import pyarchitecture
@@ -604,6 +605,26 @@ def log_subprocess_error(error: subprocess.CalledProcessError) -> str:
     LOGGER.error("Command failed: %s", cmd_str)
     LOGGER.error("[%s]: %s", error.returncode, reason)
     return reason
+
+
+def get_mfa_title(include_node: bool) -> str:
+    """Generate MFA title with current date and time.
+
+    Args:
+        include_node: Boolean flag to include node name in the title.
+
+    Returns:
+        str:
+        Returns the MFA title.
+    """
+    if include_node:
+        try:
+            node = platform.uname().node
+        except Exception as error:
+            LOGGER.critical(error)
+            node = "unknown"
+        return f'PyNinja MFA (for: {node}) - {datetime.now().strftime("%B %d, %Y - %H:%M:%S")}'
+    return f'PyNinja MFA - {datetime.now().strftime("%B %d, %Y - %H:%M:%S")}'
 
 
 class AddProcessName(logging.Filter):

@@ -15,6 +15,7 @@ BEARER_AUTH = HTTPBearer()
 async def get_mfa(
     request: Request,
     mfa_option: enums.MFAOptions,
+    get_node: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**Get multifactor authentication code.**
@@ -22,6 +23,7 @@ async def get_mfa(
     **Args:**
 
         - request: Reference to the FastAPI request object.
+        - get_node: Boolean flag to include node name in the title.
         - apikey: API Key to authenticate the request.
 
     **Raises:**
@@ -43,4 +45,4 @@ async def get_mfa(
             raise exceptions.APIResponse(
                 status_code=HTTPStatus.BAD_REQUEST.real, detail=f"MFA options should be one of: [{enums.MFAOptions}]"
             )
-    return await func(request=request, apikey=apikey)
+    return await func(request=request, get_node=get_node, apikey=apikey)

@@ -1,6 +1,5 @@
 import logging
 import time
-from datetime import datetime
 from http import HTTPStatus
 
 import gmailconnector as gc
@@ -54,6 +53,7 @@ def send_new_mfa() -> bool:
 
 async def get_mfa(
     request: Request,
+    get_node: bool = False,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**Get multifactor authentication code.**
@@ -61,6 +61,7 @@ async def get_mfa(
     **Args:**
 
         - request: Reference to the FastAPI request object.
+        - get_node: Boolean flag to include node name in the title.
         - apikey: API Key to authenticate the request.
 
     **Raises:**
@@ -74,6 +75,7 @@ async def get_mfa(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
             detail="'gmail_user' and 'gmail_pass' must be set in the environment.",
         )
+    # TODO: Conflicts with ntfy and telegram MFA options, since they all use the same table
     if not send_new_mfa():
         LOGGER.info("A recent MFA token is still valid, not sending a new one.")
         raise exceptions.APIResponse(
@@ -86,7 +88,7 @@ async def get_mfa(
     mail_stat = mail_obj.send_email(
         recipient=models.env.recipient or models.env.gmail_user,
         sender="PyNinja API",
-        subject=f"Multifactor Authenticator - {datetime.now().strftime('%c')}",
+        subject=squire.get_mfa_title(include_node=get_node),
         html_body=jinja2.Template(models.fileio.mfa_template).render(
             TIMEOUT=squire.convert_seconds(models.env.mfa_timeout),
             ENDPOINT=request.client.host,
