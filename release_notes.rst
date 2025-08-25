@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+v4.8.5 (08/25/2025)
+-------------------
+- Includes a cool off period to resend MFA with a dynamic delay
+- Add an option include the ``uname`` in MFA title
+- Set universal MFA resend delay as a cool off period regardless of which MFA type was chosen
+- Change datetime format in MFA title
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.8.4...v4.8.5
+
 v4.8.4 (08/25/2025)
 -------------------
 - Includes styling and functional updates to ``/run-ui`` endpoint
