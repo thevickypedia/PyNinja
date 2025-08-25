@@ -65,7 +65,12 @@ async def get_mfa(
     try:
         response = send_message(message=f"*{title}*\n\n```\n{token}\n```")
         LOGGER.debug(response.json())
-        database.update_token(token=token, table=enums.TableName.mfa_token, expiry=models.env.mfa_timeout)
+        database.update_token(
+            token=token,
+            table=enums.TableName.mfa_token,
+            requester=enums.MFAOptions.telegram,
+            expiry=models.env.mfa_timeout,
+        )
         raise exceptions.APIResponse(
             status_code=HTTPStatus.OK.real,
             detail="Authentication success. OTP has been sent to the requested chat ID.",

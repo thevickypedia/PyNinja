@@ -52,7 +52,9 @@ async def get_mfa(
         response = session.post(url=endpoint, data=token)
         response.raise_for_status()
         LOGGER.debug(response.json())
-        database.update_token(token=token, table=enums.TableName.mfa_token, expiry=models.env.mfa_timeout)
+        database.update_token(
+            token=token, table=enums.TableName.mfa_token, requester=enums.MFAOptions.ntfy, expiry=models.env.mfa_timeout
+        )
         raise exceptions.APIResponse(
             status_code=HTTPStatus.OK.real,
             detail="Authentication success. OTP has been sent to the subscribed topic.",

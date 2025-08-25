@@ -288,8 +288,11 @@ class EnvConfig(BaseSettings):
     # Telegram
     telegram_token: str | None = None
     telegram_chat_id: str | None = None
-    # Timeout should at least be 15 minutes (900 seconds) and can be up to 24 hours (86_400 seconds)
-    # Default: 1h
+    # Maximum time (in seconds) before a new MFA token can be sent
+    # Default: 5m (300 seconds) | Min: 1m | Max: 2h (7_200 seconds)
+    mfa_resend_delay: PositiveInt = Field(default=300, ge=60, le=7_200)
+    # MFA token expiry time in seconds (does not apply for authenticator_token - 30s)
+    # Default: 1h (3_600 seconds) | Min: 15m (900 seconds) | Max: 24h (86_400 seconds)
     mfa_timeout: PositiveInt = Field(default=3_600, ge=900, le=86_400)
 
     # Monitoring UI

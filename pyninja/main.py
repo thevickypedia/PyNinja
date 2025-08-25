@@ -150,7 +150,7 @@ def start(**kwargs) -> None:
     if all((models.env.apikey, models.env.api_secret, models.env.remote_execution)):
         models.database = models.Database(models.env.database)
         models.database.create_table(enums.TableName.auth_errors, ["host", "block_until"])
-        models.database.create_table(enums.TableName.mfa_token, ["token", "expiry"], drop_existing=True)
+        models.database.create_table(enums.TableName.mfa_token, ["token", "expiry", "requester"], drop_existing=True)
         PyNinjaAPI.routes.extend(post_routes.routes)
         post_routes.enabled = True
 

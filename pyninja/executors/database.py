@@ -12,7 +12,7 @@ from pyninja.executors import squire
 from pyninja.modules import enums, models
 
 
-def get_token(table: enums.TableName, include_expiry: bool = False) -> Any | None:
+def get_token(table: enums.TableName, get_all: bool = False) -> Any | None:
     """Gets run/mfa token stored in the database.
 
     Returns:
@@ -21,14 +21,15 @@ def get_token(table: enums.TableName, include_expiry: bool = False) -> Any | Non
     """
     with models.database.connection:
         cursor = models.database.connection.cursor()
-        if include_expiry:
-            table_entry = cursor.execute(f"SELECT token, expiry FROM {table}").fetchone()
+        if get_all:
+            table_entry = cursor.execute(f"SELECT * FROM {table}").fetchone()
             if table_entry:
-                token, expiry = table_entry
+                token, expiry, requester = table_entry
                 decrypted_token = models.CIPHER_SUITE.decrypt(token).decode("utf-8")
                 return (
                     decrypted_token,
                     expiry,
+                    requester,
                 )
         else:
             token = cursor.execute(f"SELECT token FROM {table}").fetchone()
@@ -37,12 +38,13 @@ def get_token(table: enums.TableName, include_expiry: bool = False) -> Any | Non
                 return decrypted_token
 
 
-def update_token(token: str, table: enums.TableName, expiry: int) -> None:
+def update_token(token: str, table: enums.TableName, requester: enums.MFAOptions, expiry: int) -> None:
     """Update run/mfa token in the database.
 
     Args:
         token: Token to be stored in the database.
         table: Table name to update the token.
+        requester: MFA type.
         expiry: Expiry time in seconds from the current epoch time.
     """
     encrypted_token = models.CIPHER_SUITE.encrypt(token.encode("utf-8")).decode("utf-8")
@@ -51,8 +53,8 @@ def update_token(token: str, table: enums.TableName, expiry: int) -> None:
         cursor = models.database.connection.cursor()
         cursor.execute(f"DELETE FROM {table}")
         cursor.execute(
-            f"INSERT INTO {table} (token, expiry) VALUES (?,?)",
-            (encrypted_token, timestamp),
+            f"INSERT INTO {table} (token, expiry, requester) VALUES (?,?,?)",
+            (encrypted_token, timestamp, requester.value),
         )
         models.database.connection.commit()
 
@@ -216,7 +218,9 @@ def monitor_table(env: models.EnvConfig) -> None:
                     "Too many errors while scanning tables. Re-creating '%s' table.",
                     enums.TableName.mfa_token,
                 )
-                models.database.create_table(enums.TableName.mfa_token, ["token", "expiry"], drop_existing=True)
+                models.database.create_table(
+                    enums.TableName.mfa_token, ["token", "expiry", "requester"], drop_existing=True
+                )
             time.sleep(heart_beat)
 
     try:
