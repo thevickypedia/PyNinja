@@ -1,6 +1,18 @@
 Release Notes
 =============
 
+v4.8.4 (08/25/2025)
+-------------------
+- Includes styling and functional updates to ``/run-ui`` endpoint
+-   - Block run button in ``/run-ui`` when a request is in flight
+-   - Include a ``stream-timeout`` option to handle max stream duration from ``/run-ui``
+-   - Add server side logic to handle abandoned requests
+-   - Switch ``subprocess.Popen`` to ``asyncio.create_subprocess_shell`` to better handle server side streaming
+-   - Include navigation buttons for ``/docs`` and ``/redoc`` endpoints from ``/run-ui``
+-   - Set apikey and mfa token fields to be password type in ``/run-ui``
+-   - Switch ``/run-ui`` from using ``localStorage`` to ``sessionStorage`` for saving credentials in the UI
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.8.3...v4.8.4
+
 v4.8.3 (08/24/2025)
 -------------------
 - Update documentation
