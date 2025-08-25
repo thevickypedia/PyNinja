@@ -32,19 +32,16 @@
 
             .input-group input,
             .input-group textarea {
+                min-height: 60px;
                 width: 100%;
                 padding: 12px 12px 12px 12px;
                 border: 1px solid #ccc;
+                resize: both;
                 border-radius: 6px;
                 background: white;
                 font-size: 16px;
                 outline: none;
                 transition: all 0.2s ease;
-            }
-
-            .input-group textarea {
-                resize: vertical;
-                min-height: 60px;
             }
 
             .input-group label {
@@ -93,8 +90,9 @@
 
             #log-output {
                 margin-top: 30px;
-                min-height: 300px;
+                height: 300px;
                 width: 80%;
+                resize: both;
                 overflow: auto;
                 background: #1e1e1e;
                 color: #00ff8c;
@@ -150,6 +148,24 @@
             .hidden {
                 display: none !important;
             }
+
+            .spinner {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid white;
+                border-top: 2px solid transparent;
+                border-radius: 50%;
+                margin-right: 8px;
+                animation: spin 0.7s linear infinite;
+                vertical-align: middle;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
         </style>
     </head>
     <body>
@@ -186,7 +202,10 @@
                     <input id="timeout" type="number" placeholder=" " />
                     <label for="timeout">Timeout (seconds)</label>
                 </div>
-                <button id="run-command">Run</button>
+                <button id="run-command">
+                    <span id="run-spinner" class="hidden spinner"></span>
+                    <span id="run-text">Run</span>
+                </button>
             </div>
         </div>
         <div id="log-output"></div>
@@ -276,11 +295,18 @@
         });
 
         runButton.addEventListener("click", async () => {
+            runButton.disabled = true;
+            document.getElementById("run-spinner").classList.remove("hidden");
+            document.getElementById("run-text").textContent = "Running...";
+
             const command = document.getElementById("command").value.trim();
             const timeout = parseInt(document.getElementById("timeout").value.trim(), 10);
 
             if (!command || isNaN(timeout)) {
                 alert("Please enter both command and timeout.");
+                runButton.disabled = false;
+                document.getElementById("run-spinner").classList.add("hidden");
+                document.getElementById("run-text").textContent = "Run";
                 return;
             }
 
@@ -288,7 +314,6 @@
             const apisecret = localStorage.getItem("apisecret");
             const mfa_token = localStorage.getItem("mfa_token");
 
-            logOutput.textContent = "Streaming output...\n";
             showLogOutput(true);
             credentialsSection.style.display = "none";
             stopButton.classList.remove("hidden");
@@ -338,7 +363,6 @@
                     logOutput.scrollTop = logOutput.scrollHeight;
                 }
 
-                // Streaming complete
                 stopButton.classList.add("hidden");
                 clearButton.classList.remove("hidden");
                 document.getElementById("streaming-status").classList.add("hidden");
@@ -351,13 +375,16 @@
                 if (wasManuallyStopped) {
                     wasManuallyStopped = false;
                     clearButton.classList.remove("hidden");
-                    return;
+                } else {
+                    alert(err.message);
+                    showLogOutput(false);
+                    credentialsSection.style.display = "block";
+                    clearButton.classList.add("hidden");
                 }
-
-                alert(err.message);
-                showLogOutput(false);
-                credentialsSection.style.display = "block";
-                clearButton.classList.add("hidden");
+            } finally {
+                runButton.disabled = false;
+                document.getElementById("run-spinner").classList.add("hidden");
+                document.getElementById("run-text").textContent = "Run";
             }
         });
 
