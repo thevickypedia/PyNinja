@@ -623,8 +623,8 @@ def get_mfa_title(include_node: bool) -> str:
         except Exception as error:
             LOGGER.critical(error)
             node = "unknown"
-        return f'PyNinja MFA (for: {node}) - {datetime.now().strftime("%B %d, %Y - %H:%M:%S")}'
-    return f'PyNinja MFA - {datetime.now().strftime("%B %d, %Y - %H:%M:%S")}'
+        return f'PyNinja MFA (for: {node}) - {datetime.now().strftime("%B %d, %Y - %I:%M %p")}'
+    return f'PyNinja MFA - {datetime.now().strftime("%B %d, %Y - %I:%M %p")}'
 
 
 class AddProcessName(logging.Filter):

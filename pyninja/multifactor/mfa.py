@@ -39,7 +39,7 @@ async def send_new_mfa() -> NoReturn | None:
 async def get_mfa(
     request: Request,
     mfa_option: enums.MFAOptions,
-    get_node: bool = False,
+    get_node: bool = True,
     apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
 ):
     """**Get multifactor authentication code.**
