@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+v4.8.6 (08/25/2025)
+-------------------
+- Styling updates to ``/run-ui`` endpoint
+-   - Add a ``copy`` button and display run time in the ``/run-ui``
+-   - Switch ``logout`` button to match ``redoc`` and ``docs`` button style
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.8.5...v4.8.6
+
 v4.8.5 (08/25/2025)
 -------------------
 - Includes a cool off period to resend MFA with a dynamic delay
