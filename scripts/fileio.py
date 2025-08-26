@@ -46,6 +46,23 @@ def get_current_working_directory() -> str:
     return stdout[0] if isinstance(stdout, list) else stdout
 
 
+def download_file(filepath: str) -> None:
+    """Downloads a file from Ninja API.
+
+    Args:
+        filepath: Filepath in the server.
+    """
+    url = urljoin(NINJA_API_URL, "/get-file")
+    response = SESSION.post(url, json={"filepath": filepath})
+    assert response.ok, response.text
+    downloads = os.path.join(os.getcwd(), "downloads")
+    os.makedirs(downloads, exist_ok=True)
+    destination = os.path.join(downloads, os.path.basename(filepath))
+    with open(destination, "wb") as file:
+        file.write(response.content)
+    print(f"File saved to {destination!r}")
+
+
 def upload_file(filepath: str, destination: str = None, overwrite: bool = False) -> None:
     """Uploads a file to the Ninja API.
 
@@ -93,4 +110,5 @@ def delete_content(filepath: str = None, directory: str = None, recursive: bool 
 if __name__ == "__main__":
     pathlib.Path("keep").touch(exist_ok=True)
     upload_file("keep", overwrite=True)
+    download_file("keep")
     delete_content("keep")
