@@ -203,11 +203,23 @@
             background-color: transparent;
         }
 
+        .logout {
+            position: absolute;
+            top: 7%;
+            right: 30px;
+            border: none;
+            padding: 10px 14px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: transparent;
+        }
+
     </style>
 </head>
 <body translate="no">
     <button class="docs" onclick="goDocs()"><i class="fa fa-book"></i> Docs</button>
     <button class="redoc" onclick="goReDoc()"><i class="fa fa-file"></i> ReDoc</button>
+    <button class="logout" onclick="logOut()"><i class="fa fa-sign-out"></i> Logout</button>
     <div class="main-container">
         <div id="credentials-section">
             <h2>API Credentials</h2>
@@ -228,7 +240,6 @@
 
             <button class="custom-button" id="save-creds">Save and Continue</button>
         </div>
-        <button class="custom-button" id="clear-creds" style="background: #bbb; margin-top: 10px;">Clear Credentials (Logout)</button>
 
         <div id="command-section" class="hidden">
             <h2>Run Command</h2>
@@ -267,7 +278,6 @@
         <button class="custom-button; hidden" id="clear-console">Clear Console</button>
     </div>
 <script>
-    const clearCredsButton = document.getElementById("clear-creds");
     const saveButton = document.getElementById("save-creds");
     const runButton = document.getElementById("run-command");
     const commandSection = document.getElementById("command-section");
@@ -280,11 +290,6 @@
 
     let currentAbortController = null;
     let wasManuallyStopped = false;
-
-    function toggleClearCredsButton() {
-        const hasCreds = sessionStorage.getItem("apikey") && sessionStorage.getItem("apisecret") && sessionStorage.getItem("mfa_token");
-        clearCredsButton.style.display = hasCreds ? "block" : "none";
-    }
 
     function showLogOutput(show) {
         const logContainer = document.getElementById("log-container");
@@ -311,25 +316,6 @@
         }
         // Hide download log button initially because console is not visible yet
         exportButton.classList.add("hidden");
-        toggleClearCredsButton();
-    });
-
-    clearCredsButton.addEventListener("click", () => {
-        sessionStorage.removeItem("apikey");
-        sessionStorage.removeItem("apisecret");
-        sessionStorage.removeItem("mfa_token");
-
-        document.getElementById("apikey").value = "";
-        document.getElementById("apisecret").value = "";
-        document.getElementById("mfa_token").value = "";
-
-        // Show the credentials section again
-        document.getElementById("credentials-section").style.display = "block";
-
-        // Hide command section and related buttons
-        document.getElementById("command-section").classList.add("hidden");
-        showLogOutput(false);
-        clearCredsButton.style.display = "none";
     });
 
     saveButton.addEventListener("click", () => {
@@ -347,7 +333,6 @@
         sessionStorage.setItem("mfa_token", mfa_token);
 
         commandSection.classList.remove("hidden");
-        toggleClearCredsButton();
     });
 
     runButton.addEventListener("click", async () => {
@@ -560,6 +545,33 @@
 
     function goReDoc() {
         window.location.href = window.location.origin + "/redoc";
+    }
+
+    function logOut() {
+        sessionStorage.removeItem("apikey");
+        sessionStorage.removeItem("apisecret");
+        sessionStorage.removeItem("mfa_token");
+
+        // Reset credential input fields
+        document.getElementById("apikey").value = "";
+        document.getElementById("apisecret").value = "";
+        document.getElementById("mfa_token").value = "";
+
+        // Show credentials section again
+        document.getElementById("credentials-section").style.display = "block";
+
+        // Hide command section and related buttons
+        document.getElementById("command-section").classList.add("hidden");
+        document.getElementById("run-duration").textContent = "";
+        document.getElementById("streaming-status").classList.add("hidden");
+
+        // Clear log output
+        document.getElementById("log-output").textContent = "";
+        document.getElementById("log-container").style.display = "none";
+        document.getElementById("copy-log").style.display = "none";
+        document.getElementById("export-log").classList.add("hidden");
+        document.getElementById("clear-console").classList.add("hidden");
+        document.getElementById("stop-streaming").classList.add("hidden");
     }
 
 </script>
