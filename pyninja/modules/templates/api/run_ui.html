@@ -1,3 +1,4 @@
+<!-- TODO: Switch logout button to monitor template (main.html) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,10 +88,16 @@
             margin: auto;
         }
 
-        #log-output {
-            margin-top: 30px;
-            height: 300px;
+        #log-container {
+            display: none;
+            position: relative;
             width: 80%;
+            margin: 30px auto 0 auto;
+        }
+
+        #log-output {
+            position: relative;
+            height: 300px;
             resize: both;
             overflow: auto;
             background: #1e1e1e;
@@ -100,14 +107,22 @@
             white-space: pre-wrap;
             border-radius: 6px;
             border: 1px solid #444;
-            resize: both;
             box-sizing: border-box;
+        }
 
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #2a73ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 10;
             display: none;
-
-            /* Align with centered content */
-            margin-left: auto;
-            margin-right: auto;
         }
 
         #export-log {
@@ -238,7 +253,13 @@
             </button>
         </div>
     </div>
-    <div id="log-output"></div>
+    <div id="log-container">
+        <div style="position: relative;">
+            <button class="copy-button" id="copy-log">Copy</button>
+            <div id="log-output"></div>
+        </div>
+    </div>
+    <div id="run-duration" style="text-align: center; margin-top: 5px; font-size: 14px; color: #888;"></div>
     <div id="streaming-status" class="hidden" style="margin-top: 10px; text-align: center;"><span style="color: green;">●</span> <span>Streaming...</span></div>
     <button class="custom-button; hidden" id="export-log" style="background: #4caf50;">Download Log</button>
     <div style="text-align: center; margin-top: 10px;">
@@ -252,6 +273,7 @@
     const commandSection = document.getElementById("command-section");
     const credentialsSection = document.getElementById("credentials-section");
     const logOutput = document.getElementById("log-output");
+    const copyButton = document.getElementById("copy-log");
     const stopButton = document.getElementById("stop-streaming");
     const clearButton = document.getElementById("clear-console");
     const exportButton = document.getElementById("export-log");
@@ -265,7 +287,12 @@
     }
 
     function showLogOutput(show) {
-        logOutput.style.display = show ? "block" : "none";
+        const logContainer = document.getElementById("log-container");
+        logContainer.style.display = show ? "block" : "none";
+        // Wait for next frame to ensure layout updates before showing copy button
+        requestAnimationFrame(() => {
+            copyButton.style.display = show ? "block" : "none";
+        });
         exportButton.classList.toggle("hidden", !show);
     }
 
@@ -327,6 +354,8 @@
         // First clear any previous outputs, and disable the run button
         logOutput.textContent = "";
         runButton.disabled = true;
+        const startTime = Date.now();
+        document.getElementById("run-duration").textContent = "";
         document.getElementById("run-spinner").classList.remove("hidden");
         document.getElementById("run-text").textContent = "Running...";
 
@@ -402,12 +431,18 @@
             clearButton.classList.remove("hidden");
             document.getElementById("streaming-status").classList.add("hidden");
             currentAbortController = null; // clear after normal finish
+            const endTime = Date.now();
+            const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+            document.getElementById("run-duration").textContent = `Run time: ${durationSec} seconds`;
 
         } catch (err) {
             clearTimeout(hardTimeout);
 
             stopButton.classList.add("hidden");
             document.getElementById("streaming-status").classList.add("hidden");
+            const endTime = Date.now();
+            const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+            document.getElementById("run-duration").textContent = `Run time: ${durationSec} seconds (interrupted)`;
 
             if (wasManuallyStopped && err.name === 'AbortError') {
                 wasManuallyStopped = false;
@@ -443,6 +478,7 @@
         logOutput.textContent = "";
         clearButton.classList.add("hidden");
         showLogOutput(false);
+        document.getElementById("run-duration").textContent = "";
     });
 
     exportButton.addEventListener("click", () => {
@@ -463,6 +499,60 @@
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
     });
+
+    copyButton.addEventListener("click", () => {
+        const text = logOutput.textContent;
+        if (!text) {
+            alert("No log output to copy.");
+            return;
+        }
+
+        // Modern method with clipboard API
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopiedFeedback();
+            }).catch((err) => {
+                fallbackCopyText(text);
+            });
+        } else {
+            // Fallback for older browsers or insecure origins
+            fallbackCopyText(text);
+        }
+    });
+
+    function fallbackCopyText(text) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "absolute";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.select();
+
+        try {
+            const successful = document.execCommand("copy");
+            if (successful) {
+                showCopiedFeedback();
+            } else {
+                alert("Fallback: Copy failed.");
+            }
+        } catch (err) {
+            alert("Fallback: Copy not supported.");
+        }
+
+        document.body.removeChild(textarea);
+    }
+
+    function showCopiedFeedback() {
+        const originalText = copyButton.textContent;
+        copyButton.textContent = "Copied! ✅";
+        copyButton.disabled = true;
+
+        setTimeout(() => {
+            copyButton.textContent = originalText;
+            copyButton.disabled = false;
+        }, 1500);
+    }
 
     function goDocs() {
         window.location.href = window.location.origin + "/docs";
