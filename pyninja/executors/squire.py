@@ -29,6 +29,7 @@ LOGGER = logging.getLogger("uvicorn.default")
 IP_REGEX = re.compile(
     r"""^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$"""  # noqa: E501
 )
+YIELD_LINE = lambda inline: inline.rstrip("\n")  # noqa: E731
 
 
 def public_ip_address() -> str | None:
@@ -178,7 +179,7 @@ async def stream_command(
             if not line:
                 break  # EOF
 
-            stripped = line.decode().strip()
+            stripped = YIELD_LINE(line.decode())
             if stripped:
                 output_yielded = True
                 yield f"{stripped}\n"
@@ -228,11 +229,12 @@ def process_command(command: str, timeout: int | float) -> Dict[str, List[str]]:
     result = {"stdout": [], "stderr": []}
     stdout, stderr = process_cmd.communicate(timeout=timeout)
     for line in stdout.splitlines():
-        LOGGER.info(line.strip())
-        result["stdout"].append(line.strip())
+        line = YIELD_LINE(line)
+        LOGGER.info(line)
+        result["stdout"].append(line)
     for line in stderr.splitlines():
-        LOGGER.error(line.strip())
-        result["stderr"].append(line.strip())
+        LOGGER.error(line)
+        result["stderr"].append(line)
     return result
 
 
