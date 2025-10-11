@@ -27,7 +27,7 @@ concurrency:
 
 jobs:
   pypi-publisher:
-    runs-on: thevickypedia-lite
+    runs-on: thevickypedia-default
     steps:
       - name: Set dry-run
         run: |

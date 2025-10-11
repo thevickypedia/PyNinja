@@ -7,7 +7,7 @@ on:
 
 jobs:
   release-notes:
-    runs-on: thevickypedia-lite
+    runs-on: thevickypedia-default
     steps:
       - uses: actions/checkout@v4
         with:
