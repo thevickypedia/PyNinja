@@ -59,7 +59,7 @@ def update_token(token: str, table: enums.TableName, requester: enums.MFAOptions
         models.database.connection.commit()
 
 
-def get_record(host: str) -> int | None:
+def get_forbidden(host: str) -> int | None:
     """Gets blocked epoch time for a particular host.
 
     Args:
@@ -79,7 +79,7 @@ def get_record(host: str) -> int | None:
         return state[0]
 
 
-def put_record(host: str, block_until: int) -> None:
+def put_forbidden(host: str, block_until: int) -> None:
     """Inserts blocked epoch time for a particular host.
 
     Args:
@@ -95,7 +95,7 @@ def put_record(host: str, block_until: int) -> None:
         models.database.connection.commit()
 
 
-def remove_record(host: str) -> None:
+def remove_forbidden(host: str) -> None:
     """Deletes all records related to the host address.
 
     Args:

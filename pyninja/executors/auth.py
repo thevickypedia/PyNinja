@@ -29,7 +29,7 @@ async def forbidden(request: Request) -> None:
     # placeholder list, to avoid a DB search for every request
     if request.client.host in models.session.forbid:
         # Get timestamp until which the host has to be forbidden
-        timestamp = database.get_record(request.client.host)
+        timestamp = database.get_forbidden(request.client.host)
         if timestamp and timestamp > EPOCH():
             LOGGER.warning(
                 "%s is forbidden until %s due to repeated login failures",
@@ -190,8 +190,8 @@ async def handle_auth_error(request: Request) -> None:
                 request.client.host,
                 datetime.fromtimestamp(until).strftime("%c"),
             )
-            database.remove_record(request.client.host)
-            database.put_record(request.client.host, until)
+            database.remove_forbidden(request.client.host)
+            database.put_forbidden(request.client.host, until)
         elif models.session.auth_counter[request.client.host] > 3:
             # Allows up to 3 failed login attempts
             models.session.forbid.add(request.client.host)
@@ -203,8 +203,8 @@ async def handle_auth_error(request: Request) -> None:
                 minutes,
                 datetime.fromtimestamp(until).strftime("%c"),
             )
-            database.remove_record(request.client.host)
-            database.put_record(request.client.host, until)
+            database.remove_forbidden(request.client.host)
+            database.put_forbidden(request.client.host, until)
     else:
         LOGGER.warning("Failed auth, attempt #1 for %s", request.client.host)
         models.session.auth_counter[request.client.host] = 1
