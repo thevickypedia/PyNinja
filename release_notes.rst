@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v4.8.7 (10/22/2025)
+-------------------
+- Include an option in ``/run-command`` endpoint to execute non-shell commands
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.8.6...v4.8.7
+
 v4.8.6 (08/25/2025)
 -------------------
 - Styling updates to ``/run-ui`` endpoint
