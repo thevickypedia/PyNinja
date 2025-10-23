@@ -48,7 +48,7 @@ async def run_command(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_2(request, apikey, api_secret, mfa_code)
-    LOGGER.info("Requested command: '%s' with timeout: %ds", payload.command, payload.timeout)
+    LOGGER.info("Requested command: '%s' with timeout: %ds, shell: %s", payload.command, payload.timeout, payload.shell)
     if payload.stream:
         if payload.stream_timeout > models.env.mfa_timeout:
             raise exceptions.APIResponse(
@@ -57,7 +57,7 @@ async def run_command(
             )
         LOGGER.info("Streaming command output for: '%s'", payload.command)
         return StreamingResponse(
-            squire.stream_command(request, payload.command, payload.timeout, payload.stream_timeout),
+            squire.stream_command(request, payload.command, payload.shell, payload.timeout, payload.stream_timeout),
             media_type="text/plain",
         )
     else:

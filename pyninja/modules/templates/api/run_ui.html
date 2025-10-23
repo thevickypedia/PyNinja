@@ -247,6 +247,12 @@
                 <label for="command">Enter command</label>
             </div>
 
+            <div class="input-group"
+                style="display: flex; align-items: center; justify-content: flex-start; position: static; margin-top: 25px;">
+                <input type="checkbox" id="shell" style="width: auto;">
+                <label for="shell" style="position: static; font-size: 16px;">Shell Exec</label>
+            </div>
+
             <div class="input-group">
                 <input id="timeout" type="number" placeholder=" " />
                 <label for="timeout">Timeout (seconds)</label>
@@ -344,6 +350,7 @@
         document.getElementById("run-text").textContent = "Running...";
 
         const command = document.getElementById("command").value.trim();
+        const shell = document.getElementById("shell").checked;
         const timeout = parseInt(document.getElementById("timeout").value.trim(), 10);
         const streamTimeout = parseInt(document.getElementById("stream-timeout").value.trim(), 10);
 
@@ -386,6 +393,7 @@
                 },
                 body: JSON.stringify({
                     command: command,
+                    shell: shell,
                     timeout: timeout,
                     stream_timeout: streamTimeout,
                     stream: true,

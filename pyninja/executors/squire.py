@@ -143,7 +143,7 @@ def size_converter(byte_size: int | float) -> str:
 
 
 async def stream_command(
-    request: Request, command: str, timeout: int | float, stream_limit: int | float
+    request: Request, command: str, shell: bool, timeout: int | float, stream_limit: int | float
 ) -> AsyncGenerator[str, None]:
     """Async generator to stream command output line-by-line and handle disconnects.
 
@@ -155,11 +155,17 @@ async def stream_command(
         str:
         Lines of output from the command execution.
     """
-    LOGGER.info("Initiating command stream: %s", command)
     try:
-        process = await asyncio.create_subprocess_shell(
-            command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT
-        )
+        if shell:
+            LOGGER.info("Initiating shell command stream: %s", command)
+            process = await asyncio.create_subprocess_shell(
+                cmd=command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT
+            )
+        else:
+            LOGGER.info("Initiating command stream: %s", command)
+            process = await asyncio.create_subprocess_exec(
+                program=command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT
+            )
     except Exception as e:
         LOGGER.error("Failed to start subprocess: %s", e)
         yield f"[Failed to start command: {e}]\n"

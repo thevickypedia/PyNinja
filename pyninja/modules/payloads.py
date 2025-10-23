@@ -11,6 +11,7 @@ class RunCommand(BaseModel):
     """
 
     command: str
+    shell: bool = False
     timeout: PositiveInt | PositiveFloat = 3
     stream: bool = False
     stream_timeout: PositiveInt | PositiveFloat = 300
