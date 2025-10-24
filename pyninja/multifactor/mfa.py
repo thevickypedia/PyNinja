@@ -65,9 +65,35 @@ async def get_mfa(
         case enums.MFAOptions.telegram:
             func = telegram.get_mfa
         case _:
-            # Handle edge case when passed via curl
+            # Handle invalid MFA option
             # noinspection PyUnreachableCode
             raise exceptions.APIResponse(
                 status_code=HTTPStatus.BAD_REQUEST.real, detail=f"MFA options should be one of: [{enums.MFAOptions}]"
             )
     return await func(request=request, get_node=get_node, apikey=apikey)
+
+
+async def delete_mfa(
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+):
+    """**Delete multifactor authentication code.**
+
+    **Args:**
+
+        - request: Reference to the FastAPI request object.
+        - apikey: API Key to authenticate the request.
+
+    **Raises:**
+
+        APIResponse:
+        Raises the HTTPStatus object with a status code.
+    """
+    await auth.level_1(request, apikey)
+    if not database.get_token(table=enums.TableName.mfa_token):
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.NOT_FOUND.real, detail="No active MFA token found to invalidate."
+        )
+    # Clear existing MFA token
+    database.update_token(table=enums.TableName.mfa_token)
+    raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail="Active MFA token has been invalidated.")

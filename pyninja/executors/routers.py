@@ -191,6 +191,15 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
                 dependencies=dependencies,
             ),
         )
+        basic_routes.insert(
+            1,
+            APIRoute(
+                path=enums.APIEndpoints.delete_mfa,
+                endpoint=mfa.delete_mfa,
+                methods=["DELETE"],
+                dependencies=dependencies,
+            ),
+        )
     return basic_routes
 
 

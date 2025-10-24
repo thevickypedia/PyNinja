@@ -38,24 +38,27 @@ def get_token(table: enums.TableName, get_all: bool = False) -> Any | None:
                 return decrypted_token
 
 
-def update_token(token: str, table: enums.TableName, requester: enums.MFAOptions, expiry: int) -> None:
+def update_token(
+    table: enums.TableName, token: str = None, requester: enums.MFAOptions = None, expiry: int = 0
+) -> None:
     """Update run/mfa token in the database.
 
     Args:
-        token: Token to be stored in the database.
         table: Table name to update the token.
+        token: Token to be stored in the database.
         requester: MFA type.
         expiry: Expiry time in seconds from the current epoch time.
     """
-    encrypted_token = models.CIPHER_SUITE.encrypt(token.encode("utf-8")).decode("utf-8")
-    timestamp = int(time.time()) + expiry
     with models.database.connection:
         cursor = models.database.connection.cursor()
         cursor.execute(f"DELETE FROM {table}")
-        cursor.execute(
-            f"INSERT INTO {table} (token, expiry, requester) VALUES (?,?,?)",
-            (encrypted_token, timestamp, requester.value),
-        )
+        if all((token, requester, expiry)):
+            encrypted_token = models.CIPHER_SUITE.encrypt(token.encode("utf-8")).decode("utf-8")
+            timestamp = int(time.time()) + expiry
+            cursor.execute(
+                f"INSERT INTO {table} (token, expiry, requester) VALUES (?,?,?)",
+                (encrypted_token, timestamp, requester.value),
+            )
         models.database.connection.commit()
 
 

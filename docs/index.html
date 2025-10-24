@@ -365,13 +365,13 @@ Raises the HTTPStatus object indicating OTP.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.database.update_token">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">update_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.enums.TableName" title="pyninja.modules.enums.TableName"><span class="pre">TableName</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">requester</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.enums.MFAOptions" title="pyninja.modules.enums.MFAOptions"><span class="pre">MFAOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.update_token" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">update_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.enums.TableName" title="pyninja.modules.enums.TableName"><span class="pre">TableName</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requester</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.enums.MFAOptions" title="pyninja.modules.enums.MFAOptions"><span class="pre">MFAOptions</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.update_token" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update run/mfa token in the database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>token</strong> – Token to be stored in the database.</p></li>
 <li><p><strong>table</strong> – Table name to update the token.</p></li>
+<li><p><strong>token</strong> – Token to be stored in the database.</p></li>
 <li><p><strong>requester</strong> – MFA type.</p></li>
 <li><p><strong>expiry</strong> – Expiry time in seconds from the current epoch time.</p></li>
 </ul>
@@ -1664,6 +1664,24 @@ Raises the HTTPStatus object with a status code.</p>
 </div></blockquote>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="pyninja.multifactor.mfa.delete_mfa">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.multifactor.mfa.</span></span><span class="sig-name descname"><span class="pre">delete_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.multifactor.mfa.delete_mfa" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Delete multifactor authentication code.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>request: Reference to the FastAPI request object.</p></li>
+<li><p>apikey: API Key to authenticate the request.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>APIResponse:
+Raises the HTTPStatus object with a status code.</p>
+</div></blockquote>
+</dd></dl>
+
 </section>
 <section id="module-pyninja.multifactor.gmail">
 <span id="gmail"></span><h2>Gmail<a class="headerlink" href="#module-pyninja.multifactor.gmail" title="Permalink to this heading">¶</a></h2>
@@ -2930,6 +2948,11 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.get_mfa">
 <span class="sig-name descname"><span class="pre">get_mfa</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/get-mfa'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.get_mfa" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.delete_mfa">
+<span class="sig-name descname"><span class="pre">delete_mfa</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/delete-mfa'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.delete_mfa" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
