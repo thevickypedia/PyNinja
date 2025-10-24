@@ -156,10 +156,7 @@ class Session(BaseModel):
 
     auth_counter: Dict[str, int] = Field(default_factory=dict)
     forbid: Set[str] = Field(default_factory=set)
-
-    info: Dict[str, str] = Field(default_factory=dict)
     rps: Dict[str, int] = Field(default_factory=dict)
-    allowed_origins: Set[str] = Field(default_factory=set)
 
 
 session = Session()
