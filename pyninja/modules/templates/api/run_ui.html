@@ -307,6 +307,14 @@
     }
 
     window.addEventListener("DOMContentLoaded", () => {
+        // Set a timeout to remove stored items after 30 minutes (1,800,000 ms)
+        setTimeout(() => {
+            sessionStorage.removeItem("apikey");
+            sessionStorage.removeItem("apisecret");
+            sessionStorage.removeItem("mfa_token");
+            console.log("Session storage items removed after 30 minutes");
+        }, 30 * 60 * 1000);
+
         const apikey = sessionStorage.getItem("apikey");
         const apisecret = sessionStorage.getItem("apisecret");
         const mfa_token = sessionStorage.getItem("mfa_token");
