@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v4.8.8 (10/25/2025)
+-------------------
+- Create a new endpoint to invalidate MFA token
+- Set a client side timeout to invalidate secrets in run-ui
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.8.7...v4.8.8
+
 v4.8.7 (10/22/2025)
 -------------------
 - Include an option in ``/run-command`` endpoint to execute non-shell commands
