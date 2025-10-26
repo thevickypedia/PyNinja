@@ -639,33 +639,45 @@
     });
 
     // Handle file selection
-    fileInput.addEventListener('change', (event) => {
+    fileInput.addEventListener('change', async (event) => {
         const files = Array.from(event.target.files);
-        if (files.length > 0) {
-            console.log('Selected files:');
-            const filesN = `${files.length} file${files.length > 1 ? 's' : ''}`;
-            const directoryPath = encodeURIComponent(document.getElementById('path').value.trim());
-            const overwrite = document.getElementById('overwrite').checked;
-            const queryParams = `directory=${directoryPath}&overwrite=${overwrite}`;
-            const url = `${window.location.origin}{{ FILE_UPLOAD_ENDPOINT }}?${queryParams}`;
-            if (!directoryPath) {
-                alert('Please enter a valid directory path to upload.');
-                return;
-            }
-            uploadButton.innerHTML = `<i class="fa-solid fa-upload"></i> ${filesN} selected`;
-            // TODO: Alert when all uploads have finished
-            files.forEach(file => {
-                console.log('•', file.name);
-                // Upload each file to the server concurrently
-                uploadFile(file, url).catch(err => {
-                    alert(`Failed to upload ${file.name}:\n${err.message}`);
-                    return;
-                });
-            });
-        } else {
+        if (files.length === 0) {
             uploadButton.innerHTML = '<i class="fa-solid fa-upload"></i> Upload';
             console.log('No file selected.');
+            return;
         }
+
+        const filesN = `${files.length} file${files.length > 1 ? 's' : ''}`;
+        const directoryPath = encodeURIComponent(document.getElementById('path').value.trim());
+        const overwrite = document.getElementById('overwrite').checked;
+        const queryParams = `directory=${directoryPath}&overwrite=${overwrite}`;
+        const url = `${window.location.origin}{{ FILE_UPLOAD_ENDPOINT }}?${queryParams}`;
+
+        if (!directoryPath) {
+            alert('Please enter a valid directory path to upload.');
+            return;
+        }
+
+        uploadButton.disabled = true;
+        uploadButton.innerHTML = `<span class="spinner"></span> Uploading ${filesN}...`;
+
+        const results = await Promise.allSettled(
+            files.map(file => uploadFile(file, url))
+        );
+
+        uploadButton.disabled = false;
+        uploadButton.innerHTML = '<i class="fa-solid fa-upload"></i> Upload';
+
+        const failed = results.filter(r => r.status === 'rejected');
+        if (failed.length === 0) {
+            alert(`✅ Successfully uploaded ${files.length} file${files.length > 1 ? 's' : ''}.`);
+        } else {
+            const failedNames = failed.map((r, i) => files[i].name).join(', ');
+            alert(`⚠️ Some uploads failed: ${failedNames}`);
+        }
+
+        // Clear file selection
+        fileInput.value = "";
     });
 
     async function downloadFile(filepath, url) {
