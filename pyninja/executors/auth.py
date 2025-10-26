@@ -74,32 +74,29 @@ async def level_1(request: Request, apikey: HTTPAuthorizationCredentials) -> Non
     raise exceptions.APIResponse(status_code=HTTPStatus.UNAUTHORIZED.real, detail=HTTPStatus.UNAUTHORIZED.phrase)
 
 
-def validate_otp(code: str) -> None:
+def validate_otp(code: str) -> bool:
     """Validate MFA generated through authenticator.
 
-    **Args:**
+    Args:
+        code: OTP code generated from authenticator app.
 
-        - request: Reference to the FastAPI request object.
-        - apikey: API Key to authenticate the request.
-
-    **Raises:**
-
-        APIResponse:
-        Raises the HTTPStatus object indicating OTP.
+    Returns:
+        bool:
+        Returns a boolean flag to indicate if the OTP code is valid.
     """
     totp = pyotp.TOTP(models.env.authenticator_token)
     return totp.verify(code)
 
 
-def verify_mfa(mfa_code: str) -> None:
+def verify_mfa(mfa_code: str) -> bool:
     """Verifies the multifactor authentication code.
 
     Args:
         mfa_code: Multifactor authentication code to verify.
 
-    Raises:
-        APIResponse:
-        - 401: If MFA code is invalid.
+    Returns:
+        bool:
+        Returns a boolean flag to indicate if the MFA code is valid.
     """
     if not mfa_code:
         LOGGER.error("No MFA code provided.")

@@ -60,7 +60,7 @@
             width: 100%;
             padding: 12px 12px 12px 12px;
             border: 1px solid #ccc;
-            resize: both;
+            resize: vertical;
             border-radius: 6px;
             background: white;
             font-size: 16px;
@@ -266,7 +266,7 @@
         </div>
 
         <div id="fileio-section" class="hidden">
-            <h2>Path</h2>
+            <h2>File I/O</h2>
             <div class="input-group">
                 <input id="path" type="text" required placeholder=" " />
                 <label for="path">Path</label>
@@ -620,11 +620,13 @@
     // When upload button is clicked, trigger file input click
     uploadButton.addEventListener('click', (event) => {
         event.preventDefault();
+        credentialsSection.style.display = "none";
         fileInput.click();
     });
 
     downloadButton.addEventListener('click', async (event) => {
         event.preventDefault();
+        credentialsSection.style.display = "none";
         const filepath = document.getElementById('path').value.trim();
         const url = `${window.location.origin}{{ FILE_DOWNLOAD_ENDPOINT }}`;
         if (!filepath) {
@@ -640,6 +642,8 @@
 
     // Handle file selection
     fileInput.addEventListener('change', async (event) => {
+        event.preventDefault();
+        credentialsSection.style.display = "none";
         const files = Array.from(event.target.files);
         if (files.length === 0) {
             uploadButton.innerHTML = '<i class="fa-solid fa-upload"></i> Upload';

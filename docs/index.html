@@ -262,35 +262,34 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.auth.validate_otp">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.auth.</span></span><span class="sig-name descname"><span class="pre">validate_otp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.auth.validate_otp" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.auth.</span></span><span class="sig-name descname"><span class="pre">validate_otp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.executors.auth.validate_otp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validate MFA generated through authenticator.</p>
-<p><strong>Args:</strong></p>
-<blockquote>
-<div><ul class="simple">
-<li><p>request: Reference to the FastAPI request object.</p></li>
-<li><p>apikey: API Key to authenticate the request.</p></li>
-</ul>
-</div></blockquote>
-<p><strong>Raises:</strong></p>
-<blockquote>
-<div><p>APIResponse:
-Raises the HTTPStatus object indicating OTP.</p>
-</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>code</strong> – OTP code generated from authenticator app.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a boolean flag to indicate if the OTP code is valid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.auth.verify_mfa">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.auth.</span></span><span class="sig-name descname"><span class="pre">verify_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mfa_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.auth.verify_mfa" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.executors.auth.</span></span><span class="sig-name descname"><span class="pre">verify_mfa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mfa_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.executors.auth.verify_mfa" title="Permalink to this definition">¶</a></dt>
 <dd><p>Verifies the multifactor authentication code.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>mfa_code</strong> – Multifactor authentication code to verify.</p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#pyninja.modules.exceptions.APIResponse" title="pyninja.modules.exceptions.APIResponse"><strong>APIResponse</strong></a> – </p></li>
-<li><p><strong>- 401</strong> – If MFA code is invalid.</p></li>
-</ul>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a boolean flag to indicate if the MFA code is valid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
