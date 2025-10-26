@@ -21,6 +21,8 @@ async def run_ui(request: Request):
         context={
             "request": request,
             "API_ENDPOINT": enums.APIEndpoints.run_command,
+            "FILE_UPLOAD_ENDPOINT": enums.APIEndpoints.put_file,
+            "FILE_DOWNLOAD_ENDPOINT": enums.APIEndpoints.get_file,
         },
     )
 

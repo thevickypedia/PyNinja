@@ -331,11 +331,20 @@
         <button class="custom-button; hidden" id="clear-console">Clear Console</button>
     </div>
 <script>
+    var apikey;
+    var apisecret;
+    var mfa_token;
+
     const saveButton = document.getElementById("save-creds");
     const runButton = document.getElementById("run-command");
+    const uploadButton = document.getElementById('upload-button');
+
+    const fileInput = document.getElementById('file-input');
+
     const commandSection = document.getElementById("command-section");
     const fileioSection = document.getElementById("fileio-section");
     const credentialsSection = document.getElementById("credentials-section");
+
     const logOutput = document.getElementById("log-output");
     const copyButton = document.getElementById("copy-log");
     const stopButton = document.getElementById("stop-streaming");
@@ -364,9 +373,9 @@
             console.log("Session storage items removed after 30 minutes");
         }, 30 * 60 * 1000);
 
-        const apikey = sessionStorage.getItem("apikey");
-        const apisecret = sessionStorage.getItem("apisecret");
-        const mfa_token = sessionStorage.getItem("mfa_token");
+        apikey = sessionStorage.getItem("apikey");
+        apisecret = sessionStorage.getItem("apisecret");
+        mfa_token = sessionStorage.getItem("mfa_token");
 
         if (apikey && apisecret && mfa_token) {
             document.getElementById("apikey").value = apikey;
@@ -382,9 +391,9 @@
     });
 
     saveButton.addEventListener("click", () => {
-        const apikey = document.getElementById("apikey").value.trim();
-        const apisecret = document.getElementById("apisecret").value.trim();
-        const mfa_token = document.getElementById("mfa_token").value.trim();
+        apikey = document.getElementById("apikey").value.trim();
+        apisecret = document.getElementById("apisecret").value.trim();
+        mfa_token = document.getElementById("mfa_token").value.trim();
 
         if (!apikey || !apisecret || !mfa_token) {
             alert("API Key, API Secret, and MFA Token are required.");
@@ -420,10 +429,6 @@
             document.getElementById("run-text").textContent = "Run";
             return;
         }
-
-        const apikey = sessionStorage.getItem("apikey");
-        const apisecret = sessionStorage.getItem("apisecret");
-        const mfa_token = sessionStorage.getItem("mfa_token");
 
         showLogOutput(true);
         credentialsSection.style.display = "none";
@@ -605,6 +610,67 @@
         }, 1500);
     }
 
+    // TODO: Add overwrite icon
+    // TODO: Add download functionality
+
+    // When upload button is clicked, trigger file input click
+    uploadButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        fileInput.click();
+    });
+
+    // Handle file selection
+    fileInput.addEventListener('change', (event) => {
+        const files = Array.from(event.target.files);
+        if (files.length > 0) {
+            console.log('Selected files:');
+            const textContent = `${files.length} file${files.length > 1 ? 's' : ''} selected`;
+            const directoryPath = encodeURIComponent(document.getElementById('path').value.trim());
+            uploadButton.innerHTML = `<i class="fa-solid fa-upload"></i> ${textContent}`;
+            files.forEach(file => {
+                console.log('•', file.name);
+                // Upload each file to the server concurrently
+                uploadFile(
+                    file,
+                    `${window.location.origin}{{ FILE_UPLOAD_ENDPOINT }}?directory=${directoryPath}`
+                ).catch(err => {
+                    alert(`Failed to upload ${file.name}:\n${err.message}`);
+                });
+            });
+        } else {
+            uploadButton.innerHTML = '<i class="fa-solid fa-upload"></i> Upload';
+            console.log('No file selected.');
+        }
+    });
+
+    async function uploadFile(file, url) {
+        const formData = new FormData();
+        formData.append("file", file, file.name);
+        formData.append("type", file.type);
+
+        const headers = {
+            "Authorization": `Bearer ${apikey}`,
+            "API-SECRET": apisecret,
+            "MFA-CODE": mfa_token,
+            "Accept": "application/json",
+        };
+
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: headers,
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const jsonResponse = await response.json();
+            const text = jsonResponse.detail || response.statusText;
+            throw new Error(`Upload failed: ${text}`);
+        }
+
+        const data = await response.json();
+        console.log(data);
+    }
+
     function goDocs() {
         window.location.href = window.location.origin + "/docs";
     }
@@ -643,29 +709,6 @@
         document.getElementById("stop-streaming").classList.add("hidden");
     }
 
-</script>
-<script>
-    const uploadButton = document.getElementById('upload-button');
-    const fileInput = document.getElementById('file-input');
-    // When upload button is clicked, trigger file input click
-    uploadButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        fileInput.click();
-    });
-    // Handle file selection
-    fileInput.addEventListener('change', (event) => {
-        const files = Array.from(event.target.files);
-        if (files.length > 0) {
-            console.log('Selected files:');
-            const textContent = `${files.length} file${files.length > 1 ? 's' : ''} selected`;
-            uploadButton.innerHTML = `<i class="fa-solid fa-upload"></i> ${textContent}`;
-            // TODO: Add file upload logic here
-            files.forEach(file => console.log('•', file.name));
-        } else {
-            uploadButton.innerHTML = '<i class="fa-solid fa-upload"></i> Upload';
-            console.log('No file selected.');
-        }
-    });
 </script>
 </body>
 </html>
