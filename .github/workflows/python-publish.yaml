@@ -47,3 +47,15 @@ jobs:
           token: ${{ secrets.PYPI_TOKEN }}
         with:
           dry-run: ${{ env.dry_run }}
+
+  release-notes:
+    needs: pypi-publisher
+    if: github.event_name == 'release'
+    runs-on: thevickypedia-default
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: thevickypedia/update-release-notes@v2
+        env:
+          git_token: ${{ secrets.GIT_TOKEN }}
