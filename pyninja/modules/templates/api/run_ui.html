@@ -631,6 +631,7 @@
             alert('Please enter a valid file path to download.');
             return;
         }
+        // TODO: Alert when download has finished
         await downloadFile(filepath, url).catch(err => {
             alert(`Failed to download file:\n${err.message}`);
             return;
@@ -646,23 +647,21 @@
             const directoryPath = encodeURIComponent(document.getElementById('path').value.trim());
             const overwrite = document.getElementById('overwrite').checked;
             const queryParams = `directory=${directoryPath}&overwrite=${overwrite}`;
+            const url = `${window.location.origin}{{ FILE_UPLOAD_ENDPOINT }}?${queryParams}`;
             if (!directoryPath) {
                 alert('Please enter a valid directory path to upload.');
                 return;
             }
             uploadButton.innerHTML = `<i class="fa-solid fa-upload"></i> ${filesN} selected`;
+            // TODO: Alert when all uploads have finished
             files.forEach(file => {
                 console.log('•', file.name);
                 // Upload each file to the server concurrently
-                uploadFile(
-                    file,
-                    `${window.location.origin}{{ FILE_UPLOAD_ENDPOINT }}?${queryParams}`
-                ).catch(err => {
+                uploadFile(file, url).catch(err => {
                     alert(`Failed to upload ${file.name}:\n${err.message}`);
                     return;
                 });
             });
-            alert(`${filesN} uploaded successfully.`);
         } else {
             uploadButton.innerHTML = '<i class="fa-solid fa-upload"></i> Upload';
             console.log('No file selected.');

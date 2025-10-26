@@ -200,7 +200,6 @@ async def get_file(
     )
 
 
-# TODO: Make directory as JSON body param
 async def put_file(
     request: Request,
     file: UploadFile,
