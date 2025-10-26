@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v4.9.2 (10/26/2025)
+-------------------
+- Include overwrite functionality for file uploads in ``/run-ui``
+- Show alerts in ``/run-ui`` endpoint, when file uploads have completed successfully
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.1...v4.9.2
+
 v4.9.1 (10/26/2025)
 -------------------
 - Includes download functionality in ``/run-ui`` endpoint
