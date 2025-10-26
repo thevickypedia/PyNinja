@@ -338,6 +338,7 @@
     const saveButton = document.getElementById("save-creds");
     const runButton = document.getElementById("run-command");
     const uploadButton = document.getElementById('upload-button');
+    const downloadButton = document.getElementById('download-button');
 
     const fileInput = document.getElementById('file-input');
 
@@ -449,10 +450,10 @@
             const response = await fetch(`${window.location.origin}{{ API_ENDPOINT }}`, {
                 method: "POST",
                 headers: {
-                    accept: "application/json",
-                    "api-secret": apisecret,
-                    "mfa-code": mfa_token,
                     Authorization: `Bearer ${apikey}`,
+                    Accept: "application/json",
+                    "API-SECRET": apisecret,
+                    "MFA-CODE": mfa_token,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
@@ -611,12 +612,23 @@
     }
 
     // TODO: Add overwrite icon
-    // TODO: Add download functionality
-
     // When upload button is clicked, trigger file input click
     uploadButton.addEventListener('click', (event) => {
         event.preventDefault();
         fileInput.click();
+    });
+
+    downloadButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const filepath = document.getElementById('path').value.trim();
+        const url = `${window.location.origin}{{ FILE_DOWNLOAD_ENDPOINT }}`;
+        if (!filepath) {
+            alert('Please enter a valid file path to download.');
+            return;
+        }
+        await downloadFile(filepath, url).catch(err => {
+            alert(`Failed to download file:\n${err.message}`);
+        });
     });
 
     // Handle file selection
@@ -626,6 +638,10 @@
             console.log('Selected files:');
             const textContent = `${files.length} file${files.length > 1 ? 's' : ''} selected`;
             const directoryPath = encodeURIComponent(document.getElementById('path').value.trim());
+            if (!directoryPath) {
+                alert('Please enter a valid directory path to upload.');
+                return;
+            }
             uploadButton.innerHTML = `<i class="fa-solid fa-upload"></i> ${textContent}`;
             files.forEach(file => {
                 console.log('•', file.name);
@@ -643,16 +659,50 @@
         }
     });
 
+    async function downloadFile(filepath, url) {
+        const normalized = filepath.replace(/\\/g, '/');
+        const filename = normalized.substring(normalized.lastIndexOf('/') + 1);
+        console.log('Downloading file:', filename);
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${apikey}`,
+                Accept: "application/octet-stream",
+                "API-SECRET": apisecret,
+                "MFA-CODE": mfa_token,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ filepath: filepath }),
+        });
+
+        if (!response.ok) {
+            const jsonResponse = await response.json();
+            const text = jsonResponse.detail || response.statusText;
+            throw new Error(`Download failed: ${text}`);
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(downloadUrl);
+    }
+
     async function uploadFile(file, url) {
         const formData = new FormData();
         formData.append("file", file, file.name);
         formData.append("type", file.type);
 
         const headers = {
-            "Authorization": `Bearer ${apikey}`,
+            Authorization: `Bearer ${apikey}`,
+            Accept: "application/json",
             "API-SECRET": apisecret,
             "MFA-CODE": mfa_token,
-            "Accept": "application/json",
         };
 
         const response = await fetch(url, {
