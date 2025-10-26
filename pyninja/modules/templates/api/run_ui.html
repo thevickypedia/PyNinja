@@ -368,6 +368,17 @@
         exportButton.classList.toggle("hidden", !show);
     }
 
+    function downloadBlobHandler(blob, filename) {
+        const downloadUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(downloadUrl);
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
         // Set a timeout to remove stored items after 30 minutes (1,800,000 ms)
         setTimeout(() => {
@@ -549,15 +560,7 @@
 
         const filename = `command-log_${timestamp}.txt`;
         const blob = new Blob([logOutput.textContent], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        downloadBlobHandler(blob, filename);
     });
 
     copyButton.addEventListener("click", () => {
@@ -690,14 +693,7 @@
         }
 
         const blob = await response.blob();
-        const downloadUrl = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = downloadUrl;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(downloadUrl);
+        downloadBlobHandler(blob, filename);
     }
 
     async function uploadFile(file, url) {
