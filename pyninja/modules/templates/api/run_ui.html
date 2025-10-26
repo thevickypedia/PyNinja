@@ -14,6 +14,31 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Font Awesome icons -->
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        button {
+            font-size: 16px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .upload-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .download-button {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+    </style>
+
     <style id="main-css">
         body {
             font-family: "Segoe UI", sans-serif;
@@ -240,6 +265,29 @@
             <button class="custom-button" id="save-creds">Save and Continue</button>
         </div>
 
+        <div id="fileio-section" class="hidden">
+            <h2>Path</h2>
+            <div class="input-group">
+                <input id="path" type="text" required placeholder=" " />
+                <label for="path">Path</label>
+            </div>
+
+            <div class="input-group">
+                <!-- Hidden file input -->
+                <input type="file" id="file-input" style="display: none;" multiple />
+
+                <!-- Upload button -->
+                <button class="upload-button" id="upload-button">
+                    <i class="fa-solid fa-upload"></i> Upload
+                </button>
+
+                <!-- Download button -->
+                <button class="download-button" id="download-button">
+                    <i class="fa-solid fa-download"></i> Download
+                </button>
+            </div>
+        </div>
+
         <div id="command-section" class="hidden">
             <h2>Run Command</h2>
             <div class="input-group">
@@ -286,6 +334,7 @@
     const saveButton = document.getElementById("save-creds");
     const runButton = document.getElementById("run-command");
     const commandSection = document.getElementById("command-section");
+    const fileioSection = document.getElementById("fileio-section");
     const credentialsSection = document.getElementById("credentials-section");
     const logOutput = document.getElementById("log-output");
     const copyButton = document.getElementById("copy-log");
@@ -326,6 +375,7 @@
 
             // Auto-show command section if all credentials exist
             commandSection.classList.remove("hidden");
+            fileioSection.classList.remove("hidden");
         }
         // Hide download log button initially because console is not visible yet
         exportButton.classList.add("hidden");
@@ -346,6 +396,7 @@
         sessionStorage.setItem("mfa_token", mfa_token);
 
         commandSection.classList.remove("hidden");
+        fileioSection.classList.remove("hidden");
     });
 
     runButton.addEventListener("click", async () => {
@@ -580,6 +631,9 @@
         document.getElementById("run-duration").textContent = "";
         document.getElementById("streaming-status").classList.add("hidden");
 
+        // Hide file I/O section
+        document.getElementById("fileio-section").classList.add("hidden");
+
         // Clear log output
         document.getElementById("log-output").textContent = "";
         document.getElementById("log-container").style.display = "none";
@@ -589,6 +643,29 @@
         document.getElementById("stop-streaming").classList.add("hidden");
     }
 
+</script>
+<script>
+    const uploadButton = document.getElementById('upload-button');
+    const fileInput = document.getElementById('file-input');
+    // When upload button is clicked, trigger file input click
+    uploadButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        fileInput.click();
+    });
+    // Handle file selection
+    fileInput.addEventListener('change', (event) => {
+        const files = Array.from(event.target.files);
+        if (files.length > 0) {
+            console.log('Selected files:');
+            const textContent = `${files.length} file${files.length > 1 ? 's' : ''} selected`;
+            uploadButton.innerHTML = `<i class="fa-solid fa-upload"></i> ${textContent}`;
+            // TODO: Add file upload logic here
+            files.forEach(file => console.log('•', file.name));
+        } else {
+            uploadButton.innerHTML = '<i class="fa-solid fa-upload"></i> Upload';
+            console.log('No file selected.');
+        }
+    });
 </script>
 </body>
 </html>
