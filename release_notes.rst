@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v4.9.1 (10/26/2025)
+-------------------
+- Includes download functionality in ``/run-ui`` endpoint
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.0...v4.9.1
+
 v4.9.0 (10/26/2025)
 -------------------
 - Add an upload file option in ``/run-ui`` endpoint
