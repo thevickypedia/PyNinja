@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v4.9.0 (10/26/2025)
+-------------------
+- Add an upload file option in ``/run-ui`` endpoint
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.8.8...v4.9.0
+
 v4.8.8 (10/25/2025)
 -------------------
 - Create a new endpoint to invalidate MFA token
