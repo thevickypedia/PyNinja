@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v4.9.3 (11/10/2025)
+-------------------
+- Hide credentials section during FileIO operations in ``/run-ui``
+- Display credentials section in ``/run-ui`` only when there is an auth error
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.2...v4.9.3
+
 v4.9.2 (10/26/2025)
 -------------------
 - Include overwrite functionality for file uploads in ``/run-ui``
