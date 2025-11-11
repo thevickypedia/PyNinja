@@ -368,6 +368,13 @@
         exportButton.classList.toggle("hidden", !show);
     }
 
+    function authErrorHandler(response) {
+        if ([401, 403].includes(response.status)) {
+            credentialsSection.style.display = "block";
+            throw new Error("Authentication failed. Please check the credentials.");
+        }
+    }
+
     function downloadBlobHandler(blob, filename) {
         const downloadUrl = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -461,7 +468,7 @@
         }, 15000); // 15 seconds
 
         try {
-            const response = await fetch(`${window.location.origin}{{ API_ENDPOINT }}`, {
+            const response = await fetch(`${window.location.origin}{{ RUN_COMMAND_ENDPOINT }}`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${apikey}`,
@@ -483,6 +490,7 @@
             clearTimeout(hardTimeout);
 
             if (!response.ok) {
+                authErrorHandler(response);
                 const errorText = await response.text();
                 throw new Error(`Error: ${response.status} - ${errorText}`);
             }
@@ -521,7 +529,6 @@
             } else {
                 alert(err.message);
                 showLogOutput(false);
-                credentialsSection.style.display = "block";
                 clearButton.classList.add("hidden");
             }
 
@@ -702,6 +709,7 @@
         });
 
         if (!response.ok) {
+            authErrorHandler(response);
             const jsonResponse = await response.json();
             const text = jsonResponse.detail || response.statusText;
             throw new Error(`Download failed: ${text}`);
@@ -730,6 +738,7 @@
         });
 
         if (!response.ok) {
+            authErrorHandler(response);
             const jsonResponse = await response.json();
             const text = jsonResponse.detail || response.statusText;
             throw new Error(`Upload failed: ${text}`);
