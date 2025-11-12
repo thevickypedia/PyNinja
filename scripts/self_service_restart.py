@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 
 import requests
 from fileio import run_command
-from init import NINJA_API_URL, SERVER_PASSWORD
+from init import NINJA_API_URL, SERVER_PASSWORD, SESSION
 from runbook_coverage import Colors, Format
 
 NEW_VERSION = os.environ["UPDATE_VERSION"]
@@ -186,6 +186,15 @@ def self_upgrade() -> None:
         sleep(cmd["post_delay"])
     green("Restarting the PyNinja service...")
     self_restart()
+    try:
+        new_mfa = input("Enter new MFA code: ").strip()
+        assert new_mfa, "MFA code cannot be empty."
+    except (EOFError, KeyboardInterrupt):
+        return
+    except AssertionError as err:
+        red(str(err))
+        return
+    SESSION.headers["MFA-CODE"] = new_mfa
     green("After restart:")
     cmd = upgrade_commands[-1]
     print_output(run_command(cmd["command"], timeout=cmd["timeout"], stream=False))
