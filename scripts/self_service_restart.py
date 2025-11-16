@@ -1,8 +1,10 @@
 import os
 import sys
 import time
+from datetime import datetime
 from typing import Any, Dict, List
 
+import pyotp
 import requests
 from fileio import run_command
 from init import NINJA_API_URL, SERVER_PASSWORD, SESSION
@@ -186,14 +188,17 @@ def self_upgrade() -> None:
         sleep(cmd["post_delay"])
     green("Restarting the PyNinja service...")
     self_restart()
-    try:
-        new_mfa = input("Enter new MFA code: ").strip()
-        assert new_mfa, "MFA code cannot be empty."
-    except (EOFError, KeyboardInterrupt):
-        return
-    except AssertionError as err:
-        red(str(err))
-        return
+    if authenticator_token := os.getenv("NINJA_API_AUTH_TOKEN"):
+        new_mfa = pyotp.TOTP(authenticator_token).at(datetime.now())
+    else:
+        try:
+            new_mfa = input("Enter new MFA code: ").strip()
+            assert new_mfa, "MFA code cannot be empty."
+        except (EOFError, KeyboardInterrupt):
+            return
+        except AssertionError as err:
+            red(str(err))
+            return
     SESSION.headers["MFA-CODE"] = new_mfa
     green("After restart:")
     cmd = upgrade_commands[-1]

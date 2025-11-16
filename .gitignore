@@ -23,3 +23,7 @@ logging.ini
 discard/
 ninja.py
 ninja.sh
+
+scripts/*
+!scripts/
+!scripts/*.py

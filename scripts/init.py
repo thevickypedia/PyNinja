@@ -1,20 +1,27 @@
 import math
 import os
+from datetime import datetime
 
 import dotenv
+import pyotp
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-dotenv.load_dotenv(dotenv.find_dotenv())
+dotenv.load_dotenv(dotenv.find_dotenv(), override=True)
 
 NINJA_API_KEY = os.environ["NINJA_APIKEY"]
 NINJA_API_URL = os.environ["NINJA_API_URL"]
 NINJA_API_TIMEOUT = os.environ["NINJA_API_TIMEOUT"]
 NINJA_API_SECRET = os.environ["NINJA_API_SECRET"]
-NINJA_API_MFA = os.environ["NINJA_API_MFA"]
+
+if authenticator_token := os.getenv("NINJA_API_AUTH_TOKEN"):
+    NINJA_API_MFA = pyotp.TOTP(authenticator_token).at(datetime.now())
+else:
+    NINJA_API_MFA = os.environ["NINJA_API_MFA"]
+
 SERVER_PASSWORD = os.getenv("SERVER_PASSWORD")
-CHUNK_SIZE = 9 * 1024 * 1024 * 10  # 90MB
+CHUNK_SIZE = 1 * 1024 * 1024 * 10  # 10MB
 
 SESSION = requests.Session()
 SESSION.headers = {

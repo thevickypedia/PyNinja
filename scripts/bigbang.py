@@ -91,37 +91,54 @@ async def download_large_file(filepath: str = None, directory: str = None, desti
     )
     if filepath:
         destination = os.path.join(destination or pathlib.Path(__file__).parent, os.path.basename(filepath))
+        display_name = os.path.basename(filepath)
     else:
+        display_name = os.path.basename(directory) + ".zip"
         destination = os.path.join(
             destination or pathlib.Path(__file__).parent,
-            os.path.basename(directory) + ".zip",
+            display_name,
         )
     with SESSION.get(url, stream=True, params=params) as response:
         response.raise_for_status()
+        total_size = int(response.headers.get("content-length", 0))
+        total_chunks = (total_size + CHUNK_SIZE - 1) // CHUNK_SIZE if total_size > 0 else None
+        print(f"Downloading {display_name!r} of size: {size_converter(total_size) if total_size > 0 else 'unknown'}")
+        if total_chunks:
+            print(f"Total chunks: {total_chunks}")
         with open(destination, "wb") as fstream:
             for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
-                if chunk:
-                    fstream.write(chunk)
-                else:
-                    print("Received empty chunk, stopping download.")
-                    break
+                with tqdm(total=total_chunks, unit="chunk", desc=f"Downloading {display_name}") as pbar:
+                    for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
+                        if chunk:
+                            fstream.write(chunk)
+                            pbar.update(1)
+                        else:
+                            print("Received empty chunk, stopping download.")
+                            break
 
 
 if __name__ == "__main__":
-    asyncio.run(
-        upload_large_file(
-            # Client side path (source)
-            file_path=os.environ.get("UPLOAD_FILEPATH"),
-            dir_path=os.environ.get("UPLOAD_DIRECTORY"),
-            # Server side path (destination)
-            directory=os.environ["SERVER_DESTINATION"],
-            overwrite=True,
+    # Client side path (source)
+    upload_filepath = os.getenv("UPLOAD_FILEPATH")
+    upload_directory = os.getenv("UPLOAD_DIRECTORY")
+    # Server side path (destination)
+    server_destination = os.getenv("SERVER_DESTINATION")
+    if server_destination and any((upload_directory, upload_filepath)):
+        asyncio.run(
+            upload_large_file(
+                file_path=upload_filepath,
+                dir_path=upload_directory,
+                directory=server_destination,
+                overwrite=True,
+            )
         )
-    )
-    asyncio.run(
-        download_large_file(
-            # Server side path (source)
-            filepath=os.environ.get("DOWNLOAD_FILEPATH"),
-            directory=os.environ.get("DOWNLOAD_DIRECTORY"),
+    # Server side path (source)
+    download_filepath = os.getenv("DOWNLOAD_FILEPATH")
+    download_directory = os.getenv("DOWNLOAD_DIRECTORY")
+    if any((download_filepath, download_directory)):
+        asyncio.run(
+            download_large_file(
+                filepath=download_filepath,
+                directory=download_directory,
+            )
         )
-    )
