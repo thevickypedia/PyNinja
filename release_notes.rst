@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v4.9.4 (11/16/2025)
+-------------------
+- Log details of streaming for large file download
+- Include ``Content-Length`` in the response for large file downloads
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.3...v4.9.4
+
 v4.9.3 (11/10/2025)
 -------------------
 - Hide credentials section during FileIO operations in ``/run-ui``
