@@ -85,6 +85,6 @@ async def get_large_file(
         media_type=filetype,
         headers={
             "Content-Disposition": f"attachment; filename={filepath.name}",
-            "Content-Length": filepath.stat().st_size,
+            "Content-Length": str(filepath.stat().st_size),
         },
     )
