@@ -106,15 +106,11 @@ async def download_large_file(filepath: str = None, directory: str = None, desti
         if total_chunks:
             print(f"Total chunks: {total_chunks}")
         with open(destination, "wb") as fstream:
-            for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
-                with tqdm(total=total_chunks, unit="chunk", desc=f"Downloading {display_name}") as pbar:
-                    for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
-                        if chunk:
-                            fstream.write(chunk)
-                            pbar.update(1)
-                        else:
-                            print("Received empty chunk, stopping download.")
-                            break
+            with tqdm(total=total_chunks, unit="chunk", desc=f"Downloading {display_name}") as pbar:
+                for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
+                    pbar.update(1)
+                    if chunk:
+                        fstream.write(chunk)
 
 
 if __name__ == "__main__":
