@@ -34,6 +34,7 @@ def iter_file_chunks(filepath: pathlib.Path, chunk_size: int) -> Generator[bytes
     """
     with open(filepath, "rb") as file:
         while chunk := file.read(chunk_size):
+            LOGGER.debug("Yielding chunk size: %d bytes", len(chunk))
             yield chunk
 
 
@@ -77,9 +78,13 @@ async def get_large_file(
         filetype = mimetype[0]
     else:
         filetype = "unknown"
+    LOGGER.debug(f"Started streaming response for {filepath.name} with chunk size: {chunk_size} bytes")
     return StreamingResponse(
         iter_file_chunks(filepath=filepath, chunk_size=chunk_size),
         status_code=HTTPStatus.OK.real,
         media_type=filetype,
-        headers={"Content-Disposition": f"attachment; filename={filepath.name}"},
+        headers={
+            "Content-Disposition": f"attachment; filename={filepath.name}",
+            "Content-Length": filepath.stat().st_size,
+        },
     )
