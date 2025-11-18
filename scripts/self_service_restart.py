@@ -189,7 +189,9 @@ def self_upgrade() -> None:
     green("Restarting the PyNinja service...")
     self_restart()
     if authenticator_token := os.getenv("NINJA_API_AUTH_TOKEN"):
-        new_mfa = pyotp.TOTP(authenticator_token).at(datetime.now())
+        totp = pyotp.TOTP(authenticator_token)
+        sleep(10)
+        new_mfa = totp.at(datetime.now())
     else:
         try:
             new_mfa = input("Enter new MFA code: ").strip()

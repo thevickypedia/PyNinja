@@ -15,11 +15,6 @@ NINJA_API_URL = os.environ["NINJA_API_URL"]
 NINJA_API_TIMEOUT = os.environ["NINJA_API_TIMEOUT"]
 NINJA_API_SECRET = os.environ["NINJA_API_SECRET"]
 
-if authenticator_token := os.getenv("NINJA_API_AUTH_TOKEN"):
-    NINJA_API_MFA = pyotp.TOTP(authenticator_token).at(datetime.now())
-else:
-    NINJA_API_MFA = os.environ["NINJA_API_MFA"]
-
 SERVER_PASSWORD = os.getenv("SERVER_PASSWORD")
 CHUNK_SIZE = 1 * 1024 * 1024 * 10  # 10MB
 
@@ -27,15 +22,21 @@ SESSION = requests.Session()
 SESSION.headers = {
     "Authorization": f"Bearer {NINJA_API_KEY}",
     "API-SECRET": NINJA_API_SECRET,
-    "MFA-CODE": NINJA_API_MFA,
     "Accept": "application/json",
 }
-retry = Retry(connect=5, backoff_factor=2)
+retry = Retry(connect=10, read=30, redirect=5, backoff_factor=3)
 adapter = HTTPAdapter(max_retries=retry)
 SESSION.mount("http://", adapter)
 SESSION.mount("https://", adapter)
 
 format_nos = lambda input_: (int(input_) if isinstance(input_, float) and input_.is_integer() else input_)  # noqa: E731
+
+
+def mfa_code() -> str:
+    """Returns the MFA code for the current timestamp."""
+    if authenticator_token := os.getenv("NINJA_API_AUTH_TOKEN"):
+        return pyotp.TOTP(authenticator_token).at(datetime.now())
+    return os.environ["NINJA_API_MFA"]
 
 
 def urljoin(*args) -> str:

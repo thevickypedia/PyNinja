@@ -4,7 +4,7 @@ import pathlib
 from collections.abc import Generator
 from urllib.parse import quote
 
-from init import NINJA_API_TIMEOUT, NINJA_API_URL, SESSION, urljoin
+from init import NINJA_API_TIMEOUT, NINJA_API_URL, SESSION, mfa_code, urljoin
 
 
 def run_command(command: str, timeout: int = NINJA_API_TIMEOUT, stream: bool = False):
@@ -19,6 +19,7 @@ def run_command_json(command: str, timeout: int) -> dict:
     """Runs a command via the Ninja API and returns the JSON response."""
     payload = {"command": command, "shell": True, "timeout": timeout, "stream": False}
     url = urljoin(NINJA_API_URL, "/run-command")
+    SESSION.headers["MFA-CODE"] = mfa_code()
     response = SESSION.post(url, json=payload)
     response.raise_for_status()
     return response.json()
@@ -28,6 +29,7 @@ def run_command_stream(command: str, timeout: int) -> Generator[str]:
     """Runs a command via the Ninja API and yields output lines as they are received."""
     payload = {"command": command, "shell": True, "timeout": timeout, "stream": True}
     url = urljoin(NINJA_API_URL, "/run-command")
+    SESSION.headers["MFA-CODE"] = mfa_code()
     response = SESSION.post(url, json=payload, stream=True)
     response.raise_for_status()
 
@@ -53,6 +55,7 @@ def download_file(filepath: str) -> None:
         filepath: Filepath in the server.
     """
     url = urljoin(NINJA_API_URL, "/get-file")
+    SESSION.headers["MFA-CODE"] = mfa_code()
     response = SESSION.post(url, json={"filepath": filepath})
     assert response.ok, response.text
     downloads = os.path.join(os.getcwd(), "downloads")
@@ -82,6 +85,7 @@ def upload_file(filepath: str, destination: str = None, overwrite: bool = False)
             "file": (os.path.basename(filepath), f),
             "type": mimetypes.guess_type(filepath)[0],
         }
+        SESSION.headers["MFA-CODE"] = mfa_code()
         response = SESSION.put(url, files=files)
         assert response.ok, response.text
         print(response.json())
@@ -102,6 +106,7 @@ def delete_content(filepath: str = None, directory: str = None, recursive: bool 
             return
         print(f"Deleting directory: {directory!r} and all it's subdirectories.")
     url = urljoin(NINJA_API_URL, "/delete-content")
+    SESSION.headers["MFA-CODE"] = mfa_code()
     response = SESSION.delete(url, json={"filepath": filepath, "directory": directory, "recursive": recursive})
     response.raise_for_status()
     print(response.json())

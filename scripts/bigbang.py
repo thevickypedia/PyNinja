@@ -5,7 +5,7 @@ import os
 import pathlib
 
 import aiohttp
-from init import CHUNK_SIZE, NINJA_API_URL, SESSION, size_converter, urljoin
+from init import CHUNK_SIZE, NINJA_API_URL, SESSION, mfa_code, size_converter, urljoin
 from tqdm import tqdm
 from zipper import archive
 
@@ -39,6 +39,7 @@ async def upload_large_file(
     with open(file_path, "rb") as f:
         checksum = hashlib.md5(f.read()).hexdigest()
 
+    SESSION.headers["MFA-CODE"] = mfa_code()
     headers = copy.deepcopy(SESSION.headers)
     headers["Content-Type"] = "application/octet-stream"
     overwrite = str(overwrite).lower()
@@ -98,6 +99,7 @@ async def download_large_file(filepath: str = None, directory: str = None, desti
             destination or pathlib.Path(__file__).parent,
             display_name,
         )
+    SESSION.headers["MFA-CODE"] = mfa_code()
     with SESSION.get(url, stream=True, params=params) as response:
         response.raise_for_status()
         total_size = int(response.headers.get("content-length", 0))
