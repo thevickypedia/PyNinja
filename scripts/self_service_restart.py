@@ -142,30 +142,18 @@ def commands() -> Dict[str, str]:
     """Returns a dictionary of commands to be executed."""
     return [
         dict(
-            command=f"{PYTHON_PATH} -m pip install --upgrade pip",
-            timeout=30,
-            post_delay=5,
-        ),
-        dict(
-            command=f"{PYTHON_PATH} -m pip install --no-cache --no-cache-dir --force-reinstall PyNinja=={NEW_VERSION}",
-            timeout=300,
-            post_delay=10,
-        ),
-        dict(
             command=(
                 f"{PYTHON_PATH} -m pip uninstall --no-cache --no-cache-dir PyNinja -y && "
                 f"{PYTHON_PATH} -m pip install --no-cache --no-cache-dir --force-reinstall PyNinja=={NEW_VERSION}"
             ),
             timeout=300,
-            post_delay=5,
+            post_delay=10,
         ),
         dict(
-            command=f"{PYTHON_PATH} -m pip freeze | grep PyNinja",
-            timeout=30,
-            post_delay=3,
-        ),
-        dict(
-            command=f"{PYTHON_PATH} -c 'import pyninja; print(pyninja.version.__version__)'",
+            command=(
+                f"{PYTHON_PATH} -m pip freeze | grep PyNinja && "
+                f"{PYTHON_PATH} -c 'import pyninja; print(pyninja.version.__version__)'"
+            ),
             timeout=30,
             post_delay=0,
         ),
