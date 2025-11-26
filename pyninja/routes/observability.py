@@ -36,18 +36,19 @@ async def get_observability(
         Streams system resources information.
     """
     await auth.level_1(request, apikey)
+
     base_payload = {}
     base_payload["ip_info"] = dict(private=squire.private_ip_address(), public=squire.public_ip_address())
+
     uname = platform.uname()
-    sys_info_basic = {
-        "system": uname.system,
-        "architecture": uname.machine,
-        "node": uname.node,
-        "cores": psutil.cpu_count(logical=True),
-        "uptime": squire.format_timedelta(timedelta(seconds=time.time() - psutil.boot_time())),
-    }
+    base_payload["system"] = uname.system
+    base_payload["architecture"] = uname.machine
+    base_payload["node"] = uname.node
+    base_payload["cores"] = psutil.cpu_count(logical=True)
+    base_payload["uptime"] = squire.format_timedelta(timedelta(seconds=time.time() - psutil.boot_time()))
+
     if models.architecture.cpu:
-        sys_info_basic["cpu_name"] = models.architecture.cpu
+        base_payload["cpu_name"] = models.architecture.cpu
     if gpus := models.architecture.gpu:
         base_payload["gpu_name"] = ", ".join([gpu_info.get("model") for gpu_info in gpus])
     base_payload["disks_info"] = [
