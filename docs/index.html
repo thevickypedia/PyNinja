@@ -973,6 +973,26 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 </dd></dl>
 
 <hr class="docutils" />
+<span class="target" id="module-pyninja.routes.observability"></span><dl class="py function">
+<dt class="sig sig-object py" id="pyninja.routes.observability.get_observability">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.observability.</span></span><span class="sig-name descname"><span class="pre">get_observability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.observability.get_observability" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>API function to get system metrics via StreamingResponse.</strong></p>
+<p><strong>Args:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>request: Reference to the FastAPI request object.</p></li>
+<li><p>apikey: API Key to authenticate the request.</p></li>
+<li><p>interval: Sleep interval for streaming.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Raises:</strong></p>
+<blockquote>
+<div><p>StreamingResponse:
+Streams system resources information.</p>
+</div></blockquote>
+</dd></dl>
+
+<hr class="docutils" />
 <span class="target" id="module-pyninja.routes.orchestration"></span><dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routes.orchestration.get_docker_containers">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.orchestration.</span></span><span class="sig-name descname"><span class="pre">get_docker_containers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_all</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_running</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(HTTPBearer)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.orchestration.get_docker_containers" title="Permalink to this definition">¶</a></dt>
@@ -2835,6 +2855,11 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.observability">
+<span class="sig-name descname"><span class="pre">observability</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/observability'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.observability" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.enums.APIEndpoints.monitor">
 <span class="sig-name descname"><span class="pre">monitor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/monitor'</span></em><a class="headerlink" href="#pyninja.modules.enums.APIEndpoints.monitor" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -3373,6 +3398,11 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.host_password">
 <span class="sig-name descname"><span class="pre">host_password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.host_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.observability_session">
+<span class="sig-name descname"><span class="pre">observability_session</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.observability_session" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

@@ -54,6 +54,10 @@ API Routes
 
 ====
 
+.. automodule:: pyninja.routes.observability
+
+====
+
 .. automodule:: pyninja.routes.orchestration
 
 ====

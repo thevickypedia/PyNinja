@@ -49,6 +49,7 @@ class APIEndpoints(StrEnum):
     get_process_status: str = "/get-process-status"
     get_process_usage: str = "/get-process-usage"
 
+    observability: str = "/observability"
     monitor: str = "/monitor"
     ws_system: str = "/ws/system"
     run_command: str = "/run-command"

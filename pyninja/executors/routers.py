@@ -19,6 +19,7 @@ from pyninja.routes import (
     ipaddr,
     metrics,
     namespace,
+    observability,
     orchestration,
     upload,
 )
@@ -167,6 +168,12 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
         APIRoute(
             path=enums.APIEndpoints.get_certificates,
             endpoint=certificates.get_certificate,
+            methods=["GET"],
+            dependencies=dependencies,
+        ),
+        APIRoute(
+            path=enums.APIEndpoints.observability,
+            endpoint=observability.get_observability,
             methods=["GET"],
             dependencies=dependencies,
         ),
