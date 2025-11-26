@@ -23,7 +23,7 @@ def forbidden() -> models.CertificateStatus:
     )
 
 
-def parse_certificate_output(output: str, raw: bool, ws_stream: bool) -> Generator[Dict[str, Any]]:
+def parse_certificate_output(output: str, raw: bool = False, ws_stream: bool = False) -> Generator[Dict[str, Any]]:
     """Parse the output from the certbot command to extract certificate details.
 
     Args:
@@ -33,40 +33,49 @@ def parse_certificate_output(output: str, raw: bool, ws_stream: bool) -> Generat
 
     Yields:
         Dict[str, Any]:
-        A generator yielding Certificate objects with parsed details.
+        A dictionary representing one certificate.
     """
-    cert_key = lambda k: k if raw else k.lower().replace(" ", "_")  # noqa: E731
+
+    def cert_key(k: str) -> str:
+        """Returns the cert key in lowercase with underscores in place of spaces."""
+        return k if raw else k.lower().replace(" ", "_")
+
     lines = output.strip().split("\n")
     cert_info = None
+
     for line in lines:
         line = line.strip()  # remove leading spaces
+        if not line:  # skip empty lines
+            continue
         if line.startswith("Certificate Name:"):
-            if cert_info:  # yield previous certificate if exists
+            # Yield previous certificate if exists
+            if cert_info:
                 yield cert_info
-            cert_info = {}
-            cert_info[cert_key("Certificate Name")] = line.split(": ", 1)[1].strip()
+            cert_info = {cert_key("Certificate Name"): line.split(": ", 1)[1].strip()}
         elif cert_info is not None:
-            if line.startswith("Serial Number:"):
-                if not ws_stream:
-                    cert_info[cert_key("Serial Number")] = line.split(": ", 1)[1].strip()
+            if line.startswith("Serial Number:") and not ws_stream:
+                cert_info[cert_key("Serial Number")] = line.split(": ", 1)[1].strip()
             elif line.startswith("Key Type:"):
                 cert_info[cert_key("Key Type")] = line.split(": ", 1)[1].strip()
             elif line.startswith("Domains:"):
                 cert_info[cert_key("Domains")] = line.split(": ", 1)[1].strip().split()
             elif line.startswith("Expiry Date:"):
-                expiry_date = line.split(": ", 1)[1].split("VALID")[0].replace("(", "").strip()
-                validity = line.split("VALID:")[1].strip().replace(")", "")
+                parts = line.split("VALID:")
+                expiry_date = parts[0].split(": ", 1)[1].replace("(", "").strip()
+                validity = parts[1].replace(")", "").strip() if len(parts) > 1 else ""
                 cert_info[cert_key("Expiry Date")] = expiry_date
-                cert_info[cert_key("Validity")] = validity if raw else int(validity.split()[0])
-            elif line.startswith("Certificate Path:"):
-                if not ws_stream:
-                    cert_info[cert_key("Certificate Path")] = line.split(": ", 1)[1].strip()
-            elif line.startswith("Private Key Path:"):
-                if not ws_stream:
-                    cert_info[cert_key("Private Key Path")] = line.split(": ", 1)[1].strip()
+                cert_info[cert_key("Validity")] = validity if raw else int(validity.split()[0]) if validity else None
+            elif line.startswith("Certificate Path:") and not ws_stream:
+                cert_info[cert_key("Certificate Path")] = line.split(": ", 1)[1].strip()
+            elif line.startswith("Private Key Path:") and not ws_stream:
+                cert_info[cert_key("Private Key Path")] = line.split(": ", 1)[1].strip()
+                # Yield certificate after the last field
                 yield cert_info
                 cert_info = None
 
+    # Yield last certificate if the file does not end with Private Key Path
+    if cert_info:
+        yield cert_info
 
 
 @cache.timed_cache(max_age=1_800)
