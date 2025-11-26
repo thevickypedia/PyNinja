@@ -37,29 +37,36 @@ def parse_certificate_output(output: str, raw: bool, ws_stream: bool) -> Generat
     """
     cert_key = lambda k: k if raw else k.lower().replace(" ", "_")  # noqa: E731
     lines = output.strip().split("\n")
+    cert_info = None
     for line in lines:
-        cert_info = {}
+        line = line.strip()  # remove leading spaces
         if line.startswith("Certificate Name:"):
-            cert_info[cert_key("Certificate Name")] = line.split(": ")[1].strip()
-        elif line.startswith("Serial Number:"):
-            if not ws_stream:
-                cert_info[cert_key("Serial Number")] = line.split(": ")[1].strip()
-        elif line.startswith("Key Type:"):
-            cert_info[cert_key("Key Type")] = line.split(": ")[1].strip()
-        elif line.startswith("Domains:"):
-            cert_info[cert_key("Domains")] = line.split(": ")[1].strip().split()
-        elif line.startswith("Expiry Date:"):
-            expiry_date = line.split(": ")[1].strip().split("VALID")[0].replace("(", "").strip()
-            validity = line.split("VALID:")[1].strip().replace(")", "")
-            cert_info[cert_key("Expiry Date")] = expiry_date
-            cert_info[cert_key("Validity")] = validity if raw else int(validity.split()[0])
-        elif line.startswith("Certificate Path:"):
-            if not ws_stream:
-                cert_info[cert_key("Certificate Path")] = line.split(": ")[1].strip()
-        elif line.startswith("Private Key Path:"):
-            if not ws_stream:
-                cert_info[cert_key("Private Key Path")] = line.split(": ")[1].strip()
-            yield cert_info
+            if cert_info:  # yield previous certificate if exists
+                yield cert_info
+            cert_info = {}
+            cert_info[cert_key("Certificate Name")] = line.split(": ", 1)[1].strip()
+        elif cert_info is not None:
+            if line.startswith("Serial Number:"):
+                if not ws_stream:
+                    cert_info[cert_key("Serial Number")] = line.split(": ", 1)[1].strip()
+            elif line.startswith("Key Type:"):
+                cert_info[cert_key("Key Type")] = line.split(": ", 1)[1].strip()
+            elif line.startswith("Domains:"):
+                cert_info[cert_key("Domains")] = line.split(": ", 1)[1].strip().split()
+            elif line.startswith("Expiry Date:"):
+                expiry_date = line.split(": ", 1)[1].split("VALID")[0].replace("(", "").strip()
+                validity = line.split("VALID:")[1].strip().replace(")", "")
+                cert_info[cert_key("Expiry Date")] = expiry_date
+                cert_info[cert_key("Validity")] = validity if raw else int(validity.split()[0])
+            elif line.startswith("Certificate Path:"):
+                if not ws_stream:
+                    cert_info[cert_key("Certificate Path")] = line.split(": ", 1)[1].strip()
+            elif line.startswith("Private Key Path:"):
+                if not ws_stream:
+                    cert_info[cert_key("Private Key Path")] = line.split(": ", 1)[1].strip()
+                yield cert_info
+                cert_info = None
+
 
 
 @cache.timed_cache(max_age=1_800)
