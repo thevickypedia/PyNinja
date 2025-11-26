@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v4.9.5 (11/26/2025)
+-------------------
+- Includes a new API endpoint to stream system resources' information
+- Fix a bug in parsing certificates' information
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.4...v4.9.5
+
 v4.9.4 (11/16/2025)
 -------------------
 - Log details of streaming for large file download
