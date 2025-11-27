@@ -309,13 +309,13 @@ def pyudisk_metrics() -> Dict[str, str | List[dict] | int]:
     }
 
 
-async def process_obs() -> List[Dict[str, str]]:
-    """Gathers all all processes' information."""
-    return operations.process_monitor([], True)
+async def process_obs() -> List:
+    """Generates an empty list."""
+    return []
 
 
 async def service_obs() -> List[Dict[str, str]]:
-    """Gathers all all services' information."""
+    """Awaits the result of all services before returning."""
     return list(service.get_all_services())
 
 
