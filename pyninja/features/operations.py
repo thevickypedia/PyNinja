@@ -65,11 +65,12 @@ def get_process_info(proc: psutil.Process, process_name: str = None) -> Dict[str
         return default(process_name)
 
 
-async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
+async def process_monitor(processes: List[str], get_all: bool = False) -> List[Dict[str, str]]:
     """Function to monitor processes and return their usage statistics.
 
     Args:
         processes: List of process names to monitor.
+        get_all: Boolean flag to bypass processes filter.
 
     See Also:
         Process names can be case in-sensitive as they are not strictly matched.
@@ -84,7 +85,7 @@ async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
     loop = asyncio.get_event_loop()
     tasks = []
     for proc in psutil.process_iter(["pid", "name", "cpu_percent", "memory_info", "create_time"]):
-        if any(name.lower() == proc.name().lower() or name == str(proc.pid) for name in processes):
+        if get_all or any(name.lower() == proc.name().lower() or name == str(proc.pid) for name in processes):
             tasks.append(loop.run_in_executor(models.EXECUTOR, get_process_info, proc, proc.name()))
     completed_tasks = []
     for task in asyncio.as_completed(tasks):
