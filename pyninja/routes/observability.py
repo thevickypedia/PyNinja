@@ -59,7 +59,7 @@ async def get_observability(
         """Streams the system resources as a JSON serializable string."""
         start = time.time()
         while time.time() - start < models.env.observability_session:
-            beat_payload = await resources.system_resources()
+            beat_payload = await resources.system_resources(obs=True)
             response_payload = {**base_payload, **beat_payload}
             yield json.dumps(response_payload) + "\n"
             await asyncio.sleep(interval)
