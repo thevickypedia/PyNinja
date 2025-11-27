@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v4.9.6 (11/27/2025)
+-------------------
+- Include all system metrics and services' information for observability
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.5...v4.9.6
+
 v4.9.5 (11/26/2025)
 -------------------
 - Includes a new API endpoint to stream system resources' information
