@@ -10,7 +10,7 @@ from fileio import run_command
 from init import NINJA_API_URL, SERVER_PASSWORD, SESSION
 from runbook_coverage import Colors, Format
 
-NEW_VERSION = os.environ["UPDATE_VERSION"]
+NEW_VERSION = os.getenv("UPDATE_VERSION")
 PYTHON_PATH = os.environ.get("SERVER_PYTHON_PATH", "~/pyninja/venv/bin/python")
 USE_STREAMING = os.environ.get("USE_STREAMING", "true").lower() == "true"
 PROCESS_NAME = os.getenv("PROCESS_NAME")
@@ -143,8 +143,9 @@ def commands() -> Dict[str, str]:
     return [
         dict(
             command=(
-                f"{PYTHON_PATH} -m pip uninstall --no-cache --no-cache-dir PyNinja -y && "
-                f"{PYTHON_PATH} -m pip install --no-cache --no-cache-dir --force-reinstall PyNinja=={NEW_VERSION}"
+                f"{PYTHON_PATH} -m pip install --no-cache --no-cache-dir PyNinja=={NEW_VERSION}"
+                if NEW_VERSION
+                else f"{PYTHON_PATH} -m pip install --no-cache --no-cache-dir git+https://github.com/thevickypedia/PyNinja.git"
             ),
             timeout=300,
             post_delay=10,
@@ -162,8 +163,9 @@ def commands() -> Dict[str, str]:
 
 def self_upgrade() -> None:
     """Upgrades the PyNinja service to a new version."""
-    check_pypi_version()
-    green(f"Upgrading PyNinja service for {NINJA_API_URL} to version {NEW_VERSION}")
+    if NEW_VERSION:
+        check_pypi_version()
+        green(f"Upgrading PyNinja service for {NINJA_API_URL} to version {NEW_VERSION}")
     upgrade_commands = commands()
     for cmd in upgrade_commands:
         green(f"Running command: {cmd['command']}")
