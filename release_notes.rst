@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v4.9.7 (11/27/2025)
+-------------------
+- Add an option to render all services for observability via query param
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.6...v4.9.7
+
 v4.9.6 (11/27/2025)
 -------------------
 - Include all system metrics and services' information for observability
