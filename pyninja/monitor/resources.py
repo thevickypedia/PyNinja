@@ -309,18 +309,16 @@ def pyudisk_metrics() -> Dict[str, str | List[dict] | int]:
     }
 
 
-async def process_obs() -> List:
-    """Generates an empty list."""
-    return []
-
-
 async def service_obs() -> List[Dict[str, str]]:
     """Awaits the result of all services before returning."""
     return list(service.get_all_services())
 
 
-async def system_resources(obs: bool = False) -> Dict[str, dict | List[Dict[str, str | int]]]:
+async def system_resources(all_services: bool = False) -> Dict[str, dict | List[Dict[str, str | int]]]:
     """Gather system resources including Docker stats asynchronously.
+
+    Args:
+        all_services: Boolean flag to get all services.
 
     Returns:
         Dict[str, dict]:
@@ -330,12 +328,11 @@ async def system_resources(obs: bool = False) -> Dict[str, dict | List[Dict[str,
     system_metrics_task = asyncio.create_task(get_system_metrics())
     docker_stats_task = asyncio.create_task(get_docker_stats())
     disk_stats_task = asyncio.create_task(get_disk_info())
-    if obs:
-        process_stats_task = asyncio.create_task(process_obs())
+    if all_services:
         service_stats_task = asyncio.create_task(service_obs())
     else:
-        process_stats_task = asyncio.create_task(operations.process_monitor(models.env.processes))
         service_stats_task = asyncio.create_task(operations.service_monitor(models.env.services))
+    process_stats_task = asyncio.create_task(operations.process_monitor(models.env.processes))
     certs_stats_task = asyncio.create_task(certificates.get_all_certificates(raw=True, ws_stream=True))
 
     # CPU percent check is a blocking call and cannot be awaited, so run it in a separate thread

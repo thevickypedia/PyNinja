@@ -20,7 +20,10 @@ BEARER_AUTH = HTTPBearer()
 
 
 async def get_observability(
-    request: Request, apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH), interval: int = 3
+    request: Request,
+    apikey: HTTPAuthorizationCredentials = Depends(BEARER_AUTH),
+    interval: int = 3,
+    all_services: bool = False,
 ):
     """**API function to get system metrics via StreamingResponse.**
 
@@ -59,7 +62,7 @@ async def get_observability(
         """Streams the system resources as a JSON serializable string."""
         start = time.time()
         while time.time() - start < models.env.observability_session:
-            beat_payload = await resources.system_resources(obs=True)
+            beat_payload = await resources.system_resources(all_services=all_services)
             response_payload = {**base_payload, **beat_payload}
             yield json.dumps(response_payload) + "\n"
             await asyncio.sleep(interval)
