@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+v4.9.8 (11/30/2025)
+-------------------
+- Start DB monitor for timed tokens only when run-command is enabled
+- Make ``docs``, ``redoc`` and ``logout`` buttons right click-able
+- Fix misleading type hint annotations
+- Remove f-strings from log statements
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.7...v4.9.8
+
 v4.9.7 (11/27/2025)
 -------------------
 - Add an option to render all services for observability via query param
