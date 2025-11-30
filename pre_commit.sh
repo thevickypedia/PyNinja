@@ -14,11 +14,6 @@ clean_docs() {
   fi
 }
 
-update_release_notes() {
-  # Update release notes
-  gitverse-release reverse -f release_notes.rst -t 'Release Notes'
-}
-
 gen_docs() {
   # Generate sphinx docs
   mkdir -p doc_gen/_static  # Create a _static directory if unavailable
@@ -34,9 +29,8 @@ run_pytest() {
   python -m pytest
 }
 
-clean_docs &
-gen_docs &
-update_release_notes &
+clean_docs
+gen_docs
 #run_pytest &
 
 wait

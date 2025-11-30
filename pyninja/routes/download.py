@@ -78,7 +78,7 @@ async def get_large_file(
         filetype = mimetype[0]
     else:
         filetype = "unknown"
-    LOGGER.debug(f"Started streaming response for {filepath.name} with chunk size: {chunk_size} bytes")
+    LOGGER.debug("Started streaming response for %s with chunk size: %d bytes", filepath.name, chunk_size)
     return StreamingResponse(
         iter_file_chunks(filepath=filepath, chunk_size=chunk_size),
         status_code=HTTPStatus.OK.real,

@@ -23,22 +23,25 @@ async def lifespan(app: FastAPI):
     api_name = app.__dict__.get("title", app.__name__)
     api_version = app.__dict__.get("version", version.__version__)
     LOGGER.info("FastAPI server [%s:%s] initialized.", api_name, api_version)
-    process = Process(
-        target=database.monitor_table,
-        kwargs=dict(env=models.env),
-    )
-    process.start()
-    LOGGER.info(f"Started DB monitor process: {process.pid}")
+    process = None
+    if all((models.env.apikey, models.env.api_secret, models.env.remote_execution)):
+        process = Process(
+            target=database.monitor_table,
+            kwargs=dict(env=models.env),
+        )
+        process.start()
+        LOGGER.info("Started DB monitor process: %s", process.pid)
     yield
-    LOGGER.info(f"Stopping DB monitor process: {process.pid}")
-    try:
-        process.join(timeout=3)
-    except TimeoutError as error:
-        LOGGER.error(error)
-    if process.is_alive():
-        process.terminate()
-        process.kill()
-    LOGGER.info("FastAPI server [%s:%s] shut down.", api_name, api_version)
+    if process:
+        LOGGER.info("Stopping DB monitor process: %s", process.pid)
+        try:
+            process.join(timeout=3)
+        except TimeoutError as error:
+            LOGGER.error(error)
+        if process.is_alive():
+            process.terminate()
+            process.kill()
+        LOGGER.info("FastAPI server [%s:%s] shut down.", api_name, api_version)
 
 
 PyNinjaAPI = FastAPI(

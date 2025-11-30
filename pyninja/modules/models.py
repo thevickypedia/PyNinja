@@ -187,12 +187,12 @@ class RateLimit(BaseModel):
     seconds: PositiveInt
 
 
-def default_service_lib() -> FilePath:
+def default_service_lib() -> Dict[str, str]:
     """Get default service library filepath for the host operating system.
 
     Returns:
-        FilePath:
-        Returns the ``FilePath`` referencing the appropriate library.
+        Dict[str, str]:
+        Returns a mapping of operating systems to their default service library filepaths.
     """
     return dict(
         linux=shutil.which("systemctl") or "/usr/bin/systemctl",

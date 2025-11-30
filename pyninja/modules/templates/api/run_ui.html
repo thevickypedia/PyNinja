@@ -205,45 +205,27 @@
             }
         }
 
-        .docs {
+        .docs, .redoc, .logout {
             position: absolute;
             top: 7%;
-            right: 230px;
             border: none;
             padding: 10px 14px;
             font-size: 16px;
             cursor: pointer;
             background-color: transparent;
+            color: #000 !important;
+            text-decoration: none !important;
         }
-
-        .redoc {
-            position: absolute;
-            top: 7%;
-            right: 130px;
-            border: none;
-            padding: 10px 14px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: transparent;
-        }
-
-        .logout {
-            position: absolute;
-            top: 7%;
-            right: 30px;
-            border: none;
-            padding: 10px 14px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: transparent;
-        }
+        .docs { right: 230px; }
+        .redoc { right: 130px; }
+        .logout { right: 30px; }
 
     </style>
 </head>
 <body translate="no">
-    <button class="docs" onclick="goDocs()"><i class="fa fa-book"></i> Docs</button>
-    <button class="redoc" onclick="goReDoc()"><i class="fa fa-file"></i> ReDoc</button>
-    <button class="logout" onclick="logOut()"><i class="fa fa-sign-out"></i> Logout</button>
+    <a class="docs" href="/docs"><i class="fa fa-book"></i> Docs</a>
+    <a class="redoc" href="/redoc"><i class="fa fa-file"></i> ReDoc</a>
+    <a class="logout" href="#" onclick="logOut()"><i class="fa fa-sign-out"></i> Logout</a>
     <div class="main-container">
         <div id="credentials-section">
             <h2>API Credentials</h2>

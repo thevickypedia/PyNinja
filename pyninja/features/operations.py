@@ -118,7 +118,7 @@ async def service_monitor(services: List[str]) -> List[Dict[str, str]]:
     for service_name in services:
         pid = get_service_pid(service_name)
         if not pid:
-            LOGGER.debug(f"Failed to get PID for service: {service_name}")
+            LOGGER.debug("Failed to get PID for service: %s", service_name)
             # This is to give visibility on a service that was meant to be monitored
             usages.append(default(service_name))
             continue
