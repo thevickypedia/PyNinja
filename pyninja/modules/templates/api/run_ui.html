@@ -766,6 +766,29 @@
         document.getElementById("export-log").classList.add("hidden");
         document.getElementById("clear-console").classList.add("hidden");
         document.getElementById("stop-streaming").classList.add("hidden");
+
+        // Delete MFA on server side
+        fetch(window.location.origin + "/delete-mfa", {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${apikey}`,
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+        })
+        .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(`${response.status}: ${data.detail}`);
+            }
+            return { status: response.status, detail: data.detail };
+        })
+        .then(({ status, detail }) => {
+            alert(`${status}: ${detail}`);
+        })
+        .catch(error => {
+            alert(error.message);
+        });
     }
 
 </script>
