@@ -286,9 +286,7 @@ def pyudisk_metrics() -> Dict[str, str | List[dict] | int]:
         List of required metrics as a dictionary of key-value pairs.
     """
     pyudisk_stats = []
-    updated = 0
     for metric in get_os_agnostic_metrics():
-        updated = metric.get("updated", 60)
         pyudisk_stats.append(
             {
                 **{
@@ -304,7 +302,7 @@ def pyudisk_metrics() -> Dict[str, str | List[dict] | int]:
         )
     # Smart metrics are gathered at certain system intervals - so no need to get this attr from all the drives
     return {
-        "updated": updated,
+        "updated": time.time(),
         "pyudisk_stats": pyudisk_stats,
     }
 
