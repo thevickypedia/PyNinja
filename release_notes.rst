@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v4.9.9 (12/08/2025)
+-------------------
+- Fix ``PyUdisk`` metrics' update timestamp
+- Delete MFA on the service side when logged out on ``/run-ui`` endpoint
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.8...v4.9.9
+
 v4.9.8 (11/30/2025)
 -------------------
 - Start DB monitor for timed tokens only when run-command is enabled
