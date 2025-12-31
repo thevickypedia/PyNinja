@@ -51,6 +51,7 @@ def get_process_info(proc: psutil.Process, process_name: str = None) -> Dict[str
         return {
             "PID": proc.pid,
             "Name": process_name or proc.name(),
+            "Status": proc.status(),
             "CPU": f"{proc.cpu_percent(models.MINIMUM_CPU_UPDATE_INTERVAL):.2f}%",
             # Resident Set Size
             "Memory": squire.size_converter(proc.memory_info().rss),
@@ -63,6 +64,25 @@ def get_process_info(proc: psutil.Process, process_name: str = None) -> Dict[str
     except psutil.Error as error:
         LOGGER.debug(error)
         return default(process_name)
+
+
+def get_parent_process(processes: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    """Get parent processes from a list of processes.
+
+    Args:
+        processes: List of process dictionaries.
+
+    Returns:
+        List[Dict[str, str]]:
+        Returns a list of dictionaries with unique parent processes.
+    """
+    # Remove duplicates and keep the one with the smallest PID (oldest)
+    unique_processes = {
+        entry["Name"].lower(): entry for entry in sorted(processes, key=lambda x: x["PID"], reverse=True)
+    }.values()
+    # Convert the result to a list and sort it by 'Name'
+    sorted_processes = sorted(unique_processes, key=lambda x: x["Name"].lower())
+    return sorted_processes
 
 
 async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
@@ -83,7 +103,7 @@ async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
     """
     loop = asyncio.get_event_loop()
     tasks = []
-    for proc in psutil.process_iter(["pid", "name", "cpu_percent", "memory_info", "create_time"]):
+    for proc in psutil.process_iter(["pid", "name", "status", "cpu_percent", "memory_info", "create_time"]):
         if any(name.lower() == proc.name().lower() or name == str(proc.pid) for name in processes):
             tasks.append(loop.run_in_executor(models.EXECUTOR, get_process_info, proc, proc.name()))
     completed_tasks = []
@@ -92,7 +112,7 @@ async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
             completed_tasks.append(await task)
         except psutil.Error as error:
             LOGGER.debug(error)
-    return completed_tasks
+    return get_parent_process(completed_tasks)
 
 
 async def service_monitor(services: List[str]) -> List[Dict[str, str]]:
@@ -131,7 +151,7 @@ async def service_monitor(services: List[str]) -> List[Dict[str, str]]:
         tasks.append(loop.run_in_executor(models.EXECUTOR, get_process_info, proc, service_name))
     for task in asyncio.as_completed(tasks):
         usages.append(await task)
-    return usages
+    return get_parent_process(usages)
 
 
 def get_service_pid(service_name: str) -> Optional[int]:
