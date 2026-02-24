@@ -622,10 +622,8 @@
             alert('Please enter a valid file path to download.');
             return;
         }
-        // TODO: Alert when download has finished
         await downloadFile(filepath, url).catch(err => {
             alert(`Failed to download file:\n${err.message}`);
-            return;
         });
     });
 
