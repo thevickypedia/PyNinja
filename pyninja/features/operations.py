@@ -223,7 +223,7 @@ def get_service_pid_windows(service_name: str) -> Optional[int]:
         Returns the PID of the service.
     """
     try:
-        output = subprocess.check_output([models.env.service_lib, "query", service_name], text=True)
+        output = subprocess.check_output([models.env.service_lib, "queryex", service_name], text=True)
         for line in output.splitlines():
             if "PID" in line:
                 return int(line.split(":")[1].strip())
