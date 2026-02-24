@@ -170,7 +170,7 @@ async def get_file(
     api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
-    """**Download a particular file.**
+    """**Download a file from the server.**
 
     **Args:**
 
@@ -209,7 +209,7 @@ async def put_file(
     api_secret: Optional[str] = Header(None),
     mfa_code: Optional[str] = Header(None),
 ):
-    """**Upload a file to th.**
+    """**Upload a file to the server.**
 
     **Args:**
 

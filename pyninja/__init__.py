@@ -1,4 +1,8 @@
-"""Placeholder for packaging."""
+"""PyNinja CLI allows to start the server, print version, and generate QR code for TOTP setup.
+
+>>> PyNinja
+
+"""
 
 import sys
 
