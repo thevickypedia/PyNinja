@@ -1,11 +1,17 @@
 Release Notes
 =============
 
+v4.9.92 (02/23/2026)
+--------------------
+- Expose version information via API endpoint
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.91...v4.9.92
+
 v4.9.91 (02/23/2026)
 --------------------
 - Include process status in process information
 - Filter child processes for services with multiple PIDs
 - Fix missing service PID in Windows machines
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.9...v4.9.91
 
 v4.9.9 (12/08/2025)
 -------------------
