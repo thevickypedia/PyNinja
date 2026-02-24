@@ -1,17 +1,17 @@
-click==8.1.*  # Remove hard-coded version in PyUdisk
-cryptography==45.0.*
+click==8.3.*
+cryptography==46.0.*
 docker==7.1.*
-fastapi==0.116.*
+fastapi==0.132.*
 gmail-connector==1.0.*
 Jinja2==3.1.*
-psutil==6.0.*  # Remove hard-coded version in PyUdisk
+psutil==7.2.*
 PyArchitecture==0.3.*
-pydantic==2.*
-pydantic-settings==2.*
+pydantic==2.12.*
+pydantic-settings==2.13.*
 pyotp==2.9.*
-python-multipart>=0.0.19
+python-multipart==0.0.*
 PyUdisk==2.0.*
 PyYaml==6.0.*
 qrcode[pil]==8.*
 requests==2.*
-uvicorn[standard]==0.35.*
+uvicorn[standard]==0.41.*
