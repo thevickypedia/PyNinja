@@ -24,6 +24,7 @@ class APIEndpoints(StrEnum):
     docs: str = "/docs"
     redoc: str = "/redoc"
     health: str = "/health"
+    version: str = "/version"
 
     get_file: str = "/get-file"
     put_file: str = "/put-file"

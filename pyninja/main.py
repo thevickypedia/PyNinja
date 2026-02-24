@@ -51,13 +51,21 @@ PyNinjaAPI = FastAPI(
     lifespan=lifespan,
 )
 PyNinjaAPI.__name__ = "PyNinjaAPI"
-PyNinjaAPI.routes.append(
-    APIRoute(
-        path=enums.APIEndpoints.health,
-        endpoint=routers.health,
-        methods=["GET"],
-        include_in_schema=False,
-    ),
+PyNinjaAPI.routes.extend(
+    [
+        APIRoute(
+            path=enums.APIEndpoints.health,
+            endpoint=routers.health,
+            methods=["GET"],
+            include_in_schema=False,
+        ),
+        APIRoute(
+            path=enums.APIEndpoints.version,
+            endpoint=routers.version,
+            methods=["GET"],
+            include_in_schema=False,
+        ),
+    ]
 )
 
 

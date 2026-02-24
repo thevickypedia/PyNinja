@@ -1,4 +1,5 @@
 import logging
+import sys
 from http import HTTPStatus
 from typing import List
 
@@ -56,6 +57,19 @@ async def health():
         Returns a health check response with status code 200.
     """
     raise exceptions.APIResponse(status_code=HTTPStatus.OK, detail=HTTPStatus.OK.phrase)
+
+
+async def version():
+    """Get PyNinja and Python version information.
+
+    Returns:
+        dict:
+        Returns the version information as key-value pairs.
+    """
+    return {
+        "python_version": f"{sys.version.split()[0]} - {sys.version_info.releaselevel}",
+        "pyninja_version": ui.version.__version__,
+    }
 
 
 def get_api(dependencies: List[Depends]) -> List[APIRoute]:
