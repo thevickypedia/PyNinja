@@ -624,6 +624,7 @@
         }
         await downloadFile(filepath, url).catch(err => {
             alert(`Failed to download file:\n${err.message}`);
+            return;
         });
     });
 

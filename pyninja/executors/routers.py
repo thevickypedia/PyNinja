@@ -67,7 +67,7 @@ async def version():
         Returns the version information as key-value pairs.
     """
     return {
-        "python_version": f"{sys.version.split()[0]} - {sys.version_info.releaselevel}",
+        "python_version": sys.version.split()[0],
         "pyninja_version": ui.version.__version__,
     }
 

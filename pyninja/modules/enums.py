@@ -8,9 +8,9 @@ class OperatingSystem(StrEnum):
 
     """
 
-    linux: str = "linux"
-    darwin: str = "darwin"
-    windows: str = "windows"
+    linux = "linux"
+    darwin = "darwin"
+    windows = "windows"
 
 
 class APIEndpoints(StrEnum):
@@ -20,67 +20,67 @@ class APIEndpoints(StrEnum):
 
     """
 
-    root: str = "/"
-    docs: str = "/docs"
-    redoc: str = "/redoc"
-    health: str = "/health"
-    version: str = "/version"
+    root = "/"
+    docs = "/docs"
+    redoc = "/redoc"
+    health = "/health"
+    version = "/version"
 
-    get_file: str = "/get-file"
-    put_file: str = "/put-file"
-    get_large_file: str = "/get-large-file"
-    put_large_file: str = "/put-large-file"
-    delete_content: str = "/delete-content"
+    get_file = "/get-file"
+    put_file = "/put-file"
+    get_large_file = "/get-large-file"
+    put_large_file = "/put-large-file"
+    delete_content = "/delete-content"
 
-    get_processor: str = "/get-processor"
+    get_processor = "/get-processor"
 
-    get_all_services: str = "/get-all-services"
-    get_service_status: str = "/get-service-status"
-    get_service_usage: str = "/get-service-usage"
-    stop_service: str = "/stop-service"
-    start_service: str = "/start-service"
-    restart_service: str = "/restart-service"
+    get_all_services = "/get-all-services"
+    get_service_status = "/get-service-status"
+    get_service_usage = "/get-service-usage"
+    stop_service = "/stop-service"
+    start_service = "/start-service"
+    restart_service = "/restart-service"
 
     # macOS specific endpoints
-    get_all_apps: str = "/get-all-apps"
-    start_app: str = "/start-app"
-    stop_app: str = "/stop-app"
-    restart_app: str = "/restart-app"
+    get_all_apps = "/get-all-apps"
+    start_app = "/start-app"
+    stop_app = "/stop-app"
+    restart_app = "/restart-app"
 
-    get_process_status: str = "/get-process-status"
-    get_process_usage: str = "/get-process-usage"
+    get_process_status = "/get-process-status"
+    get_process_usage = "/get-process-usage"
 
-    observability: str = "/observability"
-    monitor: str = "/monitor"
-    ws_system: str = "/ws/system"
-    run_command: str = "/run-command"
-    run_ui: str = "/run-ui"
+    observability = "/observability"
+    monitor = "/monitor"
+    ws_system = "/ws/system"
+    run_command = "/run-command"
+    run_ui = "/run-ui"
 
-    get_memory: str = "/get-memory"
-    get_all_disks: str = "/get-all-disks"
-    get_disk_utilization: str = "/get-disk-utilization"
+    get_memory = "/get-memory"
+    get_all_disks = "/get-all-disks"
+    get_disk_utilization = "/get-disk-utilization"
 
-    get_docker_images: str = "/get-docker-images"
-    get_docker_stats: str = "/get-docker-stats"
-    get_docker_volumes: str = "/get-docker-volumes"
-    get_docker_containers: str = "/get-docker-containers"
+    get_docker_images = "/get-docker-images"
+    get_docker_stats = "/get-docker-stats"
+    get_docker_volumes = "/get-docker-volumes"
+    get_docker_containers = "/get-docker-containers"
 
-    get_certificates: str = "/get-certificates"
-    renew_certificate: str = "/renew-certificate"
+    get_certificates = "/get-certificates"
+    renew_certificate = "/renew-certificate"
 
-    stop_docker_container: str = "/stop-docker-container"
-    start_docker_container: str = "/start-docker-container"
+    stop_docker_container = "/stop-docker-container"
+    start_docker_container = "/start-docker-container"
 
-    get_ip: str = "/get-ip"
-    get_cpu: str = "/get-cpu"
-    list_files: str = "/list-files"
-    get_cpu_load: str = "/get-cpu-load"
+    get_ip = "/get-ip"
+    get_cpu = "/get-cpu"
+    list_files = "/list-files"
+    get_cpu_load = "/get-cpu-load"
 
-    login: str = "/login"
-    logout: str = "/logout"
-    error: str = "/error"
-    get_mfa: str = "/get-mfa"
-    delete_mfa: str = "/delete-mfa"
+    login = "/login"
+    logout = "/logout"
+    error = "/error"
+    get_mfa = "/get-mfa"
+    delete_mfa = "/delete-mfa"
 
 
 class Cookies(StrEnum):
@@ -90,9 +90,9 @@ class Cookies(StrEnum):
 
     """
 
-    drive: str = "drive"
-    monitor: str = "monitor"
-    session_token: str = "session_token"
+    drive = "drive"
+    monitor = "monitor"
+    session_token = "session_token"
 
 
 class Templates(StrEnum):
@@ -103,18 +103,18 @@ class Templates(StrEnum):
     """
 
     # Monitoring templates
-    main: str = "main.html"
-    index: str = "index.html"
-    logout: str = "logout.html"
-    session: str = "session.html"
-    unauthorized: str = "unauthorized.html"
-    disk_report_linux: str = "disk_report_linux.html"
-    disk_report_darwin: str = "disk_report_darwin.html"
+    main = "main.html"
+    index = "index.html"
+    logout = "logout.html"
+    session = "session.html"
+    unauthorized = "unauthorized.html"
+    disk_report_linux = "disk_report_linux.html"
+    disk_report_darwin = "disk_report_darwin.html"
 
     # API templates
-    run_ui: str = "run_ui.html"
-    swagger_ui: str = "swaggerUI.js"
-    mfa_template: str = "mfa_template.html"
+    run_ui = "run_ui.html"
+    swagger_ui = "swaggerUI.js"
+    mfa_template = "mfa_template.html"
 
 
 class APIRouteType(StrEnum):
@@ -124,9 +124,9 @@ class APIRouteType(StrEnum):
 
     """
 
-    get: str = "get"
-    post: str = "post"
-    monitor: str = "monitor"
+    get = "get"
+    post = "post"
+    monitor = "monitor"
 
 
 class TableName(StrEnum):
@@ -136,8 +136,8 @@ class TableName(StrEnum):
 
     """
 
-    auth_errors: str = "auth_errors"
-    mfa_token: str = "mfa_token"
+    auth_errors = "auth_errors"
+    mfa_token = "mfa_token"
 
 
 class MFAOptions(StrEnum):
@@ -147,6 +147,6 @@ class MFAOptions(StrEnum):
 
     """
 
-    email: str = "email"
-    ntfy: str = "ntfy"
-    telegram: str = "telegram"
+    email = "email"
+    ntfy = "ntfy"
+    telegram = "telegram"
