@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v4.9.91 (02/23/2026)
+--------------------
+- Include process status in process information
+- Filter child processes for services with multiple PIDs
+- Fix missing service PID in Windows machines
+
 v4.9.9 (12/08/2025)
 -------------------
 - Fix ``PyUdisk`` metrics' update timestamp
