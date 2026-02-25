@@ -417,59 +417,6 @@
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.database.get_token_info">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">get_token_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.executors.database.get_token_info" title="Link to this definition">¶</a></dt>
-<dd><p>Retrieves information about the token based on the timestamp.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>timestamp</strong> – Epoch time when the token was generated.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Returns a dictionary containing the issued and expiry times of the token.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict[str, Any]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.database.delete_expired_tokens">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">delete_expired_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Logger</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.delete_expired_tokens" title="Link to this definition">¶</a></dt>
-<dd><p>Deletes the entry if an expired record is found.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>logger</strong> – Custom logger instance for logging messages.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.database.get_log_config">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">get_log_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyninja.executors.database.get_log_config" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the log configuration for the child process.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Returns the log configuration dictionary.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dict[str, Any]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.database.monitor_table">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.database.</span></span><span class="sig-name descname"><span class="pre">monitor_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyninja.modules.models.EnvConfig" title="pyninja.modules.models.EnvConfig"><span class="pre">EnvConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.database.monitor_table" title="Link to this definition">¶</a></dt>
-<dd><p>Initiates a dedicated connection to the database and scans for expired tokens.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>env</strong> – Environment configuration object.</p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 <section id="module-pyninja.routes.commands">
 <span id="api-routes"></span><h2>API Routes<a class="headerlink" href="#module-pyninja.routes.commands" title="Link to this heading">¶</a></h2>
@@ -1434,23 +1381,6 @@ one lowercase letter, and one safe character.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.squire.dynamic_numbers">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">dynamic_numbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#pyninja.executors.squire.dynamic_numbers" title="Link to this definition">¶</a></dt>
-<dd><p>Convert strings to integer or float dynamically.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>string</strong> – Number in string format.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Integer or float value.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int | float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4617,10 +4547,6 @@ that start with a dot (hidden files).</p>
 <li><a class="reference internal" href="#pyninja.executors.database.get_forbidden"><code class="docutils literal notranslate"><span class="pre">get_forbidden()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.database.put_forbidden"><code class="docutils literal notranslate"><span class="pre">put_forbidden()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.database.remove_forbidden"><code class="docutils literal notranslate"><span class="pre">remove_forbidden()</span></code></a></li>
-<li><a class="reference internal" href="#pyninja.executors.database.get_token_info"><code class="docutils literal notranslate"><span class="pre">get_token_info()</span></code></a></li>
-<li><a class="reference internal" href="#pyninja.executors.database.delete_expired_tokens"><code class="docutils literal notranslate"><span class="pre">delete_expired_tokens()</span></code></a></li>
-<li><a class="reference internal" href="#pyninja.executors.database.get_log_config"><code class="docutils literal notranslate"><span class="pre">get_log_config()</span></code></a></li>
-<li><a class="reference internal" href="#pyninja.executors.database.monitor_table"><code class="docutils literal notranslate"><span class="pre">monitor_table()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-pyninja.routes.commands">API Routes</a><ul>
@@ -4681,7 +4607,6 @@ that start with a dot (hidden files).</p>
 <li><a class="reference internal" href="#pyninja.executors.squire.load_architecture"><code class="docutils literal notranslate"><span class="pre">load_architecture()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.squire.generate_mfa_token"><code class="docutils literal notranslate"><span class="pre">generate_mfa_token()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.squire.keygen"><code class="docutils literal notranslate"><span class="pre">keygen()</span></code></a></li>
-<li><a class="reference internal" href="#pyninja.executors.squire.dynamic_numbers"><code class="docutils literal notranslate"><span class="pre">dynamic_numbers()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.squire.assert_pyudisk"><code class="docutils literal notranslate"><span class="pre">assert_pyudisk()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.squire.assert_tokens"><code class="docutils literal notranslate"><span class="pre">assert_tokens()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.squire.any_mfa_enabled"><code class="docutils literal notranslate"><span class="pre">any_mfa_enabled()</span></code></a></li>

@@ -1,7 +1,6 @@
 import logging
 import pathlib
 from contextlib import asynccontextmanager
-from multiprocessing import Process, TimeoutError
 
 import uvicorn
 from fastapi import Depends, FastAPI
@@ -10,7 +9,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.routing import APIRoute
 
 from pyninja import startup, version
-from pyninja.executors import database, routers, squire
+from pyninja.executors import routers, squire
 from pyninja.modules import enums, exceptions, models, rate_limit
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -23,25 +22,8 @@ async def lifespan(app: FastAPI):
     api_name = app.__dict__.get("title", app.__name__)
     api_version = app.__dict__.get("version", version.__version__)
     LOGGER.info("FastAPI server [%s:%s] initialized.", api_name, api_version)
-    process = None
-    if all((models.env.apikey, models.env.api_secret, models.env.remote_execution)):
-        process = Process(
-            target=database.monitor_table,
-            kwargs=dict(env=models.env),
-        )
-        process.start()
-        LOGGER.info("Started DB monitor process: %s", process.pid)
     yield
-    if process:
-        LOGGER.info("Stopping DB monitor process: %s", process.pid)
-        try:
-            process.join(timeout=3)
-        except TimeoutError as error:
-            LOGGER.error(error)
-        if process.is_alive():
-            process.terminate()
-            process.kill()
-        LOGGER.info("FastAPI server [%s:%s] shut down.", api_name, api_version)
+    LOGGER.info("FastAPI server [%s:%s] shut down.", api_name, api_version)
 
 
 PyNinjaAPI = FastAPI(

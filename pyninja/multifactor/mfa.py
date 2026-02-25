@@ -29,7 +29,7 @@ async def send_new_mfa() -> NoReturn | None:
             f"{datetime.fromtimestamp(expiry).strftime('%c')}, not sending a new one."
         )
         detail = f"A recent MFA token sent to your {requester!r} is still valid."
-        if enums.MFAOptions[requester] == enums.MFAOptions.email:
+        if enums.MFAOptions(requester) == enums.MFAOptions.email:
             detail += " Please check your email (including spam/junk folders)."
         detail += f" You can request a new one after {squire.convert_seconds(models.env.mfa_resend_delay, n_elem=1)}."
         detail += f" Time remaining: {squire.convert_seconds(expiration_generated - resend_factor, n_elem=2)}."

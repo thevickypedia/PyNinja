@@ -418,6 +418,7 @@ class Database:
             datastore: Name of the database file.
             timeout: Timeout for the connection to database.
         """
+        # TODO: Switch database connections to use in-house context manager - 5.0.0
         self.connection = sqlite3.connect(database=datastore, check_same_thread=False, timeout=timeout)
 
     def create_table(self, table_name: str, columns: List[str] | Tuple[str], drop_existing: bool = False) -> None:

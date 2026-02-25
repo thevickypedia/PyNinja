@@ -359,25 +359,6 @@ def keygen(nbytes: int = 64) -> str:
     return secrets.token_urlsafe(nbytes)
 
 
-def dynamic_numbers(string: str) -> int | float | None:
-    """Convert strings to integer or float dynamically.
-
-    Args:
-        string: Number in string format.
-
-    Returns:
-        int | float:
-        Integer or float value.
-    """
-    try:
-        return int(string)
-    except ValueError:
-        try:
-            return float(string)
-        except ValueError:
-            return None
-
-
 def assert_pyudisk() -> None:
     """Ensure disk_report is enabled only for Linux machines and load ``udiskctl`` library."""
     if models.OPERATING_SYSTEM not in (
