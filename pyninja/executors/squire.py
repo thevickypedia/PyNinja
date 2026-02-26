@@ -14,7 +14,7 @@ import subprocess
 import time
 import warnings
 from collections.abc import AsyncGenerator
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, List
 
 import pyarchitecture
@@ -60,6 +60,7 @@ def public_ip_address() -> str | None:
             IndexError,
         ):
             continue
+    return None
 
 
 def private_ip_address() -> str | None:
@@ -73,7 +74,7 @@ def private_ip_address() -> str | None:
     try:
         socket_.connect(("8.8.8.8", 80))
     except OSError:
-        return
+        return None
     ip_address_ = socket_.getsockname()[0]
     socket_.close()
     return ip_address_
@@ -90,39 +91,6 @@ def format_nos(input_: float) -> int | float:
         Int if found, else returns the received float value.
     """
     return int(input_) if isinstance(input_, float) and input_.is_integer() else input_
-
-
-def format_timedelta(td: timedelta) -> str:
-    """Converts timedelta to human-readable format by constructing a formatted string based on non-zero values.
-
-    Args:
-        td: Timedelta object.
-
-    See Also:
-        Always limits the output to a maximum of two identifiers.
-
-    Examples:
-        - 3 days and 1 hour
-        - 1 hour and 11 minutes
-        - 5 minutes and 23 seconds
-
-    Returns:
-        str:
-        Human-readable format of timedelta.
-    """
-    days = td.days
-    hours, remainder = divmod(td.seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    parts = []
-    if days > 0:
-        parts.append(f"{days} day{'s' if days > 1 else ''}")
-    if hours > 0:
-        parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
-    if minutes > 0:
-        parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
-    if seconds > 0:
-        parts.append(f"{seconds} second{'s' if seconds > 1 else ''}")
-    return " and ".join(parts[:2])
 
 
 def size_converter(byte_size: int | float) -> str:
@@ -148,8 +116,11 @@ async def stream_command(
     """Async generator to stream command output line-by-line and handle disconnects.
 
     Args:
+        request: FastAPI request object.
         command: Command to be executed.
+        shell: Boolean flag to indicate shell execution.
         timeout: Timeout for the command execution.
+        stream_limit: Time in seconds to stream.
 
     Yields:
         str:

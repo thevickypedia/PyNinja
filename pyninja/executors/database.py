@@ -28,6 +28,7 @@ def get_token(table: enums.TableName, get_all: bool = False) -> Any | None:
             if token and token[0]:
                 decrypted_token = models.CIPHER_SUITE.decrypt(token[0]).decode("utf-8")
                 return decrypted_token
+    return None
 
 
 def update_token(
@@ -72,6 +73,7 @@ def get_forbidden(host: str) -> int | None:
         ).fetchone()
     if state and state[0]:
         return state[0]
+    return None
 
 
 def put_forbidden(host: str, block_until: int) -> None:

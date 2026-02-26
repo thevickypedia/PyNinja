@@ -55,7 +55,9 @@ def get_process_info(proc: psutil.Process, process_name: str = None) -> Dict[str
             "CPU": f"{proc.cpu_percent(models.MINIMUM_CPU_UPDATE_INTERVAL):.2f}%",
             # Resident Set Size
             "Memory": squire.size_converter(proc.memory_info().rss),
-            "Uptime": squire.format_timedelta(timedelta(seconds=int(time.time() - proc.create_time()))),
+            "Uptime": squire.convert_seconds(
+                int(timedelta(seconds=int(time.time() - proc.create_time())).total_seconds())
+            ),
             "Threads": proc.num_threads(),
             "Open Files": len(proc.open_files()),
             "Read I/O": read_io,

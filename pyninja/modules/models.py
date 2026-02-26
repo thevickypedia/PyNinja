@@ -6,7 +6,8 @@ import shutil
 import socket
 import sqlite3
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Callable, Dict, List, Set, Tuple
+from types import TracebackType
+from typing import Any, Callable, Dict, List, Set, Tuple, Type
 
 from cryptography.fernet import Fernet
 from fastapi.routing import APIRoute, APIWebSocketRoute
@@ -336,6 +337,7 @@ class EnvConfig(BaseSettings):
             except AssertionError as error:
                 raise ValueError(error.__str__())
             return value
+        return None
 
     # noinspection PyMethodParameters
     @field_validator("api_secret", mode="after")
@@ -404,6 +406,53 @@ class FileIO(BaseModel):
 fileio = FileIO()
 
 
+class DatabaseConnection:
+    """Context manager for SQLite database connections.
+
+    >>> DatabaseConnection
+
+    """
+
+    def __init__(self, datastore: str, timeout: int):
+        """Instantiates the database connection.
+
+        Args:
+            datastore: Filepath of the database file.
+            timeout: Connection timeout in seconds.
+        """
+        self.datastore = datastore
+        self.timeout = timeout
+        self.connection: sqlite3.Connection | None = None
+
+    def __enter__(self) -> sqlite3.Connection:
+        """Creates and returns a database connection.
+
+        Returns:
+            sqlite3.Connection: An active connection to the database.
+        """
+        self.connection = sqlite3.connect(database=self.datastore, check_same_thread=False, timeout=self.timeout)
+        return self.connection
+
+    def __exit__(
+        self,
+        exc_type: Type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
+        """Commits or rolls back the transaction and closes the connection.
+
+        Args:
+            exc_type: Exception type, if an exception was raised, otherwise ``None``.
+            exc_val: Exception value, if an exception was raised, otherwise ``None``.
+            exc_tb: Exception traceback, if an exception was raised, otherwise ``None``.
+        """
+        if exc_type:
+            self.connection.rollback()
+        else:
+            self.connection.commit()
+        self.connection.close()
+
+
 class Database:
     """Creates a connection to the Database using sqlite3.
 
@@ -418,8 +467,7 @@ class Database:
             datastore: Name of the database file.
             timeout: Timeout for the connection to database.
         """
-        # TODO: Switch database connections to use in-house context manager - 5.0.0
-        self.connection = sqlite3.connect(database=datastore, check_same_thread=False, timeout=timeout)
+        self.connection = DatabaseConnection(datastore, timeout)
 
     def create_table(self, table_name: str, columns: List[str] | Tuple[str], drop_existing: bool = False) -> None:
         """Creates the table with the required columns.
@@ -429,8 +477,8 @@ class Database:
             columns: List of columns that has to be created.
             drop_existing: If True, drops the existing table before creating a new one.
         """
-        with self.connection:
-            cursor = self.connection.cursor()
+        with self.connection as connection:
+            cursor = connection.cursor()
             # Use f-string or %s as table names cannot be parametrized
             if drop_existing:
                 cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
@@ -443,23 +491,24 @@ class Database:
             Dict[str, Any]:
             A dictionary where keys are table names and values are dicts with column names and record counts.
         """
-        cursor = self.connection.cursor()
-        summary = {}
+        with self.connection as connection:
+            cursor = connection.cursor()
+            summary = {}
 
-        # Get all user-defined tables (exclude SQLite internal tables)
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
-        tables = cursor.fetchall()
+            # Get all user-defined tables (exclude SQLite internal tables)
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
+            tables = cursor.fetchall()
 
-        for (table_name,) in tables:
-            # Get column names
-            cursor.execute(f"PRAGMA table_info({table_name})")
-            columns = [col[1] for col in cursor.fetchall()]  # col[1] is the column name
+            for (table_name,) in tables:
+                # Get column names
+                cursor.execute(f"PRAGMA table_info({table_name})")
+                columns = [col[1] for col in cursor.fetchall()]  # col[1] is the column name
 
-            # Get row count
-            cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
-            row_count = cursor.fetchone()[0]
+                # Get row count
+                cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+                row_count = cursor.fetchone()[0]
 
-            summary[table_name] = {"columns": columns, "records": row_count}
+                summary[table_name] = {"columns": columns, "records": row_count}
 
         return summary
 

@@ -450,7 +450,7 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <hr class="docutils" />
 <dl class="py function" id="module-pyninja.routes.fullaccess">
 <dt class="sig sig-object py" id="pyninja.routes.fullaccess.create_directory">
-<span class="sig-prename descclassname"><span class="pre">pyninja.routes.fullaccess.</span></span><span class="sig-name descname"><span class="pre">create_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PathType</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">path_type</span></span><span class="o"><span class="pre">=</span></span><span class="pre">dir</span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PathType</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">path_type</span></span><span class="o"><span class="pre">=</span></span><span class="pre">new</span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NoReturn</span></span></span><a class="headerlink" href="#pyninja.routes.fullaccess.create_directory" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.routes.fullaccess.</span></span><span class="sig-name descname"><span class="pre">create_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PathType</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">path_type</span></span><span class="o"><span class="pre">=</span></span><span class="pre">dir</span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PathType</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">path_type</span></span><span class="o"><span class="pre">=</span></span><span class="pre">new</span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NoReturn</span></span></span><a class="headerlink" href="#pyninja.routes.fullaccess.create_directory" title="Link to this definition">¶</a></dt>
 <dd><p>Create a directory if it does not exist.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1216,35 +1216,6 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyninja.executors.squire.format_timedelta">
-<span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">format_timedelta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">td</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">timedelta</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.executors.squire.format_timedelta" title="Link to this definition">¶</a></dt>
-<dd><p>Converts timedelta to human-readable format by constructing a formatted string based on non-zero values.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>td</strong> – Timedelta object.</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p>Always limits the output to a maximum of two identifiers.</p>
-</div>
-<p class="rubric">Examples</p>
-<ul class="simple">
-<li><p>3 days and 1 hour</p></li>
-<li><p>1 hour and 11 minutes</p></li>
-<li><p>5 minutes and 23 seconds</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Human-readable format of timedelta.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pyninja.executors.squire.size_converter">
 <span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">size_converter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">byte_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyninja.executors.squire.size_converter" title="Link to this definition">¶</a></dt>
 <dd><p>Gets the current memory consumed and converts it to human friendly format.</p>
@@ -1268,8 +1239,11 @@ Raises the HTTPStatus object with a status code and attached disks as response.<
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – FastAPI request object.</p></li>
 <li><p><strong>command</strong> – Command to be executed.</p></li>
+<li><p><strong>shell</strong> – Boolean flag to indicate shell execution.</p></li>
 <li><p><strong>timeout</strong> – Timeout for the command execution.</p></li>
+<li><p><strong>stream_limit</strong> – Time in seconds to stream.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields<span class="colon">:</span></dt>
@@ -1911,7 +1885,7 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyninja.features.application.failed">
-<span class="sig-prename descclassname"><span class="pre">pyninja.features.application.</span></span><span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PathType</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">path_type</span></span><span class="o"><span class="pre">=</span></span><span class="pre">file</span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.AppStatus" title="pyninja.modules.models.AppStatus"><span class="pre">AppStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.application.failed" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyninja.features.application.</span></span><span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyninja.modules.models.AppStatus" title="pyninja.modules.models.AppStatus"><span class="pre">AppStatus</span></a></span></span><a class="headerlink" href="#pyninja.features.application.failed" title="Link to this definition">¶</a></dt>
 <dd><p>Return an AppStatus indicating the application failed to restart.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3815,6 +3789,20 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="pyninja.modules.models.DatabaseConnection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">DatabaseConnection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datastore</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.DatabaseConnection" title="Link to this definition">¶</a></dt>
+<dd><p>Context manager for SQLite database connections.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DatabaseConnection</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.DatabaseConnection.connection">
+<span class="sig-name descname"><span class="pre">connection</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Connection</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#pyninja.modules.models.DatabaseConnection.connection" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="pyninja.modules.models.Database">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyninja.modules.models.</span></span><span class="sig-name descname"><span class="pre">Database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datastore</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PathType</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">path_type</span></span><span class="o"><span class="pre">=</span></span><span class="pre">file</span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.modules.models.Database" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a connection to the Database using sqlite3.</p>
@@ -4598,7 +4586,6 @@ that start with a dot (hidden files).</p>
 <li><a class="reference internal" href="#pyninja.executors.squire.public_ip_address"><code class="docutils literal notranslate"><span class="pre">public_ip_address()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.squire.private_ip_address"><code class="docutils literal notranslate"><span class="pre">private_ip_address()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.squire.format_nos"><code class="docutils literal notranslate"><span class="pre">format_nos()</span></code></a></li>
-<li><a class="reference internal" href="#pyninja.executors.squire.format_timedelta"><code class="docutils literal notranslate"><span class="pre">format_timedelta()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.squire.size_converter"><code class="docutils literal notranslate"><span class="pre">size_converter()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.squire.stream_command"><code class="docutils literal notranslate"><span class="pre">stream_command()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.executors.squire.process_command"><code class="docutils literal notranslate"><span class="pre">process_command()</span></code></a></li>
@@ -4980,6 +4967,10 @@ that start with a dot (hidden files).</p>
 <li><a class="reference internal" href="#pyninja.modules.models.get_certbot_path"><code class="docutils literal notranslate"><span class="pre">get_certbot_path()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.modules.models.load_swagger_ui"><code class="docutils literal notranslate"><span class="pre">load_swagger_ui()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.modules.models.load_mfa_template"><code class="docutils literal notranslate"><span class="pre">load_mfa_template()</span></code></a></li>
+<li><a class="reference internal" href="#pyninja.modules.models.DatabaseConnection"><code class="docutils literal notranslate"><span class="pre">DatabaseConnection</span></code></a><ul>
+<li><a class="reference internal" href="#pyninja.modules.models.DatabaseConnection.connection"><code class="docutils literal notranslate"><span class="pre">DatabaseConnection.connection</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#pyninja.modules.models.Database"><code class="docutils literal notranslate"><span class="pre">Database</span></code></a><ul>
 <li><a class="reference internal" href="#pyninja.modules.models.Database.create_table"><code class="docutils literal notranslate"><span class="pre">Database.create_table()</span></code></a></li>
 <li><a class="reference internal" href="#pyninja.modules.models.Database.describe_database"><code class="docutils literal notranslate"><span class="pre">Database.describe_database()</span></code></a></li>

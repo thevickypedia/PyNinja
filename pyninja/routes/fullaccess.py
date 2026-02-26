@@ -18,7 +18,7 @@ LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
 
 
-def create_directory(directory: DirectoryPath | NewPath) -> None | NoReturn:
+def create_directory(directory: DirectoryPath | NewPath | str) -> None | NoReturn:
     """Create a directory if it does not exist.
 
     Args:

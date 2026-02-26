@@ -14,7 +14,6 @@ from http import HTTPStatus
 from typing import Dict
 
 import psutil
-from pydantic import FilePath
 
 from pyninja.executors import squire
 from pyninja.modules import models
@@ -80,7 +79,7 @@ def unavailable(app_name: str) -> models.AppStatus:
     )
 
 
-def failed(app_name: str, app_path: FilePath, error: str) -> models.AppStatus:
+def failed(app_name: str, app_path: str, error: str) -> models.AppStatus:
     """Return an AppStatus indicating the application failed to restart.
 
     Args:

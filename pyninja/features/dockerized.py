@@ -22,13 +22,14 @@ def get_container_status(name: str = None) -> str | None:
         containers = docker.from_env().api.containers()
     except DockerException as error:
         LOGGER.error(error)
-        return
+        return None
     for container in containers:
         if name in container.get("Image") or name in container.get("Names"):
             return (
                 f"{container.get('Id')[:12]} - {container.get('Names')} - "
                 f"{container.get('State')} - {container.get('Status')}"
             )
+    return None
 
 
 def get_running_containers() -> Generator[Dict[str, str]]:
@@ -59,7 +60,7 @@ def get_all_containers() -> List[Dict[str, str]] | None:
         return docker.from_env().api.containers(all=True)
     except DockerException as error:
         LOGGER.error(error)
-        return
+        return None
 
 
 def get_all_images() -> Dict[str, str] | None:
@@ -73,7 +74,7 @@ def get_all_images() -> Dict[str, str] | None:
         return docker.from_env().api.images(all=True)
     except DockerException as error:
         LOGGER.error(error)
-        return
+        return None
 
 
 def get_all_volumes() -> Dict[str, str] | None:
@@ -87,7 +88,7 @@ def get_all_volumes() -> Dict[str, str] | None:
         return docker.from_env().api.volumes()
     except DockerException as error:
         LOGGER.error(error)
-        return
+        return None
 
 
 def stop_container(container_name: str):
@@ -104,6 +105,7 @@ def stop_container(container_name: str):
         if container_name in container.get("Names"):
             docker.from_env().api.stop(container.get("Id"))
             return f"Container {container_name} stopped."
+    return None
 
 
 def start_container(container_name: str):
@@ -120,3 +122,4 @@ def start_container(container_name: str):
         if container_name in container.get("Names"):
             docker.from_env().api.start(container.get("Id"))
             return f"Container {container_name} has been started."
+    return None

@@ -1,3 +1,4 @@
+# noinspection PyUnresolvedReferences
 """PyNinja CLI allows to start the server, print version, and generate QR code for TOTP setup.
 
 >>> PyNinja
@@ -12,6 +13,7 @@ from .main import start, version
 from .multifactor import otp
 
 
+# noinspection PyUnusedLocal
 @click.command()
 @click.argument("start", required=False)
 @click.option("--version", "-V", is_flag=True, help="Prints the version.")

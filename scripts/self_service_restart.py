@@ -56,6 +56,7 @@ def self_restart() -> None:
                 timeout=300,
             )
         )
+    raise
 
 
 def red(msg: str, bold: bool = False) -> None:
@@ -137,11 +138,11 @@ def sleep(seconds: int) -> None:
     green("Woke up!")
 
 
-def commands() -> Dict[str, str]:
+def commands() -> List[Dict[str, str | int]]:
     """Returns a dictionary of commands to be executed."""
     return [
         dict(
-            command=(f"{PYTHON_PATH} -m pip install --no-cache --no-cache-dir {INSTALLER}"),
+            command=f"{PYTHON_PATH} -m pip install --no-cache --no-cache-dir {INSTALLER}",
             timeout=300,
             post_delay=10,
         ),

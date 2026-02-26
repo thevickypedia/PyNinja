@@ -54,6 +54,7 @@ def get_performance(process: psutil.Process, cpu_interval: PositiveInt) -> Dict[
     """
     try:
         cpu = process.cpu_percent(interval=cpu_interval) if cpu_interval else process.cpu_times()._asdict()
+        # noinspection PyProtectedMember
         memory = {k: squire.size_converter(v) for k, v in process.memory_info()._asdict().items()}
         threads = process.num_threads()
         try:

@@ -58,6 +58,7 @@ def parse_certificate_output(output: str, raw: bool = False, ws_stream: bool = F
             elif line.startswith("Key Type:"):
                 cert_info[cert_key("Key Type")] = line.split(": ", 1)[1].strip()
             elif line.startswith("Domains:"):
+                # noinspection PyTypeChecker
                 cert_info[cert_key("Domains")] = line.split(": ", 1)[1].strip().split()
             elif line.startswith("Expiry Date:"):
                 parts = line.split("VALID:")

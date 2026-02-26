@@ -32,7 +32,7 @@ def landing_page() -> Dict[str, Any]:
         "Architecture": uname.machine,
         "Node": uname.node,
         "CPU Cores": psutil.cpu_count(logical=True),
-        "Uptime": squire.format_timedelta(timedelta(seconds=time.time() - psutil.boot_time())),
+        "Uptime": squire.convert_seconds(int(timedelta(seconds=time.time() - psutil.boot_time()).total_seconds())),
     }
     if models.architecture.cpu:
         LOGGER.debug("Processor: %s", models.architecture.cpu)
@@ -97,9 +97,10 @@ def container_cpu_limit(container_id: str) -> int | float | None:
     )
     if inspector.stderr:
         LOGGER.debug(inspector.stderr.decode().strip())
-        return
+        return None
     if nano_cpus := inspector.stdout.decode().strip():
         return int(nano_cpus) / 1_000_000_000
+    return None
 
 
 def floater(value: float) -> int | float:
@@ -172,6 +173,7 @@ def containers() -> bool | None:
         return False
     if docker_ps.stdout.decode().strip().splitlines():
         return True
+    return None
 
 
 async def get_docker_stats() -> List[Dict[str, str]]:
@@ -312,6 +314,7 @@ async def service_obs() -> List[Dict[str, str]]:
     return list(service.get_all_services())
 
 
+# noinspection PyTypeChecker
 async def system_resources(all_services: bool = False) -> Dict[str, dict | List[Dict[str, str | int]]]:
     """Gather system resources including Docker stats asynchronously.
 

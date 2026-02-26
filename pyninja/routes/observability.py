@@ -48,7 +48,9 @@ async def get_observability(
     base_payload["architecture"] = uname.machine
     base_payload["node"] = uname.node
     base_payload["cores"] = psutil.cpu_count(logical=True)
-    base_payload["uptime"] = squire.format_timedelta(timedelta(seconds=time.time() - psutil.boot_time()))
+    base_payload["uptime"] = squire.convert_seconds(
+        int(timedelta(seconds=time.time() - psutil.boot_time()).total_seconds())
+    )
 
     if models.architecture.cpu:
         base_payload["cpu_name"] = models.architecture.cpu

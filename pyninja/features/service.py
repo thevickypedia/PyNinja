@@ -117,11 +117,11 @@ def get_process_object(pid: str, service: str) -> psutil.Process | None:
         return psutil.Process(int(pid))
     except ValueError:
         LOGGER.critical("Invalid PID '%s' for service: %s", pid, service)
-        return
     except psutil.NoSuchProcess:
-        return
+        pass
     except (psutil.Error, psutil.AccessDenied) as error:
         LOGGER.error(error)
+    return None
 
 
 def get_all_services() -> Generator[Dict[str, str]]:
@@ -266,6 +266,7 @@ def get_service_status(service_name: str) -> models.ServiceStatus | None:
         except subprocess.CalledProcessError as error:
             squire.log_subprocess_error(error)
             return unavailable(service_name)
+    return None
 
 
 def stop_service(service_name: str) -> models.ServiceStatus:
