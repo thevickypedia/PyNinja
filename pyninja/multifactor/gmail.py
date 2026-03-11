@@ -14,7 +14,7 @@ BEARER_AUTH = HTTPBearer()
 
 
 @cache.timed_cache(max_age=3_600)
-def instantiate_mailer() -> gc.SendEmail:
+def instantiate_mailer() -> gc.SendEmail | None:
     """Cached function to instantiate the gmail-connector object.
 
     Returns:
@@ -23,13 +23,14 @@ def instantiate_mailer() -> gc.SendEmail:
     """
     mail_obj = gc.SendEmail(gmail_user=models.env.gmail_user, gmail_pass=models.env.gmail_pass)
     auth_stat = mail_obj.authenticate
-    if not auth_stat.ok:
-        LOGGER.error(auth_stat.json())
-        raise exceptions.APIResponse(status_code=HTTPStatus.SERVICE_UNAVAILABLE.real, detail=auth_stat.body)
-    return mail_obj
+    if auth_stat.ok:
+        LOGGER.debug(auth_stat.json())
+        return mail_obj
+    LOGGER.warning(auth_stat.json())
+    return None
 
 
-async def send(subject: str, body: str = None, html_body: str = None) -> gc.Response:
+async def send(subject: str, body: str = None, html_body: str = None) -> bool:
     """Function to send an email using the gmail-connector module.
 
     Args:
@@ -38,19 +39,21 @@ async def send(subject: str, body: str = None, html_body: str = None) -> gc.Resp
         html_body: HTML body of the email. Optional if `body` is provided.
 
     Returns:
-        gc.Response:
-        Response object from the gmail-connector module.
+        bool:
+        Returns True if the email was sent successfully, False otherwise.
     """
     mail_obj = instantiate_mailer()
+    if not mail_obj:
+        return False
     if body:
-        return mail_obj.send_email(
+        resp = mail_obj.send_email(
             recipient=models.env.recipient or models.env.gmail_user,
             sender="PyNinja API",
             subject=subject,
             body=body,
         )
     elif html_body:
-        return mail_obj.send_email(
+        resp = mail_obj.send_email(
             recipient=models.env.recipient or models.env.gmail_user,
             sender="PyNinja API",
             subject=subject,
@@ -58,6 +61,12 @@ async def send(subject: str, body: str = None, html_body: str = None) -> gc.Resp
         )
     else:
         raise ValueError("Either 'body' or 'html_body' must be provided to send an email.")
+    if resp.ok:
+        LOGGER.debug(resp.json())
+        return True
+    else:
+        LOGGER.error(resp.json())
+    return False
 
 
 async def get_mfa(
@@ -94,18 +103,18 @@ async def get_mfa(
             TOKEN=token,
         ),
     )
-    if mail_stat.ok:
+    if mail_stat:
         database.update_token(
             token=token,
             table=enums.TableName.mfa_token,
             requester=enums.MFAOptions.email,
             expiry=models.env.mfa_timeout,
         )
-        LOGGER.debug(mail_stat.body)
         raise exceptions.APIResponse(
             status_code=HTTPStatus.OK.real,
             detail="Authentication success. OTP has been sent via email.",
         )
     else:
-        LOGGER.error(mail_stat.json())
-        raise exceptions.APIResponse(status_code=HTTPStatus.SERVICE_UNAVAILABLE.real, detail=mail_stat.body)
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.SERVICE_UNAVAILABLE.real, detail="Failed to send email. Check logs for details."
+        )
