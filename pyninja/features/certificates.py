@@ -1,9 +1,7 @@
-import asyncio
 import logging
 import re
 import subprocess
 from collections.abc import Generator
-from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Any, Dict
 
@@ -11,56 +9,6 @@ from pyninja.executors import squire
 from pyninja.modules import cache, enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
-
-
-async def scheduler() -> None:
-    """Schedule the certificate expiry check to run daily at a specified time."""
-    while True:
-        now = datetime.now()
-        hour, minute = map(int, models.env.cert_monitor.split(":"))
-        next_run = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
-        if now >= next_run:
-            next_run += timedelta(days=1)
-        sleep_seconds = (next_run - now).total_seconds()
-        LOGGER.info(
-            "Next certificate expiry check scheduled at %s (in %.2f seconds)", next_run.isoformat(), sleep_seconds
-        )
-        await asyncio.sleep(sleep_seconds)
-        await monitor_expiry()
-
-
-async def monitor_expiry() -> None:
-    """Check for certificates expiring within 30 days and log a warning if any are found."""
-    response = await get_all_certificates(raw=False, ws_stream=False)
-    if response.status_code == HTTPStatus.OK:
-        # TODO: Notify with body
-        for certificate in response.certificates:
-            if certificate["status"] == "INVALID":
-                if certificate["validity"] == 0:
-                    body = (
-                        f"The certificate {certificate['certificate_name']!r} has expired,"
-                        f" on {certificate['expiry_date']}"
-                    )
-                else:
-                    body = (
-                        f"The certificate {certificate['certificate_name']!r} is invalid {certificate['expiry_date']}"
-                    )
-                LOGGER.critical(body)
-            elif certificate["validity"] <= 3:
-                body = (
-                    f"The certificate {certificate['certificate_name']!r} is expiring soon,"
-                    f" on {certificate['expiry_date']} (in {certificate['validity']} days)"
-                )
-                LOGGER.warning(body)
-            else:
-                LOGGER.debug(
-                    "The certificate '%s' is valid until %s (in %d days)",
-                    certificate["certificate_name"],
-                    certificate["expiry_date"],
-                    certificate["validity"],
-                )
-    else:
-        LOGGER.warning("Unsuccessful attempt to check certificate expiry:", response.description)
 
 
 def forbidden() -> models.CertificateStatus:

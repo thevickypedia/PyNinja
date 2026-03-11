@@ -11,7 +11,7 @@ from fastapi.routing import APIRoute
 
 from pyninja import startup, version
 from pyninja.executors import routers, squire
-from pyninja.features import certificates
+from pyninja.features import cert_expiration
 from pyninja.modules import enums, exceptions, models, rate_limit
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
     api_version = app.__dict__.get("version", version.__version__)
     LOGGER.info("FastAPI server [%s:%s] initialized.", api_name, api_version)
     if models.env.cert_monitor:
-        asyncio.create_task(certificates.scheduler())
+        asyncio.create_task(cert_expiration.scheduler())
     yield
     LOGGER.info("FastAPI server [%s:%s] shut down.", api_name, api_version)
 
@@ -121,6 +121,7 @@ def start(**kwargs) -> None:
     squire.assert_tokens()
     squire.assert_pyudisk()
     squire.handle_warnings()
+    squire.assert_cert_monitor()
     startup.docs_handler(api=PyNinjaAPI, func=docs)
     dependencies = [
         Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init) for each_rate_limit in models.env.rate_limit

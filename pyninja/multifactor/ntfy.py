@@ -11,8 +11,34 @@ from pyninja.modules import enums, exceptions, models
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
 
-# Minimum time (in seconds) before a new MFA token can be sent
-MFA_RESEND_INTERVAL = 120
+
+async def send(title: str, data: str) -> bool:
+    """Function to send a notification via Ntfy.
+
+    Args:
+        title: Ntfy notification title.
+        data: Data to be sent in the notification body.
+
+    Returns:
+        bool:
+        Returns True if the notification was sent successfully, False otherwise.
+    """
+    session = requests.Session()
+    session.headers = {
+        "X-Title": title,
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    if models.env.ntfy_username and models.env.ntfy_password:
+        session.auth = (models.env.ntfy_username, models.env.ntfy_password)
+    endpoint = f"{models.env.ntfy_url}{models.env.ntfy_topic}"
+    try:
+        response = session.post(url=endpoint, data=data)
+        response.raise_for_status()
+        LOGGER.debug(response.json())
+        return True
+    except (requests.RequestException, TimeoutError, ConnectionError) as error:
+        LOGGER.error(error)
+        return False
 
 
 async def get_mfa(
@@ -39,19 +65,9 @@ async def get_mfa(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
             detail="'ntfy_url', and 'ntfy_topic' must be set in the environment.",
         )
-    session = requests.Session()
-    session.headers = {
-        "X-Title": squire.get_mfa_title(include_node=get_node),
-        "Content-Type": "application/x-www-form-urlencoded",
-    }
-    if models.env.ntfy_username and models.env.ntfy_password:
-        session.auth = (models.env.ntfy_username, models.env.ntfy_password)
-    endpoint = f"{models.env.ntfy_url}{models.env.ntfy_topic}"
     token = squire.generate_mfa_token(length=8)
-    try:
-        response = session.post(url=endpoint, data=token)
-        response.raise_for_status()
-        LOGGER.debug(response.json())
+    response = await send(title=squire.get_mfa_title(include_node=get_node), data=token)
+    if response:
         database.update_token(
             token=token, table=enums.TableName.mfa_token, requester=enums.MFAOptions.ntfy, expiry=models.env.mfa_timeout
         )
@@ -59,6 +75,8 @@ async def get_mfa(
             status_code=HTTPStatus.OK.real,
             detail="Authentication success. OTP has been sent to the subscribed topic.",
         )
-    except (requests.RequestException, TimeoutError, ConnectionError) as error:
-        LOGGER.error(error)
-        raise exceptions.APIResponse(status_code=HTTPStatus.SERVICE_UNAVAILABLE.real, detail=str(error))
+    else:
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
+            detail="Failed to send OTP via Ntfy. Please check the logs for more details.",
+        )

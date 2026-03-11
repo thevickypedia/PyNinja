@@ -29,6 +29,37 @@ def instantiate_mailer() -> gc.SendEmail:
     return mail_obj
 
 
+async def send(subject: str, body: str = None, html_body: str = None) -> gc.Response:
+    """Function to send an email using the gmail-connector module.
+
+    Args:
+        subject: Subject of the email.
+        body: Body of the email. Optional if `html_body` is provided.
+        html_body: HTML body of the email. Optional if `body` is provided.
+
+    Returns:
+        gc.Response:
+        Response object from the gmail-connector module.
+    """
+    mail_obj = instantiate_mailer()
+    if body:
+        return mail_obj.send_email(
+            recipient=models.env.recipient or models.env.gmail_user,
+            sender="PyNinja API",
+            subject=subject,
+            body=body,
+        )
+    elif html_body:
+        return mail_obj.send_email(
+            recipient=models.env.recipient or models.env.gmail_user,
+            sender="PyNinja API",
+            subject=subject,
+            html_body=html_body,
+        )
+    else:
+        raise ValueError("Either 'body' or 'html_body' must be provided to send an email.")
+
+
 async def get_mfa(
     request: Request,
     get_node: bool = False,
@@ -53,11 +84,8 @@ async def get_mfa(
             status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
             detail="'gmail_user' and 'gmail_pass' must be set in the environment.",
         )
-    mail_obj = instantiate_mailer()
     token = squire.generate_mfa_token()
-    mail_stat = mail_obj.send_email(
-        recipient=models.env.recipient or models.env.gmail_user,
-        sender="PyNinja API",
+    mail_stat = await send(
         subject=squire.get_mfa_title(include_node=get_node),
         html_body=jinja2.Template(models.fileio.mfa_template).render(
             TIMEOUT=squire.convert_seconds(models.env.mfa_timeout),

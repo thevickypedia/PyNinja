@@ -12,10 +12,10 @@ LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
 
 
-def send_message(
+async def send(
     message: str,
     parse_mode: str | None = "markdown",
-) -> requests.Response:
+) -> bool:
     """Sends a message to the user via Telegram.
 
     Args:
@@ -23,17 +23,24 @@ def send_message(
         parse_mode: Parse mode. Defaults to ``markdown``
 
     Returns:
-        Response:
-        Response class.
+        bool:
+        Returns True if the message was sent successfully, False otherwise.
     """
-    url = f"https://api.telegram.org/bot{models.env.telegram_token}/sendMessage"
-    result = requests.post(
-        url=url,
-        data={"chat_id": models.env.telegram_chat_id, "text": message, "parse_mode": parse_mode},
-        timeout=(5, 60),
-    )
-    result.raise_for_status()
-    return result
+    try:
+        url = f"https://api.telegram.org/bot{models.env.telegram_token}/sendMessage"
+        response = requests.post(
+            url=url,
+            data={"chat_id": models.env.telegram_chat_id, "text": message, "parse_mode": parse_mode},
+            timeout=(5, 60),
+        )
+        response.raise_for_status()
+        LOGGER.debug(response.json())
+        return True
+    except (requests.RequestException, TimeoutError, ConnectionError) as error:
+        # Mask the token in the error message
+        error = str(error).replace(models.env.telegram_token, "**********")
+        LOGGER.error(error)
+        return False
 
 
 async def get_mfa(
@@ -62,9 +69,8 @@ async def get_mfa(
         )
     title = squire.get_mfa_title(include_node=get_node)
     token = squire.generate_mfa_token()
-    try:
-        response = send_message(message=f"*{title}*\n\n```\n{token}\n```")
-        LOGGER.debug(response.json())
+    response = send(message=f"*{title}*\n\n```\n{token}\n```")
+    if response:
         database.update_token(
             token=token,
             table=enums.TableName.mfa_token,
@@ -75,8 +81,7 @@ async def get_mfa(
             status_code=HTTPStatus.OK.real,
             detail="Authentication success. OTP has been sent to the requested chat ID.",
         )
-    except (requests.RequestException, TimeoutError, ConnectionError) as error:
-        # Mask the token in the error message
-        error = str(error).replace(models.env.telegram_token, "**********")
-        LOGGER.error(error)
-        raise exceptions.APIResponse(status_code=HTTPStatus.SERVICE_UNAVAILABLE.real, detail=str(error))
+    raise exceptions.APIResponse(
+        status_code=HTTPStatus.SERVICE_UNAVAILABLE.real,
+        detail="Failed to send OTP via Telegram. Please check the logs for more details.",
+    )
