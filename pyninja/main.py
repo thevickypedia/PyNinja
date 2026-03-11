@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
     api_version = app.__dict__.get("version", version.__version__)
     LOGGER.info("FastAPI server [%s:%s] initialized.", api_name, api_version)
     task: asyncio.Task | None = None
-    if models.env.cert_monitor:
+    if models.env.cert_scan:
         task = asyncio.create_task(cert_expiration.scheduler())
     yield
     if task:

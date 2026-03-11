@@ -308,7 +308,7 @@ class EnvConfig(BaseSettings):
     service_lib: FilePath = retrieve_library_path(default_service_lib)
     processor_lib: FilePath = retrieve_library_path(default_cpu_lib)
     certbot_path: FilePath | None = get_certbot_path()
-    cert_monitor: str | None = Field(None, pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
+    cert_scan: str | None = Field(None, pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
 
     # macOS GUI app specific
     if OPERATING_SYSTEM == enums.OperatingSystem.darwin:

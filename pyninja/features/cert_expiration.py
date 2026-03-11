@@ -16,7 +16,7 @@ async def scheduler() -> None:
     """Schedule the certificate expiry check to run daily at a specified time."""
     while True:
         now = datetime.now()
-        hour, minute = map(int, models.env.cert_monitor.split(":"))
+        hour, minute = map(int, models.env.cert_scan.split(":"))
         next_run = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         if now >= next_run:
             next_run += timedelta(days=1)
@@ -50,21 +50,47 @@ def html_body(rows: List[Tuple[str, str, str, str]]) -> str:
         str:
         The HTML body for the certificate expiry report email.
     """
-    tbody = "\n".join(f"<tr><td>{name}</td><td>{expiry}</td><td>{status}</td></tr>" for name, expiry, status, _ in rows)
+    tbody = "\n".join(
+        f"<tr><td>{name}</td><td>{expiry}</td><td>{status}</td></tr>"
+        for name, expiry, status, _ in rows
+    )
     return f"""
-    <h2>Certificate Expiry Report</h2>
-    <table border="1" cellpadding="6" cellspacing="0">
-        <thead>
-            <tr>
-                <th>Certificate</th>
-                <th>Expiry Date</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-        {tbody}
-        </tbody>
-    </table>
+    <html>
+    <head>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+            }}
+            table {{
+                border-collapse: collapse;
+                width: 100%;
+            }}
+            th, td {{
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }}
+            th {{
+                background-color: #f4f4f4;
+            }}
+        </style>
+    </head>
+    <body>
+        <h2>Certificate Expiry Report</h2>
+        <table border="1" cellpadding="6" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Certificate</th>
+                    <th>Expiry Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {tbody}
+            </tbody>
+        </table>
+    </body>
+    </html>
     """
 
 
