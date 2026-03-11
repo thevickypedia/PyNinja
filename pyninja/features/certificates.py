@@ -1,6 +1,9 @@
+import asyncio
 import logging
+import re
 import subprocess
 from collections.abc import Generator
+from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Any, Dict
 
@@ -8,6 +11,56 @@ from pyninja.executors import squire
 from pyninja.modules import cache, enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
+
+
+async def scheduler() -> None:
+    """Schedule the certificate expiry check to run daily at a specified time."""
+    while True:
+        now = datetime.now()
+        hour, minute = map(int, models.env.cert_monitor.split(":"))
+        next_run = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+        if now >= next_run:
+            next_run += timedelta(days=1)
+        sleep_seconds = (next_run - now).total_seconds()
+        LOGGER.info(
+            "Next certificate expiry check scheduled at %s (in %.2f seconds)", next_run.isoformat(), sleep_seconds
+        )
+        await asyncio.sleep(sleep_seconds)
+        await monitor_expiry()
+
+
+async def monitor_expiry() -> None:
+    """Check for certificates expiring within 30 days and log a warning if any are found."""
+    response = await get_all_certificates(raw=False, ws_stream=False)
+    if response.status_code == HTTPStatus.OK:
+        # TODO: Notify with body
+        for certificate in response.certificates:
+            if certificate["status"] == "INVALID":
+                if certificate["validity"] == 0:
+                    body = (
+                        f"The certificate {certificate['certificate_name']!r} has expired,"
+                        f" on {certificate['expiry_date']}"
+                    )
+                else:
+                    body = (
+                        f"The certificate {certificate['certificate_name']!r} is invalid {certificate['expiry_date']}"
+                    )
+                LOGGER.critical(body)
+            elif certificate["validity"] <= 3:
+                body = (
+                    f"The certificate {certificate['certificate_name']!r} is expiring soon,"
+                    f" on {certificate['expiry_date']} (in {certificate['validity']} days)"
+                )
+                LOGGER.warning(body)
+            else:
+                LOGGER.debug(
+                    "The certificate '%s' is valid until %s (in %d days)",
+                    certificate["certificate_name"],
+                    certificate["expiry_date"],
+                    certificate["validity"],
+                )
+    else:
+        LOGGER.warning("Unsuccessful attempt to check certificate expiry:", response.description)
 
 
 def forbidden() -> models.CertificateStatus:
@@ -42,6 +95,7 @@ def parse_certificate_output(output: str, raw: bool = False, ws_stream: bool = F
 
     lines = output.strip().split("\n")
     cert_info = None
+    expiry_pattern = re.compile(r"Expiry Date:\s*(?P<date>[^(]+)\s*\((?P<status>VALID|INVALID):\s*(?P<value>[^)]+)\)")
 
     for line in lines:
         line = line.strip()  # remove leading spaces
@@ -61,11 +115,16 @@ def parse_certificate_output(output: str, raw: bool = False, ws_stream: bool = F
                 # noinspection PyTypeChecker
                 cert_info[cert_key("Domains")] = line.split(": ", 1)[1].strip().split()
             elif line.startswith("Expiry Date:"):
-                parts = line.split("VALID:")
-                expiry_date = parts[0].split(": ", 1)[1].replace("(", "").strip()
-                validity = parts[1].replace(")", "").strip() if len(parts) > 1 else ""
-                cert_info[cert_key("Expiry Date")] = expiry_date
-                cert_info[cert_key("Validity")] = validity if raw else int(validity.split()[0]) if validity else None
+                if match := expiry_pattern.match(line):
+                    expiry_date = match.group("date").strip()
+                    status = match.group("status")
+                    value = match.group("value").strip()
+                    cert_info[cert_key("Expiry Date")] = expiry_date
+                    cert_info[cert_key("Status")] = status
+                    if value == "EXPIRED":
+                        cert_info[cert_key("Validity")] = "EXPIRED" if raw else 0
+                    else:
+                        cert_info[cert_key("Validity")] = value if raw else int(value.split()[0])
             elif line.startswith("Certificate Path:") and not ws_stream:
                 cert_info[cert_key("Certificate Path")] = line.split(": ", 1)[1].strip()
             elif line.startswith("Private Key Path:") and not ws_stream:

@@ -347,6 +347,10 @@ def assert_pyudisk() -> None:
                 "\n\tPyUdisk has not been installed. Use pip install 'PyNinja[extra]' to view disk report metrics."
             )
         return
+    except ValueError:
+        if models.env.disk_report:
+            raise
+        return
     # noinspection PyArgumentList
     models.env.smart_lib = models.env.smart_lib or PyUdiskConfig().smart_lib
 

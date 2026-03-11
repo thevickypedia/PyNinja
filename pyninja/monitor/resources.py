@@ -364,7 +364,7 @@ async def system_resources(all_services: bool = False) -> Dict[str, dict | List[
             # Expected if module is not installed
             pass
         except Exception as warn:
-            LOGGER.warning(warn)
+            LOGGER.debug(warn)
 
     system_metrics["cpu_usage"] = cpu_usage
     system_metrics["docker_stats"] = docker_stats
