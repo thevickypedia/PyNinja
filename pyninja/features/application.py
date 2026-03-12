@@ -31,10 +31,11 @@ def get_all_apps() -> Generator[Dict[str, str]]:
     for entry in os.listdir("/Applications"):
         if entry.endswith(".app"):
             app_path = f"/Applications/{entry}"
+            cmd = f"{models.env.mdls} -name kMDItemDisplayName -raw {app_path!r}"
             try:
                 # Run `mdls` to get the display name
                 result = subprocess.check_output(
-                    [models.env.mdls, "-name", "kMDItemDisplayName", "-raw", app_path],
+                    cmd,
                     shell=True,
                     stderr=subprocess.DEVNULL,
                 )

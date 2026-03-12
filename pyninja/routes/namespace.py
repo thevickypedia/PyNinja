@@ -303,7 +303,7 @@ async def get_all_apps(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_1(request, apikey)
-    if response := application.get_all_apps():
+    if response := list(application.get_all_apps()):
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=response)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.INTERNAL_SERVER_ERROR.real,
