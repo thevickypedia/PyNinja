@@ -58,6 +58,8 @@ pyninja start
 - **SWAGGER_UI_PARAMETERS** - Dictionary of parameters to be included in the Swagger UI.
 - **NINJA_HOST** - Hostname for the API server.
 - **NINJA_PORT** - Port number for the API server.
+- **HOST_PASSWORD** - Password to authenticate `sudo` commands on the server. _Applies only for POSIX systems._
+- **OBSERVABILITY_SESSION** - Session timeout for observability metrics.
 
 **Functional improvements**
 - **RATE_LIMIT** - List of dictionaries with `max_requests` and `seconds` to apply as rate limit.
@@ -87,6 +89,8 @@ To enhance security, it is mandatory to use multifactor authentication (MFA) tok
     - **TELEGRAM_TOKEN** - Telegram bot token.
     - **TELEGRAM_CHAT_ID** - Telegram chat ID to send MFA.
 - **Authenticator**
+    - **AUTHENTICATOR_APP** - Authenticator app name. _Defaults to `PyNinja`._
+    - **AUTHENTICATOR_USER** - Authenticator username. _Defaults to `thevickypedia`._
     - **AUTHENTICATOR_TOKEN** - MFA Authenticator token.
 
     To generate a QR code for any authenticator application:
@@ -118,10 +122,19 @@ To enhance security, it is mandatory to use multifactor authentication (MFA) tok
 - **DISK_LIB** - Library path to retrieve disk info using [PyArchitecture].
 - **PROCESSOR_LIB** - Library path to retrieve processor name using [PyArchitecture].
 
+**Certificates**
+- **CERTBOT_PATH** - Path to the `certbot` binary for certificate management.
+- **CERT_SCAN** - Dictionary of key-value pairs `threshold` and `schedule` to set up certificate expiry monitoring.
+  - `threshold` - Expiry threshold in days to trigger alerts.
+  - `schedule` - Time in `%H:%M` format to run the certificate monitoring job daily.
+
 **macOS Specific Binaries**
 - **OSASCRIPT** - Path to the `osascript` binary for macOS. Defaults to `/usr/bin/osascript`
 - **MDLS** - Path to the `mdls` binary for macOS. Defaults to `/usr/bin/mdls`
 - **OPEN** - Path to the `open` binary for macOS. Defaults to `/usr/bin/open`
+
+**Windows Specific Binaries**
+- **pwsh** - Path to the `pwsh` binary for Windows. Defaults to `C:\Program Files\PowerShell\7\pwsh.exe`
 
 > 📓 Certain environment variables like `SERVICES` and `PROCESSS` are case-sensitive
 
@@ -148,7 +161,7 @@ markdown files (including Wiki pages)
 
 **Requirement**
 ```shell
-python -m pip install sphinx==5.1.1 pre-commit recommonmark
+python -m pip install sphinx pre-commit recommonmark
 ```
 
 **Usage**

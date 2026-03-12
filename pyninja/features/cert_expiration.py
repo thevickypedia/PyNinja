@@ -16,13 +16,13 @@ async def scheduler() -> None:
     """Schedule the certificate expiry check to run daily at a specified time."""
     while True:
         now = datetime.now()
-        hour, minute = map(int, models.env.cert_scan.split(":"))
+        hour, minute = map(int, models.env.cert_scan.schedule.split(":"))
         next_run = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         if now >= next_run:
             next_run += timedelta(days=1)
         sleep_seconds = (next_run - now).total_seconds()
         LOGGER.info(
-            "Next certificate expiry check scheduled at %s (in %.2f seconds)", next_run.strftime("%c"), sleep_seconds
+            "Next certificate expiry check scheduled at %s (in %d seconds)", next_run.strftime("%c"), sleep_seconds
         )
         try:
             await asyncio.sleep(sleep_seconds)
@@ -50,10 +50,7 @@ def html_body(rows: List[Tuple[str, str, str, str]]) -> str:
         str:
         The HTML body for the certificate expiry report email.
     """
-    tbody = "\n".join(
-        f"<tr><td>{name}</td><td>{expiry}</td><td>{status}</td></tr>"
-        for name, expiry, status, _ in rows
-    )
+    tbody = "\n".join(f"<tr><td>{name}</td><td>{expiry}</td><td>{status}</td></tr>" for name, expiry, status, _ in rows)
     return f"""
     <html>
     <head>
@@ -124,7 +121,7 @@ async def monitor_expiry() -> None:
                 msg = f"The certificate {name!r} has expired on {expiry}"
                 LOGGER.critical(msg)
                 rows.append((name, expiry, "Expired", msg))
-            elif validity <= 10:
+            elif validity <= models.env.cert_scan.threshold:
                 msg = f"The certificate {name!r} is expiring in {validity} days on {expiry}"
                 LOGGER.warning(msg)
                 rows.append((name, expiry, f"Expiring in {validity} days", msg))

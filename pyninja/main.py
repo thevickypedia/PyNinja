@@ -96,6 +96,31 @@ def start(**kwargs) -> None:
             - **swagger_ui_parameters:** Parameters for the Swagger UI.
             - **ninja_host:** Hostname for the API server.
             - **ninja_port:** Port number for the API server.
+            - **host_password** - Password to authenticate `sudo` commands on the server.
+            - **observability_session** - Session timeout for observability metrics.
+
+        Multifactor_Authentication
+
+            - **mfa_timeout** - Timeout duration for MFA in seconds.
+            - **mfa_resend_delay** - Resend duration for MFA in seconds.
+
+            - **Email**
+                - **gmail_user** - Gmail username for MFA.
+                - **gmail_pass** - Gmail password for MFA.
+                - **recipient** - Recipient email address for MFA. Defaults to **gmail_user**
+
+            - **Ntfy**
+                - **ntfy_url** - Ntfy server URL.
+                - **ntfy_topic** - Subscribed ntfy topic.
+
+            - **Telegram**
+                - **telegram_token** - Telegram bot token.
+                - **telegram_chat_id** - Telegram chat ID to send MFA.
+
+            - **Authenticator**
+                - **authenticator_app** - Authenticator app name.
+                - **authenticator_user** - Authenticator username.
+                - **authenticator_token** - MFA Authenticator token.
 
         Functional_improvements
 
@@ -118,10 +143,28 @@ def start(**kwargs) -> None:
             - **processes:** List of process names to include in the monitoring page.
             - **services:** List of service names to include in the monitoring page.
             - **service_lib:** Library path to retrieve service info.
-            - **smart_lib:** Library path for S.M.A.R.T metrics using PyUdisk.
+            - **smart_lib:** Library path for ``S.M.A.R.T`` metrics using PyUdisk.
             - **gpu_lib:** Library path to retrieve GPU names using PyArchitecture.
             - **disk_lib:** Library path to retrieve disk info using PyArchitecture.
             - **processor_lib:** Library path to retrieve processor name using PyArchitecture.
+
+        Certificates
+
+            - **certbot_path** - Path to the ``certbot`` binary for certificate management.
+            - **cert_scan** - Dictionary of key-value pairs ``threshold`` and ``schedule``.
+
+              - **threshold** - Expiry threshold in days to trigger alerts.
+              - **schedule** - Time in ``%H:%M`` format to run the certificate monitoring job daily.
+
+        macOS_Specific_Binaries
+
+            - **osascript** - Path to the ``osascript`` binary for macOS.
+            - **mdls** - Path to the ``mdls`` binary for macOS.
+            - **open** - Path to the ``open`` binary for macOS.
+
+        Windows_Specific_Binaries
+
+            - **pwsh** - Path to the ``pwsh`` binary for Windows.
     """
     models.env = squire.load_env(**kwargs)
     models.architecture = squire.load_architecture(models.env)

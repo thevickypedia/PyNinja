@@ -239,6 +239,22 @@ def get_certbot_path() -> FilePath | None:
     return None
 
 
+class CertScan(BaseModel):
+    """Object to load the certificate scan settings.
+
+    >>> CertScan
+
+    """
+
+    threshold: PositiveInt = Field(default=10, ge=1, le=30)
+    schedule: str = Field(default="8:00", pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
+
+    class Config:
+        """Configuration for certificate scan settings."""
+
+        extra = "forbid"
+
+
 class EnvConfig(BaseSettings):
     """Object to load environment variables.
 
@@ -307,8 +323,9 @@ class EnvConfig(BaseSettings):
     disk_lib: FilePath = retrieve_library_path(default_disk_lib)
     service_lib: FilePath = retrieve_library_path(default_service_lib)
     processor_lib: FilePath = retrieve_library_path(default_cpu_lib)
+
     certbot_path: FilePath | None = get_certbot_path()
-    cert_scan: str | None = Field(None, pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
+    cert_scan: CertScan | None = None
 
     # macOS GUI app specific
     if OPERATING_SYSTEM == enums.OperatingSystem.darwin:

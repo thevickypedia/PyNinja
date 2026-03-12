@@ -119,6 +119,10 @@ Application
 -----------
 .. automodule:: pyninja.features.application
 
+Cert Expiration
+---------------
+.. automodule:: pyninja.features.cert_expiration
+
 Certificates
 ------------
 .. automodule:: pyninja.features.certificates
