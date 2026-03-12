@@ -190,6 +190,7 @@ def get_api(dependencies: List[Depends]) -> List[APIRoute]:
             endpoint=observability.get_observability,
             methods=["GET"],
             dependencies=dependencies,
+            include_in_schema=False,
         ),
     ]
     # macOS treats applications different from services, so it needs special handling
