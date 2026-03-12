@@ -11,8 +11,8 @@ def get_token(table: enums.TableName, get_all: bool = False) -> Any | None:
         Any:
         Returns the token stored in the database.
     """
-    with models.database.connection:
-        cursor = models.database.connection.cursor()
+    with models.database.connection as connection:
+        cursor = connection.cursor()
         if get_all:
             table_entry = cursor.execute(f"SELECT * FROM {table}").fetchone()
             if table_entry:
@@ -42,8 +42,8 @@ def update_token(
         requester: MFA type.
         expiry: Expiry time in seconds from the current epoch time.
     """
-    with models.database.connection:
-        cursor = models.database.connection.cursor()
+    with models.database.connection as connection:
+        cursor = connection.cursor()
         cursor.execute(f"DELETE FROM {table}")
         if all((token, requester, expiry)):
             encrypted_token = models.CIPHER_SUITE.encrypt(token.encode("utf-8")).decode("utf-8")
@@ -52,7 +52,7 @@ def update_token(
                 f"INSERT INTO {table} (token, expiry, requester) VALUES (?,?,?)",
                 (encrypted_token, timestamp, requester.value),
             )
-        models.database.connection.commit()
+        connection.commit()
 
 
 def get_forbidden(host: str) -> int | None:
@@ -65,8 +65,8 @@ def get_forbidden(host: str) -> int | None:
         int:
         Returns the epoch time until when the host address should be blocked.
     """
-    with models.database.connection:
-        cursor = models.database.connection.cursor()
+    with models.database.connection as connection:
+        cursor = connection.cursor()
         state = cursor.execute(
             f"SELECT block_until FROM {enums.TableName.auth_errors} WHERE host=(?)",
             (host,),
@@ -83,13 +83,13 @@ def put_forbidden(host: str, block_until: int) -> None:
         host: Host address.
         block_until: Epoch time until when the host address should be blocked.
     """
-    with models.database.connection:
-        cursor = models.database.connection.cursor()
+    with models.database.connection as connection:
+        cursor = connection.cursor()
         cursor.execute(
             f"INSERT INTO {enums.TableName.auth_errors} (host, block_until) VALUES (?,?)",
             (host, block_until),
         )
-        models.database.connection.commit()
+        connection.commit()
 
 
 def remove_forbidden(host: str) -> None:
@@ -98,7 +98,7 @@ def remove_forbidden(host: str) -> None:
     Args:
         host: Host address.
     """
-    with models.database.connection:
-        cursor = models.database.connection.cursor()
+    with models.database.connection as connection:
+        cursor = connection.cursor()
         cursor.execute(f"DELETE FROM {enums.TableName.auth_errors} WHERE host=(?)", (host,))
-        models.database.connection.commit()
+        connection.commit()
