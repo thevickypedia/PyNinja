@@ -369,9 +369,10 @@ def assert_tokens() -> None:
 def assert_cert_monitor() -> None:
     """Ensure at least one notification method is configured for cert_monitor if it is enabled."""
     if models.env.cert_scan:
+        ntfy_notification = all((models.env.ntfy_url, models.env.ntfy_topic))
         gmail_notification = all((models.env.gmail_user, models.env.gmail_pass))
         telegram_notification = all((models.env.telegram_token, models.env.telegram_chat_id))
-        if not any((gmail_notification, telegram_notification)):
+        if not any((ntfy_notification, gmail_notification, telegram_notification)):
             raise ValueError(
                 "\n\tAt least one notification method must be configured for cert_monitor.\n\t"
                 "Please set the 'gmail_user' and 'gmail_pass' [OR] "

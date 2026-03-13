@@ -7,7 +7,7 @@ from typing import List, Tuple
 
 from pyninja.features import certificates
 from pyninja.modules import models
-from pyninja.multifactor import gmail, telegram
+from pyninja.multifactor import gmail, ntfy, telegram
 
 LOGGER = logging.getLogger("uvicorn.default")
 
@@ -106,6 +106,8 @@ async def notifier(rows: List[Tuple[str, str, str, str]]) -> None:
         await gmail.send(subject=subject, html_body=html_body(rows))
     if models.env.telegram_token and models.env.telegram_chat_id:
         await telegram.send(message="*{}*\n\n{}".format(subject, "\n".join(msg for _, _, _, msg in rows)))
+    if models.env.ntfy_url and models.env.ntfy_topic:
+        await ntfy.send(subject, f"{len(rows)} certificate(s) expired or nearing expiration")
 
 
 async def monitor_expiry() -> None:
