@@ -91,7 +91,7 @@ def get_all_volumes() -> Dict[str, str] | None:
         return None
 
 
-def stop_container(container_name: str):
+def stop_container(container_name: str) -> str | None:
     """Stop a container by name.
 
     Args:
@@ -108,7 +108,7 @@ def stop_container(container_name: str):
     return None
 
 
-def start_container(container_name: str):
+def start_container(container_name: str) -> str | None:
     """Start a container by name.
 
     Args:
@@ -118,8 +118,9 @@ def start_container(container_name: str):
         str:
         Returns the status of the container.
     """
-    for container in get_all_containers():
-        if container_name in container.get("Names"):
-            docker.from_env().api.start(container.get("Id"))
-            return f"Container {container_name} has been started."
+    if all_containers := get_all_containers():
+        for container in all_containers:
+            if container_name in container.get("Names"):
+                docker.from_env().api.start(container.get("Id"))
+                return f"Container {container_name} has been started."
     return None
