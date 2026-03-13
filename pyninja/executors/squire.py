@@ -623,3 +623,17 @@ class AddProcessName(logging.Filter):
         """Overrides the built-in filter record."""
         record.processName = self.process_name
         return True
+
+
+class HealthCheckFilter(logging.Filter):
+    """Custom logging filter to exclude health check logs from the output.
+
+    >>> HealthCheckFilter
+
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Filter out logs related to health checks."""
+        # 'record.getMessage()' contains the log text
+        # Skip logs containing 'GET /health' (from curl)
+        return "/health" not in record.getMessage()

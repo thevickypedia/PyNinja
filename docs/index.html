@@ -1595,6 +1595,21 @@ one lowercase letter, and one safe character.</p>
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="pyninja.executors.squire.HealthCheckFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.executors.squire.</span></span><span class="sig-name descname"><span class="pre">HealthCheckFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.executors.squire.HealthCheckFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom logging filter to exclude health check logs from the output.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">HealthCheckFilter</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyninja.executors.squire.HealthCheckFilter.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LogRecord</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyninja.executors.squire.HealthCheckFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter out logs related to health checks.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 <section id="multifactor-authentication">
@@ -3382,11 +3397,6 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 </pre></div>
 </div>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.Session.auth_counter">
-<span class="sig-name descname"><span class="pre">auth_counter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.Session.auth_counter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.Session.forbid">
 <span class="sig-name descname"><span class="pre">forbid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.Session.forbid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -3394,6 +3404,11 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.Session.rps">
 <span class="sig-name descname"><span class="pre">rps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.Session.rps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyninja.modules.models.Session.auth_counter">
+<span class="sig-name descname"><span class="pre">auth_counter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyninja.modules.models.Session.auth_counter" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
