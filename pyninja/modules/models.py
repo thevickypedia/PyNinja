@@ -37,7 +37,7 @@ if OPERATING_SYSTEM not in (
 CIPHER_SUITE = Fernet(Fernet.generate_key())
 MINIMUM_CPU_UPDATE_INTERVAL = 1
 # Use a ThreadPoolExecutor to run blocking functions in separate threads
-EXECUTOR = ThreadPoolExecutor(max_workers=os.cpu_count())
+executor = lambda: ThreadPoolExecutor(max_workers=os.cpu_count())  # noqa: E731
 
 templates_dir = os.path.join(os.path.dirname(__file__), "templates")
 api_templates_dir = os.path.join(templates_dir, "api")

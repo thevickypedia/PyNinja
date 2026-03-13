@@ -1,4 +1,5 @@
 import logging
+import os
 import shutil
 from http import HTTPStatus
 
@@ -114,6 +115,11 @@ async def get_disk_utilization(
         Raises the HTTPStatus object with a status code and CPU usage as response.
     """
     await auth.level_1(request, apikey)
+    if not os.path.exists(path):
+        raise exceptions.APIResponse(
+            status_code=HTTPStatus.BAD_REQUEST.real,
+            detail=f"Path {path!r} does not exist.",
+        )
     raise exceptions.APIResponse(
         status_code=HTTPStatus.OK.real,
         detail={k: squire.size_converter(v) for k, v in shutil.disk_usage(path)._asdict().items()},

@@ -105,9 +105,10 @@ async def process_monitor(processes: List[str]) -> List[Dict[str, str]]:
     """
     loop = asyncio.get_event_loop()
     tasks = []
-    for proc in psutil.process_iter(["pid", "name", "status", "cpu_percent", "memory_info", "create_time"]):
-        if any(name.lower() == proc.name().lower() or name == str(proc.pid) for name in processes):
-            tasks.append(loop.run_in_executor(models.EXECUTOR, get_process_info, proc, proc.name()))
+    with models.executor() as executor:
+        for proc in psutil.process_iter(["pid", "name", "status", "cpu_percent", "memory_info", "create_time"]):
+            if any(name.lower() == proc.name().lower() or name == str(proc.pid) for name in processes):
+                tasks.append(loop.run_in_executor(executor, get_process_info, proc, proc.name()))
     completed_tasks = []
     for task in asyncio.as_completed(tasks):
         try:
@@ -137,20 +138,21 @@ async def service_monitor(services: List[str]) -> List[Dict[str, str]]:
     loop = asyncio.get_event_loop()
     tasks = []
     usages = []
-    for service_name in services:
-        pid = get_service_pid(service_name)
-        if not pid:
-            LOGGER.debug("Failed to get PID for service: %s", service_name)
-            # This is to give visibility on a service that was meant to be monitored
-            usages.append(default(service_name))
-            continue
-        try:
-            proc = psutil.Process(pid)
-        except psutil.Error as error:
-            LOGGER.debug(error)
-            usages.append(default(service_name))
-            continue
-        tasks.append(loop.run_in_executor(models.EXECUTOR, get_process_info, proc, service_name))
+    with models.executor() as executor:
+        for service_name in services:
+            pid = get_service_pid(service_name)
+            if not pid:
+                LOGGER.debug("Failed to get PID for service: %s", service_name)
+                # This is to give visibility on a service that was meant to be monitored
+                usages.append(default(service_name))
+                continue
+            try:
+                proc = psutil.Process(pid)
+            except psutil.Error as error:
+                LOGGER.debug(error)
+                usages.append(default(service_name))
+                continue
+            tasks.append(loop.run_in_executor(executor, get_process_info, proc, service_name))
     for task in asyncio.as_completed(tasks):
         usages.append(await task)
     return get_parent_process(usages)

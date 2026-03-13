@@ -338,7 +338,7 @@ async def system_resources(all_services: bool = False) -> Dict[str, dict | List[
 
     # CPU percent check is a blocking call and cannot be awaited, so run it in a separate thread
     loop = asyncio.get_event_loop()
-    cpu_usage_task = loop.run_in_executor(models.EXECUTOR, get_cpu_percent, *(models.MINIMUM_CPU_UPDATE_INTERVAL,))
+    cpu_usage_task = loop.run_in_executor(models.executor(), get_cpu_percent, *(models.MINIMUM_CPU_UPDATE_INTERVAL,))
 
     # Await all the tasks to complete
     system_metrics = await system_metrics_task

@@ -24,10 +24,10 @@ def get_process_status(process_name: str, cpu_interval: PositiveInt) -> List[Dic
     """
     result = []
     futures = {}
-    with models.EXECUTOR:
+    with models.executor() as executor:
         for proc in psutil.process_iter(["pid", "name"]):
             if proc.name().lower() == process_name.lower():
-                future = models.EXECUTOR.submit(get_performance, process=proc, cpu_interval=cpu_interval)
+                future = executor.submit(get_performance, process=proc, cpu_interval=cpu_interval)
                 futures[future] = proc.name()
     for future in as_completed(futures):
         if future.exception():
