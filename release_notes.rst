@@ -1,29 +1,23 @@
 Release Notes
 =============
 
+v5.0.1 (03/13/2026)
+-------------------
+- Added ntfy as a notification option for certificate expiration alerts
+- Filtered health check requests from ``uvicorn`` access logs to reduce log noise
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v5.0.0...v5.0.1
+
 v5.0.0 (03/12/2026)
 -------------------
-- **Features**
-- 
 - Create an in-house context manager to auto-close database connections
 - Include a notification feature for expired certificates with email and telegram notification options
-- 
-- **Performance**
-- 
 - Switch from background polling of expired tokens to in-memory timestamp checks for expiration
-- 
-- **Bug Fix**
-- 
-- ``subprocess`` error when calling ``get-all-apps`` endpoint in ``macOS``
-- ``AttributeError`` when accessing DB connections via context manager
-- ``InternalServerError`` caused by invalid path when getting disk utilization
-- ``InternalServerError`` caused by executor shutdown error when tracking process/service usage
-- ``InternalServerError`` when docker is not set up
-- 
-- **Chore**
-- 
+- Fix ``subprocess`` error when calling ``get-all-apps`` endpoint in ``macOS``
+- Fix ``AttributeError`` when accessing DB connections via context manager
+- Fix ``InternalServerError`` caused by invalid path when getting disk utilization
+- Fix ``InternalServerError`` caused by executor shutdown error when tracking process/service usage
+- Fix ``InternalServerError`` when docker is not set up
 - Upgrade all dependencies
-- 
 - **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v4.9.92...v5.0.0
 
 v4.9.92 (02/23/2026)
