@@ -69,7 +69,7 @@ async def get_mfa(
         )
     title = squire.get_mfa_title(include_node=get_node)
     token = squire.generate_mfa_token()
-    response = send(message=f"*{title}*\n\n```\n{token}\n```")
+    response = await send(message=f"*{title}*\n\n```\n{token}\n```")
     if response:
         database.update_token(
             token=token,
