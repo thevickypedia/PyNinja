@@ -32,11 +32,11 @@ async def send(title: str, data: str) -> bool:
         session.auth = (models.env.ntfy_username, models.env.ntfy_password)
     endpoint = f"{models.env.ntfy_url}{models.env.ntfy_topic}"
     try:
-        response = session.post(url=endpoint, data=data)
+        response = session.post(url=endpoint, data=data, timeout=(5, 10))
         response.raise_for_status()
         LOGGER.debug(response.json())
         return True
-    except (requests.RequestException, TimeoutError, ConnectionError) as error:
+    except Exception as error:
         LOGGER.error(error)
         return False
 

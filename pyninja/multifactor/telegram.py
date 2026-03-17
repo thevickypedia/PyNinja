@@ -31,12 +31,12 @@ async def send(
         response = requests.post(
             url=url,
             data={"chat_id": models.env.telegram_chat_id, "text": message, "parse_mode": parse_mode},
-            timeout=(5, 60),
+            timeout=(5, 10),
         )
         response.raise_for_status()
         LOGGER.debug(response.json())
         return True
-    except (requests.RequestException, TimeoutError, ConnectionError) as error:
+    except Exception as error:
         # Mask the token in the error message
         error = str(error).replace(models.env.telegram_token, "**********")
         LOGGER.error(error)
