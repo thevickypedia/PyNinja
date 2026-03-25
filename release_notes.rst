@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v5.0.2 (03/25/2026)
+-------------------
+- Fix failing telegram message delivery
+- Improve exception handling and egress timeouts for MFA options
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v5.0.1...v5.0.2
+
 v5.0.1 (03/13/2026)
 -------------------
 - Added ntfy as a notification option for certificate expiration alerts
