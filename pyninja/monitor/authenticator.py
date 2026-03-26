@@ -126,6 +126,7 @@ async def session_error(request: Request, error: exceptions.SessionError) -> HTM
         Returns an HTML response templated using Jinja2.
     """
     return models.MONITOR_TEMPLATES.TemplateResponse(
+        request=request,
         name=enums.Templates.session.value,
         context={
             "request": request,

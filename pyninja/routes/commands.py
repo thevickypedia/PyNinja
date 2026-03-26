@@ -17,6 +17,7 @@ BEARER_AUTH = HTTPBearer()
 async def run_ui(request: Request):
     """Renders the HTML template for the run command UI."""
     return models.API_TEMPLATES.TemplateResponse(
+        request=request,
         name=enums.Templates.run_ui.value,
         context={
             "request": request,

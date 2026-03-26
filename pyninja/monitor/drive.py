@@ -26,6 +26,7 @@ async def report(request: Request) -> HTMLResponse:
     else:
         raise
     return models.MONITOR_TEMPLATES.TemplateResponse(
+        request=request,
         name=template.value,
         context=dict(
             logout=enums.APIEndpoints.logout,
