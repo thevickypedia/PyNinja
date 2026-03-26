@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v5.0.3 (03/25/2026)
+-------------------
+- Fix missing request params required by ``starlette==1.0.0`` for ``TemplateResponse``
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v5.0.2...v5.0.3
+
 v5.0.2 (03/25/2026)
 -------------------
 - Fix failing telegram message delivery
