@@ -8,7 +8,7 @@ from pydantic import PositiveFloat, PositiveInt
 
 from pyninja.executors import auth, squire
 from pyninja.features import application, operations, process, service
-from pyninja.modules import exceptions, models
+from pyninja.modules import exceptions
 
 LOGGER = logging.getLogger("uvicorn.default")
 BEARER_AUTH = HTTPBearer()
@@ -278,7 +278,7 @@ async def get_processor_name(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_1(request, apikey)
-    architecture = squire.load_architecture(models.env)
+    architecture = squire.load_architecture()
     if architecture.cpu:
         raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=architecture.cpu)
     raise exceptions.APIResponse(

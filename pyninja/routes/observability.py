@@ -52,7 +52,7 @@ async def get_observability(
         int(timedelta(seconds=time.time() - psutil.boot_time()).total_seconds())
     )
 
-    architecture = squire.load_architecture(models.env)
+    architecture = squire.load_architecture()
     if architecture.cpu:
         base_payload["cpu_name"] = architecture.cpu
     if gpus := architecture.gpu:

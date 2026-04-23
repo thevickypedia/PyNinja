@@ -267,20 +267,20 @@ def load_env(**kwargs) -> models.EnvConfig:
 
 
 @cache.timed_cache(60)
-def load_architecture(env: models.EnvConfig) -> models.Architecture:
+def load_architecture() -> models.Architecture:
     """Load architecture details from environment variables.
-
-    Args:
-        env: Environment variables.
 
     Returns:
         Architecture:
         Returns a reference to the ``Architecture`` object.
     """
+    if not models.env:
+        LOGGER.warning("Environment variables were not loaded. Loading with default settings.")
+        models.env = load_env()
     return models.Architecture(
-        gpu=pyarchitecture.gpu.get_gpu_info(env.gpu_lib),
-        cpu=pyarchitecture.cpu.get_cpu_info(env.processor_lib),
-        disks=pyarchitecture.disks.get_all_disks(env.disk_lib),
+        gpu=pyarchitecture.gpu.get_gpu_info(models.env.gpu_lib),
+        cpu=pyarchitecture.cpu.get_cpu_info(models.env.processor_lib),
+        disks=pyarchitecture.disks.get_all_disks(models.env.disk_lib),
     )
 
 

@@ -34,7 +34,7 @@ def landing_page() -> Dict[str, Any]:
         "CPU Cores": psutil.cpu_count(logical=True),
         "Uptime": squire.convert_seconds(int(timedelta(seconds=time.time() - psutil.boot_time()).total_seconds())),
     }
-    architecture = squire.load_architecture(models.env)
+    architecture = squire.load_architecture()
     if architecture.cpu:
         LOGGER.debug("Processor: %s", architecture.cpu)
         sys_info_basic["CPU"] = architecture.cpu
@@ -66,7 +66,7 @@ async def get_disk_info() -> List[Dict[str, str | int]]:
         Returns a list of key-value pairs with ID, name, and usage.
     """
     usage_metrics = []
-    architecture = squire.load_architecture(models.env)
+    architecture = squire.load_architecture()
     for disk in architecture.disks:
         disk_usage: Dict[str, str | int | float | None] = {
             "name": disk.get("name"),
