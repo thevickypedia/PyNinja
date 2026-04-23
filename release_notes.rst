@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v5.1.1 (04/23/2026)
+-------------------
+- Resolve environment variables when loading architecture values
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v5.1.0...v5.1.1
+
 v5.1.0 (04/23/2026)
 -------------------
 - Load and cache all architecture attributes on-demand instead of once at startup
