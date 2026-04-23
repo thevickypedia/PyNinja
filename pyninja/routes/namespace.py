@@ -6,7 +6,7 @@ from fastapi import Depends, Header, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import PositiveFloat, PositiveInt
 
-from pyninja.executors import auth
+from pyninja.executors import auth, squire
 from pyninja.features import application, operations, process, service
 from pyninja.modules import exceptions, models
 
@@ -278,8 +278,9 @@ async def get_processor_name(
         Raises the HTTPStatus object with a status code and detail as response.
     """
     await auth.level_1(request, apikey)
-    if models.architecture.cpu:
-        raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=models.architecture.cpu)
+    architecture = squire.load_architecture(models.env)
+    if architecture.cpu:
+        raise exceptions.APIResponse(status_code=HTTPStatus.OK.real, detail=architecture.cpu)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.NOT_FOUND.real,
         detail="Unable to retrieve processor information!",

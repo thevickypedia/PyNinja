@@ -145,5 +145,5 @@ async def get_all_disks(
     await auth.level_1(request, apikey)
     raise exceptions.APIResponse(
         status_code=HTTPStatus.OK.real,
-        detail=models.architecture.disks,
+        detail=squire.load_architecture(models.env),
     )

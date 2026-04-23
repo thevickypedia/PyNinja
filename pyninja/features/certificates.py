@@ -24,6 +24,7 @@ def forbidden() -> models.CertificateStatus:
     )
 
 
+# noinspection PyTypeChecker
 def parse_certificate_output(output: str, raw: bool = False, ws_stream: bool = False) -> Generator[Dict[str, Any]]:
     """Parse the output from the certbot command to extract certificate details.
 

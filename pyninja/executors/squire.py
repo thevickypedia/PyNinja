@@ -22,7 +22,7 @@ import requests
 import yaml
 from fastapi import Request
 
-from pyninja.modules import enums, models
+from pyninja.modules import cache, enums, models
 
 LOGGER = logging.getLogger("uvicorn.default")
 # noinspection LongLine
@@ -266,6 +266,7 @@ def load_env(**kwargs) -> models.EnvConfig:
     return models.EnvConfig(**merged_env)
 
 
+@cache.timed_cache(60)
 def load_architecture(env: models.EnvConfig) -> models.Architecture:
     """Load architecture details from environment variables.
 
@@ -494,7 +495,7 @@ def convert_seconds(seconds: int, n_elem: int = 2) -> str:
     return comma_separator(time_parts[:n_elem])
 
 
-def humanize_usage_metrics(**kwargs) -> Dict[str, str]:
+def humanize_usage_metrics(**kwargs) -> Dict[str, str | int | float]:
     """Convert the usage metrics into human-readable format."""
     percent = round((kwargs["used"] / kwargs["total"]) * 100, 2)
     return {
@@ -505,7 +506,7 @@ def humanize_usage_metrics(**kwargs) -> Dict[str, str]:
     }
 
 
-def total_mountpoints_usage(mountpoints: List[str], as_bytes: bool = False) -> Dict[str, int | str]:
+def total_mountpoints_usage(mountpoints: List[str], as_bytes: bool = False) -> Dict[str, str | int | float]:
     """Sums up the bytes used on all the mountpoint locations.
 
     Args:
@@ -513,7 +514,7 @@ def total_mountpoints_usage(mountpoints: List[str], as_bytes: bool = False) -> D
         as_bytes: Boolean flag to return the dict as bytes.
 
     Returns:
-        Dict[str, int | str]:
+        Dict[str, str | int | float]:
         Returns the usage dictionary as key-value pairs.
     """
     usage_dict = {"total": 0, "used": 0, "free": 0}

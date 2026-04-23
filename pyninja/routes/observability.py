@@ -52,12 +52,13 @@ async def get_observability(
         int(timedelta(seconds=time.time() - psutil.boot_time()).total_seconds())
     )
 
-    if models.architecture.cpu:
-        base_payload["cpu_name"] = models.architecture.cpu
-    if gpus := models.architecture.gpu:
-        base_payload["gpu_name"] = ", ".join([gpu_info.get("model") for gpu_info in gpus])
+    architecture = squire.load_architecture(models.env)
+    if architecture.cpu:
+        base_payload["cpu_name"] = architecture.cpu
+    if gpus := architecture.gpu:
+        base_payload["gpu_name"] = ", ".join([gpu_info.get("model", "") for gpu_info in gpus])
     base_payload["disks_info"] = [
-        {k.replace("_", " ").title(): v for k, v in disk.items()} for disk in models.architecture.disks
+        {k.replace("_", " ").title(): v for k, v in disk.items()} for disk in architecture.disks
     ]
 
     async def event_stream() -> AsyncGenerator[str]:

@@ -534,4 +534,3 @@ class Database:
 # Loaded in main:start()
 env: EnvConfig = EnvConfig  # noqa: PyTypeChecker
 database: Database = Database  # noqa: PyTypeChecker
-architecture: Architecture = Architecture  # noqa: PyTypeChecker

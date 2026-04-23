@@ -3,7 +3,7 @@ import base64
 import logging
 import secrets
 from datetime import datetime
-from typing import Dict, List, NoReturn, Union
+from typing import Dict, List, NoReturn
 
 from fastapi import Request, status
 from fastapi.responses import HTMLResponse
@@ -64,11 +64,11 @@ async def extract_credentials(authorization: HTTPAuthorizationCredentials, host:
     return auth.split(",")
 
 
-async def verify_login(authorization: HTTPAuthorizationCredentials, host: str) -> Dict[str, Union[str, int]] | NoReturn:
+async def verify_login(authorization: HTTPAuthorizationCredentials, host: str) -> Dict[str, int] | NoReturn:
     """Verifies authentication and generates session token for each user.
 
     Returns:
-        Dict[str, str]:
+        Dict[str, int]:
         Returns a dictionary with the payload required to create the session token.
     """
     username, signature, timestamp = await extract_credentials(authorization, host)

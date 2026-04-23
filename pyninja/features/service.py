@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import shutil
 import subprocess
 import time
 from collections.abc import Generator
@@ -183,11 +182,11 @@ def get_all_services() -> Generator[Dict[str, str]]:
             return
 
     if models.OPERATING_SYSTEM == enums.OperatingSystem.windows:
+        # noinspection LongLine
         pwsh = "Get-CimInstance -ClassName Win32_Service | Where-Object { $_.ProcessId } | Select-Object Name, DisplayName, ProcessId, StartMode, State, Status, ExitCode, PathName | ConvertTo-Json"  # noqa: E501
         try:
-            powershell = shutil.which("pwsh") or shutil.which("powershell")
             result = subprocess.run(
-                [powershell, "-Command", pwsh],
+                [models.env.pwsh, "-Command", pwsh],
                 capture_output=True,
                 text=True,
                 check=False,
@@ -204,7 +203,7 @@ def get_all_services() -> Generator[Dict[str, str]]:
             squire.log_subprocess_error(error)
 
 
-def get_service_status(service_name: str) -> models.ServiceStatus | None:
+def get_service_status(service_name: str) -> models.ServiceStatus:
     """Get service status by name.
 
     Args:
@@ -266,7 +265,8 @@ def get_service_status(service_name: str) -> models.ServiceStatus | None:
         except subprocess.CalledProcessError as error:
             squire.log_subprocess_error(error)
             return unavailable(service_name)
-    return None
+
+    return unavailable(service_name)
 
 
 def stop_service(service_name: str) -> models.ServiceStatus:

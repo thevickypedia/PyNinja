@@ -34,7 +34,7 @@ def docs_handler(api: FastAPI, func: Callable) -> None:
     )
 
 
-def generate_hyperlink(route: APIRoute | APIWebSocketRoute) -> str:
+def generate_hyperlink(route: APIRoute) -> str:
     """Generates hyperlink for a particular API route to be included in the description.
 
     Args:
@@ -87,11 +87,15 @@ def get_desc(
     description += f"\n\n**Python version:** {sys.version.split()[0]} - {sys.version_info.releaselevel}"
     description += "\n\n#### Basic Features"
     for route in get_routes.routes:
+        if isinstance(route, APIWebSocketRoute):
+            continue
         description += generate_hyperlink(route)
     description += "\n\n#### Additional Features**"
     hidden_features = "\n\n#### Hidden Features**"
     bigbang = "https://github.com/thevickypedia/PyNinja/blob/main/scripts/bigbang.py"
     for route in post_routes.routes:
+        if isinstance(route, APIWebSocketRoute):
+            continue
         if route.include_in_schema:
             description += generate_hyperlink(route)
         elif route.name != enums.APIEndpoints.run_ui.name:
@@ -113,7 +117,9 @@ def get_desc(
     return description
 
 
-async def redirect_exception_handler(request: Request, exception: exceptions.RedirectException) -> JSONResponse:
+async def redirect_exception_handler(
+    request: Request, exception: exceptions.RedirectException
+) -> JSONResponse | RedirectResponse:
     """Custom exception handler to handle redirect.
 
     Args:

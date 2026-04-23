@@ -1,9 +1,9 @@
 import logging
 from concurrent.futures import as_completed
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import psutil
-from pydantic import PositiveInt
+from pydantic import PositiveFloat, PositiveInt
 
 from pyninja.executors import squire
 from pyninja.modules import models
@@ -11,7 +11,7 @@ from pyninja.modules import models
 LOGGER = logging.getLogger("uvicorn.default")
 
 
-def get_process_status(process_name: str, cpu_interval: PositiveInt) -> List[Dict[str, int | float | str | bool]]:
+def get_process_status(process_name: str, cpu_interval: PositiveInt | PositiveFloat) -> List[Dict[str, None]]:
     """Get process information by name.
 
     Args:
@@ -19,7 +19,7 @@ def get_process_status(process_name: str, cpu_interval: PositiveInt) -> List[Dic
         cpu_interval: CPU interval to get the CPU performance.
 
     Returns:
-        List[Dict[str, int | float | str | bool]]:
+        List[Dict[str, Any]:
         Returns a list of performance report for each process hosting the given process name.
     """
     result = []
@@ -41,7 +41,7 @@ def get_process_status(process_name: str, cpu_interval: PositiveInt) -> List[Dic
     return result
 
 
-def get_performance(process: psutil.Process, cpu_interval: PositiveInt) -> Dict[str, int | float | str | bool]:
+def get_performance(process: psutil.Process, cpu_interval: PositiveInt | PositiveFloat) -> Dict[str, Any]:
     """Checks process performance by monitoring CPU utilization, number of threads and open files.
 
     Args:
@@ -49,7 +49,7 @@ def get_performance(process: psutil.Process, cpu_interval: PositiveInt) -> Dict[
         cpu_interval: CPU interval to get the CPU performance.
 
     Returns:
-        Dict[str, int | float | str | bool]:
+        Dict[str, Any]:
         Returns the process metrics as key-value pairs.
     """
     try:

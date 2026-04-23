@@ -42,7 +42,7 @@ async def forbidden(request: Request) -> None:
             )
 
 
-async def level_1(request: Request, apikey: HTTPAuthorizationCredentials) -> None:
+async def level_1(request: Request, apikey: HTTPAuthorizationCredentials | None) -> None:
     """Validates the auth request using HTTPBearer.
 
     Args:
@@ -55,6 +55,9 @@ async def level_1(request: Request, apikey: HTTPAuthorizationCredentials) -> Non
         - 403: If host address is forbidden.
     """
     await forbidden(request)
+    if not apikey:
+        await handle_auth_error(request)
+        raise exceptions.APIResponse(status_code=HTTPStatus.UNAUTHORIZED.real, detail=HTTPStatus.UNAUTHORIZED.phrase)
     if apikey.credentials.startswith("\\"):
         auth = bytes(apikey.credentials, "utf-8").decode(encoding="unicode_escape")
     else:
@@ -114,9 +117,9 @@ def verify_mfa(mfa_code: str) -> bool:
 
 async def level_2(
     request: Request,
-    apikey: HTTPAuthorizationCredentials,
-    api_secret: str,
-    mfa_code: str,
+    apikey: HTTPAuthorizationCredentials | None,
+    api_secret: str | None,
+    mfa_code: str | None,
 ) -> None:
     """Validates the auth request using HTTPBearer and additionally a secure token.
 
@@ -138,7 +141,7 @@ async def level_2(
             detail="Remote execution has been disabled on the server.",
         )
     if api_secret and secrets.compare_digest(api_secret, models.env.api_secret):
-        if verify_mfa(mfa_code):
+        if mfa_code and verify_mfa(mfa_code):
             LOGGER.info("MFA verification successful for %s", request.client.host)
             return
     # Adds host address to the forbidden set

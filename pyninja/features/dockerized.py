@@ -91,6 +91,7 @@ def get_all_volumes() -> Dict[str, str] | None:
         return None
 
 
+# noinspection PyTypeChecker
 def stop_container(container_name: str) -> str | None:
     """Stop a container by name.
 
@@ -108,6 +109,7 @@ def stop_container(container_name: str) -> str | None:
     return None
 
 
+# noinspection PyTypeChecker
 def start_container(container_name: str) -> str | None:
     """Start a container by name.
 

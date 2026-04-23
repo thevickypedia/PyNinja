@@ -49,7 +49,7 @@ async def logout_endpoint(request: Request) -> HTMLResponse:
         HTMLResponse:
         Redirects to login page.
     """
-    session_token = request.cookies.get(enums.Cookies.session_token)
+    session_token = request.cookies.get(enums.Cookies.session_token) or ""
     try:
         await monitor.authenticator.validate_session(request.client.host, session_token)
     except exceptions.SessionError as error:
@@ -89,7 +89,7 @@ async def login_endpoint(
     response.set_cookie(**await monitor.authenticator.generate_cookie(auth_payload))
     response.set_cookie(
         key="render",
-        value=request.headers.get("Content-Type"),
+        value=request.headers.get("Content-Type", ""),
         expires=await monitor.config.get_expiry(
             lease_start=int(time.time()), lease_duration=models.env.monitor_session
         ),

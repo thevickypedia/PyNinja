@@ -34,12 +34,13 @@ def landing_page() -> Dict[str, Any]:
         "CPU Cores": psutil.cpu_count(logical=True),
         "Uptime": squire.convert_seconds(int(timedelta(seconds=time.time() - psutil.boot_time()).total_seconds())),
     }
-    if models.architecture.cpu:
-        LOGGER.debug("Processor: %s", models.architecture.cpu)
-        sys_info_basic["CPU"] = models.architecture.cpu
-    if gpus := models.architecture.gpu:
+    architecture = squire.load_architecture(models.env)
+    if architecture.cpu:
+        LOGGER.debug("Processor: %s", architecture.cpu)
+        sys_info_basic["CPU"] = architecture.cpu
+    if gpus := architecture.gpu:
         LOGGER.debug(gpus)
-        sys_info_basic["GPU"] = ", ".join([gpu_info.get("model") for gpu_info in gpus])
+        sys_info_basic["GPU"] = ", ".join([gpu_info.get("model", "") for gpu_info in gpus])
 
     sys_info_basic["Memory"] = squire.size_converter(psutil.virtual_memory().total)
     if swap := psutil.swap_memory().total:
@@ -48,7 +49,7 @@ def landing_page() -> Dict[str, Any]:
         "Private IP address": squire.private_ip_address(),
         "Public IP address": squire.public_ip_address(),
     }
-    sys_info_disks = [{k.replace("_", " ").title(): v for k, v in disk.items()} for disk in models.architecture.disks]
+    sys_info_disks = [{k.replace("_", " ").title(): v for k, v in disk.items()} for disk in architecture.disks]
     return dict(
         logout=enums.APIEndpoints.logout,
         sys_info_basic=sys_info_basic,
@@ -57,7 +58,6 @@ def landing_page() -> Dict[str, Any]:
     )
 
 
-@cache.timed_cache(30)
 async def get_disk_info() -> List[Dict[str, str | int]]:
     """Get partition and usage information for each physical drive.
 
@@ -66,8 +66,9 @@ async def get_disk_info() -> List[Dict[str, str | int]]:
         Returns a list of key-value pairs with ID, name, and usage.
     """
     usage_metrics = []
-    for disk in models.architecture.disks:
-        disk_usage: Dict[str, str | int] = {
+    architecture = squire.load_architecture(models.env)
+    for disk in architecture.disks:
+        disk_usage: Dict[str, str | int | float | None] = {
             "name": disk.get("name"),
             "id": disk.get("device_id"),
         }
@@ -120,7 +121,7 @@ def floater(value: float) -> int | float:
     return int(value)
 
 
-def map_docker_stats(json_data: Dict[str, str]) -> Dict[str, str]:
+def map_docker_stats(json_data: Dict[str, str]) -> Dict[str, str | None]:
     """Map the JSON data to a dictionary.
 
     Args:
@@ -130,13 +131,16 @@ def map_docker_stats(json_data: Dict[str, str]) -> Dict[str, str]:
         Dict[str, str]:
         Returns a dictionary with container stats.
     """
+    container_id = json_data.get("ID")
+    container_cpu = json_data.get("CPUPerc")
     docker_dump = {
-        "Container ID": json_data.get("ID"),
+        "Container ID": container_id,
         "Container Name": json_data.get("Name"),
-        "CPU": json_data.get("CPUPerc"),
+        "CPU": container_cpu,
     }
-    if cpu_percent := re.findall(r"\d+\.\d+|\d+", json_data.get("CPUPerc")):
-        cpu_limit = int(container_cpu_limit(json_data.get("ID")) or psutil.cpu_count(logical=True))
+    if container_cpu and container_id and (cpu_percent := re.findall(r"\d+\.\d+|\d+", container_cpu)):
+        # noinspection PyTypeChecker
+        cpu_limit = int(container_cpu_limit(container_id) or psutil.cpu_count(logical=True))
         docker_dump["CPU Usage"] = f"{floater(round((float(cpu_percent[0]) / 100) * cpu_limit, 2))} / {cpu_limit}"
     else:
         docker_dump["CPU Usage"] = "N/A"
@@ -176,7 +180,7 @@ def containers() -> bool | None:
     return None
 
 
-async def get_docker_stats() -> List[Dict[str, str]]:
+async def get_docker_stats() -> List[Dict[str, str | None]]:
     """Run the docker stats command asynchronously and parse the output.
 
     Returns:
@@ -217,6 +221,7 @@ async def get_system_metrics() -> Dict[str, dict]:
     )
 
 
+@cache.timed_cache(60)
 def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
     """Retrieves OS-agnostic PyUdisk metrics.
 
@@ -237,11 +242,11 @@ def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
                 rendered["mountpoint"] = [partition.MountPoints for partition in disk.Partition]
             if attributes:
                 rendered["temperature"] = (
-                    f"{util.kelvin_to_fahrenheit(attributes.SmartTemperature)} °F"
+                    f"{util.kelvin_to_fahrenheit(attributes.SmartTemperature or 0)} °F"
                     + " / "
-                    + f"{util.kelvin_to_celsius(attributes.SmartTemperature)} °C"
+                    + f"{util.kelvin_to_celsius(attributes.SmartTemperature or 0)} °C"
                 )
-                rendered["uptime"] = squire.convert_seconds(attributes.SmartPowerOnSeconds)
+                rendered["uptime"] = squire.convert_seconds(attributes.SmartPowerOnSeconds or 0)
                 rendered["bad_sectors"] = attributes.SmartNumBadSectors
                 rendered["test_status"] = attributes.SmartSelftestStatus
                 rendered["updated"] = disk.Attributes.SmartUpdated
@@ -275,8 +280,7 @@ def get_os_agnostic_metrics() -> Generator[Dict[str, Any]]:
         rendered.clear()
 
 
-@cache.timed_cache(60)
-def pyudisk_metrics() -> Dict[str, str | List[dict] | int]:
+def pyudisk_metrics() -> Dict[str, str | List[Any] | float]:
     """Retrieves metrics from PyUdisk library.
 
     See Also:
@@ -284,7 +288,7 @@ def pyudisk_metrics() -> Dict[str, str | List[dict] | int]:
         - This is to avoid gathering the metrics every 2s, to improve latency and avoid extra overhead.
 
     Returns:
-        List[Dict[str, int | str | float]]:
+        Dict[str, str | List[Any] | float]:
         List of required metrics as a dictionary of key-value pairs.
     """
     pyudisk_stats = []

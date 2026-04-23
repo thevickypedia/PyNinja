@@ -28,7 +28,7 @@ def archive(path: pathlib.Path, directory: pathlib.Path) -> pathlib.Path:
     return zip_file
 
 
-def unarchive(zip_file: str | pathlib.Path, directory: str | pathlib.Path) -> str:
+def unarchive(zip_file: str, directory: str) -> str:
     """Unarchives a zip file into a specified directory.
 
     Args:

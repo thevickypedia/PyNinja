@@ -168,12 +168,12 @@ def start(**kwargs) -> None:
             - **pwsh** - Path to the ``pwsh`` binary for Windows.
     """
     models.env = squire.load_env(**kwargs)
-    models.architecture = squire.load_architecture(models.env)
     squire.assert_tokens()
     squire.assert_pyudisk()
     squire.handle_warnings()
     squire.assert_cert_monitor()
     startup.docs_handler(api=PyNinjaAPI, func=docs)
+    # noinspection PyTypeChecker
     dependencies = [
         Depends(dependency=rate_limit.RateLimiter(each_rate_limit).init) for each_rate_limit in models.env.rate_limit
     ]
@@ -230,6 +230,7 @@ def start(**kwargs) -> None:
         app=f"{module_name.parent.stem}.{module_name.stem}:{PyNinjaAPI.__name__}",
     )
     if models.env.log_config:
+        # noinspection PyTypeChecker
         uvicorn_args["log_config"] = (
             models.env.log_config if isinstance(models.env.log_config, dict) else str(models.env.log_config)
         )

@@ -13,7 +13,7 @@ from pyninja.modules import models
 LOGGER = logging.getLogger("uvicorn.default")
 
 
-def default(name: str):
+def default(name: str) -> Dict[str, str | int]:
     """Default values for processes and services."""
     return {
         "PID": 0000,
@@ -65,7 +65,7 @@ def get_process_info(proc: psutil.Process, process_name: str = None) -> Dict[str
         }
     except psutil.Error as error:
         LOGGER.debug(error)
-        return default(process_name)
+        return default(process_name or proc.name())
 
 
 def get_parent_process(processes: List[Dict[str, str]]) -> List[Dict[str, str]]:
