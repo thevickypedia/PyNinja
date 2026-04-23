@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+v5.1.0 (04/23/2026)
+-------------------
+- Load and cache all architecture attributes on-demand instead of once at startup
+- Fix type hints and avoid hyperlinks for ``APIWebSocketRoute`` type
+- Set defaults for unresolved paths, headers, and function arguments
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v5.0.3...v5.1.0
+
 v5.0.3 (03/25/2026)
 -------------------
 - Fix missing request params required by ``starlette==1.0.0`` for ``TemplateResponse``
