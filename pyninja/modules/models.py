@@ -202,11 +202,26 @@ def default_service_lib() -> Dict[str, str]:
     )
 
 
-def retrieve_library_path(func: Callable) -> FilePath:
+def default_docker_lib() -> Dict[str, str]:
+    """Get the default docker library filepath for the host operating system.
+
+    Returns:
+        Dict[str, str]:
+        Returns a mapping of operating systems to their default docker library filepaths.
+    """
+    return dict(
+        linux=shutil.which("docker") or "/usr/bin/docker",
+        darwin=shutil.which("docker") or "/usr/local/bin/docker",
+        windows=shutil.which("docker") or "C:\\Program Files\\Docker\\Docker\\DockerCli.exe",
+    )
+
+
+def retrieve_library_path(func: Callable, ignore_err: bool = False) -> FilePath:
     """Retrieves the library path from the mapping created for each operating system.
 
     Args:
         func: Function to call to get the mapping.
+        ignore_err: If True, ignores the KeyError and returns an empty FilePath.
 
     Returns:
         FilePath:
@@ -216,6 +231,8 @@ def retrieve_library_path(func: Callable) -> FilePath:
         return FilePath(func()[OPERATING_SYSTEM])
     except KeyError:
         # This shouldn't happen programmatically, but just in case
+        if ignore_err:
+            return FilePath("")
         exceptions.raise_os_error(OPERATING_SYSTEM)
 
 
@@ -323,6 +340,7 @@ class EnvConfig(BaseSettings):
     disk_lib: FilePath = retrieve_library_path(default_disk_lib)
     service_lib: FilePath = retrieve_library_path(default_service_lib)
     processor_lib: FilePath = retrieve_library_path(default_cpu_lib)
+    docker_lib: FilePath | None = retrieve_library_path(default_docker_lib, True) or None
 
     certbot_path: FilePath | None = get_certbot_path()
     cert_scan: CertScan | None = None

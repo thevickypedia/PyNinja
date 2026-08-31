@@ -89,7 +89,7 @@ def container_cpu_limit(container_id: str) -> int | float | None:
         int:
         Returns the number of CPU cores.
     """
-    cmd = r"docker inspect --format '{{.HostConfig.NanoCpus}}' " + container_id
+    cmd = str(models.env.docker_lib) + r" inspect --format '{{.HostConfig.NanoCpus}}' " + container_id
     inspector = subprocess.run(
         cmd,
         stdout=asyncio.subprocess.PIPE,
@@ -169,7 +169,7 @@ def get_cpu_percent(cpu_interval: int) -> List[float]:
 def containers() -> bool | None:
     """Check if any Docker containers are running."""
     docker_ps = subprocess.run(
-        "docker ps -q",
+        f"{models.env.docker_lib} ps -q",
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
         shell=True,
@@ -191,8 +191,9 @@ async def get_docker_stats() -> List[Dict[str, str | None]]:
     """
     if not containers():
         return []
+    cmd = str(models.env.docker_lib) + ' stats --no-stream --format "{{json .}}"'
     process = await asyncio.create_subprocess_shell(
-        'docker stats --no-stream --format "{{json .}}"',
+        cmd,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
