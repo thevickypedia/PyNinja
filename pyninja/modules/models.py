@@ -1,3 +1,4 @@
+import logging
 import os
 import pathlib
 import platform
@@ -45,6 +46,7 @@ monitor_templates_dir = os.path.join(templates_dir, "monitor")
 
 API_TEMPLATES = Jinja2Templates(directory=api_templates_dir)
 MONITOR_TEMPLATES = Jinja2Templates(directory=monitor_templates_dir)
+LOGGER = logging.getLogger("uvicorn.default")
 
 
 def complexity_checker(key: str, value: str, min_length: int) -> None:
@@ -216,6 +218,25 @@ def default_docker_lib() -> Dict[str, str]:
     )
 
 
+def get_optional_lib(func: Callable) -> FilePath | None:
+    """Get the optional library filepath for the host operating system.
+
+    Args:
+        func: Function to call to get the mapping.
+
+    Returns:
+        FilePath | None:
+        Returns the filepath as a ``FilePath`` object if it exists, otherwise ``None``.
+    """
+    try:
+        filepath = FilePath(func()[OPERATING_SYSTEM])
+        if filepath.exists():
+            return filepath
+    except Exception as err:
+        LOGGER.debug(err)
+    return None
+
+
 def retrieve_library_path(func: Callable, ignore_err: bool = False) -> FilePath:
     """Retrieves the library path from the mapping created for each operating system.
 
@@ -340,7 +361,7 @@ class EnvConfig(BaseSettings):
     disk_lib: FilePath = retrieve_library_path(default_disk_lib)
     service_lib: FilePath = retrieve_library_path(default_service_lib)
     processor_lib: FilePath = retrieve_library_path(default_cpu_lib)
-    docker_lib: FilePath | None = retrieve_library_path(default_docker_lib, True) or None
+    docker_lib: FilePath | None = get_optional_lib(default_docker_lib)
 
     certbot_path: FilePath | None = get_certbot_path()
     cert_scan: CertScan | None = None
