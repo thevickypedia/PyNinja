@@ -140,7 +140,9 @@ def map_docker_stats(json_data: Dict[str, str]) -> Dict[str, str | None]:
     }
     if container_cpu and container_id and (cpu_percent := re.findall(r"\d+\.\d+|\d+", container_cpu)):
         # noinspection PyTypeChecker
-        cpu_limit = int(container_cpu_limit(container_id) or psutil.cpu_count(logical=True))
+        cpu_limit = container_cpu_limit(container_id) or psutil.cpu_count(logical=True)
+        if isinstance(cpu_limit, float):
+            cpu_limit = round(float(cpu_limit), 2)
         docker_dump["CPU Usage"] = f"{floater(round((float(cpu_percent[0]) / 100) * cpu_limit, 2))} / {cpu_limit}"
     else:
         docker_dump["CPU Usage"] = "N/A"
