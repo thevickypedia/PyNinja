@@ -64,7 +64,7 @@ async def get_large_file(
     await auth.level_2(request, apikey, api_secret, mfa_code)
     if not any((filepath, directory)):
         LOGGER.error("No file or directory provided for download.")
-        raise exceptions.HTTPException(
+        raise exceptions.APIResponse(
             status_code=HTTPStatus.BAD_REQUEST.real,
             detail="Either 'filepath' or 'directory' must be provided.",
         )

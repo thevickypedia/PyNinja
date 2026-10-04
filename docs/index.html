@@ -983,7 +983,7 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <hr class="docutils" />
 <span class="target" id="module-pyninja.routes.observability"></span><dl class="py function">
 <dt class="sig sig-object py" id="pyninja.routes.observability.get_observability">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.observability.</span></span><span class="sig-name descname"><span class="pre">get_observability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request:</span> <span class="pre">~starlette.requests.Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey:</span> <span class="pre">~fastapi.security.http.HTTPAuthorizationCredentials</span> <span class="pre">=</span> <span class="pre">Depends(dependency=&lt;fastapi.security.http.HTTPBearer</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope=None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_services:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.observability.get_observability" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyninja.routes.observability.</span></span><span class="sig-name descname"><span class="pre">get_observability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request:</span> <span class="pre">~starlette.requests.Request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey:</span> <span class="pre">~fastapi.security.http.HTTPAuthorizationCredentials</span> <span class="pre">=</span> <span class="pre">Depends(dependency=&lt;fastapi.security.http.HTTPBearer</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope=None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_duration:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">3600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_services:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyninja.routes.observability.get_observability" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>API function to get system metrics via StreamingResponse.</strong></p>
 <p><strong>Args:</strong></p>
 <blockquote>
@@ -991,6 +991,8 @@ Raises the HTTPStatus object with a status code and detail as response.</p>
 <li><p>request: Reference to the FastAPI request object.</p></li>
 <li><p>apikey: API Key to authenticate the request.</p></li>
 <li><p>interval: Sleep interval for streaming.</p></li>
+<li><p>session_duration: Number of seconds for the observability session.</p></li>
+<li><p>all_services: Flag to include all services in the services’ metrics.</p></li>
 </ul>
 </div></blockquote>
 <p><strong>Raises:</strong></p>
@@ -1618,7 +1620,7 @@ one lowercase letter, and one safe character.</p>
 <p class="admonition-title">Note</p>
 <p>To generate a QR code, run one of the following:</p>
 <p><strong>Option 1: Python snippet</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyninja</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pyninja</span>
 <span class="n">pyninja</span><span class="o">.</span><span class="n">otp</span><span class="o">.</span><span class="n">generate_qr</span><span class="p">(</span><span class="n">show_qr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -3501,11 +3503,6 @@ Raises the HTTPStatus object with a status code to indicate MFA delivery.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.host_password">
 <span class="sig-name descname"><span class="pre">host_password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.host_password" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pyninja.modules.models.EnvConfig.observability_session">
-<span class="sig-name descname"><span class="pre">observability_session</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyninja.modules.models.EnvConfig.observability_session" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
