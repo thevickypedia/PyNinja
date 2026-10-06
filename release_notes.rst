@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+v5.2.0 (10/06/2026)
+-------------------
+- Allow clients to control ``session_duration`` for streaming ``/observability`` metrics
+- Includes an option to pass custom ``docker_lib`` filepath
+- Includes bug fixes for auth errors that result in 500
+- **Full Changelog**: https://github.com/thevickypedia/PyNinja/compare/v5.1.1...v5.2.0
+
 v5.1.1 (04/23/2026)
 -------------------
 - Resolve environment variables when loading architecture values
