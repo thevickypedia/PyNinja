@@ -137,9 +137,9 @@ async def stream_command(
             process = await asyncio.create_subprocess_exec(
                 program=command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT
             )
-    except Exception as e:
-        LOGGER.error("Failed to start subprocess: %s", e)
-        yield f"[Failed to start command: {e}]\n"
+    except Exception as error:
+        LOGGER.exception("Failed to start subprocess: %s", error)
+        yield f"[Failed to start command: {error}]\n"
         return
 
     output_yielded = False
@@ -173,10 +173,10 @@ async def stream_command(
         LOGGER.error("Command timed out and was killed: %s", command)
         yield "[Command timed out]\n"
 
-    except Exception as e:
+    except Exception as error:
         process.kill()
-        LOGGER.error("Unexpected error during command streaming: %s", e)
-        yield f"[Error: {e}]\n"
+        LOGGER.exception("Unexpected error during command streaming: %s", error)
+        yield f"[Error: {error}]\n"
 
     finally:
         LOGGER.info("Command execution completed with ouput yielded: %s", output_yielded)
@@ -600,7 +600,7 @@ def get_mfa_title(include_node: bool) -> str:
         try:
             node = platform.uname().node
         except Exception as error:
-            LOGGER.critical(error)
+            LOGGER.exception(error)
             node = "unknown"
         return f'PyNinja MFA (for: {node}) - {datetime.now().strftime("%B %d, %Y - %I:%M %p")}'
     return f'PyNinja MFA - {datetime.now().strftime("%B %d, %Y - %I:%M %p")}'

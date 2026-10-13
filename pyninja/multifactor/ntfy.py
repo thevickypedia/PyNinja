@@ -37,7 +37,7 @@ async def send(title: str, data: str) -> bool:
         LOGGER.debug(response.json())
         return True
     except Exception as error:
-        LOGGER.error(error)
+        LOGGER.exception(error)
         return False
 
 

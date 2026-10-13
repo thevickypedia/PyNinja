@@ -167,5 +167,5 @@ async def validate_session(host: str, cookie_string: str, log: bool = True) -> N
         LOGGER.debug("Expired session: %s", error)
         raise exceptions.SessionError("Session Expired")
     except Exception as error:
-        LOGGER.critical("Invalid session: %s", error)
+        LOGGER.exception("Invalid session: %s", error)
         raise exceptions.SessionError("Invalid Session")

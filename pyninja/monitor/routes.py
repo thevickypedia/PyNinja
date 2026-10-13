@@ -139,7 +139,7 @@ async def monitor_endpoint(request: Request, session_token: str = Cookie(None), 
             try:
                 return await monitor.drive.report(request)
             except Exception as error:
-                LOGGER.error(error)
+                LOGGER.exception(error)
                 return await monitor.drive.invalidate("Failed to generate disk report")
     return models.MONITOR_TEMPLATES.TemplateResponse(
         request=request,

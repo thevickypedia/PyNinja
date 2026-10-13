@@ -167,24 +167,35 @@
     <div>
         <h2>Partition</h2>
         {% if row.Partition %}
-        <table class="nested-table">
-            <thead>
-            <tr>
-                <th>Key</th>
-                <th>Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for key, value in row.Partition.items() %}
-            <tr>
-                <td>{{ key }}</td>
-                <td>{{ value }}</td>
-            </tr>
+            {% for partition in row.Partition %}
+                <h3>{{ partition.Device | default("Unknown device") }}</h3>
+                <table class="nested-table">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, value in partition.items() %}
+                            <tr>
+                                <td>{{ key }}</td>
+                                <td>
+                                    {% if value is mapping %}
+                                        {{ value | tojson }}
+                                    {% elif value is sequence and value is not string %}
+                                        {{ value | join(', ') }}
+                                    {% else %}
+                                        {{ value }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             {% endfor %}
-            </tbody>
-        </table>
         {% else %}
-        <p>No partitions available.</p>
+            <p>No partitions available.</p>
         {% endif %}
     </div>
     <div>
