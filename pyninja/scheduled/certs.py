@@ -1,7 +1,5 @@
-import asyncio
-import logging
 import platform
-from datetime import datetime, timedelta
+import logging
 from http import HTTPStatus
 from typing import List, Tuple
 
@@ -10,34 +8,6 @@ from pyninja.modules import models
 from pyninja.multifactor import gmail, ntfy, telegram
 
 LOGGER = logging.getLogger("uvicorn.default")
-
-
-async def scheduler() -> None:
-    """Schedule the certificate expiry check to run daily at a specified time."""
-    while True:
-        now = datetime.now()
-        hour, minute = map(int, models.env.cert_scan.schedule.split(":"))
-        next_run = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
-        if now >= next_run:
-            next_run += timedelta(days=1)
-        sleep_seconds = (next_run - now).total_seconds()
-        LOGGER.info(
-            "Next certificate expiry check scheduled at %s (in %d seconds)", next_run.strftime("%c"), sleep_seconds
-        )
-        try:
-            await asyncio.sleep(sleep_seconds)
-        except asyncio.CancelledError:
-            LOGGER.info("Scheduler interrupted during sleep, shutting down.")
-            return  # No work was in progress — safe to exit immediately
-
-        # Work is about to begin — shield it from cancellation
-        work = asyncio.create_task(monitor_expiry())
-        try:
-            await asyncio.shield(work)
-        except asyncio.CancelledError:
-            LOGGER.warning("Shutdown requested during certificate check, waiting for completion...")
-            await work  # Let monitor_expiry() run to completion
-            raise  # Then propagate CancelledError to exit the loop
 
 
 def html_body(rows: List[Tuple[str, str, str, str]]) -> str:

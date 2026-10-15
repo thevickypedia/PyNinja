@@ -11,7 +11,7 @@ from fastapi.routing import APIRoute
 
 from pyninja import startup, version
 from pyninja.executors import routers, squire
-from pyninja.features import cert_expiration
+from pyninja.scheduled import background
 from pyninja.modules import enums, exceptions, models, rate_limit
 
 LOGGER = logging.getLogger("uvicorn.default")
@@ -25,16 +25,13 @@ async def lifespan(app: FastAPI):
     api_name = app.__dict__.get("title", app.__name__)
     api_version = app.__dict__.get("version", version.__version__)
     LOGGER.info("FastAPI server [%s:%s] initialized.", api_name, api_version)
-    task: asyncio.Task | None = None
-    if models.env.cert_scan:
-        task = asyncio.create_task(cert_expiration.scheduler())
+    task = asyncio.create_task(background.scheduler())
     yield
-    if task:
-        task.cancel()
-        try:
-            await task  # wait for the CancelledError to propagate fully
-        except asyncio.CancelledError:
-            pass  # expected — suppress it cleanly
+    task.cancel()
+    try:
+        await task  # wait for the CancelledError to propagate fully
+    except asyncio.CancelledError:
+        pass  # expected — suppress it cleanly
     LOGGER.info("FastAPI server [%s:%s] shut down.", api_name, api_version)
 
 

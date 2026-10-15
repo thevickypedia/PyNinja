@@ -352,6 +352,9 @@ class EnvConfig(BaseSettings):
     monitor_password: str | None = None
     monitor_session: PositiveInt = 3_600
     disk_report: bool = False
+    # TODO: Allow a list of schedules
+    disk_health_schedule: str = Field(default="8:00", pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
+
     max_connections: PositiveInt = 3
     processes: List[str] = Field(default_factory=list)
     services: List[str] = Field(default_factory=list)
